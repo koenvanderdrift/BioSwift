@@ -95,15 +95,15 @@ extension BioSequence {
 extension BioSequence {
     public func possibleFunctionalGroups(at index: Int) -> [FunctionalGroup]? {
         if let symbol = symbol(at: index) {
-            var possibleFunctionalGroups = functionalGroupLibrary.filter { $0.canAttachTo.contains(symbol.identifier) == true }
+            var possibleFunctionalGroups = functionalGroupLibrary.filter { $0.site.contains(symbol.identifier) == true }
             // add N and C term groups
             if index == 0 {
-                let nTermGroups = functionalGroupLibrary.filter { $0.canAttachTo.contains("NTerminal") == true }
+                let nTermGroups = functionalGroupLibrary.filter { $0.site.contains("NTerminal") == true }
                 possibleFunctionalGroups.append(contentsOf: nTermGroups)
             }
             
             if index == sequenceString.count - 1 {
-                let cTermGroups = functionalGroupLibrary.filter { $0.canAttachTo.contains("CTerminal") == true }
+                let cTermGroups = functionalGroupLibrary.filter { $0.site.contains("CTerminal") == true }
                 possibleFunctionalGroups.append(contentsOf: cTermGroups)
             }
             
