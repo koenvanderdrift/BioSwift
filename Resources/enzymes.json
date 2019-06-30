@@ -1,0 +1,86 @@
+[
+    {
+        "name": "Trypsin",
+        "dontCleaveBefore":["P"],
+        "alternativeName":"",
+        "fullName":"",
+        "cleaveDirection":"C",
+        "cleaveAt":[
+            "K",
+            "R"
+        ]
+    },
+    {
+        "name": "CNBr",
+        "dontCleaveBefore":[],
+        "alternativeName":"",
+        "fullName":"Cyanogen Bromide",
+        "cleaveDirection":"C",
+        "cleaveAt":["M"]
+    },
+    {
+        "name":"Glu-C",
+        "dontCleaveBefore":[],
+        "alternativeName":"Staphylococcus aureus Protease V8",
+        "fullName":"Endoproteinase Glu-C",
+        "cleaveDirection":"C",
+        "cleaveAt":["E"]
+    },
+    {
+        "name":"Trypsin\/P",
+        "dontCleaveBefore":[],
+        "alternativeName":"",
+        "fullName":"",
+        "cleaveDirection":"C",
+        "cleaveAt":[
+            "K",
+            "R"
+        ]
+    },
+    {
+        "name": "Chymotrypsin",
+        "dontCleaveBefore":["P"],
+        "alternativeName":"",
+        "fullName":"",
+        "cleaveDirection":"C",
+        "cleaveAt":[
+            "F",
+            "Y",
+            "W",
+            "M",
+            "L"
+        ]
+    },
+    {
+        "name":"Arg-C",
+        "dontCleaveBefore":["P"],
+        "alternativeName":"Clostripain",
+        "fullName":"Endoproteinase-Arg-C",
+        "cleaveDirection":"C",
+        "cleaveAt":["R"]
+    },
+    {
+        "name":"Asp-N",
+        "dontCleaveBefore":[],
+        "alternativeName":"",
+        "fullName":"",
+        "cleaveDirection":"N",
+        "cleaveAt":["D"]
+    },
+    {
+        "name":"Lys-C",
+        "dontCleaveBefore":["P"],
+        "alternativeName":"",
+        "fullName":"Endoproteinase Lys-C",
+        "cleaveDirection":"C",
+        "cleaveAt":["K"]
+    },
+    {
+        "name":"Lys-C\/P",
+        "dontCleaveBefore":[],
+        "alternativeName":"",
+        "fullName":"",
+        "cleaveDirection":"C",
+        "cleaveAt":["K"]
+    }
+]

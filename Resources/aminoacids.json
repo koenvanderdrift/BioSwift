@@ -1,0 +1,248 @@
+[
+    {
+        "oneLetterCode": "G",
+        "threeLetterCode":"Gly",
+        "formula": "C2H3NO",
+        "represents":[
+            "glycine"
+        ],
+        "representedBy":[
+            "glycine"
+        ],
+        "name":"Glycine"
+    },
+    {
+        "oneLetterCode": "H",
+        "threeLetterCode":"His",
+        "formula":"C6H7N3O",
+        "represents":[
+            "histidine"
+        ],
+        "representedBy":[
+            "histidine"
+        ],
+        "name":"Histidine"
+    },
+    {
+        "oneLetterCode": "V",
+        "threeLetterCode":"Val",
+        "formula":"C5H9NO",
+        "represents":[
+            "valine"
+        ],
+        "representedBy":[
+            "valine"
+        ],
+        "name":"Valine"
+    },
+    {
+        "oneLetterCode": "I",
+        "threeLetterCode":"Ile",
+        "formula":"C6H11NO",
+        "represents":[
+            "isoleucine"
+        ],
+        "representedBy":[
+            "isoleucine"
+        ],
+        "name":"Isoleucine"
+    },
+    {
+        "oneLetterCode": "W",
+        "threeLetterCode":"Trp",
+        "formula":"C11H10N2O",
+        "represents":[
+            "tryptophan"
+        ],
+        "representedBy":[
+            "tryptophan"
+        ],
+        "name":"Tryptophan"
+    },
+    {
+        "oneLetterCode": "K",
+        "threeLetterCode":"Lys",
+        "formula":"C6H12N2O",
+        "represents":[
+            "lysine"
+        ],
+        "representedBy":[
+            "lysine"
+        ],
+        "name":"Lysine"
+    },
+    {
+        "oneLetterCode": "Y",
+        "threeLetterCode":"Tyr",
+        "formula":"C9H9NO2",
+        "represents":[
+            "tyrosine"
+        ],
+        "representedBy":[
+            "tyrosine"
+        ],
+        "name":"Tyrosine"
+    },
+    {
+        "oneLetterCode": "L",
+        "threeLetterCode":"Leu",
+        "formula":"C6H11NO",
+        "represents":[
+            "leucine"
+        ],
+        "representedBy":[
+            "leucine"
+        ],
+        "name":"Leucine"
+    },
+    {
+        "oneLetterCode": "M",
+        "threeLetterCode":"Met",
+        "formula":"C5H9NOS",
+        "represents":[
+            "methionine"
+        ],
+        "representedBy":[
+            "methionine"
+        ],
+        "name":"Methionine"
+    },
+    {
+        "oneLetterCode": "N",
+        "threeLetterCode":"Asn",
+        "formula":"C4H6N2O2",
+        "represents":[
+            "asparagine"
+        ],
+        "representedBy":[
+            "asparagine",
+            "asx"
+        ],
+        "name":"Asparagine"
+    },
+    {
+        "oneLetterCode": "A",
+        "threeLetterCode":"Ala",
+        "formula":"C3H5NO",
+        "represents":[
+            "alanine"
+        ],
+        "representedBy":[
+            "alanine"
+        ],
+        "name":"Alanine"
+    },
+    {
+        "oneLetterCode": "P",
+        "threeLetterCode":"Pro",
+        "formula":"C5H7NO",
+        "represents":[
+            "proline"
+        ],
+        "representedBy":[
+            "proline"
+        ],
+        "name":"Proline"
+    },
+    {
+        "oneLetterCode": "C",
+        "threeLetterCode":"Cys",
+        "formula":"C3H5NOS",
+        "represents":[
+            "cysteine"
+        ],
+        "representedBy":[
+            "cysteine"
+        ],
+        "name":"Cysteine"
+    },
+    {
+        "oneLetterCode": "Q",
+        "threeLetterCode":"Gln",
+        "formula":"C5H8N2O2",
+        "represents":[
+            "glutamine"
+        ],
+        "representedBy":[
+            "glutamine",
+            "glx"
+        ],
+        "name":"Glutamine"
+    },
+    {
+        "oneLetterCode": "D",
+        "threeLetterCode":"Asp",
+        "formula":"C4H5NO3",
+        "HoppWoods":"3.0",
+        "BullBreeze":"0.610",
+        "represents":[
+            "asparticacid"
+        ],
+        "representedBy":[
+            "asparticacid",
+            "asx"
+        ],
+        "name":"Aspartic Acid"
+    },
+    {
+        "oneLetterCode": "R",
+        "threeLetterCode":"Arg",
+        "formula":"C6H12N4O",
+        "represents":[
+            "arginine"
+        ],
+        "representedBy":[
+            "arginine"
+        ],
+        "name":"Arginine"
+    },
+    {
+        "oneLetterCode": "E",
+        "threeLetterCode":"Glu",
+        "formula":"C5H7NO3",
+        "represents":[
+            "glutamicacid"
+        ],
+        "representedBy":[
+            "glutamicacid",
+            "glx"
+        ],
+        "name":"Glutamic Acid"
+    },
+    {
+        "oneLetterCode": "S",
+        "threeLetterCode":"Ser",
+        "formula":"C3H5NO2",
+        "represents":[
+            "serine"
+        ],
+        "representedBy":[
+            "serine"
+        ],
+        "name":"Serine"
+    },
+    {
+        "oneLetterCode": "F",
+        "threeLetterCode":"Phe",
+        "formula":"C9H9NO",
+        "represents":[
+            "phenylalanine"
+        ],
+        "representedBy":[
+            "phenylalanine"
+        ],
+        "name":"Phenylalanine"
+    },
+    {
+        "oneLetterCode": "T",
+        "threeLetterCode":"Thr",
+        "formula":"C4H7NO2",
+        "represents":[
+            "threonine"
+        ],
+        "representedBy":[
+            "threonine"
+        ],
+        "name":"Threonine"
+    }
+]

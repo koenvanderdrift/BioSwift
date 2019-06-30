@@ -1,0 +1,41 @@
+[
+    {
+        "name":"Carbamidomethylation",
+        "formula":"CH2CONH2",
+        "canAttachTo":[
+            "C"
+        ]
+    },
+    {
+        "name": "Acetylation",
+        "formula":"CH2CO",
+        "canAttachTo":[
+            "K",
+            "NTerminal"
+        ]
+    },
+    {
+        "name" : "Phosphorylation",
+        "formula":"PO3H",
+        "canAttachTo":[
+            "S",
+            "T",
+            "Y"
+        ]
+    },
+    {
+        "name": "Oxidation",
+        "formula":"O",
+        "canAttachTo":[
+            "M",
+            "W"
+        ]
+    },
+    {
+        "name": "Carboxymethylation",
+        "formula":"CH2COOH",
+        "canAttachTo":[
+            "C"
+        ]
+    }
+]
