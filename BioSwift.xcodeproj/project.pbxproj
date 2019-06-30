@@ -89,6 +89,10 @@
 		C731DDF922480D8D00040139 /* aminoacids-nonessential.json in Resources */ = {isa = PBXBuildFile; fileRef = C731DDF722480D8D00040139 /* aminoacids-nonessential.json */; };
 		C731DDFA22480D8D00040139 /* aminoacids-nonessential.json in Resources */ = {isa = PBXBuildFile; fileRef = C731DDF722480D8D00040139 /* aminoacids-nonessential.json */; };
 		C731DDFB22480D8D00040139 /* aminoacids-nonessential.json in Resources */ = {isa = PBXBuildFile; fileRef = C731DDF722480D8D00040139 /* aminoacids-nonessential.json */; };
+		C75850F022C92A8300BDEF55 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = C75850EF22C92A8200BDEF55 /* README.md */; };
+		C75850F122C92A8300BDEF55 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = C75850EF22C92A8200BDEF55 /* README.md */; };
+		C75850F222C92A8300BDEF55 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = C75850EF22C92A8200BDEF55 /* README.md */; };
+		C75850F322C92A8300BDEF55 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = C75850EF22C92A8200BDEF55 /* README.md */; };
 		C762DBA42247BDA3006E95E8 /* Mass.swift in Sources */ = {isa = PBXBuildFile; fileRef = C762DBA32247BDA3006E95E8 /* Mass.swift */; };
 		C762DBA52247BDA3006E95E8 /* Mass.swift in Sources */ = {isa = PBXBuildFile; fileRef = C762DBA32247BDA3006E95E8 /* Mass.swift */; };
 		C762DBA62247BDA3006E95E8 /* Mass.swift in Sources */ = {isa = PBXBuildFile; fileRef = C762DBA32247BDA3006E95E8 /* Mass.swift */; };
@@ -179,6 +183,7 @@
 		5DDA8BF521C5B4E1005B7064 /* Fasta.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Fasta.swift; sourceTree = "<group>"; };
 		C7175DCE22A5629A00F8EAE7 /* Double.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Double.swift; sourceTree = "<group>"; };
 		C731DDF722480D8D00040139 /* aminoacids-nonessential.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "aminoacids-nonessential.json"; sourceTree = "<group>"; };
+		C75850EF22C92A8200BDEF55 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		C762DBA32247BDA3006E95E8 /* Mass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Mass.swift; sourceTree = "<group>"; };
 		C77D737921C7D700002247CA /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		C795B3B222441F310032AB26 /* BioSymbol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BioSymbol.swift; sourceTree = "<group>"; };
@@ -231,6 +236,7 @@
 		5DDA8B6121C5B421005B7064 = {
 			isa = PBXGroup;
 			children = (
+				C75850EF22C92A8200BDEF55 /* README.md */,
 				C77D737321C7D700002247CA /* Resources */,
 				5DDA8BD521C5B4E1005B7064 /* Sources */,
 				5DDA8B6D21C5B421005B7064 /* BioSwift */,
@@ -537,6 +543,7 @@
 				C7E476D122301844007041FB /* elements.json in Resources */,
 				C7E476D922301844007041FB /* enzymes.json in Resources */,
 				C7E476C922301844007041FB /* hydropathy.json in Resources */,
+				C75850F022C92A8300BDEF55 /* README.md in Resources */,
 				C731DDF822480D8D00040139 /* aminoacids-nonessential.json in Resources */,
 				C7E476CD22301844007041FB /* functionalgroups.json in Resources */,
 				C7E476D522301844007041FB /* aminoacids.json in Resources */,
@@ -553,6 +560,7 @@
 				C77D738F21C7D700002247CA /* Info.plist in Resources */,
 				C7E476CE22301844007041FB /* functionalgroups.json in Resources */,
 				C731DDF922480D8D00040139 /* aminoacids-nonessential.json in Resources */,
+				C75850F122C92A8300BDEF55 /* README.md in Resources */,
 				C7E476CA22301844007041FB /* hydropathy.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -567,6 +575,7 @@
 				C77D739021C7D700002247CA /* Info.plist in Resources */,
 				C7E476CF22301844007041FB /* functionalgroups.json in Resources */,
 				C731DDFA22480D8D00040139 /* aminoacids-nonessential.json in Resources */,
+				C75850F222C92A8300BDEF55 /* README.md in Resources */,
 				C7E476CB22301844007041FB /* hydropathy.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -581,6 +590,7 @@
 				C77D739121C7D700002247CA /* Info.plist in Resources */,
 				C7E476D022301844007041FB /* functionalgroups.json in Resources */,
 				C731DDFB22480D8D00040139 /* aminoacids-nonessential.json in Resources */,
+				C75850F322C92A8300BDEF55 /* README.md in Resources */,
 				C7E476CC22301844007041FB /* hydropathy.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
