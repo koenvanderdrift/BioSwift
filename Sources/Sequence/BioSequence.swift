@@ -53,7 +53,14 @@ public class BioSequence: Mass {
     }
     
     public func symbol(at index: Int) -> MassSymbol? {
-        return symbolSequence()?[index]
+        var result: MassSymbol? = nil
+
+        if !sequenceString.isEmpty {
+            result = symbolLibrary?.first(where: { $0.identifier == String(sequenceString[index])
+            })
+        }
+
+        return result
     }
 
     public var masses: MassContainer {
