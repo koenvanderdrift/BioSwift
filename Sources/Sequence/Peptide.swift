@@ -1,9 +1,9 @@
 import Foundation
 
 public class Peptide: BioSequence {
-    public override init(sequence: String, sequenceType: SequenceType = .protein, charge: Int) {
+    public override init(sequence: String, type: SequenceType = .protein, charge: Int) {
         
-        super.init(sequence: sequence, sequenceType: sequenceType, charge: charge)
+        super.init(sequence: sequence, type: type, charge: charge)
     }
 }
 
@@ -17,10 +17,10 @@ extension Peptide {
         var nTerminalFragmentIons: [Fragment] = []
 
         for z in 1 ... min(2, self.charge) {
-            for i in 2 ... sequenceString.count - 1 {
-                let index = sequenceString.index(sequenceString.startIndex, offsetBy: i) // let newStr = String(str[..<index])
+            for i in 2 ... sequence.count - 1 {
+                let index = sequence.index(sequence.startIndex, offsetBy: i) // let newStr = String(str[..<index])
 
-                let fragment = Fragment(sequence: String(sequenceString[..<index]), sequenceType: .protein, charge: z, fragmentType: .nTerminal)
+                let fragment = Fragment(sequence: String(sequence[..<index]), type: .protein, charge: z, fragmentType: .nTerminal)
                 fragment.charge = z
                 
                 if z == 1 {
@@ -42,9 +42,9 @@ extension Peptide {
         var cTerminalFragmentIons: [Fragment] = []
 
         for z in 1 ... min(2, self.charge) {
-            for i in 1 ... sequenceString.count - 1 {
-                let index = sequenceString.index(sequenceString.endIndex, offsetBy: -i)
-                let fragment = Fragment(sequence: String(sequenceString[..<index]), charge: z, fragmentType: .cTerminal)
+            for i in 1 ... sequence.count - 1 {
+                let index = sequence.index(sequence.endIndex, offsetBy: -i)
+                let fragment = Fragment(sequence: String(sequence[..<index]), charge: z, fragmentType: .cTerminal)
 
                 cTerminalFragmentIons.append(fragment)
             }
@@ -55,11 +55,11 @@ extension Peptide {
     }
 
     func canLoseWater() -> Bool {
-        return sequenceString.containsCharactersFrom(substring: "STED")
+        return sequence.containsCharactersFrom(substring: "STED")
     }
 
     func canLoseAmmonia() -> Bool {
-        return sequenceString.containsCharactersFrom(substring: "RQNK")
+        return sequence.containsCharactersFrom(substring: "RQNK")
     }
 
 //    public func isoElectricPoint() -> Double {
@@ -75,7 +75,7 @@ extension Collection where Iterator.Element == Peptide {
 
         for z in minCharge ... maxCharge {
             let chargedPeptides = map { (p) -> Peptide in
-                return Peptide(sequence: p.sequenceString, sequenceType: .protein, charge: z)
+                return Peptide(sequence: p.sequence, type: .protein, charge: z)
             }
 
             peptides.append(contentsOf: chargedPeptides)

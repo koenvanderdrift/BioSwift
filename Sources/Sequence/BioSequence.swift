@@ -18,19 +18,19 @@ public enum SequenceType {
 }
 
 public class BioSequence: Mass {
-    public var sequenceString: String
-    public let sequenceType: SequenceType
+    public var sequence: String
+    public let type: SequenceType
     public var modifications: [Modification]
 
-    public init(sequence: String, sequenceType: SequenceType, charge: Int = 0) {
-        self.sequenceString = sequence
-        self.sequenceType = sequenceType
+    public init(sequence: String, type: SequenceType, charge: Int = 0) {
+        self.sequence = sequence
+        self.type = type
         self.charge = charge
         self.modifications = []
     }
 
     lazy var symbolLibrary: [MassSymbol]? = {
-        switch sequenceType {
+        switch type {
         case .protein:
             return aminoAcidLibrary
             
@@ -43,7 +43,7 @@ public class BioSequence: Mass {
         var result: [MassSymbol] = []
 
         // use map?
-        for s in sequenceString {
+        for s in sequence {
             if let symbol = symbolLibrary?.first(where: { $0.identifier == String(s) }) {
                 result.append(symbol)
             }
@@ -55,8 +55,8 @@ public class BioSequence: Mass {
     public func symbol(at index: Int) -> MassSymbol? {
         var result: MassSymbol? = nil
 
-        if !sequenceString.isEmpty {
-            result = symbolLibrary?.first(where: { $0.identifier == String(sequenceString[index])
+        if !sequence.isEmpty {
+            result = symbolLibrary?.first(where: { $0.identifier == String(sequence[index])
             })
         }
 
@@ -109,7 +109,7 @@ extension BioSequence {
                 possibleFunctionalGroups.append(contentsOf: nTermGroups)
             }
             
-            if index == sequenceString.count - 1 {
+            if index == sequence.count - 1 {
                 let cTermGroups = functionalGroupLibrary.filter { $0.sites.contains("CTerminal") == true }
                 possibleFunctionalGroups.append(contentsOf: cTermGroups)
             }

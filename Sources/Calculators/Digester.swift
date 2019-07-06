@@ -44,7 +44,7 @@ extension Digester {
         let subSequences = createSubSequences(sites: parameters.cleavageSites(), missedCleavages: parameters.missedCleavages)
 
         return subSequences
-            .map { Peptide(sequence: $0, sequenceType: parameters.sequenceType, charge: 0) }
+            .map { Peptide(sequence: $0, type: parameters.sequenceType, charge: 0) }
             .charge(minCharge: parameters.minimumCharge, maxCharge: parameters.maximumCharge)
             .filter { parameters.minimumMass < $0.massOverCharge().monoisotopicMass && $0.massOverCharge().averageMass < parameters.maximumMass }
             .sorted(by: { $0.masses.monoisotopicMass < $1.masses.monoisotopicMass })

@@ -18,10 +18,10 @@ public enum FragmentType {
 public class Fragment: BioSequence {
     public let fragmentType: FragmentType
 
-    public init(sequence: String, sequenceType: SequenceType = .protein, charge: Int = 0, fragmentType: FragmentType) {
+    public init(sequence: String, type: SequenceType = .protein, charge: Int = 0, fragmentType: FragmentType) {
         self.fragmentType = fragmentType
 
-        super.init(sequence: sequence, sequenceType: sequenceType, charge: charge)
+        super.init(sequence: sequence, type: type, charge: charge)
     }
     
     public override func calculateMasses() -> MassContainer {
