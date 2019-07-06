@@ -2,14 +2,14 @@
     {
         "name":"Carbamidomethylation",
         "formula":"CH2CONH2",
-        "site":[
+        "sites":[
             "C"
         ]
     },
     {
         "name": "Acetylation",
         "formula":"CH2CO",
-        "site":[
+        "sites":[
             "K",
             "NTerminal"
         ]
@@ -17,7 +17,7 @@
     {
         "name" : "Phosphorylation",
         "formula":"PO3H",
-        "site":[
+        "sites":[
             "S",
             "T",
             "Y"
@@ -26,7 +26,7 @@
     {
         "name": "Oxidation",
         "formula":"O",
-        "site":[
+        "sites":[
             "M",
             "W"
         ]
@@ -34,7 +34,7 @@
     {
         "name": "Carboxymethylation",
         "formula":"CH2COOH",
-        "site":[
+        "sites":[
             "C"
         ]
     }

@@ -3,23 +3,23 @@ import Foundation
 public struct Modification {
     public let group: FunctionalGroup
     public var location: Int
-    public var attachedTo: String
+    public var site: String
 
-    public init(group: FunctionalGroup, location: Int, attachedTo: String = "") {
+    public init(group: FunctionalGroup, location: Int, site: String = "") {
         self.group = group
         self.location = location
-        self.attachedTo = attachedTo
+        self.site = site
     }
 }
 
 extension Modification: Hashable {
     public static func == (lhs: Modification, rhs: Modification) -> Bool {
-        return (lhs.group == rhs.group && lhs.location == rhs.location && lhs.attachedTo == rhs.attachedTo)
+        return (lhs.group == rhs.group && lhs.location == rhs.location && lhs.site == rhs.site)
     }
 
     public func hash(into hasher: inout Hasher) {
         hasher.combine(group)
         hasher.combine(location)
-        hasher.combine(attachedTo)
+        hasher.combine(site)
     }
 }
