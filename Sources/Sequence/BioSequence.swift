@@ -39,7 +39,7 @@ public class BioSequence: Mass {
         }
     }()
     
-    func symbolSequence() -> [MassSymbol]? {
+    public func symbolSequence() -> [MassSymbol]? {
         var result: [MassSymbol] = []
 
         // use map?
@@ -50,6 +50,12 @@ public class BioSequence: Mass {
         }
 
         return result
+    }
+    
+    public func countOfSymbols() -> NSCountedSet? {
+        guard let symbols = symbolSequence() else { return nil }
+
+        return NSCountedSet(array: symbols)
     }
     
     public func symbol(at index: Int) -> MassSymbol? {
