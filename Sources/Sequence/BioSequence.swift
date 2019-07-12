@@ -17,7 +17,7 @@ public enum SequenceType {
     case undefined
 }
 
-public class BioSequence: Mass {
+public class BioSequence: NSObject, Mass {
     public var sequence: String
     public let type: SequenceType
     public var modifications: [Modification]
