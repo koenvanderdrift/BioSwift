@@ -9,7 +9,7 @@
 ////
 ////            return dict
 ////        } catch {
-////            print(error.localizedDescription)
+////            debugPrint(error.localizedDescription)
 ////        }
 ////    }
 ////
@@ -38,7 +38,7 @@
 //    let result = f()
 //    let endTime = DispatchTime.now()
 //    let diff = Double(endTime.uptimeNanoseconds - startTime.uptimeNanoseconds) / 1_000_000_000 as Double
-//    print("\(name) (line \(line)): \(diff) sec")
+//    debugPrint("\(name) (line \(line)): \(diff) sec")
 //    return result
 //}
 //
@@ -112,6 +112,6 @@ func ~= <T>(pattern: (T) -> Bool, value: T) -> Bool {
 //    let startTime = CACurrentMediaTime()
 //    let result = block()
 //    let timeElapsed = CACurrentMediaTime() - startTime
-//    print("Time: \(name) - \(timeElapsed)")
+//    debugPrint("Time: \(name) - \(timeElapsed)")
 //    return result
 //}

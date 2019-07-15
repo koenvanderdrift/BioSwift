@@ -54,7 +54,7 @@ extension String {
             return results
 
         } catch let error as NSError {
-            print("invalid regex: \(error.localizedDescription)")
+            debugPrint("invalid regex: \(error.localizedDescription)")
             return []
         }
     }
@@ -133,7 +133,7 @@ extension StringProtocol {
 //        let start = index(startIndex, offsetBy: range.lowerBound)
 //        let end = index(startIndex, offsetBy: range.upperBound)
 //        let subString = self[start ..< end]
-//        // print(subString)
+//        // debugPrint(subString)
 //        return subString
 //    }
 

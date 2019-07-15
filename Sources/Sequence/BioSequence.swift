@@ -77,7 +77,7 @@ public class BioSequence: NSObject, Mass {
 
     public var charge: Int = 0 {
         didSet {
-//            print(" didSet charge")
+//            debugPrint(" didSet charge")
 //            var mods = modifications.filter { $0 != protonAdduct }
 //            for _ in 0..<charge {
 //                mods.append(protonAdduct)
