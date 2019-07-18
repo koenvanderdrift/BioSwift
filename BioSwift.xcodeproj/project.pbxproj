@@ -100,10 +100,10 @@
 		C77D738F21C7D700002247CA /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = C77D737921C7D700002247CA /* Info.plist */; };
 		C77D739021C7D700002247CA /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = C77D737921C7D700002247CA /* Info.plist */; };
 		C77D739121C7D700002247CA /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = C77D737921C7D700002247CA /* Info.plist */; };
-		C795B3B322441F310032AB26 /* BioSymbol.swift in Sources */ = {isa = PBXBuildFile; fileRef = C795B3B222441F310032AB26 /* BioSymbol.swift */; };
-		C795B3B422441F310032AB26 /* BioSymbol.swift in Sources */ = {isa = PBXBuildFile; fileRef = C795B3B222441F310032AB26 /* BioSymbol.swift */; };
-		C795B3B522441F310032AB26 /* BioSymbol.swift in Sources */ = {isa = PBXBuildFile; fileRef = C795B3B222441F310032AB26 /* BioSymbol.swift */; };
-		C795B3B622441F310032AB26 /* BioSymbol.swift in Sources */ = {isa = PBXBuildFile; fileRef = C795B3B222441F310032AB26 /* BioSymbol.swift */; };
+		C795B3B322441F310032AB26 /* Symbol.swift in Sources */ = {isa = PBXBuildFile; fileRef = C795B3B222441F310032AB26 /* Symbol.swift */; };
+		C795B3B422441F310032AB26 /* Symbol.swift in Sources */ = {isa = PBXBuildFile; fileRef = C795B3B222441F310032AB26 /* Symbol.swift */; };
+		C795B3B522441F310032AB26 /* Symbol.swift in Sources */ = {isa = PBXBuildFile; fileRef = C795B3B222441F310032AB26 /* Symbol.swift */; };
+		C795B3B622441F310032AB26 /* Symbol.swift in Sources */ = {isa = PBXBuildFile; fileRef = C795B3B222441F310032AB26 /* Symbol.swift */; };
 		C79DF0F92243FED9004EF40D /* JSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = C79DF0F82243FED9004EF40D /* JSON.swift */; };
 		C7B7F88A22034F22007BE60C /* Scanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7B7F88922034F22007BE60C /* Scanner.swift */; };
 		C7E147942261043A0092C846 /* Fragment.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7E147932261043A0092C846 /* Fragment.swift */; };
@@ -186,7 +186,7 @@
 		C75850EF22C92A8200BDEF55 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		C762DBA32247BDA3006E95E8 /* Mass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Mass.swift; sourceTree = "<group>"; };
 		C77D737921C7D700002247CA /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		C795B3B222441F310032AB26 /* BioSymbol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BioSymbol.swift; sourceTree = "<group>"; };
+		C795B3B222441F310032AB26 /* Symbol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Symbol.swift; sourceTree = "<group>"; };
 		C79DF0F82243FED9004EF40D /* JSON.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSON.swift; sourceTree = "<group>"; };
 		C7B7F88922034F22007BE60C /* Scanner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Scanner.swift; sourceTree = "<group>"; };
 		C7E147932261043A0092C846 /* Fragment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Fragment.swift; sourceTree = "<group>"; };
@@ -332,7 +332,7 @@
 		5DDA8BEE21C5B4E1005B7064 /* Protocols */ = {
 			isa = PBXGroup;
 			children = (
-				C795B3B222441F310032AB26 /* BioSymbol.swift */,
+				C795B3B222441F310032AB26 /* Symbol.swift */,
 				C762DBA32247BDA3006E95E8 /* Mass.swift */,
 			);
 			path = Protocols;
@@ -623,7 +623,7 @@
 				C7B7F88A22034F22007BE60C /* Scanner.swift in Sources */,
 				5DDA8C4921C5B4E1005B7064 /* MassSearch.swift in Sources */,
 				5DDA8C2521C5B4E1005B7064 /* String.swift in Sources */,
-				C795B3B322441F310032AB26 /* BioSymbol.swift in Sources */,
+				C795B3B322441F310032AB26 /* Symbol.swift in Sources */,
 				C7175DCF22A5629A00F8EAE7 /* Double.swift in Sources */,
 				5DDA8C3121C5B4E1005B7064 /* Utilities.swift in Sources */,
 				5DDA8C3521C5B4E1005B7064 /* Webservice.swift in Sources */,
@@ -649,7 +649,7 @@
 				5DDA8C0A21C5B4E1005B7064 /* Hydropathy.swift in Sources */,
 				5DDA8C3A21C5B4E1005B7064 /* Peptide.swift in Sources */,
 				5DDA8C2221C5B4E1005B7064 /* Array.swift in Sources */,
-				C795B3B422441F310032AB26 /* BioSymbol.swift in Sources */,
+				C795B3B422441F310032AB26 /* Symbol.swift in Sources */,
 				C762DBA52247BDA3006E95E8 /* Mass.swift in Sources */,
 				5DDA8C5621C5B4E1005B7064 /* Digester.swift in Sources */,
 				5DDA8C1A21C5B4E1005B7064 /* Formula.swift in Sources */,
@@ -679,7 +679,7 @@
 				5DDA8C2321C5B4E1005B7064 /* Array.swift in Sources */,
 				5DDA8C6721C5B4E1005B7064 /* Fasta.swift in Sources */,
 				C7EB5505224C0F6300E21C41 /* Bundle+Decoding.swift in Sources */,
-				C795B3B522441F310032AB26 /* BioSymbol.swift in Sources */,
+				C795B3B522441F310032AB26 /* Symbol.swift in Sources */,
 				5DDA8C1F21C5B4E1005B7064 /* Molecule.swift in Sources */,
 				5DDA8C1721C5B4E1005B7064 /* AminoAcid.swift in Sources */,
 				5DDA8C1B21C5B4E1005B7064 /* Formula.swift in Sources */,
@@ -706,7 +706,7 @@
 				5DDA8C0C21C5B4E1005B7064 /* Hydropathy.swift in Sources */,
 				5DDA8C3C21C5B4E1005B7064 /* Peptide.swift in Sources */,
 				5DDA8C2421C5B4E1005B7064 /* Array.swift in Sources */,
-				C795B3B622441F310032AB26 /* BioSymbol.swift in Sources */,
+				C795B3B622441F310032AB26 /* Symbol.swift in Sources */,
 				C762DBA72247BDA3006E95E8 /* Mass.swift in Sources */,
 				5DDA8C5821C5B4E1005B7064 /* Digester.swift in Sources */,
 				5DDA8C1C21C5B4E1005B7064 /* Formula.swift in Sources */,

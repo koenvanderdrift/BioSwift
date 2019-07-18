@@ -1,5 +1,5 @@
 //
-//  BioSymbol.swift
+//  Symbol.swift
 //  BioSwift
 //
 //  Created by Koen van der Drift on 3/15/18.
@@ -8,6 +8,8 @@
 
 import Foundation
 
-public protocol MassSymbol: Mass {
+public protocol Symbol {
     var identifier: String { get }
 }
+
+public protocol MassSymbol: Symbol, Mass {}

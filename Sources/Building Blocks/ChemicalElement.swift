@@ -18,7 +18,7 @@ extension Isotope {
     }
 }
 
-public class ChemicalElement: Codable, Mass {
+public class ChemicalElement: Codable, MassSymbol {
     public let name: String
     public let symbol: String
     public let isotopes: [Isotope]
@@ -43,6 +43,10 @@ public class ChemicalElement: Codable, Mass {
         isotopes = try values.decode([Isotope].self, forKey: .isotopes)
     }
     
+    public var identifier: String {
+        return symbol
+    }
+
     public lazy var masses: MassContainer = {
         return calculateMasses()
     }()
@@ -73,11 +77,5 @@ public class ChemicalElement: Codable, Mass {
         averageMass = currentMass
         
         return MassContainer(monoisotopicMass: monoisotopicMass, averageMass: averageMass, nominalMass: nominalMass)
-    }
-}
-
-extension ChemicalElement: MassSymbol {
-    public var identifier: String {
-        return symbol
     }
 }

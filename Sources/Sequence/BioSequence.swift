@@ -29,7 +29,7 @@ public class BioSequence: NSObject, Mass {
         self.modifications = []
     }
 
-    lazy var symbolLibrary: [MassSymbol]? = {
+    lazy var symbolLibrary: [Symbol]? = {
         switch type {
         case .protein:
             return aminoAcidLibrary
@@ -39,8 +39,8 @@ public class BioSequence: NSObject, Mass {
         }
     }()
     
-    public func symbolSequence() -> [MassSymbol]? {
-        var result: [MassSymbol] = []
+    public func symbolSequence() -> [Symbol]? {
+        var result: [Symbol] = []
 
         // use map?
         for s in sequence {
@@ -52,14 +52,14 @@ public class BioSequence: NSObject, Mass {
         return result
     }
     
-    public func countOfSymbols() -> NSCountedSet? {
+    public func symbolSet() -> BioSymbolSet? {
         guard let symbols = symbolSequence() else { return nil }
 
-        return NSCountedSet(array: symbols)
+        return BioSymbolSet(array: symbols)
     }
     
-    public func symbol(at index: Int) -> MassSymbol? {
-        var result: MassSymbol? = nil
+    public func symbol(at index: Int) -> Symbol? {
+        var result: Symbol? = nil
 
         if !sequence.isEmpty {
             result = symbolLibrary?.first(where: { $0.identifier == String(sequence[index])
@@ -87,9 +87,18 @@ public class BioSequence: NSObject, Mass {
     }
 
     public func calculateMasses() -> MassContainer {
-        let sequenceMass = symbolSequence()?.compactMap { $0.masses }
-            .reduce(zeroMass, +) ?? zeroMass
-        return sequenceMass + modificationMasses() + adductMasses() + nterm.masses + cterm.masses
+        var sequenceMass = zeroMass
+        
+        if let aminoAcids = symbolSet() {
+            for case let aa as AminoAcid in aminoAcids {
+                let aaCount = aminoAcids.count(for: aa)
+                sequenceMass += aaCount * aa.masses
+            }
+            
+            return sequenceMass + modificationMasses() + adductMasses() + nterm.masses + cterm.masses
+        }
+        
+        return sequenceMass
     }
 }
 
@@ -136,4 +145,13 @@ extension BioSequence {
 //    public func removeModification(_ modification: Modification) {
 //        modifications = modifications.filter { $0 != modification }
 //    }
+}
+
+
+public class BioSymbolSet: NSCountedSet {    
+    public func countFor(_ identifier: String) -> Int {
+        let symbol = self.compactMap { $0 as? Symbol }.first(where: { $0.identifier == identifier })
+        
+        return self.count(for: symbol as Any)
+    }
 }

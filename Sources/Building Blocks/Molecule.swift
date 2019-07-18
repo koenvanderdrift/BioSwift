@@ -20,6 +20,8 @@ public class Molecule: NSObject, Mass {
     }
 }
 
+
+
 //extension Molecule: Equatable {
 //    public static func == (lhs: Molecule, rhs: Molecule) -> Bool {
 //        return lhs.name == rhs.name

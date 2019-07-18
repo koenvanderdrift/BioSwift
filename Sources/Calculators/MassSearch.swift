@@ -70,25 +70,27 @@ public struct MassSearch {
             var mass = nterm.masses + cterm.masses
 
             symbolSequence.enumerated().forEach { index, symbol in
-                mass += symbol.masses
-                let chargedMass = params.charge > 0 ? mass / params.charge : mass
-                
-                let s = String(sequence.substring(from: start, to: start + index + 1) ?? "")
-                
-                switch params.massType {
-                case .monoisotopic:
-                    if range ~= chargedMass.monoisotopicMass {
-                        result.insert(s)
-                    }
+                if let symbol = symbol as? MassSymbol {
+                    mass += symbol.masses
+                    let chargedMass = params.charge > 0 ? mass / params.charge : mass
+                    
+                    let s = String(sequence.substring(from: start, to: start + index + 1) ?? "")
+                    
+                    switch params.massType {
+                    case .monoisotopic:
+                        if range ~= chargedMass.monoisotopicMass {
+                            result.insert(s)
+                        }
 
-                case .average:
-                    if range ~= chargedMass.averageMass {
-                        result.insert(s)
-                    }
+                    case .average:
+                        if range ~= chargedMass.averageMass {
+                            result.insert(s)
+                        }
 
-                case .nominal:
-                    if range ~= chargedMass.nominalMass {
-                        result.insert(s)
+                    case .nominal:
+                        if range ~= chargedMass.nominalMass {
+                            result.insert(s)
+                        }
                     }
                 }
             }
