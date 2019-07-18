@@ -29,6 +29,7 @@ extension Mass {
     }
 }
 
+public protocol MassSymbol: Mass, Symbol {}
 
 public let zeroMass = MassContainer(monoisotopicMass: 0.0, averageMass: 0.0, nominalMass: 0.0)
 

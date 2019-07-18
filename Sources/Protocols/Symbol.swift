@@ -11,5 +11,3 @@ import Foundation
 public protocol Symbol {
     var identifier: String { get }
 }
-
-public protocol MassSymbol: Symbol, Mass {}
