@@ -16,10 +16,10 @@ public struct Hydro: Codable {
 }
 
 public class Hydropathy {
-    public var symbols = BioSymbolSet()
+    public var symbolSet = SymbolSet()
     
-    public init(symbols: BioSymbolSet) {
-        self.symbols = symbols
+    public init(symbolSet: SymbolSet) {
+        self.symbolSet = symbolSet
     }
     
     public func isoElectricPoint() -> Double {
@@ -41,13 +41,13 @@ public class Hydropathy {
             let argininepKa = pKaDict["R"]
         else { return (0.0) }
 
-        let numberOfAsparticAcid = symbols.countFor("D")
-        let numberOfGlutamicAcid = symbols.countFor("E")
-        let numberOfCysteine = symbols.countFor("C")
-        let numberOfTyrosine = symbols.countFor("Y")
-        let numberOfHistidine = symbols.countFor("H")
-        let numberOfLysine = symbols.countFor("K")
-        let numberOfArginine = symbols.countFor("R")
+        let numberOfAsparticAcid = symbolSet.countFor("D")
+        let numberOfGlutamicAcid = symbolSet.countFor("E")
+        let numberOfCysteine = symbolSet.countFor("C")
+        let numberOfTyrosine = symbolSet.countFor("Y")
+        let numberOfHistidine = symbolSet.countFor("H")
+        let numberOfLysine = symbolSet.countFor("K")
+        let numberOfArginine = symbolSet.countFor("R")
 
         // starting point pI = 6.5 - theoretically it should be 7, but average protein pI is 6.5 so we increase the probability of finding the solution
         var pH = 6.5

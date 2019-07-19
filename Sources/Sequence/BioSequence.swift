@@ -52,10 +52,10 @@ public class BioSequence: NSObject, Mass {
         return result
     }
     
-    public func symbolSet() -> BioSymbolSet? {
+    public func symbolSet() -> SymbolSet? {
         guard let symbols = symbolSequence() else { return nil }
 
-        return BioSymbolSet(array: symbols)
+        return SymbolSet(array: symbols)
     }
     
     public func symbol(at index: Int) -> Symbol? {
@@ -148,7 +148,7 @@ extension BioSequence {
 }
 
 
-public class BioSymbolSet: NSCountedSet {    
+public class SymbolSet: NSCountedSet {    
     public func countFor(_ identifier: String) -> Int {
         let symbol = self.compactMap { $0 as? Symbol }.first(where: { $0.identifier == identifier })
         
