@@ -68,6 +68,23 @@ public class BioSequence: NSObject, Mass {
 
         return result
     }
+    
+    public func symbolLocations(with identifiers: [String]) -> [Int] {
+        guard let enumeratedSymbols = symbolSequence()?.enumerated() else { return [] }
+        
+        var locations: [Int] = []
+        
+        for identifier in identifiers {
+            let indices = enumeratedSymbols.filter {
+                $0.element.identifier == identifier
+            }
+            
+            locations += indices.map{ $0.offset }
+        }
+        
+        return locations
+    }
+
 
     public var masses: MassContainer {
         get {
