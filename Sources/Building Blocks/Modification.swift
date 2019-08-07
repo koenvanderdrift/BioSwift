@@ -28,11 +28,15 @@ public struct Bond {
         self.to = to
         self.type = type
     }
+    
+    public func contains(_ location: Int) -> Bool {
+        return (from == location || to == location)
+    }
 }
 
 extension Bond: Equatable {
     public static func == (lhs: Bond, rhs: Bond) -> Bool {
-        // return true if to and from are the same or reversed
+        // return true if same type and if to and from are the same or reversed
         return (lhs.type == rhs.type) &&
             ((lhs.from == rhs.from && lhs.to == rhs.to) || (lhs.from == rhs.to && lhs.to == rhs.from))
     }
