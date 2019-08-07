@@ -116,6 +116,27 @@ extension StringProtocol {
 }
 
 
+
+/*
+ let string = "Hello, world!"
+ 
+ let secondIndex = string.index(after: string.startIndex)
+ let thirdIndex = string.index(string.startIndex, offsetBy: 2)
+ let lastIndex = string.index(before: string.endIndex)
+ 
+ print(string[secondIndex]) // e
+ print(string[thirdIndex]) // l
+ print(string[lastIndex]) // !
+
+ let range = secondIndex..<lastIndex
+ let substring = string[range]
+ print(substring) // ello, world
+ 
+ */
+
+
+
+
 //    func substring(with nsrange: NSRange) -> Substring? {
 //        guard nsrange.location != NSNotFound else { return nil }
 //
