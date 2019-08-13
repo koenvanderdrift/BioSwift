@@ -18,15 +18,18 @@ public enum BondType {
     case other
 }
 
-public struct Bond {
+public typealias BondInfo = (type: BondType, name: String, from: String, to: String)
+public let disulfideBondInfo = BondInfo(type: .disulfide, name: "Disulfide", from: "Cys", to: "Cys")
+
+public struct Bond { // only created as a modification
     public var from: Int
     public var to: Int
-    public var type: BondType
+    public var info: BondInfo
     
-    public init(from: Int, to: Int, type: BondType) {
+    public init(from: Int, to: Int, info: BondInfo) {
         self.from = from
         self.to = to
-        self.type = type
+        self.info = info
     }
     
     public func contains(_ location: Int) -> Bool {
@@ -37,7 +40,7 @@ public struct Bond {
 extension Bond: Equatable {
     public static func == (lhs: Bond, rhs: Bond) -> Bool {
         // return true if same type and if to and from are the same or reversed
-        return (lhs.type == rhs.type) &&
+        return (lhs.info == rhs.info) &&
             ((lhs.from == rhs.from && lhs.to == rhs.to) || (lhs.from == rhs.to && lhs.to == rhs.from))
     }
 }
