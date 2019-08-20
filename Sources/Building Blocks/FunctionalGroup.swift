@@ -8,6 +8,7 @@
 
 import Foundation
 
+public let emptyGroup = FunctionalGroup(name: "empty", masses: zeroMass, sites: [])
 public let proton = FunctionalGroup(name: "proton", formula: "H", sites: [])
 public let hydroxyl = FunctionalGroup(name: "hydroxyl", formula: "OH", sites: [])
 public let ammonia = FunctionalGroup(name: "ammonia", formula: "NH3", sites: [])
