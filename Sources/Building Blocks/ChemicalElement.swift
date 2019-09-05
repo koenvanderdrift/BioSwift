@@ -18,7 +18,7 @@ extension Isotope {
     }
 }
 
-public class ChemicalElement: Codable, MassSymbol {
+public class ChemicalElement: Codable, Mass, Symbol {
     public let name: String
     public let symbol: String
     public let isotopes: [Isotope]

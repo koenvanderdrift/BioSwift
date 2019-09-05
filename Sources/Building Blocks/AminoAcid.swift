@@ -49,7 +49,7 @@ public class AminoAcid: Molecule, Codable {
     }
 }
 
-extension AminoAcid: MassSymbol {
+extension AminoAcid: Symbol {
     public var identifier: String {
         return oneLetterCode
     }

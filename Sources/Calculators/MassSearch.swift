@@ -70,7 +70,7 @@ public struct MassSearch {
             var mass = nterm.masses + cterm.masses
 
             symbolSequence.enumerated().forEach { index, symbol in
-                if let symbol = symbol as? MassSymbol {
+                if let symbol = symbol as? Mass {
                     mass += symbol.masses
                     let chargedMass = params.charge > 0 ? mass / params.charge : mass
                     
