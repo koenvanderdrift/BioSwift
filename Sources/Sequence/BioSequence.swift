@@ -172,3 +172,20 @@ public class SymbolSet: NSCountedSet {
         return self.count(for: symbol as Any)
     }
 }
+
+extension Collection where Iterator.Element == BioSequence {
+    func charge(minCharge: Int, maxCharge: Int) -> [BioSequence] {
+        var result: [BioSequence] = []
+        
+        for z in minCharge ... maxCharge {
+            let chargedSequences = map { (s) -> BioSequence in
+                return BioSequence(sequence: s.sequence, type: s.type, charge: z)
+            }
+            
+            result.append(contentsOf: chargedSequences)
+        }
+        
+        return result
+    }
+}
+
