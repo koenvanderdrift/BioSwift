@@ -1,16 +1,15 @@
 import Foundation
 
-// let url = URL(string: "http://www.uniprot.org/uniprot/P01009.fasta")!
-
 public class Protein: BioSequence {
-    public override init(sequence: String = "", type: SequenceType = .protein, charge: Int = 0) {
-        
+    public override init(sequence: String, type: SequenceType = .protein, charge: Int = 0) {
         super.init(sequence: sequence, type: type, charge: charge)
     }
-
 }
 
 //extension Protein {
+
+// let url = URL(string: "http://www.uniprot.org/uniprot/P01009.fasta")!
+
 //    public init?(fasta: Fasta) {
 //        guard let fastaRecord = fasta.serializer() else { return nil }
 //

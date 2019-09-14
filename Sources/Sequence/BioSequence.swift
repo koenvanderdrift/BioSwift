@@ -8,8 +8,6 @@
 
 import Foundation
 
-let protonAdduct = Modification(group: proton, location: 0)
-
 public enum SequenceType {
     case protein
     case dna
@@ -86,30 +84,31 @@ public class BioSequence: NSObject, Mass {
     }
 
 
+    public var charge: Int = 0 {
+        didSet {
+//            debugPrint(" didSet charge")
+//            var mods = modifications.filter { $0 != proton }
+//            for _ in 0..<charge {
+//                mods.append(proton)
+//            }
+//          modifications = mods
+        }
+    }
+    
     public var masses: MassContainer {
         get {
             return calculateMasses()
         }
     }
-
-    public var charge: Int = 0 {
-        didSet {
-//            debugPrint(" didSet charge")
-//            var mods = modifications.filter { $0 != protonAdduct }
-//            for _ in 0..<charge {
-//                mods.append(protonAdduct)
-//            }
-//          modifications = mods
-        }
-    }
-
+    
     public func calculateMasses() -> MassContainer {
         var sequenceMass = zeroMass
         
-        if let aminoAcids = symbolSet() {
-            for case let aa as AminoAcid in aminoAcids {
-                let aaCount = aminoAcids.count(for: aa)
-                sequenceMass += aaCount * aa.masses
+        //
+        if let symbols = symbolSet() {
+            for case let massSymbol as Mass in symbols {
+                let count = symbols.count(for: massSymbol)
+                sequenceMass += count * massSymbol.masses
             }
             
             return sequenceMass + modificationMasses() + adductMasses() + nterm.masses + cterm.masses
@@ -117,9 +116,12 @@ public class BioSequence: NSObject, Mass {
         
         return sequenceMass
     }
+    
+
+
 }
 
-extension BioSequence {    
+extension BioSequence {
     private func modificationMasses() -> MassContainer {
         return modifications.reduce(zeroMass, {$0 + $1.group.masses})
     }
@@ -174,7 +176,7 @@ public class SymbolSet: NSCountedSet {
 }
 
 extension Collection where Iterator.Element == BioSequence {
-    func charge(minCharge: Int, maxCharge: Int) -> [BioSequence] {
+    public func charge(minCharge: Int, maxCharge: Int) -> [BioSequence] {
         var result: [BioSequence] = []
         
         for z in minCharge ... maxCharge {

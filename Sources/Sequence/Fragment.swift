@@ -18,7 +18,7 @@ public enum FragmentType {
 public class Fragment: BioSequence {
     public let fragmentType: FragmentType
 
-    public init(sequence: String, type: SequenceType = .protein, charge: Int = 0, fragmentType: FragmentType) {
+    public init(sequence: String, type: SequenceType, charge: Int = 0, fragmentType: FragmentType) {
         self.fragmentType = fragmentType
 
         super.init(sequence: sequence, type: type, charge: charge)

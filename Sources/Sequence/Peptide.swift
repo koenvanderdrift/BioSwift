@@ -1,11 +1,6 @@
 import Foundation
 
-public class Peptide: BioSequence {
-    public override init(sequence: String, type: SequenceType = .protein, charge: Int) {
-
-        super.init(sequence: sequence, type: type, charge: charge)
-    }
-}
+typealias Peptide = Protein
 
 extension Peptide {
     public func fragment() -> [Fragment] {
