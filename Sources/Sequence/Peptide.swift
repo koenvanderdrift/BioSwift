@@ -1,6 +1,6 @@
 import Foundation
 
-typealias Peptide = Protein
+public typealias Peptide = Protein
 
 extension Peptide {
     public func fragment() -> [Fragment] {
