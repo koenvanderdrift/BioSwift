@@ -20,7 +20,7 @@ public class BioSequence: NSObject, Mass {
     public let type: SequenceType
     public var modifications: [Modification]
 
-    public init(sequence: String, type: SequenceType, charge: Int = 0) {
+    public required init(sequence: String, type: SequenceType, charge: Int = 0) {
         self.sequence = sequence
         self.type = type
         self.charge = charge
@@ -175,19 +175,11 @@ public class SymbolSet: NSCountedSet {
     }
 }
 
-extension Collection where Iterator.Element == BioSequence {
-    public func charge(minCharge: Int, maxCharge: Int) -> [BioSequence] {
-        var result: [BioSequence] = []
-        
-        for z in minCharge ... maxCharge {
-            let chargedSequences = map { (s) -> BioSequence in
-                return BioSequence(sequence: s.sequence, type: s.type, charge: z)
-            }
-            
-            result.append(contentsOf: chargedSequences)
+extension Collection where Element: BioSequence {
+    public func charge(minCharge: Int, maxCharge: Int) -> [Element] {
+        return self.flatMap { item in
+            (minCharge...maxCharge).map { Element(sequence: item.sequence, type: item.type, charge: $0) }
         }
-        
-        return result
     }
 }
 

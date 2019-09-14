@@ -24,6 +24,10 @@ public class Fragment: BioSequence {
         super.init(sequence: sequence, type: type, charge: charge)
     }
     
+    public required init(sequence: String, type: SequenceType, charge: Int) {
+        fatalError("init(sequence:type:charge:) has not been implemented")
+    }
+    
     public override func calculateMasses() -> MassContainer {
         var masses = super.calculateMasses()
         

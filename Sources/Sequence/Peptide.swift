@@ -1,7 +1,7 @@
 import Foundation
 
 public class Peptide: BioSequence {
-    public override init(sequence: String, type: SequenceType = .protein, charge: Int = 0) {
+    public required init(sequence: String, type: SequenceType = .protein, charge: Int = 0) {
         super.init(sequence: sequence, type: type, charge: charge)
     }
 }
