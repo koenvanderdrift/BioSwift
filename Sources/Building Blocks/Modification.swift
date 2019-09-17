@@ -55,6 +55,21 @@ extension Bond: Equatable {
     }
 }
 
+
+//typealias Link = FunctionalGroup
+//
+//public class Bond: Modification {
+//    public var sites: [String]
+//    
+//    public init(group: Link, sites: [String]) {
+//        self.sites = sites
+//        self.link = group
+//
+//        super.init(group: group, location: -1)
+//    }
+//}
+
+
 //extension Modification: Hashable {
 //    public static func == (lhs: Modification, rhs: Modification) -> Bool {
 //        return (lhs.group == rhs.group && lhs.location == rhs.location && lhs.site == rhs.site)
