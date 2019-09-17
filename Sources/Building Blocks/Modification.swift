@@ -55,19 +55,38 @@ extension Bond: Equatable {
     }
 }
 
+/*
 
-//typealias Link = FunctionalGroup
-//
-//public class Bond: Modification {
-//    public var sites: [String]
-//    
-//    public init(group: Link, sites: [String]) {
-//        self.sites = sites
-//        self.link = group
-//
-//        super.init(group: group, location: -1)
-//    }
-//}
+Bond (FunctionalGroup)
+•	Name (disulfide, lactam, etc)
+•	Formula (probably negative)
+•	Sites it can attach to
+•	Is ignorant of where it is located in a sequence
+Link (Modification)
+•	Bond
+•	Locations (in sequence)
+•	Sites it is attached to
+
+So Bond is a FG and Link is a Mod
+•	But with two sites it is attached to
+•	So subclass and add additional property for pair of sites
+•	In init: set location (inherited from Mod) to -1
+
+
+typealias Bond = FunctionalGroup
+
+public class Link: Modification {
+    public var sites: [String]
+    
+    public init(bond: Bond, sites: [String]) {
+        self.sites = sites
+        self.group = bond
+
+       super.init(group: bond, location: -1)
+    }
+}
+
+*/
 
 
 //extension Modification: Hashable {
