@@ -2,7 +2,7 @@ import Foundation
 
 public var aminoAcidLibrary: [AminoAcid] = loadJSONFromBundle(fileName: "aminoacids")
 
-public class AminoAcid: Molecule, Codable {
+public class AminoAcid: Residue, Codable {
     public let oneLetterCode: String
     public let threeLetterCode: String
     public let represents: [String]

@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5D14836F2336352C006B904B /* Residue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D14836E2336352C006B904B /* Residue.swift */; };
+		5D1483702336352C006B904B /* Residue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D14836E2336352C006B904B /* Residue.swift */; };
+		5D1483712336352C006B904B /* Residue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D14836E2336352C006B904B /* Residue.swift */; };
+		5D1483722336352C006B904B /* Residue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D14836E2336352C006B904B /* Residue.swift */; };
 		5DDA8B7521C5B421005B7064 /* BioSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DDA8B6B21C5B421005B7064 /* BioSwift.framework */; };
 		5DDA8B7A21C5B421005B7064 /* MassKitTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DDA8B7921C5B421005B7064 /* MassKitTests.swift */; };
 		5DDA8B7C21C5B421005B7064 /* BioSwift.h in Headers */ = {isa = PBXBuildFile; fileRef = 5DDA8B6E21C5B421005B7064 /* BioSwift.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -152,6 +156,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		5D14836E2336352C006B904B /* Residue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Residue.swift; sourceTree = "<group>"; };
 		5DDA8B6B21C5B421005B7064 /* BioSwift.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = BioSwift.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		5DDA8B6E21C5B421005B7064 /* BioSwift.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BioSwift.h; sourceTree = "<group>"; };
 		5DDA8B6F21C5B421005B7064 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -332,8 +337,8 @@
 		5DDA8BEE21C5B4E1005B7064 /* Protocols */ = {
 			isa = PBXGroup;
 			children = (
-				C795B3B222441F310032AB26 /* Symbol.swift */,
 				C762DBA32247BDA3006E95E8 /* Mass.swift */,
+				C795B3B222441F310032AB26 /* Symbol.swift */,
 			);
 			path = Protocols;
 			sourceTree = "<group>";
@@ -380,6 +385,7 @@
 				C7EAA9F12233F649002267DC /* FunctionalGroup.swift */,
 				5DDA8BF021C5B4E1005B7064 /* Modification.swift */,
 				5DDA8BE021C5B4E1005B7064 /* Molecule.swift */,
+				5D14836E2336352C006B904B /* Residue.swift */,
 			);
 			path = "Building Blocks";
 			sourceTree = "<group>";
@@ -621,6 +627,7 @@
 				5DDA8C4121C5B4E1005B7064 /* Protein.swift in Sources */,
 				5DDA8C3921C5B4E1005B7064 /* Peptide.swift in Sources */,
 				C7B7F88A22034F22007BE60C /* Scanner.swift in Sources */,
+				5D14836F2336352C006B904B /* Residue.swift in Sources */,
 				5DDA8C4921C5B4E1005B7064 /* MassSearch.swift in Sources */,
 				5DDA8C2521C5B4E1005B7064 /* String.swift in Sources */,
 				C795B3B322441F310032AB26 /* Symbol.swift in Sources */,
@@ -639,6 +646,7 @@
 				5DDA8C2621C5B4E1005B7064 /* String.swift in Sources */,
 				5DDA8C0E21C5B4E1005B7064 /* ChemicalElement.swift in Sources */,
 				5DDA8B7A21C5B421005B7064 /* MassKitTests.swift in Sources */,
+				5D1483702336352C006B904B /* Residue.swift in Sources */,
 				5DDA8C4A21C5B4E1005B7064 /* MassSearch.swift in Sources */,
 				5DDA8C3E21C5B4E1005B7064 /* BioSequence.swift in Sources */,
 				5DDA8C3221C5B4E1005B7064 /* Utilities.swift in Sources */,
@@ -676,6 +684,7 @@
 				5DDA8C2721C5B4E1005B7064 /* String.swift in Sources */,
 				C762DBA62247BDA3006E95E8 /* Mass.swift in Sources */,
 				5DDA8C3721C5B4E1005B7064 /* Webservice.swift in Sources */,
+				5D1483712336352C006B904B /* Residue.swift in Sources */,
 				5DDA8C2321C5B4E1005B7064 /* Array.swift in Sources */,
 				5DDA8C6721C5B4E1005B7064 /* Fasta.swift in Sources */,
 				C7EB5505224C0F6300E21C41 /* Bundle+Decoding.swift in Sources */,
@@ -696,6 +705,7 @@
 				5DDA8C2821C5B4E1005B7064 /* String.swift in Sources */,
 				5DDA8C1021C5B4E1005B7064 /* ChemicalElement.swift in Sources */,
 				5DDA8B9821C5B469005B7064 /* MassKit_iOSTests.swift in Sources */,
+				5D1483722336352C006B904B /* Residue.swift in Sources */,
 				5DDA8C4C21C5B4E1005B7064 /* MassSearch.swift in Sources */,
 				5DDA8C4021C5B4E1005B7064 /* BioSequence.swift in Sources */,
 				5DDA8C3421C5B4E1005B7064 /* Utilities.swift in Sources */,
