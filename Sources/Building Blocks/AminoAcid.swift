@@ -3,8 +3,6 @@ import Foundation
 public var aminoAcidLibrary: [AminoAcid] = loadJSONFromBundle(fileName: "aminoacids")
 
 public class AminoAcid: Residue, Codable {
-    public let oneLetterCode: String
-    public let threeLetterCode: String
     public let represents: [String]
     public let representedBy: [String]
 
@@ -18,23 +16,20 @@ public class AminoAcid: Residue, Codable {
     }
 
     public init(name: String, oneLetterCode: String, threeLetterCode: String = "", formula: Formula, represents: [String] = [], representedBy: [String] = []) {
-        self.oneLetterCode = oneLetterCode
-        self.threeLetterCode = threeLetterCode
         self.represents = represents
         self.representedBy = representedBy
         
-        super.init(name: name, formula: formula)
+        super.init(name: name, oneLetterCode: oneLetterCode, threeLetterCode: threeLetterCode, formula: formula)
     }
 
     required public init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: CodingKeys.self)
-
-        oneLetterCode = try values.decode(String.self, forKey: .oneLetterCode)
-        threeLetterCode = try values.decode(String.self, forKey: .threeLetterCode)
         represents = try values.decode([String].self, forKey: .represents)
         representedBy = try values.decode([String].self, forKey: .representedBy)
         
         super.init(name: try values.decode(String.self, forKey: .name),
+                   oneLetterCode: try values.decode(String.self, forKey: .oneLetterCode),
+                   threeLetterCode: try values.decode(String.self, forKey: .threeLetterCode),
                    formula: try values.decode(Formula.self, forKey: .formula))
     }
     
@@ -46,11 +41,5 @@ public class AminoAcid: Residue, Codable {
         try container.encode(threeLetterCode, forKey: .threeLetterCode)
         try container.encode(represents, forKey: .represents)
         try container.encode(representedBy, forKey: .representedBy)
-    }
-}
-
-extension AminoAcid: Symbol {
-    public var identifier: String {
-        return oneLetterCode
     }
 }
