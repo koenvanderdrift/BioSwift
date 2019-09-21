@@ -78,17 +78,17 @@ public struct MassSearch {
                     
                     switch params.massType {
                     case .monoisotopic:
-                        if range ~= chargedMass.monoisotopicMass {
+                        if range.contains(chargedMass.monoisotopicMass) {
                             result.insert(s)
                         }
 
                     case .average:
-                        if range ~= chargedMass.averageMass {
+                        if range.contains(chargedMass.averageMass) {
                             result.insert(s)
                         }
 
                     case .nominal:
-                        if range ~= chargedMass.nominalMass {
+                        if range.contains(chargedMass.nominalMass) {
                             result.insert(s)
                         }
                     }
