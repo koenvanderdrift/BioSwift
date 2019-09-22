@@ -62,7 +62,7 @@ public class ChemicalElement: Codable, Mass, Symbol {
         var nominalMass = 0.0
         
         for i in isotopes {
-            let abundance = i.abundanceDouble
+            let abundance = i.abundanceDouble * 0.01
             let mass = i.massDouble
             
             if abundance > currentAbundance {
@@ -71,7 +71,7 @@ public class ChemicalElement: Codable, Mass, Symbol {
                 currentAbundance = abundance
             }
             
-            currentMass += abundance * mass * 0.01
+            currentMass += abundance * mass
         }
         
         averageMass = currentMass
