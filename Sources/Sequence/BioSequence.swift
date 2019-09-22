@@ -19,14 +19,14 @@ public class BioSequence: NSObject, Mass {
     public var sequence: String
     public let type: SequenceType
     public var modifications: [Modification]
-
+    
     public required init(sequence: String, type: SequenceType, charge: Int = 0) {
         self.sequence = sequence
         self.type = type
         self.charge = charge
         self.modifications = []
     }
-
+    
     lazy var symbolLibrary: [Symbol]? = {
         switch type {
         case .protein:
@@ -38,32 +38,27 @@ public class BioSequence: NSObject, Mass {
     }()
     
     public func symbolSequence() -> [Symbol]? {
-        var result: [Symbol] = []
-
-        // use map?
-        for s in sequence {
-            if let symbol = symbolLibrary?.first(where: { $0.identifier == String(s) }) {
-                result.append(symbol)
-            }
+        let result = sequence.map { s in
+            return symbolLibrary?.first(where: { $0.identifier == String(s) })
         }
-
-        return result
+        
+        return result as? [Symbol]
     }
     
     public func symbolSet() -> SymbolSet? {
         guard let symbols = symbolSequence() else { return nil }
-
+        
         return SymbolSet(array: symbols)
     }
     
     public func symbol(at index: Int) -> Symbol? {
         var result: Symbol? = nil
-
+        
         if !sequence.isEmpty {
             result = symbolLibrary?.first(where: { $0.identifier == String(sequence[index])
             })
         }
-
+        
         return result
     }
     
@@ -82,16 +77,15 @@ public class BioSequence: NSObject, Mass {
         
         return locations
     }
-
-
+    
     public var charge: Int = 0 {
         didSet {
-//            debugPrint(" didSet charge")
-//            var mods = modifications.filter { $0 != proton }
-//            for _ in 0..<charge {
-//                mods.append(proton)
-//            }
-//          modifications = mods
+            //            debugPrint(" didSet charge")
+            //            var mods = modifications.filter { $0 != proton }
+            //            for _ in 0..<charge {
+            //                mods.append(proton)
+            //            }
+            //          modifications = mods
         }
     }
     
@@ -102,23 +96,13 @@ public class BioSequence: NSObject, Mass {
     }
     
     public func calculateMasses() -> MassContainer {
-        var sequenceMass = zeroMass
-        
-        //
-        if let symbols = symbolSet() {
-            for case let massSymbol as Mass in symbols {
-                let count = symbols.count(for: massSymbol)
-                sequenceMass += count * massSymbol.masses
-            }
-            
-            return sequenceMass + modificationMasses() + adductMasses() + nterm.masses + cterm.masses
+        if let sequenceMass = symbolSequence()?.compactMap({ $0 as? Mass })
+            .reduce(zeroMass, {$0 + $1.masses}) {
+            return sequenceMass + adductMasses() + nterm.masses + cterm.masses
         }
-        
-        return sequenceMass
+
+        return zeroMass
     }
-    
-
-
 }
 
 extension BioSequence {
@@ -154,20 +138,20 @@ extension BioSequence {
         return nil
     }
     
-//    public func addModification(with name: String, at location: Int = -1) {
-//        if let group = functionalGroupsArray.first(where: { $0.name == name }) {
-//            let mod = Modification(group: group, location: location, site: symbol(at: location)?.identifier ?? "")
-//            modifications.append(mod)
-//        }
-//    }
-//
-//    public func removeModification(_ modification: Modification) {
-//        modifications = modifications.filter { $0 != modification }
-//    }
+    public func addModification(with name: String, at location: Int = -1) {
+        if let group = functionalGroupLibrary.first(where: { $0.name == name }),
+            let residue = symbol(at: location) as? Residue {
+            residue.groups.append(group)
+        }
+    }
+    
+    public func removeModification(_ modification: Modification) {
+        modifications = modifications.filter { $0 != modification }
+    }
 }
 
 
-public class SymbolSet: NSCountedSet {    
+public class SymbolSet: NSCountedSet {
     public func countFor(_ identifier: String) -> Int {
         let symbol = self.compactMap { $0 as? Symbol }.first(where: { $0.identifier == identifier })
         
@@ -178,7 +162,9 @@ public class SymbolSet: NSCountedSet {
 extension Collection where Element: BioSequence {
     public func charge(minCharge: Int, maxCharge: Int) -> [Element] {
         return self.flatMap { item in
-            (minCharge...maxCharge).map { Element(sequence: item.sequence, type: item.type, charge: $0) }
+            (minCharge...maxCharge).map {
+                Element(sequence: item.sequence, type: item.type, charge: $0)
+            }
         }
     }
 }
