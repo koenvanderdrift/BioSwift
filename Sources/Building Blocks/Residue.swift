@@ -9,7 +9,6 @@
 import Foundation
 
 public class Residue: Molecule {
-    public var groups: [FunctionalGroup] = []
     public var oneLetterCode: String
     public var threeLetterCode: String
     
@@ -19,6 +18,8 @@ public class Residue: Molecule {
 
         super.init(name: name, formula: formula)
     }
+
+    public var groups: [FunctionalGroup] = []
 
     public override func calculateMasses() -> MassContainer {
         return super.calculateMasses() + modificationMasses()
