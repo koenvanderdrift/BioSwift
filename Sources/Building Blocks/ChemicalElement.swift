@@ -12,13 +12,12 @@ extension Isotope {
     var massDouble: Double {
         return Double(mass) ?? 0.0
     }
-
     var abundanceDouble: Double {
         return Double(abundance) ?? 0.0
     }
 }
 
-public class ChemicalElement: Codable, Mass, Symbol {
+public struct ChemicalElement: Codable, Symbol {
     public let name: String
     public let symbol: String
     public let isotopes: [Isotope]
@@ -35,7 +34,7 @@ public class ChemicalElement: Codable, Mass, Symbol {
         self.isotopes = isotopes
     }
 
-    required public init(from decoder: Decoder) throws {
+    public init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: CodingKeys.self)
 
         name = try values.decode(String.self, forKey: .name)
@@ -47,11 +46,13 @@ public class ChemicalElement: Codable, Mass, Symbol {
         return symbol
     }
 
-    public lazy var masses: MassContainer = {
-        return calculateMasses()
-    }()
-    
     public var charge: Int = 0
+}
+
+extension ChemicalElement: Mass {
+    public var masses: MassContainer {
+        return calculateMasses()
+    }
     
     public func calculateMasses() -> MassContainer {
         var currentMass = 0.0

@@ -8,7 +8,7 @@
 
 import Foundation
 
-public let emptyGroup = FunctionalGroup(name: "empty", masses: zeroMass, sites: [])
+public let emptyGroup = FunctionalGroup(name: "empty", formula: "", sites: [])
 public let proton = FunctionalGroup(name: "proton", formula: "H", sites: [])
 public let hydroxyl = FunctionalGroup(name: "hydroxyl", formula: "OH", sites: [])
 public let ammonia = FunctionalGroup(name: "ammonia", formula: "NH3", sites: [])
@@ -19,9 +19,10 @@ public let cterm = FunctionalGroup(name: "C-term", formula: "OH", sites: ["CTerm
 
 public var functionalGroupLibrary: [FunctionalGroup] = loadJSONFromBundle(fileName: "functionalgroups")
 
-
-public class FunctionalGroup: Molecule, Codable {
+public struct FunctionalGroup: Molecule, Codable {
     public let sites: [String]
+    public var name: String
+    public var formula: Formula
 
     private enum CodingKeys: String, CodingKey {
         case name
@@ -29,31 +30,40 @@ public class FunctionalGroup: Molecule, Codable {
         case sites
     }
 
-    public init(name: String, formula: Formula, sites: [String] = []) {
-        self.sites = sites
-        
-        super.init(name: name, formula: formula)
-    }
-    
-    convenience public init(name: String, masses: MassContainer, sites: [String] = []) {
-        self.init(name: name, formula: "", sites: sites)
-
-        self.masses = masses
-    }
-    
-    required public init(from decoder: Decoder) throws {
+    public init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: CodingKeys.self)
 
-        sites = try values.decode([String].self, forKey: .sites)
-
-        super.init(name: try values.decode(String.self, forKey: .name),
-                   formula: try values.decode(Formula.self, forKey: .formula))
+        self.sites = try values.decode([String].self, forKey: .sites)
+        self.name = try values.decode(String.self, forKey: .name)
+        self.formula = try values.decode(Formula.self, forKey: .formula)
     }
     
+    public init(name: String, formula: Formula, sites: [String] = []) {
+        self.sites = sites
+        self.name = name
+        self.formula = name
+    }
+    
+//    public init(name: String, masses: MassContainer, sites: [String] = []) {
+//        self.sites = sites
+//        self.name = name
+//        self.masses = masses
+//    }
+
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(name, forKey: .name)
         try container.encode(formula, forKey: .formula)
         try container.encode(sites, forKey: .sites)
+    }
+}
+
+extension FunctionalGroup: Mass {
+    public var masses: MassContainer {
+        return calculateMasses()
+    }
+
+    public func calculateMasses() -> MassContainer {
+        return formula.masses()
     }
 }

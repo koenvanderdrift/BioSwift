@@ -138,16 +138,16 @@ extension BioSequence {
         return nil
     }
     
-    public func addModification(with name: String, at location: Int = -1) {
-        if let group = functionalGroupLibrary.first(where: { $0.name == name }),
-            let residue = symbol(at: location) as? Residue {
-            residue.groups.append(group)
-        }
-    }
-    
-    public func removeModification(_ modification: Modification) {
-        modifications = modifications.filter { $0 != modification }
-    }
+//    public func addModification(with name: String, at location: Int = -1) {
+//        if let group = functionalGroupLibrary.first(where: { $0.name == name }),
+//            let residue = symbol(at: location) as? Residue {
+//            residue.groups.append(group)
+//        }
+//    }
+//    
+//    public func removeModification(_ modification: Modification) {
+//        modifications = modifications.filter { $0 != modification }
+//    }
 }
 
 

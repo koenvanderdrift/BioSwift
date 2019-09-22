@@ -8,19 +8,18 @@
 
 import Foundation
 
+public let zeroMass = MassContainer(monoisotopicMass: 0.0, averageMass: 0.0, nominalMass: 0.0)
+
 public protocol Mass {
     var masses: MassContainer { get }
-    var charge: Int { get set }
     
     func calculateMasses() -> MassContainer
 }
 
 extension Mass {
-    var masses: MassContainer {
-        return zeroMass
-    }
-    
-    public func massOverCharge() -> MassContainer {
+    public func massOverCharge(charge: Int) -> MassContainer {
+        let masses = calculateMasses()
+        
         if charge == 0 {
             return masses
         }
@@ -28,8 +27,6 @@ extension Mass {
         return masses / charge
     }
 }
-
-public let zeroMass = MassContainer(monoisotopicMass: 0.0, averageMass: 0.0, nominalMass: 0.0)
 
 public enum MassType: String {
     case average = "Average"

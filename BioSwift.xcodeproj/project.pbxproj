@@ -338,6 +338,8 @@
 			isa = PBXGroup;
 			children = (
 				C762DBA32247BDA3006E95E8 /* Mass.swift */,
+				5DDA8BE021C5B4E1005B7064 /* Molecule.swift */,
+				5D14836E2336352C006B904B /* Residue.swift */,
 				C795B3B222441F310032AB26 /* Symbol.swift */,
 			);
 			path = Protocols;
@@ -384,8 +386,6 @@
 				5DDA8BDC21C5B4E1005B7064 /* ChemicalElement.swift */,
 				C7EAA9F12233F649002267DC /* FunctionalGroup.swift */,
 				5DDA8BF021C5B4E1005B7064 /* Modification.swift */,
-				5DDA8BE021C5B4E1005B7064 /* Molecule.swift */,
-				5D14836E2336352C006B904B /* Residue.swift */,
 			);
 			path = "Building Blocks";
 			sourceTree = "<group>";

@@ -20,13 +20,13 @@ extension Peptide {
         
         if self.canLoseAmmonia() {
             let fragment = Fragment(sequence: self.sequence, type: .protein, charge: self.charge, fragmentType: .precursor)
-            fragment.modifications = [Modification(group: FunctionalGroup(name: "lossOfAmmonia", masses: zeroMass - ammonia.masses), location: 0)]
+            fragment.modifications = [Modification(group: FunctionalGroup(name: "lossOfAmmonia", formula: "-NH3"), location: 0)]
             fragments.append(fragment)
         }
 
         if self.canLoseWater() {
             let fragment = Fragment(sequence: self.sequence, type: .protein, charge: self.charge, fragmentType: .precursor)
-            fragment.modifications = [Modification(group: FunctionalGroup(name: "lossOfWater", masses: zeroMass - water.masses), location: 0)]
+            fragment.modifications = [Modification(group: FunctionalGroup(name: "lossOfWater", formula: "-H2O"), location: 0)]
             fragments.append(fragment)
         }
 
@@ -34,9 +34,10 @@ extension Peptide {
     }
     
     func immoniumIons() -> [Fragment] {
-        guard let symbols = self.symbolSet() as? Set<AminoAcid> else { return [] }
-        
-        return symbols.map { Fragment(sequence: $0.oneLetterCode, type: .protein, charge: $0.charge, fragmentType: .immonium) }
+//        guard let symbols = self.symbolSet() as? Set<AminoAcid> else { return [] }
+//        
+//        return symbols.map { Fragment(sequence: $0.oneLetterCode, type: .protein, charge: $0.charge, fragmentType: .immonium) }
+        return []
     }
 
     func nTerminalIons() -> [Fragment] { // b fragments
@@ -54,7 +55,7 @@ extension Peptide {
                 if z == 1 {
                     fragments.append(fragment)
                 } else {
-                    if fragment.massOverCharge().monoisotopicMass > massOverCharge().monoisotopicMass {
+                    if fragment.massOverCharge(charge: z).monoisotopicMass > massOverCharge(charge: z).monoisotopicMass {
                         fragments.append(fragment)
                     }
                 }
