@@ -41,14 +41,8 @@ public struct FunctionalGroup: Molecule, Codable {
     public init(name: String, formula: Formula, sites: [String] = []) {
         self.sites = sites
         self.name = name
-        self.formula = name
+        self.formula = formula
     }
-    
-//    public init(name: String, masses: MassContainer, sites: [String] = []) {
-//        self.sites = sites
-//        self.name = name
-//        self.masses = masses
-//    }
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
@@ -62,8 +56,13 @@ extension FunctionalGroup: Mass {
     public var masses: MassContainer {
         return calculateMasses()
     }
+    
+    public var charge: Int {
+        return 0
+    }
 
     public func calculateMasses() -> MassContainer {
-        return formula.masses()
+        return formula.components(separatedBy: formulaSeparator)
+            .reduce(zeroMass, {$0 + $1.masses()})
     }
 }

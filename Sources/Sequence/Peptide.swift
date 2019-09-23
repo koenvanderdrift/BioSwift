@@ -55,7 +55,7 @@ extension Peptide {
                 if z == 1 {
                     fragments.append(fragment)
                 } else {
-                    if fragment.massOverCharge(charge: z).monoisotopicMass > massOverCharge(charge: z).monoisotopicMass {
+                    if fragment.massOverCharge(z).monoisotopicMass > massOverCharge(z).monoisotopicMass {
                         fragments.append(fragment)
                     }
                 }

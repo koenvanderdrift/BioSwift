@@ -98,7 +98,7 @@ public class BioSequence: NSObject, Mass {
     public func calculateMasses() -> MassContainer {
         if let sequenceMass = symbolSequence()?.compactMap({ $0 as? Mass })
             .reduce(zeroMass, {$0 + $1.masses}) {
-            return sequenceMass + adductMasses() + nterm.masses + cterm.masses
+            return sequenceMass + adductMasses() + nterm.masses + cterm.masses + modificationMasses()
         }
 
         return zeroMass

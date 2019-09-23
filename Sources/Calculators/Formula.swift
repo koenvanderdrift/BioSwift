@@ -7,17 +7,6 @@ public typealias Formula = String
 private typealias ElementInfo = (name: String, count: Int)
 
 extension Formula {
-    private func countOneElement(string: String) -> ElementInfo? {
-        let scanner = Scanner(string: string)
-        
-        guard
-            let element = scanner.scanCharactersFromSet(set: CharacterSet.letters),
-            let elementCount = scanner.scanInt()
-            else { return nil }
-        
-        return ElementInfo(element as String, (elementCount == 0) ? 1 : elementCount)
-    }
-    
     private func countedElements() -> [ChemicalElement] {
         // https://stackoverflow.com/questions/23602175/regex-for-parsing-chemical-formulas
         let pattern = "([A-Z][a-z]*)([0-9]*)"
@@ -43,6 +32,17 @@ extension Formula {
         return result
     }
     
+    private func countOneElement(string: String) -> ElementInfo? {
+        let scanner = Scanner(string: string)
+        
+        guard
+            let element = scanner.scanCharactersFromSet(set: CharacterSet.letters),
+            let elementCount = scanner.scanInt()
+            else { return nil }
+        
+        return ElementInfo(element as String, (elementCount == 0) ? 1 : elementCount)
+    }
+    
     func masses() -> MassContainer {
         var result = zeroMass
         
@@ -55,5 +55,13 @@ extension Formula {
         }
         
         return result
+    }
+}
+
+public let formulaSeparator = " + "
+
+extension Formula {
+    public static func - (lhs: Formula, rhs: Formula) -> Formula {
+        return lhs + formulaSeparator + "-" + rhs
     }
 }
