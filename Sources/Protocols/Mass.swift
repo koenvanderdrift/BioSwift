@@ -12,7 +12,6 @@ public let zeroMass = MassContainer(monoisotopicMass: 0.0, averageMass: 0.0, nom
 
 public protocol Mass {
     var masses: MassContainer { get }
-    var charge: Int { get }
     
     func calculateMasses() -> MassContainer
 }

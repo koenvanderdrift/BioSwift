@@ -57,10 +57,6 @@ extension FunctionalGroup: Mass {
         return calculateMasses()
     }
     
-    public var charge: Int {
-        return 0
-    }
-
     public func calculateMasses() -> MassContainer {
         return formula.components(separatedBy: formulaSeparator)
             .reduce(zeroMass, {$0 + $1.masses})

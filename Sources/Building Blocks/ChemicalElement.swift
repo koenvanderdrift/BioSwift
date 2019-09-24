@@ -48,10 +48,6 @@ public struct ChemicalElement: Codable, Symbol {
 }
 
 extension ChemicalElement: Mass {
-    public var charge: Int {
-        return 0
-    }
-
     public var masses: MassContainer {
         return calculateMasses()
     }

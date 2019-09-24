@@ -69,10 +69,6 @@ extension AminoAcid: Hashable {
 }
 
 extension AminoAcid: Mass {
-    public var charge: Int {
-        return 0
-    }
-    
     public var masses: MassContainer {
         return calculateMasses()
     }

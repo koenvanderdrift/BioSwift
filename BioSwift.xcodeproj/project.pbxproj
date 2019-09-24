@@ -384,6 +384,7 @@
 			children = (
 				5DDA8BDE21C5B4E1005B7064 /* AminoAcid.swift */,
 				5DDA8BDC21C5B4E1005B7064 /* ChemicalElement.swift */,
+				5DDA8BDF21C5B4E1005B7064 /* Formula.swift */,
 				C7EAA9F12233F649002267DC /* FunctionalGroup.swift */,
 				5DDA8BF021C5B4E1005B7064 /* Modification.swift */,
 			);
@@ -395,7 +396,6 @@
 			children = (
 				5DDA8BF121C5B4E1005B7064 /* Digester.swift */,
 				5DDA8BEC21C5B4E1005B7064 /* Enzyme.swift */,
-				5DDA8BDF21C5B4E1005B7064 /* Formula.swift */,
 				5DDA8BDB21C5B4E1005B7064 /* Hydropathy.swift */,
 				5DDA8BED21C5B4E1005B7064 /* MassSearch.swift */,
 			);

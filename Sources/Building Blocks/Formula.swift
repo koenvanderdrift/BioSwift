@@ -46,10 +46,6 @@ extension Formula {
 
 
 extension Formula: Mass {
-    public var charge: Int {
-        return 0
-    }
-    
     public var masses: MassContainer {
         return calculateMasses()
     }
