@@ -78,7 +78,7 @@ extension AminoAcid: Mass {
     }
     
     public func calculateMasses() -> MassContainer {
-        return formula.masses() + modificationMasses()
+        return formula.masses + modificationMasses()
     }
     
     private func modificationMasses() -> MassContainer {

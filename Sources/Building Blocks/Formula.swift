@@ -7,7 +7,7 @@ public typealias Formula = String
 private typealias ElementInfo = (name: String, count: Int)
 
 extension Formula {
-    private func countedElements() -> [ChemicalElement] {
+    private func parse() -> [ChemicalElement] {
         // https://stackoverflow.com/questions/23602175/regex-for-parsing-chemical-formulas
         let pattern = "([A-Z][a-z]*)([0-9]*)"
 //        let pattern =  "([0-9]?d*|[A-Z][a-z]{0,2}?d*)"
@@ -42,21 +42,26 @@ extension Formula {
         
         return ElementInfo(element as String, (elementCount == 0) ? 1 : elementCount)
     }
+}
+
+
+extension Formula: Mass {
+    public var charge: Int {
+        return 0
+    }
     
-    func masses() -> MassContainer {
-        var result = zeroMass
-        
-        for element in countedElements() {
-            result += element.masses
-        }
-        
-        if hasPrefix("-") {
-            result = -1 * result
-        }
-        
-        return result
+    public var masses: MassContainer {
+        return calculateMasses()
+    }
+    
+    public func calculateMasses() -> MassContainer {
+        let result = parse()
+            .reduce(zeroMass, {$0 + $1.masses})
+
+        return hasPrefix("-") ? -1 * result : result
     }
 }
+
 
 public let formulaSeparator = " + "
 

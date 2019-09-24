@@ -63,6 +63,6 @@ extension FunctionalGroup: Mass {
 
     public func calculateMasses() -> MassContainer {
         return formula.components(separatedBy: formulaSeparator)
-            .reduce(zeroMass, {$0 + $1.masses()})
+            .reduce(zeroMass, {$0 + $1.masses})
     }
 }
