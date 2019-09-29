@@ -1,8 +1,52 @@
 import Foundation
 
-public class Protein: BioSequence {
-    public required init(sequence: String, type: SequenceType = .protein, charge: Int = 0) {
-        super.init(sequence: sequence, type: type, charge: charge)
+public struct Protein: BioSequence {
+    
+    public var sequenceType: SequenceType = .protein
+    public var symbolLibrary: Symbols = aminoAcidLibrary
+    public var sequence: String = ""
+    public var modifications: [Modification] = []
+    
+    public init(sequence: String) {
+        self.sequence = sequence
+    }
+
+    private var _charge = 0
+}
+
+extension Protein: MassChargeable {
+    public var charge: Int {
+        get {
+            return _charge
+        }
+        set {
+            _charge = newValue
+        }
+    }
+
+    public var masses: MassContainer {
+        return calculateMasses()
+    }
+    
+    public func calculateMasses() -> MassContainer {
+        if let sequenceMass = symbolSequence()?.compactMap({ $0 as? Mass })
+            .reduce(zeroMass, {$0 + $1.masses}) {
+            return sequenceMass + modificationMasses() + terminalMasses() + adductMasses()
+        }
+        
+        return zeroMass
+    }
+    
+    private func modificationMasses() -> MassContainer {
+        return modifications.reduce(zeroMass, {$0 + $1.group.masses})
+    }
+    
+    private func terminalMasses() -> MassContainer {
+        return nterm.masses + cterm.masses
+    }
+    
+    private func adductMasses() -> MassContainer {
+        return zeroMass
     }
 }
 

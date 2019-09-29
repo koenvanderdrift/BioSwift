@@ -13,29 +13,63 @@ public enum FragmentType {
     case immonium
     case nTerminal
     case cTerminal
+    case undefined
 }
 
-public class Fragment: BioSequence {
+public struct Fragment: BioSequence {
+    public var sequenceType: SequenceType = .protein
+    public let symbolLibrary: Symbols = aminoAcidLibrary
     public let fragmentType: FragmentType
 
-    public init(sequence: String, type: SequenceType, charge: Int = 0, fragmentType: FragmentType) {
-        self.fragmentType = fragmentType
+    public var sequence: String = ""
+    public var modifications: [Modification] = []
 
-        super.init(sequence: sequence, type: type, charge: charge)
+    public init(sequence: String) {
+        self.fragmentType = .undefined
+        self.sequence = sequence
     }
     
-    public required init(sequence: String, type: SequenceType, charge: Int) {
-        fatalError("init(sequence:type:charge:) has not been implemented")
+    public init(sequence: String, fragmentType: FragmentType) {
+        self.fragmentType = fragmentType
+        self.sequence = sequence
     }
     
-    public override func calculateMasses() -> MassContainer {
-        var masses = super.calculateMasses()
-        
-        if fragmentType == .nTerminal {
-            masses -= (nterm.masses + cterm.masses)
-        }
-        
-        return masses
-    }
+    private var _charge: Int = 0
 }
 
+extension Fragment: MassChargeable {
+    public var charge: Int {
+        get {
+            return _charge
+        }
+        set {
+            _charge = newValue
+        }
+    }
+
+    public var masses: MassContainer {
+        return calculateMasses()
+    }
+    
+    public func calculateMasses() -> MassContainer {
+        if let sequenceMass = symbolSequence()?.compactMap({ $0 as? Mass })
+            .reduce(zeroMass, {$0 + $1.masses}) {
+            return sequenceMass + modificationMasses() + terminalMasses()
+        }
+        
+        return zeroMass
+    }
+    
+    private func modificationMasses() -> MassContainer {
+        return modifications.reduce(zeroMass, {$0 + $1.group.masses})
+    }
+    
+    private func terminalMasses() -> MassContainer {
+        var result = zeroMass
+        if fragmentType == .nTerminal {
+            result -= (nterm.masses + cterm.masses)
+        }
+        
+        return result
+    }
+}

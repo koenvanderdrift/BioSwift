@@ -60,7 +60,7 @@ public struct MassSearch {
 
     public func searchMass() -> SearchResult {
         var result = SearchResult()
-        let bioSequence = BioSequence(sequence: sequence, type: params.sequenceType)
+        let bioSequence = Protein(sequence: sequence)
         guard var symbolSequence = bioSequence.symbolSequence() else { return result }
         
         let range = massRange()

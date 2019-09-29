@@ -16,8 +16,12 @@ public protocol Mass {
     func calculateMasses() -> MassContainer
 }
 
-extension Mass {
-    public func massOverCharge(_ charge: Int) -> MassContainer {
+public protocol MassChargeable: Mass {
+    var charge: Int { get set }
+}
+
+extension MassChargeable {
+    public func massOverCharge() -> MassContainer {
         let masses = calculateMasses()
         
         if charge == 0 {

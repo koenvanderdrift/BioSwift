@@ -11,3 +11,13 @@ import Foundation
 public protocol Symbol {
     var identifier: String { get }
 }
+
+public class SymbolSet: NSCountedSet {
+    public func countFor(_ identifier: String) -> Int {
+        let symbol = self.compactMap { $0 as? Symbol }.first(where: { $0.identifier == identifier })
+        
+        return self.count(for: symbol as Any)
+    }
+}
+
+public typealias Symbols = [Symbol]
