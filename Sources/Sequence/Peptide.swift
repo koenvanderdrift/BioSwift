@@ -57,9 +57,7 @@ extension Peptide {
 
                 var fragment = Fragment(sequence: String(sequence[..<index]), fragmentType: .nTerminal)
                 
-                for _ in 1..<z {
-                    fragment.adducts.append(protonAdduct)
-                }
+                fragment.adducts.append(contentsOf: repeatElement(protonAdduct, count: z))
 
                 if z == 1 {
                     fragments.append(fragment)
@@ -84,9 +82,7 @@ extension Peptide {
                 let index = sequence.index(sequence.endIndex, offsetBy: -i)
                 var fragment = Fragment(sequence: String(sequence[..<index]), fragmentType: .cTerminal)
 
-                for _ in 1..<z {
-                    fragment.adducts.append(protonAdduct)
-                }
+                fragment.adducts.append(contentsOf: repeatElement(protonAdduct, count: z))
 
                 fragments.append(fragment)
             }

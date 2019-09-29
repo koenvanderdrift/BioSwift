@@ -110,10 +110,7 @@ extension Collection where Element: BioSequence & Chargeable {
         return self.flatMap { item in
             (minCharge...maxCharge).map { charge in
                 var el = Element.init(sequence: item.sequence)
-                for _ in 0..<charge {
-                    el.adducts.append(protonAdduct)
-                }
-                
+                el.adducts.append(contentsOf: repeatElement(protonAdduct, count: charge))
                 return el
             }
         }
