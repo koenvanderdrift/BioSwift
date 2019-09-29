@@ -34,19 +34,19 @@ public struct Fragment: BioSequence {
         self.sequence = sequence
     }
     
-    private var _charge: Int = 0
+    private var _adducts = [Adduct]()
 }
 
-extension Fragment: MassChargeable {
-    public var charge: Int {
+extension Fragment: Chargeable {
+    public var adducts: [Adduct] {
         get {
-            return _charge
+            return _adducts
         }
         set {
-            _charge = newValue
+            _adducts = newValue
         }
     }
-
+    
     public var masses: MassContainer {
         return calculateMasses()
     }

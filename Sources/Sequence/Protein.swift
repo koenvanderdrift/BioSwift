@@ -11,18 +11,28 @@ public struct Protein: BioSequence {
         self.sequence = sequence
     }
 
-    private var _charge = 0
+//    private var _charge = 0
+    private var _adducts = [Adduct]()
 }
 
-extension Protein: MassChargeable {
-    public var charge: Int {
+extension Protein: Chargeable {
+    public var adducts: [Adduct] {
         get {
-            return _charge
+            return _adducts
         }
         set {
-            _charge = newValue
+            _adducts = newValue
         }
     }
+    
+//    public var charge: Int {
+//        get {
+//            return _charge
+//        }
+//        set {
+//            _charge = newValue
+//        }
+//    }
 
     public var masses: MassContainer {
         return calculateMasses()
@@ -46,7 +56,7 @@ extension Protein: MassChargeable {
     }
     
     private func adductMasses() -> MassContainer {
-        return zeroMass
+        return adducts.reduce(zeroMass, {$0 + $1.group.masses})
     }
 }
 

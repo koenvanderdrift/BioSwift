@@ -11,6 +11,10 @@
 		5D1483702336352C006B904B /* Residue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D14836E2336352C006B904B /* Residue.swift */; };
 		5D1483712336352C006B904B /* Residue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D14836E2336352C006B904B /* Residue.swift */; };
 		5D1483722336352C006B904B /* Residue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D14836E2336352C006B904B /* Residue.swift */; };
+		5D9F506423411679003F2A06 /* Chargeable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9F506323411679003F2A06 /* Chargeable.swift */; };
+		5D9F506523411679003F2A06 /* Chargeable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9F506323411679003F2A06 /* Chargeable.swift */; };
+		5D9F506623411679003F2A06 /* Chargeable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9F506323411679003F2A06 /* Chargeable.swift */; };
+		5D9F506723411679003F2A06 /* Chargeable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9F506323411679003F2A06 /* Chargeable.swift */; };
 		5DDA8B7521C5B421005B7064 /* BioSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DDA8B6B21C5B421005B7064 /* BioSwift.framework */; };
 		5DDA8B7A21C5B421005B7064 /* MassKitTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DDA8B7921C5B421005B7064 /* MassKitTests.swift */; };
 		5DDA8B7C21C5B421005B7064 /* BioSwift.h in Headers */ = {isa = PBXBuildFile; fileRef = 5DDA8B6E21C5B421005B7064 /* BioSwift.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -157,6 +161,7 @@
 
 /* Begin PBXFileReference section */
 		5D14836E2336352C006B904B /* Residue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Residue.swift; sourceTree = "<group>"; };
+		5D9F506323411679003F2A06 /* Chargeable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Chargeable.swift; sourceTree = "<group>"; };
 		5DDA8B6B21C5B421005B7064 /* BioSwift.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = BioSwift.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		5DDA8B6E21C5B421005B7064 /* BioSwift.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BioSwift.h; sourceTree = "<group>"; };
 		5DDA8B6F21C5B421005B7064 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -338,6 +343,7 @@
 			isa = PBXGroup;
 			children = (
 				5DDA8BEA21C5B4E1005B7064 /* BioSequence.swift */,
+				5D9F506323411679003F2A06 /* Chargeable.swift */,
 				C762DBA32247BDA3006E95E8 /* Mass.swift */,
 				5DDA8BE021C5B4E1005B7064 /* Molecule.swift */,
 				5D14836E2336352C006B904B /* Residue.swift */,
@@ -628,6 +634,7 @@
 				5DDA8C3921C5B4E1005B7064 /* Peptide.swift in Sources */,
 				C7B7F88A22034F22007BE60C /* Scanner.swift in Sources */,
 				5D14836F2336352C006B904B /* Residue.swift in Sources */,
+				5D9F506423411679003F2A06 /* Chargeable.swift in Sources */,
 				5DDA8C4921C5B4E1005B7064 /* MassSearch.swift in Sources */,
 				5DDA8C2521C5B4E1005B7064 /* String.swift in Sources */,
 				C795B3B322441F310032AB26 /* Symbol.swift in Sources */,
@@ -658,6 +665,7 @@
 				5DDA8C3A21C5B4E1005B7064 /* Peptide.swift in Sources */,
 				5DDA8C2221C5B4E1005B7064 /* Array.swift in Sources */,
 				C795B3B422441F310032AB26 /* Symbol.swift in Sources */,
+				5D9F506523411679003F2A06 /* Chargeable.swift in Sources */,
 				C762DBA52247BDA3006E95E8 /* Mass.swift in Sources */,
 				5DDA8C5621C5B4E1005B7064 /* Digester.swift in Sources */,
 				5DDA8C1A21C5B4E1005B7064 /* Formula.swift in Sources */,
@@ -687,6 +695,7 @@
 				5D1483712336352C006B904B /* Residue.swift in Sources */,
 				5DDA8C2321C5B4E1005B7064 /* Array.swift in Sources */,
 				5DDA8C6721C5B4E1005B7064 /* Fasta.swift in Sources */,
+				5D9F506623411679003F2A06 /* Chargeable.swift in Sources */,
 				C7EB5505224C0F6300E21C41 /* Bundle+Decoding.swift in Sources */,
 				C795B3B522441F310032AB26 /* Symbol.swift in Sources */,
 				5DDA8C1F21C5B4E1005B7064 /* Molecule.swift in Sources */,
@@ -717,6 +726,7 @@
 				5DDA8C3C21C5B4E1005B7064 /* Peptide.swift in Sources */,
 				5DDA8C2421C5B4E1005B7064 /* Array.swift in Sources */,
 				C795B3B622441F310032AB26 /* Symbol.swift in Sources */,
+				5D9F506723411679003F2A06 /* Chargeable.swift in Sources */,
 				C762DBA72247BDA3006E95E8 /* Mass.swift in Sources */,
 				5DDA8C5821C5B4E1005B7064 /* Digester.swift in Sources */,
 				5DDA8C1C21C5B4E1005B7064 /* Formula.swift in Sources */,

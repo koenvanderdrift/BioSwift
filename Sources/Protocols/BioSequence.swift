@@ -105,12 +105,14 @@ extension BioSequence {
 
 
 
-extension Collection where Element: BioSequence & MassChargeable {
+extension Collection where Element: BioSequence & Chargeable {
     public func charge(minCharge: Int, maxCharge: Int) -> [Element] {
         return self.flatMap { item in
             (minCharge...maxCharge).map { charge in
                 var el = Element.init(sequence: item.sequence)
-                el.charge = charge
+                for _ in 0..<charge {
+                    el.adducts.append(protonAdduct)
+                }
                 
                 return el
             }

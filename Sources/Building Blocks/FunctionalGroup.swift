@@ -8,14 +8,22 @@
 
 import Foundation
 
-public let emptyGroup = FunctionalGroup(name: "empty", formula: "", sites: [])
-public let proton = FunctionalGroup(name: "proton", formula: "H", sites: [])
-public let hydroxyl = FunctionalGroup(name: "hydroxyl", formula: "OH", sites: [])
-public let ammonia = FunctionalGroup(name: "ammonia", formula: "NH3", sites: [])
+public let emptyGroup = FunctionalGroup(name: "empty", formula: "")
+public let hydroxyl = FunctionalGroup(name: "hydroxyl", formula: "OH")
+public let ammonia = FunctionalGroup(name: "ammonia", formula: "NH3")
+public let water = FunctionalGroup(name: "water", formula: "H2O")
 
-public let water = FunctionalGroup(name: "water", formula: "H2O", sites: [])
 public let nterm = FunctionalGroup(name: "N-term", formula: "H", sites: ["NTerminal"])
 public let cterm = FunctionalGroup(name: "C-term", formula: "OH", sites: ["CTerminal"])
+
+public let proton = FunctionalGroup(name: "proton", formula: "H")
+public let sodium = FunctionalGroup(name: "Sodium", formula: "Na")
+public let ammonium = FunctionalGroup(name: "Ammonium", formula: "NH4")
+
+public typealias Adduct = (group: FunctionalGroup, charge: Int)
+public let protonAdduct = (group: proton, charge: 1)
+public let sodiumAdduct = (group: sodium, charge: 1)
+public let ammoniumAdduct = (group: ammonium, charge: 1)
 
 public var functionalGroupLibrary: [FunctionalGroup] = loadJSONFromBundle(fileName: "functionalgroups")
 

@@ -40,7 +40,7 @@ extension Peptide {
         
         return symbols.map { symbol in
             var fragment = Fragment(sequence: symbol.oneLetterCode, fragmentType: .immonium)
-            fragment.charge = self.charge
+            fragment.adducts = self.adducts
             
             return fragment
         }
@@ -49,19 +49,22 @@ extension Peptide {
     func nTerminalIons() -> [Fragment] { // b fragments
         var fragments = [Fragment]()
 
-        guard self.charge > 0 else { return fragments }
+        guard self.adducts.count > 0 else { return fragments }
 
-        for z in 1 ... min(2, self.charge) {
+        for z in 1 ... min(2, self.adducts.count) {
             for i in 2 ... sequence.count - 1 {
                 let index = sequence.index(sequence.startIndex, offsetBy: i) // let newStr = String(str[..<index])
 
                 var fragment = Fragment(sequence: String(sequence[..<index]), fragmentType: .nTerminal)
-                fragment.charge = z
+                
+                for _ in 1..<z {
+                    fragment.adducts.append(protonAdduct)
+                }
 
                 if z == 1 {
                     fragments.append(fragment)
                 } else {
-                    if fragment.massOverCharge().monoisotopicMass > massOverCharge().monoisotopicMass {
+                    if fragment.pseudomolecularIon().monoisotopicMass > pseudomolecularIon().monoisotopicMass {
                         fragments.append(fragment)
                     }
                 }
@@ -74,14 +77,17 @@ extension Peptide {
     func cTerminalIons() -> [Fragment] { // y fragments
         var fragments = [Fragment]()
 
-        guard self.charge > 0 else { return fragments }
+        guard self.adducts.count > 0 else { return fragments }
         
-        for z in 1 ... min(2, self.charge) {
+        for z in 1 ... min(2, self.adducts.count) {
             for i in 1 ... sequence.count - 1 {
                 let index = sequence.index(sequence.endIndex, offsetBy: -i)
                 var fragment = Fragment(sequence: String(sequence[..<index]), fragmentType: .cTerminal)
-                fragment.charge = z
-                
+
+                for _ in 1..<z {
+                    fragment.adducts.append(protonAdduct)
+                }
+
                 fragments.append(fragment)
             }
         }

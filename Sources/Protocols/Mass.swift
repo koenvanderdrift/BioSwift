@@ -16,22 +16,6 @@ public protocol Mass {
     func calculateMasses() -> MassContainer
 }
 
-public protocol MassChargeable: Mass {
-    var charge: Int { get set }
-}
-
-extension MassChargeable {
-    public func massOverCharge() -> MassContainer {
-        let masses = calculateMasses()
-        
-        if charge == 0 {
-            return masses
-        }
-        
-        return masses / charge
-    }
-}
-
 public enum MassType: String {
     case average = "Average"
     case monoisotopic = "Monoisotopic"
