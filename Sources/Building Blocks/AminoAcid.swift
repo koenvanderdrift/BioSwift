@@ -62,10 +62,9 @@ extension AminoAcid: Hashable {
         return lhs.threeLetterCode == rhs.threeLetterCode
     }
     
-    public var hashValue: Int {
-        return threeLetterCode.hashValue
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(threeLetterCode)
     }
-
 }
 
 extension AminoAcid: Mass {
