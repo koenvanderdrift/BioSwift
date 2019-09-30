@@ -50,18 +50,19 @@ public struct SearchParameters {
 public typealias SearchResult = Set<String>
 
 public struct MassSearch {
-    public let sequence: String
+    public let sequence: BioSequence
     public let params: SearchParameters
-
-    public init(sequence: String, params: SearchParameters) {
+    
+    public init(sequence: BioSequence, params: SearchParameters) {
         self.sequence = sequence
         self.params = params
     }
 
     public func searchMass() -> SearchResult {
         var result = SearchResult()
-        let bioSequence = Protein(sequence: sequence)
-        guard var symbolSequence = bioSequence.symbolSequence() else { return result }
+        guard var symbolSequence = sequence.symbolSequence() else { return result }
+        
+        let sequenceString = sequence.sequenceString
         
         let range = massRange()
         var start = 0
@@ -74,7 +75,7 @@ public struct MassSearch {
                     mass += symbol.masses
                     let chargedMass = params.charge > 0 ? mass / params.charge : mass
                     
-                    let s = String(sequence.substring(from: start, to: start + index + 1) ?? "")
+                    let s = String(sequenceString.substring(from: start, to: start + index + 1) ?? "")
                     
                     switch params.massType {
                     case .monoisotopic:
