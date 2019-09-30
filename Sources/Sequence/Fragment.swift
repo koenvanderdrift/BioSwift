@@ -17,12 +17,13 @@ public enum FragmentType {
 }
 
 public struct Fragment: BioSequence {
-    public var sequenceType: SequenceType = .protein
-    public let symbolLibrary: [Symbol] = aminoAcidLibrary
     public let fragmentType: FragmentType
 
+    public var sequenceType: SequenceType = .protein
+    public let symbolLibrary: [Symbol] = aminoAcidLibrary
     public var sequenceString: String = ""
     public var modifications: [Modification] = []
+    public var adducts: [Adduct] = []
 
     public init(sequenceString: String) {
         self.fragmentType = .undefined
@@ -33,20 +34,9 @@ public struct Fragment: BioSequence {
         self.fragmentType = fragmentType
         self.sequenceString = sequenceString
     }
-    
-    private var _adducts: [Adduct] = []
 }
 
 extension Fragment: Chargeable {
-    public var adducts: [Adduct] {
-        get {
-            return _adducts
-        }
-        set {
-            _adducts = newValue
-        }
-    }
-    
     public var masses: MassContainer {
         return calculateMasses()
     }
@@ -54,7 +44,7 @@ extension Fragment: Chargeable {
     public func calculateMasses() -> MassContainer {
         if let sequenceMass = symbolSequence()?.compactMap({ $0 as? Mass })
             .reduce(zeroMass, {$0 + $1.masses}) {
-            return sequenceMass + modificationMasses() + terminalMasses()
+            return sequenceMass + modificationMasses() + terminalMasses() + adductMasses()
         }
         
         return zeroMass
@@ -71,5 +61,9 @@ extension Fragment: Chargeable {
         }
         
         return result
+    }
+    
+    private func adductMasses() -> MassContainer {
+        return adducts.reduce(zeroMass, {$0 + $1.group.masses})
     }
 }
