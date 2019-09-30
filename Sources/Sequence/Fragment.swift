@@ -18,23 +18,23 @@ public enum FragmentType {
 
 public struct Fragment: BioSequence {
     public var sequenceType: SequenceType = .protein
-    public let symbolLibrary: Symbols = aminoAcidLibrary
+    public let symbolLibrary: [Symbol] = aminoAcidLibrary
     public let fragmentType: FragmentType
 
-    public var sequence: String = ""
+    public var sequenceString: String = ""
     public var modifications: [Modification] = []
 
-    public init(sequence: String) {
+    public init(sequenceString: String) {
         self.fragmentType = .undefined
-        self.sequence = sequence
+        self.sequenceString = sequenceString
     }
     
-    public init(sequence: String, fragmentType: FragmentType) {
+    public init(sequenceString: String, fragmentType: FragmentType) {
         self.fragmentType = fragmentType
-        self.sequence = sequence
+        self.sequenceString = sequenceString
     }
     
-    private var _adducts = [Adduct]()
+    private var _adducts: [Adduct] = []
 }
 
 extension Fragment: Chargeable {

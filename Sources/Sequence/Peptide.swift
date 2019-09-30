@@ -4,7 +4,7 @@ public typealias Peptide = Protein
 
 extension Peptide: Equatable {
     public static func == (lhs: Peptide, rhs: Peptide) -> Bool {
-        return lhs.sequence == rhs.sequence
+        return lhs.sequenceString == rhs.sequenceString
     }
 }
 
@@ -16,18 +16,18 @@ extension Peptide {
     func precursorIons() -> [Fragment] {
         var fragments = [Fragment]()
         
-        let fragment = Fragment(sequence: sequence, fragmentType: .precursor)
+        let fragment = Fragment(sequenceString: sequenceString, fragmentType: .precursor)
         
         fragments.append(fragment)
         
         if self.canLoseAmmonia() {
-            var fragment = Fragment(sequence: sequence, fragmentType: .precursor)
+            var fragment = Fragment(sequenceString: sequenceString, fragmentType: .precursor)
             fragment.modifications = [Modification(group: FunctionalGroup(name: "lossOfAmmonia", formula: "-NH3"), location: 0)]
             fragments.append(fragment)
         }
 
         if self.canLoseWater() {
-            var fragment = Fragment(sequence: self.sequence, fragmentType: .precursor)
+            var fragment = Fragment(sequenceString: self.sequenceString, fragmentType: .precursor)
             fragment.modifications = [Modification(group: FunctionalGroup(name: "lossOfWater", formula: "-H2O"), location: 0)]
             fragments.append(fragment)
         }
@@ -39,7 +39,7 @@ extension Peptide {
         guard let symbols = self.symbolSet() as? Set<AminoAcid> else { return [] }
         
         return symbols.map { symbol in
-            var fragment = Fragment(sequence: symbol.oneLetterCode, fragmentType: .immonium)
+            var fragment = Fragment(sequenceString: symbol.oneLetterCode, fragmentType: .immonium)
             fragment.adducts = self.adducts
             
             return fragment
@@ -52,10 +52,10 @@ extension Peptide {
         guard self.adducts.count > 0 else { return fragments }
 
         for z in 1 ... min(2, self.adducts.count) {
-            for i in 2 ... sequence.count - 1 {
-                let index = sequence.index(sequence.startIndex, offsetBy: i) // let newStr = String(str[..<index])
+            for i in 2 ... sequenceString.count - 1 {
+                let index = sequenceString.index(sequenceString.startIndex, offsetBy: i) // let newStr = String(str[..<index])
 
-                var fragment = Fragment(sequence: String(sequence[..<index]), fragmentType: .nTerminal)
+                var fragment = Fragment(sequenceString: String(sequenceString[..<index]), fragmentType: .nTerminal)
                 
                 fragment.adducts.append(contentsOf: repeatElement(protonAdduct, count: z))
 
@@ -78,9 +78,9 @@ extension Peptide {
         guard self.adducts.count > 0 else { return fragments }
         
         for z in 1 ... min(2, self.adducts.count) {
-            for i in 1 ... sequence.count - 1 {
-                let index = sequence.index(sequence.endIndex, offsetBy: -i)
-                var fragment = Fragment(sequence: String(sequence[..<index]), fragmentType: .cTerminal)
+            for i in 1 ... sequenceString.count - 1 {
+                let index = sequenceString.index(sequenceString.endIndex, offsetBy: -i)
+                var fragment = Fragment(sequenceString: String(sequenceString[..<index]), fragmentType: .cTerminal)
 
                 fragment.adducts.append(contentsOf: repeatElement(protonAdduct, count: z))
 
@@ -92,11 +92,11 @@ extension Peptide {
     }
 
     func canLoseWater() -> Bool {
-        return sequence.containsCharactersFrom(substring: "STED")
+        return sequenceString.containsCharactersFrom(substring: "STED")
     }
 
     func canLoseAmmonia() -> Bool {
-        return sequence.containsCharactersFrom(substring: "RQNK")
+        return sequenceString.containsCharactersFrom(substring: "RQNK")
     }
 
 //    public func isoElectricPoint() -> Double {

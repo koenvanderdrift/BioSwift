@@ -17,24 +17,24 @@ public enum SequenceType {
 
 public protocol BioSequence {
     var sequenceType: SequenceType { get }
-    var symbolLibrary: Symbols { get }
-    var sequence: String { get set }
+    var symbolLibrary: [Symbol] { get }
+    var sequenceString: String { get set }
     var modifications: [Modification] { get set }
 
-    func symbolSequence() -> Symbols?
+    func symbolSequence() -> [Symbol]?
     func symbolSet() -> SymbolSet?
     func symbol(at index: Int) -> Symbol?
     
-    init(sequence: String)
+    init(sequenceString: String)
 }
 
 extension BioSequence {
-    public func symbolSequence() -> Symbols? {
-        let result = sequence.map { s in
+    public func symbolSequence() -> [Symbol]? {
+        let result = sequenceString.map { s in
             return symbolLibrary.first(where: { $0.identifier == String(s) })
         }
 
-        return result as? Symbols
+        return result as? [Symbol]
     }
     
     public func symbolSet() -> SymbolSet? {
@@ -46,11 +46,15 @@ extension BioSequence {
     public func symbol(at index: Int) -> Symbol? {
         var result: Symbol? = nil
 
-        if !sequence.isEmpty {
-            result = symbolLibrary.first(where: { $0.identifier == String(sequence[index]) })
+        if !sequenceString.isEmpty {
+            result = symbolLibrary.first(where: { $0.identifier == String(sequenceString[index]) })
         }
 
         return result
+    }
+    
+    public func subSymbolSequence(from: Int, to: Int) -> [Symbol] {
+        return Array((symbolSequence()?[from...to])!)
     }
     
     public func symbolLocations(with identifiers: [String]) -> [Int] {
@@ -78,7 +82,7 @@ extension BioSequence {
                 possibleFunctionalGroups.append(contentsOf: nTermGroups)
             }
 
-            if index == sequence.count - 1 {
+            if index == sequenceString.count - 1 {
                 let cTermGroups = functionalGroupLibrary.filter { $0.sites.contains("CTerminal") == true }
                 possibleFunctionalGroups.append(contentsOf: cTermGroups)
             }
@@ -109,7 +113,7 @@ extension Collection where Element: BioSequence & Chargeable {
     public func charge(minCharge: Int, maxCharge: Int) -> [Element] {
         return self.flatMap { item in
             (minCharge...maxCharge).map { charge in
-                var el = Element.init(sequence: item.sequence)
+                var el = Element.init(sequenceString: item.sequenceString)
                 el.adducts.append(contentsOf: repeatElement(protonAdduct, count: charge))
                 return el
             }

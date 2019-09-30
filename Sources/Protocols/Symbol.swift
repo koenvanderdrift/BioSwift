@@ -19,5 +19,3 @@ public class SymbolSet: NSCountedSet {
         return self.count(for: symbol as Any)
     }
 }
-
-public typealias Symbols = [Symbol]

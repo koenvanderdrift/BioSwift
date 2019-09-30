@@ -20,11 +20,6 @@ public let proton = FunctionalGroup(name: "proton", formula: "H")
 public let sodium = FunctionalGroup(name: "Sodium", formula: "Na")
 public let ammonium = FunctionalGroup(name: "Ammonium", formula: "NH4")
 
-public typealias Adduct = (group: FunctionalGroup, charge: Int)
-public let protonAdduct = (group: proton, charge: 1)
-public let sodiumAdduct = (group: sodium, charge: 1)
-public let ammoniumAdduct = (group: ammonium, charge: 1)
-
 public var functionalGroupLibrary: [FunctionalGroup] = loadJSONFromBundle(fileName: "functionalgroups")
 
 public struct FunctionalGroup: Molecule, Codable {

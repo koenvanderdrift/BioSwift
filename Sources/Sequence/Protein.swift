@@ -3,16 +3,15 @@ import Foundation
 public struct Protein: BioSequence {
     
     public var sequenceType: SequenceType = .protein
-    public var symbolLibrary: Symbols = aminoAcidLibrary
-    public var sequence: String = ""
+    public var symbolLibrary: [Symbol] = aminoAcidLibrary
+    public var sequenceString: String = ""
     public var modifications: [Modification] = []
     
-    public init(sequence: String) {
-        self.sequence = sequence
+    public init(sequenceString: String) {
+        self.sequenceString = sequenceString
     }
 
-//    private var _charge = 0
-    private var _adducts = [Adduct]()
+    private var _adducts: [Adduct] = []
 }
 
 extension Protein: Chargeable {
@@ -25,15 +24,6 @@ extension Protein: Chargeable {
         }
     }
     
-//    public var charge: Int {
-//        get {
-//            return _charge
-//        }
-//        set {
-//            _charge = newValue
-//        }
-//    }
-
     public var masses: MassContainer {
         return calculateMasses()
     }

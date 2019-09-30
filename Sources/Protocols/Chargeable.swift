@@ -8,6 +8,11 @@
 
 import Foundation
 
+public typealias Adduct = (group: FunctionalGroup, charge: Int)
+public let protonAdduct = (group: proton, charge: 1)
+public let sodiumAdduct = (group: sodium, charge: 1)
+public let ammoniumAdduct = (group: ammonium, charge: 1)
+
 public protocol Chargeable: Mass {
     var adducts: [Adduct] { get set }
 }
