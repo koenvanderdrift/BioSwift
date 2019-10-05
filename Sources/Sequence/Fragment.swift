@@ -36,7 +36,7 @@ public struct Fragment: BioSequence {
     }
 }
 
-extension Fragment: Chargeable {
+extension Fragment: Chargeable, Modifiable {
     public var masses: MassContainer {
         return calculateMasses()
     }
@@ -48,10 +48,6 @@ extension Fragment: Chargeable {
         }
         
         return zeroMass
-    }
-    
-    private func modificationMasses() -> MassContainer {
-        return modifications.reduce(zeroMass, {$0 + $1.group.masses})
     }
     
     private func terminalMasses() -> MassContainer {

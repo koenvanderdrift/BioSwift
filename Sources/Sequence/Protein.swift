@@ -12,7 +12,7 @@ public struct Protein: BioSequence {
     }
 }
 
-extension Protein: Chargeable {
+extension Protein: Chargeable, Modifiable {
     public var masses: MassContainer {
         return calculateMasses()
     }
@@ -24,10 +24,6 @@ extension Protein: Chargeable {
         }
         
         return zeroMass
-    }
-    
-    private func modificationMasses() -> MassContainer {
-        return modifications.reduce(zeroMass, {$0 + $1.group.masses})
     }
     
     private func terminalMasses() -> MassContainer {

@@ -1,14 +1,24 @@
 import Foundation
 
-public class Modification: NSObject {
+public struct Modification {
     public let group: FunctionalGroup
-    public var location: Int
+    public var location: Int = -1 
     public var site: String
 
     public init(group: FunctionalGroup, location: Int, site: String = "") {
         self.group = group
         self.location = location
         self.site = site
+    }
+}
+
+extension Modification: Hashable {
+    public static func == (lhs: Modification, rhs: Modification) -> Bool {
+        return lhs.group == rhs.group && lhs.location == rhs.location
+    }
+    
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(location)
     }
 }
 

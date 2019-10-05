@@ -7,6 +7,16 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5D0E45EF2349046B00D67B65 /* Modifiable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D0E45EE2349046B00D67B65 /* Modifiable.swift */; };
+		5D0E45F02349046B00D67B65 /* Modifiable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D0E45EE2349046B00D67B65 /* Modifiable.swift */; };
+		5D0E45F12349046B00D67B65 /* Modifiable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D0E45EE2349046B00D67B65 /* Modifiable.swift */; };
+		5D0E45F22349046B00D67B65 /* Modifiable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D0E45EE2349046B00D67B65 /* Modifiable.swift */; };
+		5D0E45FC234941EA00D67B65 /* BioSwiftTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D0E45FA234941EA00D67B65 /* BioSwiftTests.swift */; };
+		5D0E45FD234941EA00D67B65 /* BioSwiftTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D0E45FA234941EA00D67B65 /* BioSwiftTests.swift */; };
+		5D0E45FE234941EA00D67B65 /* BioSwiftTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D0E45FA234941EA00D67B65 /* BioSwiftTests.swift */; };
+		5D0E4600234941FB00D67B65 /* BioSwift_iOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 5D0E45FF234941FB00D67B65 /* BioSwift_iOS.h */; };
+		5D0E4601234941FB00D67B65 /* BioSwift_iOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 5D0E45FF234941FB00D67B65 /* BioSwift_iOS.h */; };
+		5D0E46032349420B00D67B65 /* BioSwift_iOSTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D0E46022349420B00D67B65 /* BioSwift_iOSTests.swift */; };
 		5D14836F2336352C006B904B /* Residue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D14836E2336352C006B904B /* Residue.swift */; };
 		5D1483702336352C006B904B /* Residue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D14836E2336352C006B904B /* Residue.swift */; };
 		5D1483712336352C006B904B /* Residue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D14836E2336352C006B904B /* Residue.swift */; };
@@ -16,11 +26,8 @@
 		5D9F506623411679003F2A06 /* Chargeable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9F506323411679003F2A06 /* Chargeable.swift */; };
 		5D9F506723411679003F2A06 /* Chargeable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9F506323411679003F2A06 /* Chargeable.swift */; };
 		5DDA8B7521C5B421005B7064 /* BioSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DDA8B6B21C5B421005B7064 /* BioSwift.framework */; };
-		5DDA8B7A21C5B421005B7064 /* MassKitTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DDA8B7921C5B421005B7064 /* MassKitTests.swift */; };
 		5DDA8B7C21C5B421005B7064 /* BioSwift.h in Headers */ = {isa = PBXBuildFile; fileRef = 5DDA8B6E21C5B421005B7064 /* BioSwift.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5DDA8B9321C5B469005B7064 /* BioSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DDA8B8A21C5B468005B7064 /* BioSwift.framework */; };
-		5DDA8B9821C5B469005B7064 /* MassKit_iOSTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DDA8B9721C5B469005B7064 /* MassKit_iOSTests.swift */; };
-		5DDA8B9A21C5B469005B7064 /* MassKit_iOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 5DDA8B8C21C5B468005B7064 /* MassKit_iOS.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5DDA8C0921C5B4E1005B7064 /* Hydropathy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DDA8BDB21C5B4E1005B7064 /* Hydropathy.swift */; };
 		5DDA8C0A21C5B4E1005B7064 /* Hydropathy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DDA8BDB21C5B4E1005B7064 /* Hydropathy.swift */; };
 		5DDA8C0B21C5B4E1005B7064 /* Hydropathy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DDA8BDB21C5B4E1005B7064 /* Hydropathy.swift */; };
@@ -160,19 +167,20 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		5D0E45EE2349046B00D67B65 /* Modifiable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Modifiable.swift; sourceTree = "<group>"; };
+		5D0E45FA234941EA00D67B65 /* BioSwiftTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BioSwiftTests.swift; sourceTree = "<group>"; };
+		5D0E45FF234941FB00D67B65 /* BioSwift_iOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BioSwift_iOS.h; sourceTree = "<group>"; };
+		5D0E46022349420B00D67B65 /* BioSwift_iOSTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BioSwift_iOSTests.swift; sourceTree = "<group>"; };
 		5D14836E2336352C006B904B /* Residue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Residue.swift; sourceTree = "<group>"; };
 		5D9F506323411679003F2A06 /* Chargeable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Chargeable.swift; sourceTree = "<group>"; };
 		5DDA8B6B21C5B421005B7064 /* BioSwift.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = BioSwift.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		5DDA8B6E21C5B421005B7064 /* BioSwift.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BioSwift.h; sourceTree = "<group>"; };
 		5DDA8B6F21C5B421005B7064 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		5DDA8B7421C5B421005B7064 /* BioSwiftTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BioSwiftTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		5DDA8B7921C5B421005B7064 /* MassKitTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MassKitTests.swift; sourceTree = "<group>"; };
 		5DDA8B7B21C5B421005B7064 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		5DDA8B8A21C5B468005B7064 /* BioSwift.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = BioSwift.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		5DDA8B8C21C5B468005B7064 /* MassKit_iOS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MassKit_iOS.h; sourceTree = "<group>"; };
 		5DDA8B8D21C5B468005B7064 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		5DDA8B9221C5B469005B7064 /* BioSwift-iOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "BioSwift-iOSTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
-		5DDA8B9721C5B469005B7064 /* MassKit_iOSTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MassKit_iOSTests.swift; sourceTree = "<group>"; };
 		5DDA8B9921C5B469005B7064 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		5DDA8BDB21C5B4E1005B7064 /* Hydropathy.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Hydropathy.swift; sourceTree = "<group>"; };
 		5DDA8BDC21C5B4E1005B7064 /* ChemicalElement.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChemicalElement.swift; sourceTree = "<group>"; };
@@ -280,7 +288,7 @@
 		5DDA8B7821C5B421005B7064 /* BioSwiftTests */ = {
 			isa = PBXGroup;
 			children = (
-				5DDA8B7921C5B421005B7064 /* MassKitTests.swift */,
+				5D0E45FA234941EA00D67B65 /* BioSwiftTests.swift */,
 				5DDA8B7B21C5B421005B7064 /* Info.plist */,
 			);
 			path = BioSwiftTests;
@@ -289,7 +297,7 @@
 		5DDA8B8B21C5B468005B7064 /* BioSwift-iOS */ = {
 			isa = PBXGroup;
 			children = (
-				5DDA8B8C21C5B468005B7064 /* MassKit_iOS.h */,
+				5D0E45FF234941FB00D67B65 /* BioSwift_iOS.h */,
 				5DDA8B8D21C5B468005B7064 /* Info.plist */,
 			);
 			path = "BioSwift-iOS";
@@ -298,7 +306,7 @@
 		5DDA8B9621C5B469005B7064 /* BioSwift-iOSTests */ = {
 			isa = PBXGroup;
 			children = (
-				5DDA8B9721C5B469005B7064 /* MassKit_iOSTests.swift */,
+				5D0E46022349420B00D67B65 /* BioSwift_iOSTests.swift */,
 				5DDA8B9921C5B469005B7064 /* Info.plist */,
 			);
 			path = "BioSwift-iOSTests";
@@ -348,6 +356,7 @@
 				5DDA8BE021C5B4E1005B7064 /* Molecule.swift */,
 				5D14836E2336352C006B904B /* Residue.swift */,
 				C795B3B222441F310032AB26 /* Symbol.swift */,
+				5D0E45EE2349046B00D67B65 /* Modifiable.swift */,
 			);
 			path = Protocols;
 			sourceTree = "<group>";
@@ -416,6 +425,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				5DDA8B7C21C5B421005B7064 /* BioSwift.h in Headers */,
+				5D0E4600234941FB00D67B65 /* BioSwift_iOS.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -423,7 +433,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5DDA8B9A21C5B469005B7064 /* MassKit_iOS.h in Headers */,
+				5D0E4601234941FB00D67B65 /* BioSwift_iOS.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -633,6 +643,7 @@
 				5DDA8C4121C5B4E1005B7064 /* Protein.swift in Sources */,
 				5DDA8C3921C5B4E1005B7064 /* Peptide.swift in Sources */,
 				C7B7F88A22034F22007BE60C /* Scanner.swift in Sources */,
+				5D0E45EF2349046B00D67B65 /* Modifiable.swift in Sources */,
 				5D14836F2336352C006B904B /* Residue.swift in Sources */,
 				5D9F506423411679003F2A06 /* Chargeable.swift in Sources */,
 				5DDA8C4921C5B4E1005B7064 /* MassSearch.swift in Sources */,
@@ -652,10 +663,11 @@
 				C7EB5504224C0F6300E21C41 /* Bundle+Decoding.swift in Sources */,
 				5DDA8C2621C5B4E1005B7064 /* String.swift in Sources */,
 				5DDA8C0E21C5B4E1005B7064 /* ChemicalElement.swift in Sources */,
-				5DDA8B7A21C5B421005B7064 /* MassKitTests.swift in Sources */,
 				5D1483702336352C006B904B /* Residue.swift in Sources */,
+				5D0E45F02349046B00D67B65 /* Modifiable.swift in Sources */,
 				5DDA8C4A21C5B4E1005B7064 /* MassSearch.swift in Sources */,
 				5DDA8C3E21C5B4E1005B7064 /* BioSequence.swift in Sources */,
+				5D0E45FC234941EA00D67B65 /* BioSwiftTests.swift in Sources */,
 				5DDA8C3221C5B4E1005B7064 /* Utilities.swift in Sources */,
 				5DDA8C4221C5B4E1005B7064 /* Protein.swift in Sources */,
 				5DDA8C1621C5B4E1005B7064 /* AminoAcid.swift in Sources */,
@@ -679,6 +691,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5D0E45FD234941EA00D67B65 /* BioSwiftTests.swift in Sources */,
 				5DDA8C4321C5B4E1005B7064 /* Protein.swift in Sources */,
 				5DDA8C3B21C5B4E1005B7064 /* Peptide.swift in Sources */,
 				5DDA8C0F21C5B4E1005B7064 /* ChemicalElement.swift in Sources */,
@@ -702,6 +715,7 @@
 				5DDA8C1721C5B4E1005B7064 /* AminoAcid.swift in Sources */,
 				5DDA8C1B21C5B4E1005B7064 /* Formula.swift in Sources */,
 				5DDA8C5721C5B4E1005B7064 /* Digester.swift in Sources */,
+				5D0E45F12349046B00D67B65 /* Modifiable.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -713,13 +727,15 @@
 				C7EB5506224C0F6300E21C41 /* Bundle+Decoding.swift in Sources */,
 				5DDA8C2821C5B4E1005B7064 /* String.swift in Sources */,
 				5DDA8C1021C5B4E1005B7064 /* ChemicalElement.swift in Sources */,
-				5DDA8B9821C5B469005B7064 /* MassKit_iOSTests.swift in Sources */,
 				5D1483722336352C006B904B /* Residue.swift in Sources */,
+				5D0E45F22349046B00D67B65 /* Modifiable.swift in Sources */,
 				5DDA8C4C21C5B4E1005B7064 /* MassSearch.swift in Sources */,
 				5DDA8C4021C5B4E1005B7064 /* BioSequence.swift in Sources */,
+				5D0E45FE234941EA00D67B65 /* BioSwiftTests.swift in Sources */,
 				5DDA8C3421C5B4E1005B7064 /* Utilities.swift in Sources */,
 				5DDA8C4421C5B4E1005B7064 /* Protein.swift in Sources */,
 				5DDA8C1821C5B4E1005B7064 /* AminoAcid.swift in Sources */,
+				5D0E46032349420B00D67B65 /* BioSwift_iOSTests.swift in Sources */,
 				C7175DD222A5629A00F8EAE7 /* Double.swift in Sources */,
 				5DDA8C4821C5B4E1005B7064 /* Enzyme.swift in Sources */,
 				5DDA8C0C21C5B4E1005B7064 /* Hydropathy.swift in Sources */,

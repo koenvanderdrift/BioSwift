@@ -55,6 +55,17 @@ public struct FunctionalGroup: Molecule, Codable {
     }
 }
 
+extension FunctionalGroup: Hashable {
+    public static func == (lhs: FunctionalGroup, rhs: FunctionalGroup) -> Bool {
+        return lhs.name == rhs.name
+    }
+    
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(name)
+        hasher.combine(formula)
+    }
+}
+
 extension FunctionalGroup: Mass {
     public var masses: MassContainer {
         return calculateMasses()
