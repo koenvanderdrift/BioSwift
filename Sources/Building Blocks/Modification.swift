@@ -14,11 +14,13 @@ public struct Modification {
 
 extension Modification: Hashable {
     public static func == (lhs: Modification, rhs: Modification) -> Bool {
-        return lhs.group == rhs.group && lhs.location == rhs.location
+        return lhs.group == rhs.group && lhs.location == rhs.location && lhs.site == rhs.site
     }
-    
+
     public func hash(into hasher: inout Hasher) {
+        hasher.combine(group)
         hasher.combine(location)
+        hasher.combine(site)
     }
 }
 
@@ -97,16 +99,3 @@ public class Link: Modification {
 }
 
 */
-
-
-//extension Modification: Hashable {
-//    public static func == (lhs: Modification, rhs: Modification) -> Bool {
-//        return (lhs.group == rhs.group && lhs.location == rhs.location && lhs.site == rhs.site)
-//    }
-//
-//    public func hash(into hasher: inout Hasher) {
-//        hasher.combine(group)
-//        hasher.combine(location)
-//        hasher.combine(site)
-//    }
-//}
