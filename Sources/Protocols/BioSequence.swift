@@ -15,25 +15,31 @@ public enum SequenceType {
     case undefined
 }
 
-public protocol BioSequence {
-    var sequenceType: SequenceType { get }
-    var symbolLibrary: [Symbol] { get }
-    var sequenceString: String { get set }
-    var modifications: [Modification] { get set }
-
-    func symbolSequence() -> [Symbol]?
-    func symbolSet() -> SymbolSet?
-    func symbol(at index: Int) -> Symbol?
+public class BioSequence {
+    var sequenceString: String
+    var sequenceType: SequenceType = .undefined
+    var symbolLibrary: [Symbol] = []
     
-    init(sequenceString: String)
+    public var modifications: [Modification] = []
+    
+    public required init(sequence: String) {
+        self.sequenceString = sequence
+    }
 }
 
 extension BioSequence {
+    // this is very expensive, symbolSequence() is re-created everytime
+    // better is to have a property edit directly based on old and new string
+    
+    public func updateSequence(with string: String) {
+        sequenceString = string
+    }
+    
     public func symbolSequence() -> [Symbol]? {
         let result = sequenceString.map { s in
             return symbolLibrary.first(where: { $0.identifier == String(s) })
         }
-
+        
         return result as? [Symbol]
     }
     
@@ -41,6 +47,14 @@ extension BioSequence {
         guard let symbols = symbolSequence() else { return nil }
 
         return SymbolSet(array: symbols)
+    }
+    
+    public func symbols(from string: String) -> [Symbol]? {
+        let result = sequenceString.map { s in
+            return symbolLibrary.first(where: { $0.identifier == String(s) })
+        }
+        
+        return result as? [Symbol]
     }
 
     public func symbol(at index: Int) -> Symbol? {
@@ -107,14 +121,19 @@ extension BioSequence {
 //}
 
 
-
+extension Array where Element: Symbol {
+    var description: String {
+        return map { $0.identifier }.joined()
+    }
+}
 
 extension Collection where Element: BioSequence & Chargeable {
     public func charge(minCharge: Int, maxCharge: Int) -> [Element] {
         return self.flatMap { item in
             (minCharge...maxCharge).map { charge in
-                var el = Element.init(sequenceString: item.sequenceString)
+                var el = Element.init(sequence: item.sequenceString)
                 el.adducts.append(contentsOf: repeatElement(protonAdduct, count: charge))
+                
                 return el
             }
         }

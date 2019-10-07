@@ -16,18 +16,18 @@ extension Peptide {
     func precursorIons() -> [Fragment] {
         var fragments = [Fragment]()
         
-        let fragment = Fragment(sequenceString: sequenceString, fragmentType: .precursor)
+        let fragment = Fragment(type: .precursor, sequence: sequenceString)
         
         fragments.append(fragment)
         
         if self.canLoseAmmonia() {
-            var fragment = Fragment(sequenceString: sequenceString, fragmentType: .precursor)
+            let fragment = Fragment(type: .precursor, sequence: sequenceString)
             fragment.modifications = [Modification(group: FunctionalGroup(name: "lossOfAmmonia", formula: "-NH3"), location: 0)]
             fragments.append(fragment)
         }
 
         if self.canLoseWater() {
-            var fragment = Fragment(sequenceString: self.sequenceString, fragmentType: .precursor)
+            let fragment = Fragment(type: .precursor, sequence: self.sequenceString)
             fragment.modifications = [Modification(group: FunctionalGroup(name: "lossOfWater", formula: "-H2O"), location: 0)]
             fragments.append(fragment)
         }
@@ -39,7 +39,7 @@ extension Peptide {
         guard let symbols = self.symbolSet() as? Set<AminoAcid> else { return [] }
         
         return symbols.map { symbol in
-            var fragment = Fragment(sequenceString: symbol.oneLetterCode, fragmentType: .immonium)
+            let fragment = Fragment(type: .immonium, sequence: symbol.oneLetterCode)
             fragment.adducts = self.adducts
             
             return fragment
@@ -55,7 +55,7 @@ extension Peptide {
             for i in 2 ... sequenceString.count - 1 {
                 let index = sequenceString.index(sequenceString.startIndex, offsetBy: i) // let newStr = String(str[..<index])
 
-                var fragment = Fragment(sequenceString: String(sequenceString[..<index]), fragmentType: .nTerminal)
+                let fragment = Fragment(type: .nTerminal, sequence: String(sequenceString[..<index]))
                 
                 fragment.adducts.append(contentsOf: repeatElement(protonAdduct, count: z))
 
@@ -80,7 +80,7 @@ extension Peptide {
         for z in 1 ... min(2, self.adducts.count) {
             for i in 1 ... sequenceString.count - 1 {
                 let index = sequenceString.index(sequenceString.endIndex, offsetBy: -i)
-                var fragment = Fragment(sequenceString: String(sequenceString[..<index]), fragmentType: .cTerminal)
+                let fragment = Fragment(type: .cTerminal, sequence: String(sequenceString[..<index]))
 
                 fragment.adducts.append(contentsOf: repeatElement(protonAdduct, count: z))
 

@@ -1,18 +1,18 @@
 import Foundation
 
-public struct Protein: BioSequence {
-    public var sequenceType: SequenceType = .protein
-    public var symbolLibrary: [Symbol] = aminoAcidLibrary
-    public var sequenceString: String = ""
-    public var modifications: [Modification] = []
+public class Protein: BioSequence {
     public var adducts: [Adduct] = []
+    
+    public required init(sequence: String) {
+        super.init(sequence: sequence)
 
-    public init(sequenceString: String) {
-        self.sequenceString = sequenceString
+        self.symbolLibrary = aminoAcidLibrary
+        self.sequenceType = .protein        
     }
 }
 
 extension Protein: Chargeable, Modifiable {
+    
     public var masses: MassContainer {
         return calculateMasses()
     }

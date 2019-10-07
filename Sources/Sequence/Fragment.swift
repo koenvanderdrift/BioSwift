@@ -16,23 +16,21 @@ public enum FragmentType {
     case undefined
 }
 
-public struct Fragment: BioSequence {
+public class Fragment: BioSequence {
     public let fragmentType: FragmentType
-
-    public var sequenceType: SequenceType = .protein
-    public let symbolLibrary: [Symbol] = aminoAcidLibrary
-    public var sequenceString: String = ""
-    public var modifications: [Modification] = []
     public var adducts: [Adduct] = []
+    
+    public init(type: FragmentType, sequence: String) {
+        self.fragmentType = type
 
-    public init(sequenceString: String) {
-        self.fragmentType = .undefined
-        self.sequenceString = sequenceString
+        super.init(sequence: sequence)
+
+        self.symbolLibrary = aminoAcidLibrary
+        self.sequenceType = .protein
     }
     
-    public init(sequenceString: String, fragmentType: FragmentType) {
-        self.fragmentType = fragmentType
-        self.sequenceString = sequenceString
+    public required init(sequence: String) {
+        fatalError("init(sequence:) has not been implemented")
     }
 }
 
