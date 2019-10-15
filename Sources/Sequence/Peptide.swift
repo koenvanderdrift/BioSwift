@@ -1,14 +1,6 @@
 import Foundation
 
-public typealias Peptide = Protein
-
-extension Peptide: Equatable {
-    public static func == (lhs: Peptide, rhs: Peptide) -> Bool {
-        return lhs.sequenceString == rhs.sequenceString
-    }
-}
-
-extension Peptide {
+public class Peptide: Protein {
     public func fragment() -> [Fragment] {
         return precursorIons() + immoniumIons() + nTerminalIons() + cTerminalIons()
     }

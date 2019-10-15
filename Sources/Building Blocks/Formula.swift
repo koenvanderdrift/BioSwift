@@ -49,10 +49,11 @@ extension Formula: Mass {
     public var masses: MassContainer {
         return calculateMasses()
     }
-    
+
     public func calculateMasses() -> MassContainer {
-        let result = parse()
-            .reduce(zeroMass, {$0 + $1.masses})
+        var elements = parse()
+        let result = elements.indices.map { elements[$0].masses }
+            .reduce(zeroMass, +)
 
         return hasPrefix("-") ? -1 * result : result
     }

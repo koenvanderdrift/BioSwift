@@ -108,6 +108,13 @@ extension BioSequence {
     }
 }
 
+extension BioSequence: Equatable {
+    public static func == (lhs: BioSequence, rhs: BioSequence) -> Bool {
+        return lhs.sequenceString == rhs.sequenceString
+    }
+}
+
+
 //    public func addModification(with name: String, at location: Int = -1) {
 //        if let group = functionalGroupLibrary.first(where: { $0.name == name }),
 //            let residue = symbol(at: location) as? Residue {

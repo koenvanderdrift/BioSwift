@@ -1,36 +1,35 @@
 import Foundation
 
-public class Protein: BioSequence {
+public class Protein: BioSequence, Chargeable, Modifiable {
     public var adducts: [Adduct] = []
     
     public required init(sequence: String) {
         super.init(sequence: sequence)
-
+        
         self.symbolLibrary = aminoAcidLibrary
         self.sequenceType = .protein        
     }
-}
-
-extension Protein: Chargeable, Modifiable {
     
     public var masses: MassContainer {
         return calculateMasses()
     }
     
     public func calculateMasses() -> MassContainer {
-        if let sequenceMass = symbolSequence()?.compactMap({ $0 as? Mass })
-            .reduce(zeroMass, {$0 + $1.masses}) {
+        if var massSymbols = symbolSequence()?.compactMap({ $0 as? Mass }) {
+            let sequenceMass = massSymbols.indices.map { massSymbols[$0].masses }
+                .reduce(zeroMass, +)
+            
             return sequenceMass + modificationMasses() + terminalMasses() + adductMasses()
         }
         
         return zeroMass
     }
     
-    private func terminalMasses() -> MassContainer {
+    func terminalMasses() -> MassContainer {
         return nterm.masses + cterm.masses
     }
     
-    private func adductMasses() -> MassContainer {
+    func adductMasses() -> MassContainer {
         return adducts.reduce(zeroMass, {$0 + $1.group.masses})
     }
 }

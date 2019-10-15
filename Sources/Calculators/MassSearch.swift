@@ -93,7 +93,7 @@ public struct MassSearch {
             // get pseudomolecular ion
             
             symbolSequence.enumerated().forEach { index, symbol in
-                if let symbol = symbol as? Mass, let s = sequenceString.substring(from: start, to: start + index + 1) {
+                if var symbol = symbol as? Mass, let s = sequenceString.substring(from: start, to: start + index + 1) {
                     mass += symbol.masses
                     let chargedMass = params.charge > 0 ? mass / params.charge : mass
                     
