@@ -14,13 +14,13 @@ public class Peptide: Protein {
         
         if self.canLoseAmmonia() {
             let fragment = Fragment(type: .precursor, sequence: sequenceString)
-            fragment.modifications = [Modification(group: FunctionalGroup(name: "lossOfAmmonia", formula: "-NH3"), location: 0)]
+            fragment.modifications = [Modification(group: FunctionalGroup(name: "lossOfAmmonia", formula: Formula(stringValue: "-NH3")), location: 0)]
             fragments.append(fragment)
         }
 
         if self.canLoseWater() {
             let fragment = Fragment(type: .precursor, sequence: self.sequenceString)
-            fragment.modifications = [Modification(group: FunctionalGroup(name: "lossOfWater", formula: "-H2O"), location: 0)]
+            fragment.modifications = [Modification(group: FunctionalGroup(name: "lossOfWater", formula: Formula(stringValue: "-H2O")), location: 0)]
             fragments.append(fragment)
         }
 

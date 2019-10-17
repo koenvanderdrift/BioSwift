@@ -2,11 +2,33 @@ import Foundation
 
 // chemical formula parser
 
-public typealias Formula = String
+//public typealias Formula = String
 
 private typealias ElementInfo = (name: String, count: Int)
 
-extension Formula {
+
+public struct Formula: Codable {
+    public let stringValue: String
+    
+    public init(stringValue: String) {
+        self.stringValue = stringValue
+    }
+    
+    private enum CodingKeys: String, CodingKey {
+        case string
+    }
+    
+    public init(from decoder: Decoder) throws {
+        let values = try decoder.container(keyedBy: CodingKeys.self)
+        stringValue = try values.decode(String.self, forKey: .string)
+    }
+
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(stringValue, forKey: .string)
+    }
+
+
     private func parse() -> [ChemicalElement] {
         // https://stackoverflow.com/questions/23602175/regex-for-parsing-chemical-formulas
         let pattern = "([A-Z][a-z]*)([0-9]*)"
@@ -17,8 +39,8 @@ extension Formula {
         
         var result = [ChemicalElement]()
         
-        for match in self.matches(for: pattern) {
-            guard let elementString = self.substring(with: match.range),
+        for match in self.stringValue.matches(for: pattern) {
+            guard let elementString = self.stringValue.substring(with: match.range),
                 let elementInfo = countOneElement(string: String(elementString))
                 else { break }
             
@@ -42,28 +64,35 @@ extension Formula {
         
         return ElementInfo(element as String, (elementCount == 0) ? 1 : elementCount)
     }
+
+    public lazy var masses: MassContainer = {
+        return calculateMasses()
+    }()
 }
 
-
 extension Formula: Mass {
-    public var masses: MassContainer {
-        return calculateMasses()
-    }
-
+//    public var masses: MassContainer {
+//        return calculateMasses()
+//    }
+    
     public func calculateMasses() -> MassContainer {
+//        debugPrint("calc form")
         var elements = parse()
         let result = elements.indices.map { elements[$0].masses }
             .reduce(zeroMass, +)
 
-        return hasPrefix("-") ? -1 * result : result
+        return stringValue.hasPrefix("-") ? -1 * result : result
     }
 }
-
 
 public let formulaSeparator = " + "
 
 extension Formula {
+    public static func + (lhs: Formula, rhs: Formula) -> Formula {
+        return Formula(stringValue: (lhs.stringValue + formulaSeparator + rhs.stringValue))
+    }
+
     public static func - (lhs: Formula, rhs: Formula) -> Formula {
-        return lhs + formulaSeparator + "-" + rhs
+        return Formula(stringValue: (lhs.stringValue + formulaSeparator + "-" + rhs.stringValue))
     }
 }

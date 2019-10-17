@@ -36,7 +36,8 @@ public struct AminoAcid: Molecule, Residue, Codable {
         representedBy = try values.decode([String].self, forKey: .representedBy)
         oneLetterCode = try values.decode(String.self, forKey: .oneLetterCode)
         threeLetterCode = try values.decode(String.self, forKey: .threeLetterCode)
-        formula = try values.decode(Formula.self, forKey: .formula)
+        //        self.formula = try values.decode(Formula.self, forKey: .formula)
+       formula = Formula(stringValue: "C12N2H33O2")
         name = try values.decode(String.self, forKey: .name)
     }
     
@@ -73,7 +74,8 @@ extension AminoAcid: Mass {
     }
     
     public func calculateMasses() -> MassContainer {
-        return formula.masses + modificationMasses()
+        var f = formula
+        return f.masses + modificationMasses()
     }
     
     private func modificationMasses() -> MassContainer {
