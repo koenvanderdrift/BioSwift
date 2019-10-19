@@ -49,11 +49,15 @@ extension Formula {
         for element in countedElements() {
             result += element.masses
         }
-        
-        if hasPrefix("-") {
-            result = -1 * result
-        }
-        
-        return result
+
+        return hasPrefix("-") ? -1 * result : result
+    }
+}
+
+public let formulaSeparator = " + "
+
+extension Formula {
+    public static func - (lhs: Formula, rhs: Formula) -> Formula {
+        return lhs + formulaSeparator + "-" + rhs
     }
 }
