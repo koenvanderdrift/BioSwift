@@ -35,11 +35,11 @@ public struct ChemicalElement: Codable, Symbol {
     }
 
     public init(from decoder: Decoder) throws {
-        let values = try decoder.container(keyedBy: CodingKeys.self)
+        let container = try decoder.container(keyedBy: CodingKeys.self)
 
-        name = try values.decode(String.self, forKey: .name)
-        symbol = try values.decode(String.self, forKey: .symbol)
-        isotopes = try values.decode([Isotope].self, forKey: .isotopes)
+        name = try container.decode(String.self, forKey: .name)
+        symbol = try container.decode(String.self, forKey: .symbol)
+        isotopes = try container.decode([Isotope].self, forKey: .isotopes)
     }
     
     public var identifier: String {

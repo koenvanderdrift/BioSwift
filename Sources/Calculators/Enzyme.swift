@@ -35,14 +35,14 @@ public class Enzyme: Codable {
     }
     
     required public init(from decoder: Decoder) throws {
-        let values = try decoder.container(keyedBy: CodingKeys.self)
+        let container = try decoder.container(keyedBy: CodingKeys.self)
         
-        name = try values.decode(String.self, forKey: .name)
-        cleaveAt = try values.decode([String].self, forKey: .cleaveAt)
-        dontCleaveBefore = try values.decode([String].self, forKey: .dontCleaveBefore)
-        cleaveDirection = try values.decode(String.self, forKey: .cleaveDirection)
-        fullName = try values.decode(String.self, forKey: .fullName)
-        alternativeName = try values.decode(String.self, forKey: .alternativeName)
+        name = try container.decode(String.self, forKey: .name)
+        cleaveAt = try container.decode([String].self, forKey: .cleaveAt)
+        dontCleaveBefore = try container.decode([String].self, forKey: .dontCleaveBefore)
+        cleaveDirection = try container.decode(String.self, forKey: .cleaveDirection)
+        fullName = try container.decode(String.self, forKey: .fullName)
+        alternativeName = try container.decode(String.self, forKey: .alternativeName)
     }
 }
 

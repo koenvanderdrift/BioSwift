@@ -3,12 +3,11 @@ import Foundation
 public var aminoAcidLibrary: [AminoAcid] = loadJSONFromBundle(fileName: "aminoacids")
 
 public class AminoAcid: Molecule, Residue, Codable {
-    public var groups: [FunctionalGroup] = []
-    
-    public var name: String
     public var formula: Formula
-    public var oneLetterCode: String
-    public var threeLetterCode: String
+    public var groups: [FunctionalGroup] = []
+    public let name: String
+    public let oneLetterCode: String
+    public let threeLetterCode: String
     public let represents: [String]
     public let representedBy: [String]
 
@@ -31,20 +30,19 @@ public class AminoAcid: Molecule, Residue, Codable {
     }
 
     required public init(from decoder: Decoder) throws {
-        let values = try decoder.container(keyedBy: CodingKeys.self)
-        represents = try values.decode([String].self, forKey: .represents)
-        representedBy = try values.decode([String].self, forKey: .representedBy)
-        oneLetterCode = try values.decode(String.self, forKey: .oneLetterCode)
-        threeLetterCode = try values.decode(String.self, forKey: .threeLetterCode)
-        //        self.formula = try values.decode(Formula.self, forKey: .formula)
-       formula = Formula(stringValue: "C12N2H33O2")
-        name = try values.decode(String.self, forKey: .name)
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        represents = try container.decode([String].self, forKey: .represents)
+        representedBy = try container.decode([String].self, forKey: .representedBy)
+        oneLetterCode = try container.decode(String.self, forKey: .oneLetterCode)
+        threeLetterCode = try container.decode(String.self, forKey: .threeLetterCode)
+        formula = Formula(stringValue: try container.decode(String.self, forKey: .formula))
+        name = try container.decode(String.self, forKey: .name)
     }
     
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(name, forKey: .name)
-        try container.encode(formula, forKey: .formula)
+        try container.encode(formula.stringValue, forKey: .formula)
         try container.encode(oneLetterCode, forKey: .oneLetterCode)
         try container.encode(threeLetterCode, forKey: .threeLetterCode)
         try container.encode(represents, forKey: .represents)

@@ -34,12 +34,11 @@ public struct FunctionalGroup: Molecule, Codable {
     }
 
     public init(from decoder: Decoder) throws {
-        let values = try decoder.container(keyedBy: CodingKeys.self)
+        let container = try decoder.container(keyedBy: CodingKeys.self)
 
-        self.sites = try values.decode([String].self, forKey: .sites)
-        self.name = try values.decode(String.self, forKey: .name)
-//        self.formula = try values.decode(Formula.self, forKey: .formula)
-        self.formula = Formula(stringValue: "C3H5O")
+        sites = try container.decode([String].self, forKey: .sites)
+        name = try container.decode(String.self, forKey: .name)
+        formula = Formula(stringValue: try container.decode(String.self, forKey: .formula))
     }
     
     public init(name: String, formula: Formula, sites: [String] = []) {
@@ -51,14 +50,9 @@ public struct FunctionalGroup: Molecule, Codable {
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(name, forKey: .name)
-        try container.encode(formula, forKey: .formula)
+        try container.encode(formula.stringValue, forKey: .formula)
         try container.encode(sites, forKey: .sites)
     }
-    
-    //    public lazy var masses: MassContainer = {
-    //        return calculateMasses()
-    //    }()
-
 }
 
 extension FunctionalGroup: Hashable {

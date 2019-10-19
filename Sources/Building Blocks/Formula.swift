@@ -1,33 +1,13 @@
 import Foundation
 
-// chemical formula parser
-
-//public typealias Formula = String
-
-private typealias ElementInfo = (name: String, count: Int)
-
-
-public struct Formula: Codable {
+public struct Formula {
     public let stringValue: String
     
     public init(stringValue: String) {
         self.stringValue = stringValue
     }
-    
-    private enum CodingKeys: String, CodingKey {
-        case string
-    }
-    
-    public init(from decoder: Decoder) throws {
-        let values = try decoder.container(keyedBy: CodingKeys.self)
-        stringValue = try values.decode(String.self, forKey: .string)
-    }
 
-    public func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(stringValue, forKey: .string)
-    }
-
+    private typealias ElementInfo = (name: String, count: Int)
 
     private func parse() -> [ChemicalElement] {
         // https://stackoverflow.com/questions/23602175/regex-for-parsing-chemical-formulas
@@ -72,7 +52,6 @@ public struct Formula: Codable {
 
 extension Formula: Mass {
     public func calculateMasses() -> MassContainer {
-//        debugPrint("calc form")
         var elements = parse()
         let result = elements.indices.map { elements[$0].masses }
             .reduce(zeroMass, +)
