@@ -9,7 +9,7 @@ public struct Formula {
 
     private typealias ElementInfo = (name: String, count: Int)
 
-    private func parse() -> [ChemicalElement] {
+    private func parse(_ string: String) -> [ChemicalElement] {
         // https://stackoverflow.com/questions/23602175/regex-for-parsing-chemical-formulas
         let pattern = "([A-Z][a-z]*)([0-9]*)"
 //        let pattern =  "([0-9]?d*|[A-Z][a-z]{0,2}?d*)"
@@ -19,8 +19,8 @@ public struct Formula {
         
         var result = [ChemicalElement]()
         
-        for match in self.stringValue.matches(for: pattern) {
-            guard let elementString = self.stringValue.substring(with: match.range),
+        for match in string.matches(for: pattern) {
+            guard let elementString = string.substring(with: match.range),
                 let elementInfo = countOneElement(string: String(elementString))
                 else { break }
             
@@ -52,11 +52,17 @@ public struct Formula {
 
 extension Formula: Mass {
     public func calculateMasses() -> MassContainer {
-        var elements = parse()
-        let result = elements.indices.map { elements[$0].masses }
-            .reduce(zeroMass, +)
+        var result = zeroMass
 
-        return stringValue.hasPrefix("-") ? -1 * result : result
+        for f in stringValue.components(separatedBy: formulaSeparator) {
+            var elements = parse(f)
+            let mass = elements.indices.map { elements[$0].masses }
+                .reduce(zeroMass, +)
+            
+            result += f.hasPrefix("-") ? -1 * mass : mass
+        }
+        
+        return result
     }
 }
 

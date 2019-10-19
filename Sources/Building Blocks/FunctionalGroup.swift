@@ -22,7 +22,7 @@ public let ammonium = FunctionalGroup(name: "Ammonium", formula: Formula(stringV
 
 public var functionalGroupLibrary: [FunctionalGroup] = loadJSONFromBundle(fileName: "functionalgroups")
 
-public struct FunctionalGroup: Molecule, Codable {
+public class FunctionalGroup: Molecule, Codable {
     public let sites: [String]
     public var name: String
     public var formula: Formula
@@ -33,7 +33,7 @@ public struct FunctionalGroup: Molecule, Codable {
         case sites
     }
 
-    public init(from decoder: Decoder) throws {
+    public required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
 
         sites = try container.decode([String].self, forKey: .sites)
@@ -53,6 +53,10 @@ public struct FunctionalGroup: Molecule, Codable {
         try container.encode(formula.stringValue, forKey: .formula)
         try container.encode(sites, forKey: .sites)
     }
+    
+    public lazy var masses: MassContainer = {
+        return calculateMasses()
+    }()
 }
 
 extension FunctionalGroup: Hashable {
@@ -67,18 +71,7 @@ extension FunctionalGroup: Hashable {
 }
 
 extension FunctionalGroup: Mass {
-    public var masses: MassContainer {
-        return calculateMasses()
-    }
-    
     public func calculateMasses() -> MassContainer {
-        let components = formula.stringValue.components(separatedBy: formulaSeparator)
-        
-        let result = components.indices.map { index in
-            var f = Formula(stringValue: components[index])
-            return f.masses
-        }.reduce(zeroMass, +)
-        
-        return result
+        return formula.masses
     }
 }
