@@ -71,10 +71,6 @@ public struct Formula: Codable {
 }
 
 extension Formula: Mass {
-//    public var masses: MassContainer {
-//        return calculateMasses()
-//    }
-    
     public func calculateMasses() -> MassContainer {
 //        debugPrint("calc form")
         var elements = parse()

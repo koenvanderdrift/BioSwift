@@ -2,7 +2,7 @@ import Foundation
 
 public var aminoAcidLibrary: [AminoAcid] = loadJSONFromBundle(fileName: "aminoacids")
 
-public struct AminoAcid: Molecule, Residue, Codable {
+public class AminoAcid: Molecule, Residue, Codable {
     public var groups: [FunctionalGroup] = []
     
     public var name: String
@@ -30,7 +30,7 @@ public struct AminoAcid: Molecule, Residue, Codable {
         self.representedBy = representedBy
     }
 
-    public init(from decoder: Decoder) throws {
+    required public init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: CodingKeys.self)
         represents = try values.decode([String].self, forKey: .represents)
         representedBy = try values.decode([String].self, forKey: .representedBy)
@@ -74,8 +74,7 @@ extension AminoAcid: Mass {
     }
     
     public func calculateMasses() -> MassContainer {
-        var f = formula
-        return f.masses + modificationMasses()
+        return formula.masses + modificationMasses()
     }
     
     private func modificationMasses() -> MassContainer {
