@@ -2,8 +2,8 @@ import Foundation
 
 public var aminoAcidLibrary: [AminoAcid] = loadJSONFromBundle(fileName: "aminoacids")
 
-public class AminoAcid: Molecule, Residue, Codable {
-    public var formula: Formula
+public struct AminoAcid: Molecule, Residue, Codable {
+    public let formula: Formula
     public var groups: [FunctionalGroup] = []
     public let name: String
     public let oneLetterCode: String
@@ -29,7 +29,7 @@ public class AminoAcid: Molecule, Residue, Codable {
         self.representedBy = representedBy
     }
 
-    required public init(from decoder: Decoder) throws {
+    public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         represents = try container.decode([String].self, forKey: .represents)
         representedBy = try container.decode([String].self, forKey: .representedBy)
@@ -68,6 +68,7 @@ extension AminoAcid: Hashable {
 
 extension AminoAcid: Mass {
     public var masses: MassContainer {
+//        print(Unmanaged.passUnretained(self).toOpaque())
         return calculateMasses()
     }
     

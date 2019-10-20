@@ -45,13 +45,13 @@ public struct ChemicalElement: Codable, Symbol {
     public var identifier: String {
         return symbol
     }
- 
-    public lazy var masses: MassContainer = {
-        return calculateMasses()
-    }()
 }
 
 extension ChemicalElement: Mass {
+    public var masses: MassContainer {
+        return calculateMasses()
+    }
+
     public func calculateMasses() -> MassContainer {
         var currentMass = 0.0
         var currentAbundance = 0.0

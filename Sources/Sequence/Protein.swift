@@ -15,9 +15,8 @@ public class Protein: BioSequence, Chargeable, Modifiable {
     }
     
     public func calculateMasses() -> MassContainer {
-        if var massSymbols = symbolSequence()?.compactMap({ $0 as? Mass }) {
-            let sequenceMass = massSymbols.indices.map { massSymbols[$0].masses }
-                .reduce(zeroMass, +)
+        if let massSymbols = symbolSequence()?.compactMap({ $0 as? Mass }) {
+            let sequenceMass = massSymbols.reduce(zeroMass, {$0 + $1.masses})
             
             return sequenceMass + modificationMasses() + terminalMasses() + adductMasses()
         }

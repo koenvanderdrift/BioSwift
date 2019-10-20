@@ -7,6 +7,7 @@ public struct Formula {
         self.stringValue = stringValue
     }
 
+    private let elements: [ChemicalElement] = []
     private typealias ElementInfo = (name: String, count: Int)
 
     private func parse(_ string: String) -> [ChemicalElement] {
@@ -44,20 +45,19 @@ public struct Formula {
         
         return ElementInfo(element as String, (elementCount == 0) ? 1 : elementCount)
     }
-
-    public lazy var masses: MassContainer = {
-        return calculateMasses()
-    }()
 }
 
 extension Formula: Mass {
+    public var masses: MassContainer {
+        return calculateMasses()
+    }
+
     public func calculateMasses() -> MassContainer {
         var result = zeroMass
 
         for f in stringValue.components(separatedBy: formulaSeparator) {
-            var elements = parse(f)
-            let mass = elements.indices.map { elements[$0].masses }
-                .reduce(zeroMass, +)
+            let elements = parse(f)
+            let mass = elements.reduce(zeroMass, {$0 + $1.masses})
             
             result += f.hasPrefix("-") ? -1 * mass : mass
         }

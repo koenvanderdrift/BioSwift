@@ -350,7 +350,6 @@
 		5DDA8BEE21C5B4E1005B7064 /* Protocols */ = {
 			isa = PBXGroup;
 			children = (
-				5DDA8BEA21C5B4E1005B7064 /* BioSequence.swift */,
 				5D9F506323411679003F2A06 /* Chargeable.swift */,
 				C762DBA32247BDA3006E95E8 /* Mass.swift */,
 				5DDA8BE021C5B4E1005B7064 /* Molecule.swift */,
@@ -378,6 +377,7 @@
 		C795B3B722441F750032AB26 /* Sequence */ = {
 			isa = PBXGroup;
 			children = (
+				5DDA8BEA21C5B4E1005B7064 /* BioSequence.swift */,
 				C7E147932261043A0092C846 /* Fragment.swift */,
 				5DDA8BE921C5B4E1005B7064 /* Peptide.swift */,
 				5DDA8BEB21C5B4E1005B7064 /* Protein.swift */,

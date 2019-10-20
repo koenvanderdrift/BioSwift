@@ -22,10 +22,10 @@ public let ammonium = FunctionalGroup(name: "Ammonium", formula: Formula(stringV
 
 public var functionalGroupLibrary: [FunctionalGroup] = loadJSONFromBundle(fileName: "functionalgroups")
 
-public class FunctionalGroup: Molecule, Codable {
+public struct FunctionalGroup: Molecule, Codable {
     public let sites: [String]
-    public var name: String
-    public var formula: Formula
+    public let name: String
+    public let formula: Formula
 
     private enum CodingKeys: String, CodingKey {
         case name
@@ -33,7 +33,7 @@ public class FunctionalGroup: Molecule, Codable {
         case sites
     }
 
-    public required init(from decoder: Decoder) throws {
+    public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
 
         sites = try container.decode([String].self, forKey: .sites)
@@ -53,13 +53,13 @@ public class FunctionalGroup: Molecule, Codable {
         try container.encode(formula.stringValue, forKey: .formula)
         try container.encode(sites, forKey: .sites)
     }
-    
-    public lazy var masses: MassContainer = {
-        return calculateMasses()
-    }()
 }
 
 extension FunctionalGroup: Hashable {
+    public var masses: MassContainer {
+        return calculateMasses()
+    }
+
     public static func == (lhs: FunctionalGroup, rhs: FunctionalGroup) -> Bool {
         return lhs.name == rhs.name
     }

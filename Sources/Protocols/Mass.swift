@@ -11,7 +11,7 @@ import Foundation
 public let zeroMass = MassContainer(monoisotopicMass: 0.0, averageMass: 0.0, nominalMass: 0.0)
 
 public protocol Mass {
-    var masses: MassContainer { mutating get }
+    var masses: MassContainer { get }
     
     func calculateMasses() -> MassContainer
 }
