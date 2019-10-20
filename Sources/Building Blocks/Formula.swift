@@ -5,6 +5,7 @@ public struct Formula {
     
     public init(stringValue: String) {
         self.stringValue = stringValue
+        debugPrint(stringValue)
     }
 
     private let elements: [ChemicalElement] = []
@@ -56,8 +57,7 @@ extension Formula: Mass {
         var result = zeroMass
 
         for f in stringValue.components(separatedBy: formulaSeparator) {
-            let elements = parse(f)
-            let mass = elements.reduce(zeroMass, {$0 + $1.masses})
+            let mass = parse(f).reduce(zeroMass, {$0 + $1.masses})
             
             result += f.hasPrefix("-") ? -1 * mass : mass
         }
