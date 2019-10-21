@@ -72,6 +72,13 @@ extension FunctionalGroup: Hashable {
 
 extension FunctionalGroup: Mass {
     public func calculateMasses() -> MassContainer {
-        return formula.masses
+        let components = formula.stringValue.components(separatedBy: formulaSeparator)
+        
+        let result = components.indices.map { index in
+            let f = Formula(stringValue: components[index])
+            return f.masses
+            }.reduce(zeroMass, +)
+        
+        return result
     }
 }
