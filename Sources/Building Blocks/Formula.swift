@@ -1,14 +1,14 @@
 import Foundation
 
 public struct Formula {
-//    private(set) var elements: [ChemicalElement] = []
+    private(set) var elements: [ChemicalElement] = []
     private(set) var _masses: MassContainer = zeroMass
 
     public var stringValue: String
 
     public init(stringValue: String) {
         self.stringValue = stringValue
-//        self.elements = parse(stringValue)
+        self.elements = parse(stringValue)
         
         _masses = calculateMasses()
     }
@@ -58,7 +58,7 @@ extension Formula: Mass {
     }
 
     public func calculateMasses() -> MassContainer {
-        let result = parse(stringValue).reduce(zeroMass, {$0 + $1.masses})
+        let result = elements.reduce(zeroMass, {$0 + $1.masses})
     
         return stringValue.hasPrefix("-") ? -1 * result : result
     }
