@@ -18,6 +18,8 @@ extension Isotope {
 }
 
 public struct ChemicalElement: Codable, Symbol {
+    private(set) var _masses: MassContainer = zeroMass
+
     public let name: String
     public let symbol: String
     public let isotopes: [Isotope]
@@ -32,6 +34,8 @@ public struct ChemicalElement: Codable, Symbol {
         self.name = name
         self.symbol = symbol
         self.isotopes = isotopes
+        
+        _masses = calculateMasses()
     }
 
     public init(from decoder: Decoder) throws {
@@ -40,6 +44,8 @@ public struct ChemicalElement: Codable, Symbol {
         name = try container.decode(String.self, forKey: .name)
         symbol = try container.decode(String.self, forKey: .symbol)
         isotopes = try container.decode([Isotope].self, forKey: .isotopes)
+
+        _masses = calculateMasses()
     }
     
     public var identifier: String {
@@ -49,7 +55,7 @@ public struct ChemicalElement: Codable, Symbol {
 
 extension ChemicalElement: Mass {
     public var masses: MassContainer {
-        return calculateMasses()
+        return _masses
     }
 
     public func calculateMasses() -> MassContainer {
