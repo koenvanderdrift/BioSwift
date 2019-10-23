@@ -32,15 +32,15 @@
 ////    return text
 //// }
 //
-//@discardableResult func time<Result>(name: StaticString = #function, line: Int = #line, _ f: () -> Result) -> Result {
-//    // via: https://talk.objc.io/episodes/S01E90-concurrent-map
-//    let startTime = DispatchTime.now()
-//    let result = f()
-//    let endTime = DispatchTime.now()
-//    let diff = Double(endTime.uptimeNanoseconds - startTime.uptimeNanoseconds) / 1_000_000_000 as Double
-//    debugPrint("\(name) (line \(line)): \(diff) sec")
-//    return result
-//}
+@discardableResult func time<Result>(name: StaticString = #function, line: Int = #line, _ f: () -> Result) -> Result {
+    // via: https://talk.objc.io/episodes/S01E90-concurrent-map
+    let startTime = DispatchTime.now()
+    let result = f()
+    let endTime = DispatchTime.now()
+    let diff = Double(endTime.uptimeNanoseconds - startTime.uptimeNanoseconds) / 1_000_000_000 as Double
+    debugPrint("\(name) (line \(line)): \(diff) sec")
+    return result
+}
 //
 //
 //// via:  Fhttp://stackoverflow.com/questions/41402770/swift-parse-string-with-different-formats/41402868#41402868

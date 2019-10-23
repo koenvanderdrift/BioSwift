@@ -58,7 +58,7 @@ extension Formula: Mass {
     }
 
     public func calculateMasses() -> MassContainer {
-        let result = elements.reduce(zeroMass, {$0 + $1.masses})
+        let result = mass(of: elements)
     
         return stringValue.hasPrefix("-") ? -1 * result : result
     }

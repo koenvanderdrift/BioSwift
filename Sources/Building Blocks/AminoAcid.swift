@@ -77,6 +77,6 @@ extension AminoAcid: Mass {
     }
     
     private func modificationMasses() -> MassContainer {
-        return groups.reduce(zeroMass, {$0 + $1.masses})
+        return mass(of: groups)
     }
 }

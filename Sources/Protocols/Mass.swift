@@ -16,6 +16,30 @@ public protocol Mass {
     func calculateMasses() -> MassContainer
 }
 
+
+extension Mass {
+    // TO DO rename function calls
+    public func mass(of symbols: [Symbol]?) -> MassContainer {
+        var result = zeroMass
+        
+        if let massSymbols = symbols?.compactMap({ $0 as? Mass }) {
+            result = mass(of: massSymbols)
+        }
+            
+        return result
+    }
+    
+    public func mass(of mass: [Mass]) -> MassContainer {
+        var result = zeroMass
+        
+        for m in mass {
+            result += m.masses
+        }
+        
+        return result
+    }
+}
+
 public enum MassType: String {
     case average = "Average"
     case monoisotopic = "Monoisotopic"
