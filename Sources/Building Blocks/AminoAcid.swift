@@ -48,6 +48,10 @@ public struct AminoAcid: Molecule, Residue, Codable {
         try container.encode(represents, forKey: .represents)
         try container.encode(representedBy, forKey: .representedBy)
     }
+    
+    var description: String {
+        return threeLetterCode
+    }
 }
 
 extension AminoAcid: Symbol {
@@ -68,7 +72,6 @@ extension AminoAcid: Hashable {
 
 extension AminoAcid: Mass {
     public var masses: MassContainer {
-//        print(Unmanaged.passUnretained(self).toOpaque())
         return calculateMasses()
     }
     

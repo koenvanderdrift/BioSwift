@@ -12,7 +12,11 @@ public struct Formula {
         
         _masses = calculateMasses()
     }
-
+    
+    var description: String {
+        return stringValue
+    }
+    
     private typealias ElementInfo = (name: String, count: Int)
 
     private func parse(_ string: String) -> [ChemicalElement] {

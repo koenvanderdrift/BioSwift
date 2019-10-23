@@ -27,6 +27,8 @@ public struct FunctionalGroup: Molecule, Codable {
     public let name: String
     public let formula: Formula
 
+    private(set) var _masses: MassContainer = zeroMass
+
     private enum CodingKeys: String, CodingKey {
         case name
         case formula
@@ -39,12 +41,16 @@ public struct FunctionalGroup: Molecule, Codable {
         sites = try container.decode([String].self, forKey: .sites)
         name = try container.decode(String.self, forKey: .name)
         formula = Formula(stringValue: try container.decode(String.self, forKey: .formula))
+
+        _masses = calculateMasses()
     }
     
     public init(name: String, formula: Formula, sites: [String] = []) {
         self.sites = sites
         self.name = name
         self.formula = formula
+
+        _masses = calculateMasses()
     }
 
     public func encode(to encoder: Encoder) throws {
@@ -53,11 +59,16 @@ public struct FunctionalGroup: Molecule, Codable {
         try container.encode(formula.stringValue, forKey: .formula)
         try container.encode(sites, forKey: .sites)
     }
+    
+    var description: String {
+        return name
+    }
+
 }
 
 extension FunctionalGroup: Hashable {
     public var masses: MassContainer {
-        return calculateMasses()
+        return _masses
     }
 
     public static func == (lhs: FunctionalGroup, rhs: FunctionalGroup) -> Bool {

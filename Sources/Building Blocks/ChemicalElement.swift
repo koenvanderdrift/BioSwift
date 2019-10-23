@@ -51,6 +51,11 @@ public struct ChemicalElement: Codable, Symbol {
     public var identifier: String {
         return symbol
     }
+    
+    var description: String {
+        return symbol
+    }
+
 }
 
 extension ChemicalElement: Mass {
