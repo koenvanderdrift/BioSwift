@@ -2,14 +2,15 @@ import Foundation
 
 public var aminoAcidLibrary: [AminoAcid] = loadJSONFromBundle(fileName: "aminoacids")
 
-public struct AminoAcid: Molecule, Residue, Codable {
+public struct AminoAcid: Residue, Codable {
     public let formula: Formula
-    public var groups: [FunctionalGroup] = []
     public let name: String
     public let oneLetterCode: String
     public let threeLetterCode: String
     public let represents: [String]
     public let representedBy: [String]
+
+    public var groups: [FunctionalGroup] = []
 
     private enum CodingKeys: String, CodingKey {
         case name
@@ -54,12 +55,6 @@ public struct AminoAcid: Molecule, Residue, Codable {
     }
 }
 
-extension AminoAcid: Symbol {
-    public var identifier: String {
-        return oneLetterCode
-    }
-}
-
 extension AminoAcid: Hashable {
     public static func == (lhs: AminoAcid, rhs: AminoAcid) -> Bool {
         return lhs.threeLetterCode == rhs.threeLetterCode
@@ -73,13 +68,5 @@ extension AminoAcid: Hashable {
 extension AminoAcid: Mass {
     public var masses: MassContainer {
         return calculateMasses()
-    }
-    
-    public func calculateMasses() -> MassContainer {
-        return formula.masses + modificationMasses()
-    }
-    
-    private func modificationMasses() -> MassContainer {
-        return mass(of: groups)
     }
 }
