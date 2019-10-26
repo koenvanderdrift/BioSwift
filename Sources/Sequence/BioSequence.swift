@@ -27,6 +27,12 @@ public class BioSequence {
     }
 }
 
+extension BioSequence: Equatable {
+    public static func == (lhs: BioSequence, rhs: BioSequence) -> Bool {
+        return lhs.sequenceString == rhs.sequenceString
+    }
+}
+
 extension BioSequence {
     // this is very expensive, symbolSequence() is re-created everytime
     // better is to have a property edit directly based on old and new string
@@ -108,13 +114,6 @@ extension BioSequence {
     }
 }
 
-extension BioSequence: Equatable {
-    public static func == (lhs: BioSequence, rhs: BioSequence) -> Bool {
-        return lhs.sequenceString == rhs.sequenceString
-    }
-}
-
-
 //    public func addModification(with name: String, at location: Int = -1) {
 //        if let group = functionalGroupLibrary.first(where: { $0.name == name }),
 //            let residue = symbol(at: location) as? Residue {
@@ -127,23 +126,4 @@ extension BioSequence: Equatable {
 //    }
 //}
 
-
-extension Array where Element: Symbol {
-    var description: String {
-        return map { $0.identifier }.joined()
-    }
-}
-
-extension Collection where Element: BioSequence & Chargeable {
-    public func charge(minCharge: Int, maxCharge: Int) -> [Element] {
-        return self.flatMap { item in
-            (minCharge...maxCharge).map { charge in
-                var el = Element.init(sequence: item.sequenceString)
-                el.adducts.append(contentsOf: repeatElement(protonAdduct, count: charge))
-                
-                return el
-            }
-        }
-    }
-}
 

@@ -38,3 +38,17 @@ extension Chargeable {
         return mass(over: charge)
     }
 }
+
+extension Collection where Element: BioSequence & Chargeable {
+    public func charge(minCharge: Int, maxCharge: Int) -> [Element] {
+        return self.flatMap { item in
+            (minCharge...maxCharge).map { charge in
+                var el = Element.init(sequence: item.sequenceString)
+                el.adducts.append(contentsOf: repeatElement(protonAdduct, count: charge))
+                
+                return el
+            }
+        }
+    }
+}
+

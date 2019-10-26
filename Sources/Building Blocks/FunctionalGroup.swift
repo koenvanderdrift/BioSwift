@@ -60,17 +60,16 @@ public struct FunctionalGroup: Molecule, Codable {
         try container.encode(sites, forKey: .sites)
     }
     
-    var description: String {
-        return name
-    }
-
-}
-
-extension FunctionalGroup: Hashable {
     public var masses: MassContainer {
         return _masses
     }
+    
+    var description: String {
+        return name
+    }
+}
 
+extension FunctionalGroup: Hashable {
     public static func == (lhs: FunctionalGroup, rhs: FunctionalGroup) -> Bool {
         return lhs.name == rhs.name
     }

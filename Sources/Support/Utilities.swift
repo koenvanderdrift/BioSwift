@@ -32,7 +32,7 @@
 ////    return text
 //// }
 //
-@discardableResult func time<Result>(name: StaticString = #function, line: Int = #line, _ f: () -> Result) -> Result {
+@discardableResult public func time<Result>(name: StaticString = #function, line: Int = #line, _ f: () -> Result) -> Result {
     // via: https://talk.objc.io/episodes/S01E90-concurrent-map
     let startTime = DispatchTime.now()
     let result = f()
