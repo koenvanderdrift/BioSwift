@@ -78,7 +78,7 @@ public struct MassSearch {
     
     public func searchMass() -> SearchResult {
         var result = SearchResult()
-        guard var symbolSequence = sequence.symbolSequence() else { return result }
+        guard var symbolSequence = sequence.symbolSequence else { return result }
         
         let sequenceString = sequence.sequenceString
         

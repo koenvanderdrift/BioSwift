@@ -16,7 +16,18 @@ public enum SequenceType {
 }
 
 public class BioSequence {
-    var sequenceString: String
+    var symbolSequence: [Symbol]? = []
+    
+    var sequenceString: String {
+        didSet {
+            let result = sequenceString.map { s in
+                return symbolLibrary.first(where: { $0.identifier == String(s) })
+            }
+            debugPrint("didSet sequence")
+            symbolSequence = result as? [Symbol]
+        }
+    }
+    
     var sequenceType: SequenceType = .undefined
     var symbolLibrary: [Symbol] = []
     
@@ -41,16 +52,8 @@ extension BioSequence {
         sequenceString = string
     }
     
-    public func symbolSequence() -> [Symbol]? {
-        let result = sequenceString.map { s in
-            return symbolLibrary.first(where: { $0.identifier == String(s) })
-        }
-        
-        return result as? [Symbol]
-    }
-    
     public func symbolSet() -> SymbolSet? {
-        guard let symbols = symbolSequence() else { return nil }
+        guard let symbols = symbolSequence else { return nil }
 
         return SymbolSet(array: symbols)
     }
@@ -74,11 +77,11 @@ extension BioSequence {
     }
     
     public func subSymbolSequence(from: Int, to: Int) -> [Symbol] {
-        return Array((symbolSequence()?[from...to])!)
+        return Array((symbolSequence?[from...to])!)
     }
     
     public func symbolLocations(with identifiers: [String]) -> [Int] {
-        guard let enumeratedSymbols = symbolSequence()?.enumerated() else { return [] }
+        guard let enumeratedSymbols = symbolSequence?.enumerated() else { return [] }
 
         var locations: [Int] = []
 
