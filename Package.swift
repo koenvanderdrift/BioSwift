@@ -2,7 +2,7 @@
 /**
 *  BioSwift
 *  Copyright (c) Koen van der Drift 2019
-*  
+*  MIT license, see LICENSE file for details
 */
 
 import PackageDescription
