@@ -16,6 +16,8 @@
 - fragmentation of peptides
 
 ### TODO:
+- sequence manipulations
+- sequence calculations (chemical and physical properties)
 - import of fasta files
 - import of UniProt files
 - support for dna and rna sequences
