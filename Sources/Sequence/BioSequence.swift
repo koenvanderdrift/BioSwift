@@ -97,6 +97,7 @@ extension BioSequence {
     }
     
     public func possibleFunctionalGroups(at index: Int) -> [FunctionalGroup]? {
+        return nil
         if let symbol = symbol(at: index) {
             var possibleFunctionalGroups = functionalGroupLibrary.filter { $0.sites.contains(symbol.identifier) == true }
             // add N and C term groups
