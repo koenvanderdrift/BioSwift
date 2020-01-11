@@ -12,7 +12,7 @@ protocol Residue: Molecule, Symbol, Mass {
     var oneLetterCode: String { get }
     var threeLetterCode: String { get }
     
-    var groups: [FunctionalGroup] { get set }
+    var modifications: [Modification] { get set }
 }
 
 extension Residue {
@@ -25,6 +25,6 @@ extension Residue {
     }
     
     private func modificationMasses() -> MassContainer {
-        return mass(of: groups)
+        return mass(of: modifications.map { $0.group })
     }
 }
