@@ -6,7 +6,7 @@
 //  Copyright © 2018 Koen van der Drift. All rights reserved.
 //
 
-#import <Cocoa/Cocoa.h>
+#import <Foundation/Foundation.h>
 
 //! Project version number for BioSwift.
 FOUNDATION_EXPORT double BioSwiftVersionNumber;
