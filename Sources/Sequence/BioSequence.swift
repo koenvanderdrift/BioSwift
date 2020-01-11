@@ -16,16 +16,21 @@ public enum SequenceType {
 }
 
 public class BioSequence {
-    var symbolSequence: [Symbol]? = []
-    
+    var residueSequence: [Residue]? = []
+
     var sequenceString: String {
         didSet {
             let result = sequenceString.map { s in
                 return symbolLibrary.first(where: { $0.identifier == String(s) })
             }
             debugPrint("didSet sequence")
-            symbolSequence = result as? [Symbol]
+
+            residueSequence = result as? [Residue]
         }
+    }
+    
+    var symbolSequence: [Symbol]? {
+        return residueSequence
     }
     
     var sequenceType: SequenceType = .undefined
@@ -115,18 +120,32 @@ extension BioSequence {
 
         return nil
     }
+
+    public func addModification(with name: String, at location: Int = -1) {
+        if let group = functionalGroupLibrary.first(where: { $0.name == name }) {
+            residueSequence?.modifyElement(atIndex: location) {
+                $0.modifications.append(Modification(group: group, location: -1))
+            }
+        }
+    }
+
+    public func removeModification(with name: String, at location: Int = -1) {
+        residueSequence?.modifyElement(atIndex: location) { residue in
+            residue.modifications = residue.modifications.filter { $0.group.name != name }
+        }
+    }
 }
 
-//    public func addModification(with name: String, at location: Int = -1) {
-//        if let group = functionalGroupLibrary.first(where: { $0.name == name }),
-//            let residue = symbol(at: location) as? Residue {
-//            residue.groups.append(group)
-//        }
-//    }
-//
-//    public func removeModification(_ modification: Modification) {
-//        modifications = modifications.filter { $0 != modification }
-//    }
-//}
-
-
+extension Array {
+    mutating func modifyForEach(_ body: (_ index: Index, _ element: inout Element) -> ()) {
+        for index in indices {
+            modifyElement(atIndex: index) { body(index, &$0) }
+        }
+    }
+    
+    mutating func modifyElement(atIndex index: Index, _ modifyElement: (_ element: inout Element) -> ()) {
+        var element = self[index]
+        modifyElement(&element)
+        self[index] = element
+    }
+}
