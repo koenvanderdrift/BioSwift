@@ -2,25 +2,21 @@ import Foundation
 
 public struct Modification {
     public let group: FunctionalGroup
-    public var location: Int = -1 
-    public var site: String
-
-    public init(group: FunctionalGroup, location: Int, site: String = "") {
+    public let isBond: Bool
+    
+    public init(group: FunctionalGroup, isBond: Bool = false) {
         self.group = group
-        self.location = location
-        self.site = site
+        self.isBond = isBond
     }
 }
 
 extension Modification: Hashable {
     public static func == (lhs: Modification, rhs: Modification) -> Bool {
-        return lhs.group == rhs.group && lhs.location == rhs.location && lhs.site == rhs.site
+        return lhs.group == rhs.group
     }
 
     public func hash(into hasher: inout Hasher) {
         hasher.combine(group)
-        hasher.combine(location)
-        hasher.combine(site)
     }
 }
 

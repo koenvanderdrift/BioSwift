@@ -124,7 +124,7 @@ extension BioSequence {
     public func addModification(with name: String, at location: Int = -1) {
         if let group = functionalGroupLibrary.first(where: { $0.name == name }) {
             residueSequence?.modifyElement(atIndex: location) {
-                $0.modifications.append(Modification(group: group, location: -1))
+                $0.modifications.append(Modification(group: group))
             }
         }
     }
