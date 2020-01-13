@@ -2,11 +2,11 @@ import Foundation
 
 public struct Modification {
     public let group: FunctionalGroup
-    public let isBond: Bool
+    public var sites: [Int]
     
-    public init(group: FunctionalGroup, isBond: Bool = false) {
+    public init(group: FunctionalGroup, sites: [Int] = []) {
         self.group = group
-        self.isBond = isBond
+        self.sites = sites
     }
 }
 
@@ -18,7 +18,13 @@ extension Modification: Hashable {
     public func hash(into hasher: inout Hasher) {
         hasher.combine(group)
     }
+    
+    public func isLink() -> Bool {
+        return sites.count > 1
+    }
 }
+
+public let disulfideBondInfo = BondInfo(name: "Disulfide", from: "Cys", to: "Cys")
 
 public struct BondInfo {
     public let name: String
@@ -38,30 +44,30 @@ extension BondInfo: Equatable {
     }
 }
 
-public struct Bond { // only created as a modification
-    public var from: Int
-    public var to: Int
-    public var info: BondInfo
-    
-    public init(from: Int, to: Int, info: BondInfo) {
-        self.from = from
-        self.to = to
-        self.info = info
-    }
-    
-    public func contains(_ location: Int) -> Bool {
-        return (from == location || to == location)
-    }
-}
-
-extension Bond: Equatable {
-    public static func == (lhs: Bond, rhs: Bond) -> Bool {
-        // return true if same type and if to and from are the same or reversed
-        return lhs.info == rhs.info &&
-            ((lhs.from == rhs.from && lhs.to == rhs.to) ||
-            (lhs.from == rhs.to && lhs.to == rhs.from))
-    }
-}
+//public struct Bond { // only created as a modification
+//    public var from: Int
+//    public var to: Int
+//    public var info: BondInfo
+//    
+//    public init(from: Int, to: Int, info: BondInfo) {
+//        self.from = from
+//        self.to = to
+//        self.info = info
+//    }
+//    
+//    public func contains(_ location: Int) -> Bool {
+//        return (from == location || to == location)
+//    }
+//}
+//
+//extension Bond: Equatable {
+//    public static func == (lhs: Bond, rhs: Bond) -> Bool {
+//        // return true if same type and if to and from are the same or reversed
+//        return lhs.info == rhs.info &&
+//            ((lhs.from == rhs.from && lhs.to == rhs.to) ||
+//            (lhs.from == rhs.to && lhs.to == rhs.from))
+//    }
+//}
 
 /*
 
