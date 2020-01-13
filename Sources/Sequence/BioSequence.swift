@@ -136,6 +136,18 @@ extension BioSequence {
             }
         }
     }
+    
+    public func addModification(with name: String, at location: Int = -1) {
+        if let group = functionalGroupLibrary.first(where: { $0.name == name }) {
+            add(Modification(group: group, sites: [location]))
+        }
+    }
+            
+    public func removeModification(with name: String, at location: Int = -1) {
+        if let group = functionalGroupLibrary.first(where: { $0.name == name }) {
+            remove(Modification(group: group, sites: [location]))
+        }
+    }
 }
 
 extension Array {
