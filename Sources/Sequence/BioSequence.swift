@@ -121,17 +121,19 @@ extension BioSequence {
         return nil
     }
 
-    public func addModification(with name: String, at location: Int = -1) {
-        if let group = functionalGroupLibrary.first(where: { $0.name == name }) {
+    public func add(_ modification: Modification) {
+        if let location = modification.sites.first {
             residueSequence?.modifyElement(atIndex: location) {
-                $0.modifications.append(Modification(group: group))
+                $0.modifications.append(modification)
             }
         }
     }
 
-    public func removeModification(with name: String, at location: Int = -1) {
-        residueSequence?.modifyElement(atIndex: location) { residue in
-            residue.modifications = residue.modifications.filter { $0.group.name != name }
+    public func remove(_ modification: Modification) {
+        if let location = modification.sites.first {
+            residueSequence?.modifyElement(atIndex: location) { residue in
+                residue.modifications = residue.modifications.filter { $0.sites.first != location }
+            }
         }
     }
 }
