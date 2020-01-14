@@ -23,9 +23,9 @@ public let ammonium = FunctionalGroup(name: "Ammonium", formula: Formula(stringV
 public var functionalGroupLibrary: [FunctionalGroup] = loadJSONFromBundle(fileName: "functionalgroups")
 
 public struct FunctionalGroup: Molecule, Codable {
-    public let sites: [String]
     public let name: String
     public let formula: Formula
+    public let sites: [String]
 
     private(set) var _masses: MassContainer = zeroMass
 
@@ -38,17 +38,17 @@ public struct FunctionalGroup: Molecule, Codable {
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
 
-        sites = try container.decode([String].self, forKey: .sites)
         name = try container.decode(String.self, forKey: .name)
         formula = Formula(stringValue: try container.decode(String.self, forKey: .formula))
+        sites = try container.decode([String].self, forKey: .sites)
 
         _masses = calculateMasses()
     }
     
     public init(name: String, formula: Formula, sites: [String] = []) {
-        self.sites = sites
         self.name = name
         self.formula = formula
+        self.sites = sites
 
         _masses = calculateMasses()
     }
