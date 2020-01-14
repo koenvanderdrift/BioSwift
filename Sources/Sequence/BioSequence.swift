@@ -148,6 +148,10 @@ extension BioSequence {
             remove(Modification(group: group, sites: [location]))
         }
     }
+    
+    public func modifications() -> [Modification] = {
+        return residueSequence.map { $0.modifications }.filter { $0.count > 0 }
+    }
 }
 
 extension Array {
