@@ -36,7 +36,15 @@ public class BioSequence {
     var sequenceType: SequenceType = .undefined
     var symbolLibrary: [Symbol] = []
     
-    public var modifications: [Modification] = []
+    public var modifications: [Modification] {
+        var result: [Modification] = []
+        
+        residueSequence?.forEach { residue in
+            result.append(contentsOf: residue.modifications)
+        }
+        
+        return result
+    }    
     
     public required init(sequence: String) {
         self.sequenceString = sequence
@@ -122,17 +130,18 @@ extension BioSequence {
     }
 
     public func add(_ modification: Modification) {
-        if let location = modification.sites.first {
-            residueSequence?.modifyElement(atIndex: location) {
-                $0.modifications.append(modification)
+        for site in modification.sites {
+            residueSequence?.modifyElement(atIndex: site) {
+                let mod = Modification(group: modification.group, sites: [site])
+                $0.modifications.append(mod)
             }
         }
     }
 
     public func remove(_ modification: Modification) {
-        if let location = modification.sites.first {
-            residueSequence?.modifyElement(atIndex: location) { residue in
-                residue.modifications = residue.modifications.filter { $0.sites.first != location }
+        for site in modification.sites {
+            residueSequence?.modifyElement(atIndex: site) { residue in
+                residue.modifications = residue.modifications.filter { $0.sites.first != site }
             }
         }
     }
@@ -149,9 +158,6 @@ extension BioSequence {
         }
     }
     
-    public func modifications() -> [Modification] = {
-        return residueSequence.map { $0.modifications }.filter { $0.count > 0 }
-    }
 }
 
 extension Array {

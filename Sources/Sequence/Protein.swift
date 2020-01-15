@@ -1,6 +1,6 @@
 import Foundation
 
-public class Protein: BioSequence, Chargeable, Modifiable {
+public class Protein: BioSequence, Chargeable {    
     public var adducts: [Adduct] = []
     
     public required init(sequence: String) {
@@ -15,7 +15,7 @@ public class Protein: BioSequence, Chargeable, Modifiable {
     }
     
     public func calculateMasses() -> MassContainer {
-        let result = mass(of: symbolSequence) + modificationMasses() + terminalMasses() + adductMasses()
+        let result = mass(of: symbolSequence) + terminalMasses() + adductMasses()
 
         return result
     }
