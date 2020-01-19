@@ -10,12 +10,20 @@ public class Protein: BioSequence, Chargeable {
         self.sequenceType = .protein        
     }
     
+    public override init(residues: [Residue]) {
+        super.init(residues: residues)
+        
+        self.symbolLibrary = aminoAcidLibrary
+        self.sequenceType = .protein
+    }
+
+    
     public var masses: MassContainer {
         return calculateMasses()
     }
     
     public func calculateMasses() -> MassContainer {
-        let result = mass(of: symbolSequence) + terminalMasses() + adductMasses()
+        let result = mass(of: residueSequence) + terminalMasses() + adductMasses()
 
         return result
     }

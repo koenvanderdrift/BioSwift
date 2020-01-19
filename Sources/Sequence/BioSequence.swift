@@ -16,38 +16,41 @@ public enum SequenceType {
 }
 
 public class BioSequence {
-    var residueSequence: [Residue]? = []
+    var residueSequence = [Residue]()
 
-    var sequenceString: String {
-        didSet {
-            let result = sequenceString.map { s in
-                return symbolLibrary.first(where: { $0.identifier == String(s) })
-            }
-            debugPrint("didSet sequence")
-
-            residueSequence = result as? [Residue]
-        }
+    var symbolSequence: [Symbol] {
+        return residueSequence
     }
     
-    var symbolSequence: [Symbol]? {
-        return residueSequence
+    var sequenceString: String {
+        var result: String = ""
+        
+        residueSequence.forEach { residue in
+            result.append(contentsOf: residue.oneLetterCode)
+        }
+        
+        return residueSequence.map { $0.identifier }.joined()
     }
     
     var sequenceType: SequenceType = .undefined
     var symbolLibrary: [Symbol] = []
     
-    public var modifications: [Modification] {
-        var result: [Modification] = []
-        
-        residueSequence?.forEach { residue in
-            result.append(contentsOf: residue.modifications)
-        }
-        
-        return result
-    }    
+//    public var modifications: [Modification] {
+//        var result: [Modification] = []
+//        
+//        residueSequence.forEach { residue in
+//            result.append(contentsOf: residue.modifications)
+//        }
+//        
+//        return result
+//    }    
     
     public required init(sequence: String) {
-        self.sequenceString = sequence
+        residueSequence = (symbols(from: sequence) as? [Residue])!
+    }
+    
+    public init(residues: [Residue]) {
+        residueSequence = residues
     }
 }
 
@@ -58,21 +61,42 @@ extension BioSequence: Equatable {
 }
 
 extension BioSequence {
-    // this is very expensive, symbolSequence() is re-created everytime
-    // better is to have a property edit directly based on old and new string
-    
-    public func updateSequence(with string: String) {
-        sequenceString = string
+    public func update(_ sequence: String, in editedRange: NSRange, changeInLength: Int) {
+        if changeInLength > 0 {
+            // insert
+            let range = editedRange.location..<editedRange.location + changeInLength
+            let s = String(sequence[range])
+            
+            if let newResidues = symbols(from: s) as? [Residue] {
+                residueSequence.insert(contentsOf: newResidues, at: editedRange.location)
+            }
+        }
+        
+        else if changeInLength < 0 {
+            // remove
+            let range = editedRange.location..<editedRange.location - changeInLength
+            residueSequence.removeSubrange(range)
+        }
+            
+        else if changeInLength == 0 {
+            // replace
+            let range = editedRange.location..<editedRange.location + editedRange.length
+            let s = String(sequence[range])
+            
+            if let newResidues = symbols(from: s) as? [Residue] {
+                residueSequence.replaceSubrange(range, with: newResidues)
+            }
+        }
+        
+//        debugPrint(residueSequence?.map{ $0.oneLetterCode })
     }
     
     public func symbolSet() -> SymbolSet? {
-        guard let symbols = symbolSequence else { return nil }
-
-        return SymbolSet(array: symbols)
+        return SymbolSet(array: symbolSequence)
     }
     
     public func symbols(from string: String) -> [Symbol]? {
-        let result = sequenceString.map { s in
+        let result = string.map { s in
             return symbolLibrary.first(where: { $0.identifier == String(s) })
         }
         
@@ -89,17 +113,17 @@ extension BioSequence {
         return result
     }
     
-    public func subSymbolSequence(from: Int, to: Int) -> [Symbol] {
-        return Array((symbolSequence?[from...to])!)
+    public func residueSequence(with range: NSRange) -> [Residue] {
+        let slice = residueSequence[range.location..<range.location + range.length]
+
+        return Array(slice)
     }
     
     public func symbolLocations(with identifiers: [String]) -> [Int] {
-        guard let enumeratedSymbols = symbolSequence?.enumerated() else { return [] }
-
         var locations: [Int] = []
 
         for identifier in identifiers {
-            let indices = enumeratedSymbols.filter {
+            let indices = symbolSequence.enumerated().filter {
                 $0.element.identifier == identifier
             }
 
@@ -131,7 +155,7 @@ extension BioSequence {
 
     public func add(_ modification: Modification) {
         for site in modification.sites {
-            residueSequence?.modifyElement(atIndex: site) {
+            residueSequence.modifyElement(atIndex: site) {
                 let mod = Modification(group: modification.group, sites: [site])
                 $0.modifications.append(mod)
             }
@@ -140,7 +164,7 @@ extension BioSequence {
 
     public func remove(_ modification: Modification) {
         for site in modification.sites {
-            residueSequence?.modifyElement(atIndex: site) { residue in
+            residueSequence.modifyElement(atIndex: site) { residue in
                 residue.modifications = residue.modifications.filter { $0.sites.first != site }
             }
         }
