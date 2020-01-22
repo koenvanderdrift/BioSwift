@@ -35,15 +35,13 @@ public struct SearchParameters {
     public let searchType: SearchType
     public var charge: Int
     public var massType: MassType
-    public let sequenceType: SequenceType
     
-    public init(searchValue: Double, tolerance: Tolerance, searchType: SearchType, charge: Int, massType: MassType, sequenceType: SequenceType) {
+    public init(searchValue: Double, tolerance: Tolerance, searchType: SearchType, charge: Int, massType: MassType) {
         self.searchValue = searchValue
         self.tolerance = tolerance
         self.searchType = searchType
         self.charge = charge
         self.massType = massType
-        self.sequenceType = sequenceType
     }
     
     func massRange() -> ClosedRange<Double> {

@@ -7,14 +7,12 @@ public class Protein: BioSequence, Chargeable {
         super.init(sequence: sequence)
         
         self.symbolLibrary = aminoAcidLibrary
-        self.sequenceType = .protein        
     }
     
     public override init(residues: [Residue]) {
         super.init(residues: residues)
         
         self.symbolLibrary = aminoAcidLibrary
-        self.sequenceType = .protein
     }
 
     
@@ -45,7 +43,6 @@ public class Protein: BioSequence, Chargeable {
 //        guard let fastaRecord = fasta.serializer() else { return nil }
 //
 //        self.sequenceString = fastaRecord.sequence
-//        self.sequenceType = .protein
 ////        super.init(sequence: fastaRecord.sequence, sequenceType: .protein)
 //    }
 //}
