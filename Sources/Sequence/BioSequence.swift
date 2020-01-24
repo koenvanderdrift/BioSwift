@@ -102,11 +102,7 @@ extension BioSequence {
         var locations: [Int] = []
         
         for identifier in identifiers {
-            let indices = symbolSequence.enumerated().filter {
-                $0.element.identifier == identifier
-            }
-            
-            locations += indices.map{ $0.offset }
+            locations += sequenceString.locations(of: identifier)
         }
         
         return locations

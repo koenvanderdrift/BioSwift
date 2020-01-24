@@ -33,12 +33,29 @@ extension String {
     }
 
     func indices(of string: String, options: CompareOptions = .literal) -> [Index] {
-        var result: [Index] = []
-        var start = startIndex
+        var result = [Index]()
+        var start = self.startIndex
+        
         while let range = range(of: string, options: options, range: start ..< endIndex) {
             result.append(range.lowerBound)
+            
             start = range.upperBound
         }
+        
+        return result
+    }
+
+    func locations(of string: String) -> [Int] {
+        var result = [Int]()
+        var start = self.startIndex
+        
+        while start < self.endIndex, let range = self.range(of: string, range: start..<self.endIndex), !range.isEmpty {
+            let location = distance(from: self.startIndex, to: range.lowerBound)
+            result.append(location)
+            
+            start = range.upperBound
+        }
+        
         return result
     }
 
