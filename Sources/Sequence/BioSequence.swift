@@ -41,8 +41,7 @@ extension BioSequence: Equatable {
 }
 
 extension BioSequence {
-    public func update(_ sequence: String, in editedRange: NSRange, changeInLength: Int) {
-        
+    public func update(with sequence: String, in editedRange: NSRange, changeInLength: Int) {
         switch changeInLength {
         case Int.min..<0:
             let range = editedRange.location..<editedRange.location - changeInLength
@@ -64,8 +63,6 @@ extension BioSequence {
         default:
             fatalError()
         }
-        
-        //        debugPrint(residueSequence?.map{ $0.oneLetterCode })
     }
     
     public func symbolSet() -> SymbolSet? {
@@ -81,28 +78,20 @@ extension BioSequence {
     }
     
     public func symbol(at index: Int) -> Symbol? {
-        var result: Symbol? = nil
-        
-        if !sequenceString.isEmpty {
-            result = symbolLibrary.first(where: { $0.identifier == String(sequenceString[index]) })
-        }
-        
-        return result
+        return symbolSequence[index]
     }
     
-    public func residueSequence(with range: NSRange) -> [Residue] {
-        if range.length == 0 { return [] }
+    public func residueSequence(with range: NSRange) -> [Residue]? {
+        guard range.length > 0 else { return nil }
         
-        let slice = residueSequence[range.location..<range.location + range.length]
-        
-        return Array(slice)
+        return Array(residueSequence[range.location..<range.location + range.length])
     }
     
     public func symbolLocations(with identifiers: [String]) -> [Int] {
         var locations: [Int] = []
         
         for identifier in identifiers {
-            locations += sequenceString.locations(of: identifier)
+            locations += symbolSequence.indices.filter { (symbolSequence[$0].identifier) == identifier}
         }
         
         return locations
@@ -155,20 +144,5 @@ extension BioSequence {
         if let group = functionalGroupLibrary.first(where: { $0.name == name }) {
             remove(Modification(group: group, sites: [location]))
         }
-    }
-    
-}
-
-extension Array {
-    mutating func modifyForEach(_ body: (_ index: Index, _ element: inout Element) -> ()) {
-        for index in indices {
-            modifyElement(atIndex: index) { body(index, &$0) }
-        }
-    }
-    
-    mutating func modifyElement(atIndex index: Index, _ modifyElement: (_ element: inout Element) -> ()) {
-        var element = self[index]
-        modifyElement(&element)
-        self[index] = element
     }
 }

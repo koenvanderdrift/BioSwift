@@ -32,33 +32,6 @@ extension String {
         return subStrings
     }
 
-    func indices(of string: String, options: CompareOptions = .literal) -> [Index] {
-        var result = [Index]()
-        var start = self.startIndex
-        
-        while let range = range(of: string, options: options, range: start ..< endIndex) {
-            result.append(range.lowerBound)
-            
-            start = range.upperBound
-        }
-        
-        return result
-    }
-
-    func locations(of string: String) -> [Int] {
-        var result = [Int]()
-        var start = self.startIndex
-        
-        while start < self.endIndex, let range = self.range(of: string, range: start..<self.endIndex), !range.isEmpty {
-            let location = distance(from: self.startIndex, to: range.lowerBound)
-            result.append(location)
-            
-            start = range.upperBound
-        }
-        
-        return result
-    }
-
     func matches(for regex: String) -> [NSTextCheckingResult] {
         // https://www.raywenderlich.com/86205/nsregularexpression-swift-tutorial
 
@@ -107,6 +80,32 @@ extension String {
         return Range(nsRange, in: self)
     }
 
+//    func indices(of string: String, options: CompareOptions = .literal) -> [Index] {
+//        var result = [Index]()
+//        var start = self.startIndex
+//
+//        while let range = range(of: string, options: options, range: start ..< endIndex) {
+//            result.append(range.lowerBound)
+//
+//            start = range.upperBound
+//        }
+//
+//        return result
+//    }
+
+//    func locations(of string: String) -> [Int] {
+//        var result = [Int]()
+//        var start = self.startIndex
+//
+//        while start < self.endIndex, let range = self.range(of: string, range: start..<self.endIndex), !range.isEmpty {
+//            let location = distance(from: self.startIndex, to: range.lowerBound)
+//            result.append(location)
+//
+//            start = range.upperBound
+//        }
+//
+//        return result
+//    }    
 }
 
 extension StringProtocol {
