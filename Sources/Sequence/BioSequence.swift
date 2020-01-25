@@ -54,13 +54,6 @@ extension BioSequence {
             
             let newResidues = residueSequence(from: s)
             residueSequence.insert(contentsOf: newResidues, at: editedRange.location)
-//            
-//        case 0:
-//            let range = editedRange.location..<editedRange.location + editedRange.length
-//            let s = String(sequence[range])
-//            
-//            let newResidues = residueSequence(from: s)
-//            residueSequence.replaceSubrange(range, with: newResidues)
             
         default:
             fatalError()
@@ -72,12 +65,8 @@ extension BioSequence {
     }
     
     public func residueSequence(from string: String) -> [Residue] {
-        var result = [Residue]()
-        
-        for char in string {
-            if let residue = symbolLibrary.first(where: { $0.identifier == String(char) }) {
-                result.append(residue as! Residue)
-            }
+        let result = string.compactMap { char in
+            return symbolLibrary.first(where: { $0.identifier == String(char) }) as? Residue
         }
         
         return result
@@ -94,13 +83,11 @@ extension BioSequence {
     }
     
     public func symbolLocations(with identifiers: [String]) -> [Int] {
-        var locations = [Int]()
-        
-        for identifier in identifiers {
-            locations += symbolSequence.indices.filter { (symbolSequence[$0].identifier) == identifier}
+        let result = identifiers.map { i in
+            return residueSequence.indices.filter { (residueSequence[$0].identifier) == i }
         }
-        
-        return locations
+
+        return result.flatMap { $0 }
     }
     
     public func possibleFunctionalGroups(at index: Int) -> [FunctionalGroup]? {
