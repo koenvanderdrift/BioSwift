@@ -25,18 +25,19 @@ public class BioSequence {
         return residueSequence.flatMap { $0.modifications }
     }
     
-    public required init(sequence: String) {
-        residueSequence = (symbols(from: sequence) as? [Residue])!
-    }
-    
-    public init(residues: [Residue]) {
+    public required init(residues: [Residue]) {
         residueSequence = residues
     }
+
+    public init(sequence: String) {
+        residueSequence = residueSequence(from: sequence)
+    }    
 }
 
 extension BioSequence: Equatable {
+// https://khawerkhaliq.com/blog/swift-protocols-equatable-part-one/
     public static func == (lhs: BioSequence, rhs: BioSequence) -> Bool {
-        return lhs.sequenceString == rhs.sequenceString
+        return lhs.sequenceString == rhs.sequenceString && lhs.modifications == rhs.modifications
     }
 }
 
@@ -46,20 +47,21 @@ extension BioSequence {
         case Int.min..<0:
             let range = editedRange.location..<editedRange.location - changeInLength
             residueSequence.removeSubrange(range)
-        case 0:
-            let range = editedRange.location..<editedRange.location + editedRange.length
-            let s = String(sequence[range])
             
-            if let newResidues = symbols(from: s) as? [Residue] {
-                residueSequence.replaceSubrange(range, with: newResidues)
-            }
         case 0..<Int.max:
             let range = editedRange.location..<editedRange.location + changeInLength
             let s = String(sequence[range])
             
-            if let newResidues = symbols(from: s) as? [Residue] {
-                residueSequence.insert(contentsOf: newResidues, at: editedRange.location)
-            }
+            let newResidues = residueSequence(from: s)
+            residueSequence.insert(contentsOf: newResidues, at: editedRange.location)
+//            
+//        case 0:
+//            let range = editedRange.location..<editedRange.location + editedRange.length
+//            let s = String(sequence[range])
+//            
+//            let newResidues = residueSequence(from: s)
+//            residueSequence.replaceSubrange(range, with: newResidues)
+            
         default:
             fatalError()
         }
@@ -69,12 +71,16 @@ extension BioSequence {
         return SymbolSet(array: symbolSequence)
     }
     
-    public func symbols(from string: String) -> [Symbol]? {
-        let result = string.map { s in
-            return symbolLibrary.first(where: { $0.identifier == String(s) })
+    public func residueSequence(from string: String) -> [Residue] {
+        var result = [Residue]()
+        
+        for char in string {
+            if let residue = symbolLibrary.first(where: { $0.identifier == String(char) }) {
+                result.append(residue as! Residue)
+            }
         }
         
-        return result as? [Symbol]
+        return result
     }
     
     public func symbol(at index: Int) -> Symbol? {
@@ -82,13 +88,13 @@ extension BioSequence {
     }
     
     public func residueSequence(with range: NSRange) -> [Residue]? {
-        guard range.length > 0 else { return nil }
+        guard range.location < residueSequence.count, range.length > 0 else { return nil }
         
         return Array(residueSequence[range.location..<range.location + range.length])
     }
     
     public func symbolLocations(with identifiers: [String]) -> [Int] {
-        var locations: [Int] = []
+        var locations = [Int]()
         
         for identifier in identifiers {
             locations += symbolSequence.indices.filter { (symbolSequence[$0].identifier) == identifier}

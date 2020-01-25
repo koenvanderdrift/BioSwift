@@ -3,18 +3,17 @@ import Foundation
 public class Protein: BioSequence, Chargeable {    
     public var adducts: [Adduct] = []
     
-    public required init(sequence: String) {
-        super.init(sequence: sequence)
-        
-        self.symbolLibrary = aminoAcidLibrary
-    }
-    
-    public override init(residues: [Residue]) {
+    public required init(residues: [Residue]) {
         super.init(residues: residues)
         
         self.symbolLibrary = aminoAcidLibrary
     }
 
+    public override init(sequence: String) {
+        super.init(sequence: sequence)
+        
+        self.symbolLibrary = aminoAcidLibrary
+    }
     
     public var masses: MassContainer {
         return calculateMasses()
