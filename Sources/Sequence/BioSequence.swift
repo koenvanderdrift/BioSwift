@@ -35,7 +35,7 @@ public class BioSequence {
 }
 
 extension BioSequence: Equatable {
-// https://khawerkhaliq.com/blog/swift-protocols-equatable-part-one/
+ // https://khawerkhaliq.com/blog/swift-protocols-equatable-part-one/
     public static func == (lhs: BioSequence, rhs: BioSequence) -> Bool {
         return lhs.sequenceString == rhs.sequenceString && lhs.modifications == rhs.modifications
     }
@@ -90,10 +90,19 @@ extension BioSequence {
         return result.flatMap { $0 }
     }
     
+    public func functionalGroups(at index: Int) -> [FunctionalGroup]? {
+        if let residue = symbol(at: index) as? Residue {
+            return residue.modifications.map { $0.group }
+        }
+
+        return nil
+    }
+    
     public func possibleFunctionalGroups(at index: Int) -> [FunctionalGroup]? {
         if let symbol = symbol(at: index) {
             var possibleFunctionalGroups = functionalGroupLibrary.filter { $0.sites.contains(symbol.identifier) == true }
-            // add N and C term groups
+         
+         // add N and C term groups
             if index == 0 {
                 let nTermGroups = functionalGroupLibrary.filter { $0.sites.contains("NTerminal") == true }
                 possibleFunctionalGroups.append(contentsOf: nTermGroups)
