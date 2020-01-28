@@ -14,9 +14,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "5DDA8B6A21C5B421005B7064"
+               BlueprintIdentifier = "5DDA8B8921C5B468005B7064"
                BuildableName = "BioSwift.framework"
-               BlueprintName = "BioSwift"
+               BlueprintName = "BioSwift_iOS"
                ReferencedContainer = "container:BioSwift.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -28,13 +28,23 @@
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       shouldUseLaunchSchemeArgsEnv = "YES">
       <Testables>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "5DDA8B9121C5B469005B7064"
+               BuildableName = "BioSwift-iOSTests.xctest"
+               BlueprintName = "BioSwift-iOSTests"
+               ReferencedContainer = "container:BioSwift.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "5DDA8B6A21C5B421005B7064"
+            BlueprintIdentifier = "5DDA8B8921C5B468005B7064"
             BuildableName = "BioSwift.framework"
-            BlueprintName = "BioSwift"
+            BlueprintName = "BioSwift_iOS"
             ReferencedContainer = "container:BioSwift.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -54,9 +64,9 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "5DDA8B6A21C5B421005B7064"
+            BlueprintIdentifier = "5DDA8B8921C5B468005B7064"
             BuildableName = "BioSwift.framework"
-            BlueprintName = "BioSwift"
+            BlueprintName = "BioSwift_iOS"
             ReferencedContainer = "container:BioSwift.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -72,9 +82,9 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "5DDA8B6A21C5B421005B7064"
+            BlueprintIdentifier = "5DDA8B8921C5B468005B7064"
             BuildableName = "BioSwift.framework"
-            BlueprintName = "BioSwift"
+            BlueprintName = "BioSwift_iOS"
             ReferencedContainer = "container:BioSwift.xcodeproj">
          </BuildableReference>
       </MacroExpansion>

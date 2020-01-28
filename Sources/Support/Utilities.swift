@@ -43,7 +43,7 @@
 //}
 //
 //
-//// via:  Fhttp://stackoverflow.com/questions/41402770/swift-parse-string-with-different-formats/41402868#41402868
+//// via:  http://stackoverflow.com/questions/41402770/swift-parse-string-with-different-formats/41402868#41402868
 //
 //// This type alias is just here to make the next line a bit more readable.
 //// A `BoolInstanceMethod<T, U>` is a closure type that represents an unapplied

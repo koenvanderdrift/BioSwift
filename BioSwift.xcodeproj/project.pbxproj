@@ -14,6 +14,10 @@
 		5D54693B23DFA8810000BD87 /* Fragment.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7E147932261043A0092C846 /* Fragment.swift */; };
 		5D54693C23DFA8A30000BD87 /* FunctionalGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7EAA9F12233F649002267DC /* FunctionalGroup.swift */; };
 		5D54693D23DFA93B0000BD87 /* Scanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7B7F88922034F22007BE60C /* Scanner.swift */; };
+		5D54694923DFAF750000BD87 /* BioSwift_macOSTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D54694823DFAF750000BD87 /* BioSwift_macOSTests.swift */; };
+		5D54694B23DFAF750000BD87 /* BioSwift_macOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DDA8B6B21C5B421005B7064 /* BioSwift_macOS.framework */; };
+		5D54695823DFAF8C0000BD87 /* BioSwift_iOSTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D54695723DFAF8C0000BD87 /* BioSwift_iOSTests.swift */; };
+		5D54695A23DFAF8C0000BD87 /* BioSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DDA8B8A21C5B468005B7064 /* BioSwift.framework */; };
 		5D9F506423411679003F2A06 /* Chargeable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9F506323411679003F2A06 /* Chargeable.swift */; };
 		5D9F506623411679003F2A06 /* Chargeable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9F506323411679003F2A06 /* Chargeable.swift */; };
 		5DDA8B7C21C5B421005B7064 /* BioSwift.h in Headers */ = {isa = PBXBuildFile; fileRef = 5DDA8B6E21C5B421005B7064 /* BioSwift.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -77,11 +81,34 @@
 		C7EB5505224C0F6300E21C41 /* Bundle+Decoding.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7EB5502224C0F6300E21C41 /* Bundle+Decoding.swift */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		5D54694C23DFAF750000BD87 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5DDA8B6221C5B421005B7064 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5DDA8B6A21C5B421005B7064;
+			remoteInfo = BioSwift_macOS;
+		};
+		5D54695B23DFAF8C0000BD87 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5DDA8B6221C5B421005B7064 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5DDA8B8921C5B468005B7064;
+			remoteInfo = BioSwift_iOS;
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXFileReference section */
 		5D0E45FF234941FB00D67B65 /* BioSwift_iOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BioSwift_iOS.h; sourceTree = "<group>"; };
 		5D14836E2336352C006B904B /* Residue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Residue.swift; sourceTree = "<group>"; };
+		5D54694623DFAF750000BD87 /* BioSwift_macOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BioSwift_macOSTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		5D54694823DFAF750000BD87 /* BioSwift_macOSTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BioSwift_macOSTests.swift; sourceTree = "<group>"; };
+		5D54694A23DFAF750000BD87 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		5D54695523DFAF8C0000BD87 /* BioSwift_iOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BioSwift_iOSTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		5D54695723DFAF8C0000BD87 /* BioSwift_iOSTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BioSwift_iOSTests.swift; sourceTree = "<group>"; };
+		5D54695923DFAF8C0000BD87 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		5D9F506323411679003F2A06 /* Chargeable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Chargeable.swift; sourceTree = "<group>"; };
-		5DDA8B6B21C5B421005B7064 /* BioSwift.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = BioSwift.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		5DDA8B6B21C5B421005B7064 /* BioSwift_macOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = BioSwift_macOS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		5DDA8B6E21C5B421005B7064 /* BioSwift.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BioSwift.h; sourceTree = "<group>"; };
 		5DDA8B6F21C5B421005B7064 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		5DDA8B8A21C5B468005B7064 /* BioSwift.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = BioSwift.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -122,6 +149,22 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		5D54694323DFAF750000BD87 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5D54694B23DFAF750000BD87 /* BioSwift_macOS.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5D54695223DFAF8C0000BD87 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5D54695A23DFAF8C0000BD87 /* BioSwift.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		5DDA8B6821C5B421005B7064 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -139,6 +182,24 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		5D54694723DFAF750000BD87 /* BioSwift_macOSTests */ = {
+			isa = PBXGroup;
+			children = (
+				5D54694823DFAF750000BD87 /* BioSwift_macOSTests.swift */,
+				5D54694A23DFAF750000BD87 /* Info.plist */,
+			);
+			path = BioSwift_macOSTests;
+			sourceTree = "<group>";
+		};
+		5D54695623DFAF8C0000BD87 /* BioSwift_iOSTests */ = {
+			isa = PBXGroup;
+			children = (
+				5D54695723DFAF8C0000BD87 /* BioSwift_iOSTests.swift */,
+				5D54695923DFAF8C0000BD87 /* Info.plist */,
+			);
+			path = BioSwift_iOSTests;
+			sourceTree = "<group>";
+		};
 		5DDA8B6121C5B421005B7064 = {
 			isa = PBXGroup;
 			children = (
@@ -147,6 +208,8 @@
 				5DDA8BD521C5B4E1005B7064 /* Sources */,
 				5DDA8B6D21C5B421005B7064 /* BioSwift */,
 				5DDA8B8B21C5B468005B7064 /* BioSwift-iOS */,
+				5D54694723DFAF750000BD87 /* BioSwift_macOSTests */,
+				5D54695623DFAF8C0000BD87 /* BioSwift_iOSTests */,
 				5DDA8B6C21C5B421005B7064 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -154,8 +217,10 @@
 		5DDA8B6C21C5B421005B7064 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				5DDA8B6B21C5B421005B7064 /* BioSwift.framework */,
+				5DDA8B6B21C5B421005B7064 /* BioSwift_macOS.framework */,
 				5DDA8B8A21C5B468005B7064 /* BioSwift.framework */,
+				5D54694623DFAF750000BD87 /* BioSwift_macOSTests.xctest */,
+				5D54695523DFAF8C0000BD87 /* BioSwift_iOSTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -304,9 +369,45 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		5DDA8B6A21C5B421005B7064 /* BioSwift */ = {
+		5D54694523DFAF750000BD87 /* BioSwift_macOSTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 5DDA8B7F21C5B421005B7064 /* Build configuration list for PBXNativeTarget "BioSwift" */;
+			buildConfigurationList = 5D54695023DFAF750000BD87 /* Build configuration list for PBXNativeTarget "BioSwift_macOSTests" */;
+			buildPhases = (
+				5D54694223DFAF750000BD87 /* Sources */,
+				5D54694323DFAF750000BD87 /* Frameworks */,
+				5D54694423DFAF750000BD87 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				5D54694D23DFAF750000BD87 /* PBXTargetDependency */,
+			);
+			name = BioSwift_macOSTests;
+			productName = BioSwift_macOSTests;
+			productReference = 5D54694623DFAF750000BD87 /* BioSwift_macOSTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		5D54695423DFAF8C0000BD87 /* BioSwift_iOSTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5D54695D23DFAF8C0000BD87 /* Build configuration list for PBXNativeTarget "BioSwift_iOSTests" */;
+			buildPhases = (
+				5D54695123DFAF8C0000BD87 /* Sources */,
+				5D54695223DFAF8C0000BD87 /* Frameworks */,
+				5D54695323DFAF8C0000BD87 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				5D54695C23DFAF8C0000BD87 /* PBXTargetDependency */,
+			);
+			name = BioSwift_iOSTests;
+			productName = BioSwift_iOSTests;
+			productReference = 5D54695523DFAF8C0000BD87 /* BioSwift_iOSTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		5DDA8B6A21C5B421005B7064 /* BioSwift_macOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5DDA8B7F21C5B421005B7064 /* Build configuration list for PBXNativeTarget "BioSwift_macOS" */;
 			buildPhases = (
 				5DDA8B6621C5B421005B7064 /* Headers */,
 				5DDA8B6721C5B421005B7064 /* Sources */,
@@ -317,14 +418,14 @@
 			);
 			dependencies = (
 			);
-			name = BioSwift;
+			name = BioSwift_macOS;
 			productName = MassKit;
-			productReference = 5DDA8B6B21C5B421005B7064 /* BioSwift.framework */;
+			productReference = 5DDA8B6B21C5B421005B7064 /* BioSwift_macOS.framework */;
 			productType = "com.apple.product-type.framework";
 		};
-		5DDA8B8921C5B468005B7064 /* BioSwift-iOS */ = {
+		5DDA8B8921C5B468005B7064 /* BioSwift_iOS */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 5DDA8B9F21C5B469005B7064 /* Build configuration list for PBXNativeTarget "BioSwift-iOS" */;
+			buildConfigurationList = 5DDA8B9F21C5B469005B7064 /* Build configuration list for PBXNativeTarget "BioSwift_iOS" */;
 			buildPhases = (
 				5DDA8B8521C5B468005B7064 /* Headers */,
 				5DDA8B8621C5B468005B7064 /* Sources */,
@@ -335,7 +436,7 @@
 			);
 			dependencies = (
 			);
-			name = "BioSwift-iOS";
+			name = BioSwift_iOS;
 			productName = "MassKit-iOS";
 			productReference = 5DDA8B8A21C5B468005B7064 /* BioSwift.framework */;
 			productType = "com.apple.product-type.framework";
@@ -350,6 +451,12 @@
 				LastUpgradeCheck = 1020;
 				ORGANIZATIONNAME = "Koen van der Drift";
 				TargetAttributes = {
+					5D54694523DFAF750000BD87 = {
+						CreatedOnToolsVersion = 10.1;
+					};
+					5D54695423DFAF8C0000BD87 = {
+						CreatedOnToolsVersion = 10.1;
+					};
 					5DDA8B6A21C5B421005B7064 = {
 						CreatedOnToolsVersion = 10.1;
 					};
@@ -371,13 +478,29 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				5DDA8B6A21C5B421005B7064 /* BioSwift */,
-				5DDA8B8921C5B468005B7064 /* BioSwift-iOS */,
+				5DDA8B6A21C5B421005B7064 /* BioSwift_macOS */,
+				5DDA8B8921C5B468005B7064 /* BioSwift_iOS */,
+				5D54694523DFAF750000BD87 /* BioSwift_macOSTests */,
+				5D54695423DFAF8C0000BD87 /* BioSwift_iOSTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		5D54694423DFAF750000BD87 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5D54695323DFAF8C0000BD87 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		5DDA8B6921C5B421005B7064 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -407,6 +530,22 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		5D54694223DFAF750000BD87 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5D54694923DFAF750000BD87 /* BioSwift_macOSTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5D54695123DFAF8C0000BD87 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5D54695823DFAF8C0000BD87 /* BioSwift_iOSTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		5DDA8B6721C5B421005B7064 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -477,7 +616,97 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		5D54694D23DFAF750000BD87 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5DDA8B6A21C5B421005B7064 /* BioSwift_macOS */;
+			targetProxy = 5D54694C23DFAF750000BD87 /* PBXContainerItemProxy */;
+		};
+		5D54695C23DFAF8C0000BD87 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5DDA8B8921C5B468005B7064 /* BioSwift_iOS */;
+			targetProxy = 5D54695B23DFAF8C0000BD87 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin XCBuildConfiguration section */
+		5D54694E23DFAF750000BD87 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = BioSwift_macOSTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "koen.BioSwift-macOSTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 4.2;
+			};
+			name = Debug;
+		};
+		5D54694F23DFAF750000BD87 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = BioSwift_macOSTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "koen.BioSwift-macOSTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 4.2;
+			};
+			name = Release;
+		};
+		5D54695E23DFAF8C0000BD87 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				INFOPLIST_FILE = BioSwift_iOSTests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.1;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "koen.BioSwift-iOSTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 4.2;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		5D54695F23DFAF8C0000BD87 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				INFOPLIST_FILE = BioSwift_iOSTests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.1;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "koen.BioSwift-iOSTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 4.2;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
 		5DDA8B7D21C5B421005B7064 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -709,6 +938,24 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		5D54695023DFAF750000BD87 /* Build configuration list for PBXNativeTarget "BioSwift_macOSTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5D54694E23DFAF750000BD87 /* Debug */,
+				5D54694F23DFAF750000BD87 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		5D54695D23DFAF8C0000BD87 /* Build configuration list for PBXNativeTarget "BioSwift_iOSTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5D54695E23DFAF8C0000BD87 /* Debug */,
+				5D54695F23DFAF8C0000BD87 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		5DDA8B6521C5B421005B7064 /* Build configuration list for PBXProject "BioSwift" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -718,7 +965,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		5DDA8B7F21C5B421005B7064 /* Build configuration list for PBXNativeTarget "BioSwift" */ = {
+		5DDA8B7F21C5B421005B7064 /* Build configuration list for PBXNativeTarget "BioSwift_macOS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5DDA8B8021C5B421005B7064 /* Debug */,
@@ -727,7 +974,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		5DDA8B9F21C5B469005B7064 /* Build configuration list for PBXNativeTarget "BioSwift-iOS" */ = {
+		5DDA8B9F21C5B469005B7064 /* Build configuration list for PBXNativeTarget "BioSwift_iOS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5DDA8B9B21C5B469005B7064 /* Debug */,
