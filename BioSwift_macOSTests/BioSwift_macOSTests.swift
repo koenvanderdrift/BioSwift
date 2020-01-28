@@ -7,6 +7,7 @@
 //
 
 import XCTest
+@testable import BioSwift_macOS
 
 class BioSwift_macOSTests: XCTestCase {
 
@@ -29,5 +30,28 @@ class BioSwift_macOSTests: XCTestCase {
             // Put the code you want to measure the time of here.
         }
     }
+    
+    func testProteinLength() {  
+        let protein = Protein(sequence: "DWSSD")
+        XCTAssertEqual(protein.sequenceString.count, 5)
+    }
+    
+    func testProteinLengthWithIllegalCharacters() {
+        let protein = Protein(sequence: "D___WS83SD")
+        XCTAssertEqual(protein.sequenceString.count, 5)
+    }
+
+    func testProteinAverageMass() {
+        let protein = Protein(sequence: "DWSSD")
+        XCTAssertEqual(protein.masses.averageMass.roundToDecimal(4), 608.5558)
+    }
+    
+    func testProteinSerinePhosphorylationAverageMass() {
+        let protein = Protein(sequence: "DWSSD")
+        protein.addModification(with: "Phosphorylation", at: 4)
+        XCTAssertEqual(protein.masses.averageMass.roundToDecimal(4), 688.5357)
+    }
+
+
 
 }

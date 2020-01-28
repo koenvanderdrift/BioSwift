@@ -28,7 +28,11 @@ public class Fragment: Peptide {
     public required init(residues: [Residue]) {
         fatalError("init(residues:) has not been implemented")
     }
-
+    
+    required init(residues: [Residue], library: [Symbol]) {
+        fatalError("init(residues:library:) has not been implemented")
+    }
+    
     override func terminalMasses() -> MassContainer {
         var result = zeroMass
         if fragmentType == .nTerminal {

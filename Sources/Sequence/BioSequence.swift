@@ -25,11 +25,13 @@ public class BioSequence {
         return residueSequence.flatMap { $0.modifications }
     }
     
-    public required init(residues: [Residue]) {
+    public required init(residues: [Residue], library: [Symbol] = []) {
+        symbolLibrary = library
         residueSequence = residues
     }
 
-    public init(sequence: String) {
+    public init(sequence: String, library: [Symbol] = []) {
+        symbolLibrary = library
         residueSequence = residueSequence(from: sequence)
     }    
 }
@@ -66,10 +68,10 @@ extension BioSequence {
     
     public func residueSequence(from string: String) -> [Residue] {
         let result = string.compactMap { char in
-            return symbolLibrary.first(where: { $0.identifier == String(char) }) as? Residue
+            return symbolLibrary.first(where: { $0.identifier == String(char) })
         }
         
-        return result
+        return (result as? [Residue])!
     }
     
     public func symbol(at index: Int) -> Symbol? {

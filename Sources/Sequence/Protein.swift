@@ -4,15 +4,15 @@ public class Protein: BioSequence, Chargeable {
     public var adducts: [Adduct] = []
     
     public required init(residues: [Residue]) {
-        super.init(residues: residues)
-        
-        self.symbolLibrary = aminoAcidLibrary
+        super.init(residues: residues, library: aminoAcidLibrary)
     }
 
-    public override init(sequence: String) {
-        super.init(sequence: sequence)
-        
-        self.symbolLibrary = aminoAcidLibrary
+    public init(sequence: String) {
+        super.init(sequence: sequence, library: aminoAcidLibrary)
+    }
+    
+    public required init(residues: [Residue], library: [Symbol]) {
+        fatalError("init(residues:library:) has not been implemented")
     }
     
     public var masses: MassContainer {
