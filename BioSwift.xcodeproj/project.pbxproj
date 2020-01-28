@@ -3,987 +3,804 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 46;
 	objects = {
 
+/* Begin PBXAggregateTarget section */
+		"BioSwift::BioSwiftPackageTests::ProductTarget" /* BioSwiftPackageTests */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = OBJ_31 /* Build configuration list for PBXAggregateTarget "BioSwiftPackageTests" */;
+			buildPhases = (
+			);
+			dependencies = (
+				OBJ_34 /* PBXTargetDependency */,
+			);
+			name = BioSwiftPackageTests;
+			productName = BioSwiftPackageTests;
+		};
+/* End PBXAggregateTarget section */
+
 /* Begin PBXBuildFile section */
-		5D0E4601234941FB00D67B65 /* BioSwift_iOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 5D0E45FF234941FB00D67B65 /* BioSwift_iOS.h */; };
-		5D14836F2336352C006B904B /* Residue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D14836E2336352C006B904B /* Residue.swift */; };
-		5D1483712336352C006B904B /* Residue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D14836E2336352C006B904B /* Residue.swift */; };
-		5D54693A23DFA7330000BD87 /* JSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = C79DF0F82243FED9004EF40D /* JSON.swift */; };
-		5D54693B23DFA8810000BD87 /* Fragment.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7E147932261043A0092C846 /* Fragment.swift */; };
-		5D54693C23DFA8A30000BD87 /* FunctionalGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7EAA9F12233F649002267DC /* FunctionalGroup.swift */; };
-		5D54693D23DFA93B0000BD87 /* Scanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7B7F88922034F22007BE60C /* Scanner.swift */; };
-		5D54694923DFAF750000BD87 /* BioSwift_macOSTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D54694823DFAF750000BD87 /* BioSwift_macOSTests.swift */; };
-		5D54694B23DFAF750000BD87 /* BioSwift_macOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DDA8B6B21C5B421005B7064 /* BioSwift_macOS.framework */; };
-		5D54695823DFAF8C0000BD87 /* BioSwift_iOSTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D54695723DFAF8C0000BD87 /* BioSwift_iOSTests.swift */; };
-		5D54695A23DFAF8C0000BD87 /* BioSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DDA8B8A21C5B468005B7064 /* BioSwift.framework */; };
-		5D9F506423411679003F2A06 /* Chargeable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9F506323411679003F2A06 /* Chargeable.swift */; };
-		5D9F506623411679003F2A06 /* Chargeable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9F506323411679003F2A06 /* Chargeable.swift */; };
-		5DDA8B7C21C5B421005B7064 /* BioSwift.h in Headers */ = {isa = PBXBuildFile; fileRef = 5DDA8B6E21C5B421005B7064 /* BioSwift.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		5DDA8C0921C5B4E1005B7064 /* Hydropathy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DDA8BDB21C5B4E1005B7064 /* Hydropathy.swift */; };
-		5DDA8C0B21C5B4E1005B7064 /* Hydropathy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DDA8BDB21C5B4E1005B7064 /* Hydropathy.swift */; };
-		5DDA8C0D21C5B4E1005B7064 /* ChemicalElement.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DDA8BDC21C5B4E1005B7064 /* ChemicalElement.swift */; };
-		5DDA8C0F21C5B4E1005B7064 /* ChemicalElement.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DDA8BDC21C5B4E1005B7064 /* ChemicalElement.swift */; };
-		5DDA8C1521C5B4E1005B7064 /* AminoAcid.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DDA8BDE21C5B4E1005B7064 /* AminoAcid.swift */; };
-		5DDA8C1721C5B4E1005B7064 /* AminoAcid.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DDA8BDE21C5B4E1005B7064 /* AminoAcid.swift */; };
-		5DDA8C1921C5B4E1005B7064 /* Formula.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DDA8BDF21C5B4E1005B7064 /* Formula.swift */; };
-		5DDA8C1B21C5B4E1005B7064 /* Formula.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DDA8BDF21C5B4E1005B7064 /* Formula.swift */; };
-		5DDA8C1D21C5B4E1005B7064 /* Molecule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DDA8BE021C5B4E1005B7064 /* Molecule.swift */; };
-		5DDA8C1F21C5B4E1005B7064 /* Molecule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DDA8BE021C5B4E1005B7064 /* Molecule.swift */; };
-		5DDA8C2121C5B4E1005B7064 /* Array.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DDA8BE221C5B4E1005B7064 /* Array.swift */; };
-		5DDA8C2321C5B4E1005B7064 /* Array.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DDA8BE221C5B4E1005B7064 /* Array.swift */; };
-		5DDA8C2521C5B4E1005B7064 /* String.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DDA8BE321C5B4E1005B7064 /* String.swift */; };
-		5DDA8C2721C5B4E1005B7064 /* String.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DDA8BE321C5B4E1005B7064 /* String.swift */; };
-		5DDA8C3121C5B4E1005B7064 /* Utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DDA8BE721C5B4E1005B7064 /* Utilities.swift */; };
-		5DDA8C3321C5B4E1005B7064 /* Utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DDA8BE721C5B4E1005B7064 /* Utilities.swift */; };
-		5DDA8C3521C5B4E1005B7064 /* Webservice.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DDA8BE821C5B4E1005B7064 /* Webservice.swift */; };
-		5DDA8C3721C5B4E1005B7064 /* Webservice.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DDA8BE821C5B4E1005B7064 /* Webservice.swift */; };
-		5DDA8C3921C5B4E1005B7064 /* Peptide.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DDA8BE921C5B4E1005B7064 /* Peptide.swift */; };
-		5DDA8C3B21C5B4E1005B7064 /* Peptide.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DDA8BE921C5B4E1005B7064 /* Peptide.swift */; };
-		5DDA8C3D21C5B4E1005B7064 /* BioSequence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DDA8BEA21C5B4E1005B7064 /* BioSequence.swift */; };
-		5DDA8C3F21C5B4E1005B7064 /* BioSequence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DDA8BEA21C5B4E1005B7064 /* BioSequence.swift */; };
-		5DDA8C4121C5B4E1005B7064 /* Protein.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DDA8BEB21C5B4E1005B7064 /* Protein.swift */; };
-		5DDA8C4321C5B4E1005B7064 /* Protein.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DDA8BEB21C5B4E1005B7064 /* Protein.swift */; };
-		5DDA8C4521C5B4E1005B7064 /* Enzyme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DDA8BEC21C5B4E1005B7064 /* Enzyme.swift */; };
-		5DDA8C4721C5B4E1005B7064 /* Enzyme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DDA8BEC21C5B4E1005B7064 /* Enzyme.swift */; };
-		5DDA8C4921C5B4E1005B7064 /* MassSearch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DDA8BED21C5B4E1005B7064 /* MassSearch.swift */; };
-		5DDA8C4B21C5B4E1005B7064 /* MassSearch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DDA8BED21C5B4E1005B7064 /* MassSearch.swift */; };
-		5DDA8C5121C5B4E1005B7064 /* Modification.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DDA8BF021C5B4E1005B7064 /* Modification.swift */; };
-		5DDA8C5321C5B4E1005B7064 /* Modification.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DDA8BF021C5B4E1005B7064 /* Modification.swift */; };
-		5DDA8C5521C5B4E1005B7064 /* Digester.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DDA8BF121C5B4E1005B7064 /* Digester.swift */; };
-		5DDA8C5721C5B4E1005B7064 /* Digester.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DDA8BF121C5B4E1005B7064 /* Digester.swift */; };
-		5DDA8C6521C5B4E1005B7064 /* Fasta.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DDA8BF521C5B4E1005B7064 /* Fasta.swift */; };
-		5DDA8C6721C5B4E1005B7064 /* Fasta.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DDA8BF521C5B4E1005B7064 /* Fasta.swift */; };
-		C7175DCF22A5629A00F8EAE7 /* Double.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7175DCE22A5629A00F8EAE7 /* Double.swift */; };
-		C7175DD122A5629A00F8EAE7 /* Double.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7175DCE22A5629A00F8EAE7 /* Double.swift */; };
-		C75850F022C92A8300BDEF55 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = C75850EF22C92A8200BDEF55 /* README.md */; };
-		C75850F222C92A8300BDEF55 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = C75850EF22C92A8200BDEF55 /* README.md */; };
-		C762DBA42247BDA3006E95E8 /* Mass.swift in Sources */ = {isa = PBXBuildFile; fileRef = C762DBA32247BDA3006E95E8 /* Mass.swift */; };
-		C762DBA62247BDA3006E95E8 /* Mass.swift in Sources */ = {isa = PBXBuildFile; fileRef = C762DBA32247BDA3006E95E8 /* Mass.swift */; };
-		C795B3B322441F310032AB26 /* Symbol.swift in Sources */ = {isa = PBXBuildFile; fileRef = C795B3B222441F310032AB26 /* Symbol.swift */; };
-		C795B3B522441F310032AB26 /* Symbol.swift in Sources */ = {isa = PBXBuildFile; fileRef = C795B3B222441F310032AB26 /* Symbol.swift */; };
-		C79DF0F92243FED9004EF40D /* JSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = C79DF0F82243FED9004EF40D /* JSON.swift */; };
-		C7B7F88A22034F22007BE60C /* Scanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7B7F88922034F22007BE60C /* Scanner.swift */; };
-		C7E147942261043A0092C846 /* Fragment.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7E147932261043A0092C846 /* Fragment.swift */; };
-		C7E476C922301844007041FB /* hydropathy.json in Resources */ = {isa = PBXBuildFile; fileRef = C7E476C422301844007041FB /* hydropathy.json */; };
-		C7E476CB22301844007041FB /* hydropathy.json in Resources */ = {isa = PBXBuildFile; fileRef = C7E476C422301844007041FB /* hydropathy.json */; };
-		C7E476CD22301844007041FB /* functionalgroups.json in Resources */ = {isa = PBXBuildFile; fileRef = C7E476C522301844007041FB /* functionalgroups.json */; };
-		C7E476CF22301844007041FB /* functionalgroups.json in Resources */ = {isa = PBXBuildFile; fileRef = C7E476C522301844007041FB /* functionalgroups.json */; };
-		C7E476D122301844007041FB /* elements.json in Resources */ = {isa = PBXBuildFile; fileRef = C7E476C622301844007041FB /* elements.json */; };
-		C7E476D322301844007041FB /* elements.json in Resources */ = {isa = PBXBuildFile; fileRef = C7E476C622301844007041FB /* elements.json */; };
-		C7E476D522301844007041FB /* aminoacids.json in Resources */ = {isa = PBXBuildFile; fileRef = C7E476C722301844007041FB /* aminoacids.json */; };
-		C7E476D722301844007041FB /* aminoacids.json in Resources */ = {isa = PBXBuildFile; fileRef = C7E476C722301844007041FB /* aminoacids.json */; };
-		C7E476D922301844007041FB /* enzymes.json in Resources */ = {isa = PBXBuildFile; fileRef = C7E476C822301844007041FB /* enzymes.json */; };
-		C7E476DB22301844007041FB /* enzymes.json in Resources */ = {isa = PBXBuildFile; fileRef = C7E476C822301844007041FB /* enzymes.json */; };
-		C7EAA9F22233F649002267DC /* FunctionalGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7EAA9F12233F649002267DC /* FunctionalGroup.swift */; };
-		C7EB5503224C0F6300E21C41 /* Bundle+Decoding.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7EB5502224C0F6300E21C41 /* Bundle+Decoding.swift */; };
-		C7EB5505224C0F6300E21C41 /* Bundle+Decoding.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7EB5502224C0F6300E21C41 /* Bundle+Decoding.swift */; };
+		5D39778C23E0F3A100A6631C /* aminoacids.json in Resources */ = {isa = PBXBuildFile; fileRef = 5D3976F723E0F18300A6631C /* aminoacids.json */; };
+		5D39778D23E0F3AB00A6631C /* hydropathy.json in Resources */ = {isa = PBXBuildFile; fileRef = 5D3976F823E0F18300A6631C /* hydropathy.json */; };
+		5D39778E23E0F3AD00A6631C /* functionalgroups.json in Resources */ = {isa = PBXBuildFile; fileRef = 5D3976FA23E0F18300A6631C /* functionalgroups.json */; };
+		5D39778F23E0F3B000A6631C /* elements.json in Resources */ = {isa = PBXBuildFile; fileRef = 5D3976FB23E0F18300A6631C /* elements.json */; };
+		5D39779023E0F3B300A6631C /* enzymes.json in Resources */ = {isa = PBXBuildFile; fileRef = 5D3976FD23E0F18300A6631C /* enzymes.json */; };
+		5D9605A023E0F6FC00F6A93E /* ChemicalElement.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D96059B23E0F6FC00F6A93E /* ChemicalElement.swift */; };
+		5D9605A123E0F6FC00F6A93E /* ChemicalElement.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D96059B23E0F6FC00F6A93E /* ChemicalElement.swift */; };
+		5D9605A223E0F6FC00F6A93E /* ChemicalElement.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D96059B23E0F6FC00F6A93E /* ChemicalElement.swift */; };
+		5D9605A323E0F6FC00F6A93E /* AminoAcid.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D96059C23E0F6FC00F6A93E /* AminoAcid.swift */; };
+		5D9605A423E0F6FC00F6A93E /* AminoAcid.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D96059C23E0F6FC00F6A93E /* AminoAcid.swift */; };
+		5D9605A523E0F6FC00F6A93E /* AminoAcid.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D96059C23E0F6FC00F6A93E /* AminoAcid.swift */; };
+		5D9605A623E0F6FC00F6A93E /* Formula.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D96059D23E0F6FC00F6A93E /* Formula.swift */; };
+		5D9605A723E0F6FC00F6A93E /* Formula.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D96059D23E0F6FC00F6A93E /* Formula.swift */; };
+		5D9605A823E0F6FC00F6A93E /* Formula.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D96059D23E0F6FC00F6A93E /* Formula.swift */; };
+		5D9605A923E0F6FC00F6A93E /* FunctionalGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D96059E23E0F6FC00F6A93E /* FunctionalGroup.swift */; };
+		5D9605AA23E0F6FC00F6A93E /* FunctionalGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D96059E23E0F6FC00F6A93E /* FunctionalGroup.swift */; };
+		5D9605AB23E0F6FC00F6A93E /* FunctionalGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D96059E23E0F6FC00F6A93E /* FunctionalGroup.swift */; };
+		5D9605AC23E0F6FC00F6A93E /* Modification.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D96059F23E0F6FC00F6A93E /* Modification.swift */; };
+		5D9605AD23E0F6FC00F6A93E /* Modification.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D96059F23E0F6FC00F6A93E /* Modification.swift */; };
+		5D9605AE23E0F6FC00F6A93E /* Modification.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D96059F23E0F6FC00F6A93E /* Modification.swift */; };
+		5D9605CC23E0F70E00F6A93E /* JSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605B023E0F70E00F6A93E /* JSON.swift */; };
+		5D9605CD23E0F70E00F6A93E /* JSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605B023E0F70E00F6A93E /* JSON.swift */; };
+		5D9605CE23E0F70E00F6A93E /* JSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605B023E0F70E00F6A93E /* JSON.swift */; };
+		5D9605CF23E0F70E00F6A93E /* Fasta.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605B123E0F70E00F6A93E /* Fasta.swift */; };
+		5D9605D023E0F70E00F6A93E /* Fasta.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605B123E0F70E00F6A93E /* Fasta.swift */; };
+		5D9605D123E0F70E00F6A93E /* Fasta.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605B123E0F70E00F6A93E /* Fasta.swift */; };
+		5D9605D223E0F70E00F6A93E /* Utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605B323E0F70E00F6A93E /* Utilities.swift */; };
+		5D9605D323E0F70E00F6A93E /* Utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605B323E0F70E00F6A93E /* Utilities.swift */; };
+		5D9605D423E0F70E00F6A93E /* Utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605B323E0F70E00F6A93E /* Utilities.swift */; };
+		5D9605D523E0F70E00F6A93E /* Bundle+Decoding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605B423E0F70E00F6A93E /* Bundle+Decoding.swift */; };
+		5D9605D623E0F70E00F6A93E /* Bundle+Decoding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605B423E0F70E00F6A93E /* Bundle+Decoding.swift */; };
+		5D9605D723E0F70E00F6A93E /* Bundle+Decoding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605B423E0F70E00F6A93E /* Bundle+Decoding.swift */; };
+		5D9605D823E0F70E00F6A93E /* Webservice.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605B523E0F70E00F6A93E /* Webservice.swift */; };
+		5D9605D923E0F70E00F6A93E /* Webservice.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605B523E0F70E00F6A93E /* Webservice.swift */; };
+		5D9605DA23E0F70E00F6A93E /* Webservice.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605B523E0F70E00F6A93E /* Webservice.swift */; };
+		5D9605DB23E0F70E00F6A93E /* Array.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605B723E0F70E00F6A93E /* Array.swift */; };
+		5D9605DC23E0F70E00F6A93E /* Array.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605B723E0F70E00F6A93E /* Array.swift */; };
+		5D9605DD23E0F70E00F6A93E /* Array.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605B723E0F70E00F6A93E /* Array.swift */; };
+		5D9605DE23E0F70E00F6A93E /* Scanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605B823E0F70E00F6A93E /* Scanner.swift */; };
+		5D9605DF23E0F70E00F6A93E /* Scanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605B823E0F70E00F6A93E /* Scanner.swift */; };
+		5D9605E023E0F70E00F6A93E /* Scanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605B823E0F70E00F6A93E /* Scanner.swift */; };
+		5D9605E123E0F70E00F6A93E /* String.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605B923E0F70E00F6A93E /* String.swift */; };
+		5D9605E223E0F70E00F6A93E /* String.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605B923E0F70E00F6A93E /* String.swift */; };
+		5D9605E323E0F70E00F6A93E /* String.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605B923E0F70E00F6A93E /* String.swift */; };
+		5D9605E423E0F70E00F6A93E /* Double.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605BA23E0F70E00F6A93E /* Double.swift */; };
+		5D9605E523E0F70E00F6A93E /* Double.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605BA23E0F70E00F6A93E /* Double.swift */; };
+		5D9605E623E0F70E00F6A93E /* Double.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605BA23E0F70E00F6A93E /* Double.swift */; };
+		5D9605E723E0F70E00F6A93E /* Residue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605BC23E0F70E00F6A93E /* Residue.swift */; };
+		5D9605E823E0F70E00F6A93E /* Residue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605BC23E0F70E00F6A93E /* Residue.swift */; };
+		5D9605E923E0F70E00F6A93E /* Residue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605BC23E0F70E00F6A93E /* Residue.swift */; };
+		5D9605EA23E0F70E00F6A93E /* Modifiable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605BD23E0F70E00F6A93E /* Modifiable.swift */; };
+		5D9605EB23E0F70E00F6A93E /* Modifiable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605BD23E0F70E00F6A93E /* Modifiable.swift */; };
+		5D9605EC23E0F70E00F6A93E /* Modifiable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605BD23E0F70E00F6A93E /* Modifiable.swift */; };
+		5D9605ED23E0F70E00F6A93E /* Molecule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605BE23E0F70E00F6A93E /* Molecule.swift */; };
+		5D9605EE23E0F70E00F6A93E /* Molecule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605BE23E0F70E00F6A93E /* Molecule.swift */; };
+		5D9605EF23E0F70E00F6A93E /* Molecule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605BE23E0F70E00F6A93E /* Molecule.swift */; };
+		5D9605F023E0F70E00F6A93E /* Chargeable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605BF23E0F70E00F6A93E /* Chargeable.swift */; };
+		5D9605F123E0F70E00F6A93E /* Chargeable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605BF23E0F70E00F6A93E /* Chargeable.swift */; };
+		5D9605F223E0F70E00F6A93E /* Chargeable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605BF23E0F70E00F6A93E /* Chargeable.swift */; };
+		5D9605F323E0F70E00F6A93E /* Mass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605C023E0F70E00F6A93E /* Mass.swift */; };
+		5D9605F423E0F70E00F6A93E /* Mass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605C023E0F70E00F6A93E /* Mass.swift */; };
+		5D9605F523E0F70E00F6A93E /* Mass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605C023E0F70E00F6A93E /* Mass.swift */; };
+		5D9605F623E0F70E00F6A93E /* Symbol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605C123E0F70E00F6A93E /* Symbol.swift */; };
+		5D9605F723E0F70E00F6A93E /* Symbol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605C123E0F70E00F6A93E /* Symbol.swift */; };
+		5D9605F823E0F70E00F6A93E /* Symbol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605C123E0F70E00F6A93E /* Symbol.swift */; };
+		5D9605F923E0F70E00F6A93E /* Fragment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605C323E0F70E00F6A93E /* Fragment.swift */; };
+		5D9605FA23E0F70E00F6A93E /* Fragment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605C323E0F70E00F6A93E /* Fragment.swift */; };
+		5D9605FB23E0F70E00F6A93E /* Fragment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605C323E0F70E00F6A93E /* Fragment.swift */; };
+		5D9605FC23E0F70E00F6A93E /* Peptide.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605C423E0F70E00F6A93E /* Peptide.swift */; };
+		5D9605FD23E0F70E00F6A93E /* Peptide.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605C423E0F70E00F6A93E /* Peptide.swift */; };
+		5D9605FE23E0F70E00F6A93E /* Peptide.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605C423E0F70E00F6A93E /* Peptide.swift */; };
+		5D9605FF23E0F70E00F6A93E /* BioSequence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605C523E0F70E00F6A93E /* BioSequence.swift */; };
+		5D96060023E0F70E00F6A93E /* BioSequence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605C523E0F70E00F6A93E /* BioSequence.swift */; };
+		5D96060123E0F70E00F6A93E /* BioSequence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605C523E0F70E00F6A93E /* BioSequence.swift */; };
+		5D96060223E0F70E00F6A93E /* Protein.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605C623E0F70E00F6A93E /* Protein.swift */; };
+		5D96060323E0F70E00F6A93E /* Protein.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605C623E0F70E00F6A93E /* Protein.swift */; };
+		5D96060423E0F70E00F6A93E /* Protein.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605C623E0F70E00F6A93E /* Protein.swift */; };
+		5D96060523E0F70E00F6A93E /* Hydropathy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605C823E0F70E00F6A93E /* Hydropathy.swift */; };
+		5D96060623E0F70E00F6A93E /* Hydropathy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605C823E0F70E00F6A93E /* Hydropathy.swift */; };
+		5D96060723E0F70E00F6A93E /* Hydropathy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605C823E0F70E00F6A93E /* Hydropathy.swift */; };
+		5D96060823E0F70E00F6A93E /* Digester.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605C923E0F70E00F6A93E /* Digester.swift */; };
+		5D96060923E0F70E00F6A93E /* Digester.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605C923E0F70E00F6A93E /* Digester.swift */; };
+		5D96060A23E0F70E00F6A93E /* Digester.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605C923E0F70E00F6A93E /* Digester.swift */; };
+		5D96060B23E0F70E00F6A93E /* Enzyme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605CA23E0F70E00F6A93E /* Enzyme.swift */; };
+		5D96060C23E0F70E00F6A93E /* Enzyme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605CA23E0F70E00F6A93E /* Enzyme.swift */; };
+		5D96060D23E0F70E00F6A93E /* Enzyme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605CA23E0F70E00F6A93E /* Enzyme.swift */; };
+		5D96060E23E0F70E00F6A93E /* MassSearch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605CB23E0F70E00F6A93E /* MassSearch.swift */; };
+		5D96060F23E0F70E00F6A93E /* MassSearch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605CB23E0F70E00F6A93E /* MassSearch.swift */; };
+		5D96061023E0F70E00F6A93E /* MassSearch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605CB23E0F70E00F6A93E /* MassSearch.swift */; };
+		OBJ_22 /* BioSwift.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_9 /* BioSwift.swift */; };
+		OBJ_29 /* Package.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_6 /* Package.swift */; };
+		OBJ_40 /* BioSwiftTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_12 /* BioSwiftTests.swift */; };
+		OBJ_41 /* XCTestManifests.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_13 /* XCTestManifests.swift */; };
+		OBJ_43 /* BioSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = "BioSwift::BioSwift::Product" /* BioSwift.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		5D54694C23DFAF750000BD87 /* PBXContainerItemProxy */ = {
+		5D3976F423E0F15200A6631C /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 5DDA8B6221C5B421005B7064 /* Project object */;
+			containerPortal = OBJ_1 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 5DDA8B6A21C5B421005B7064;
-			remoteInfo = BioSwift_macOS;
+			remoteGlobalIDString = "BioSwift::BioSwift";
+			remoteInfo = BioSwift;
 		};
-		5D54695B23DFAF8C0000BD87 /* PBXContainerItemProxy */ = {
+		5D3976F523E0F15300A6631C /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 5DDA8B6221C5B421005B7064 /* Project object */;
+			containerPortal = OBJ_1 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 5DDA8B8921C5B468005B7064;
-			remoteInfo = BioSwift_iOS;
+			remoteGlobalIDString = "BioSwift::BioSwiftTests";
+			remoteInfo = BioSwiftTests;
 		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		5D0E45FF234941FB00D67B65 /* BioSwift_iOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BioSwift_iOS.h; sourceTree = "<group>"; };
-		5D14836E2336352C006B904B /* Residue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Residue.swift; sourceTree = "<group>"; };
-		5D54694623DFAF750000BD87 /* BioSwift_macOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BioSwift_macOSTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		5D54694823DFAF750000BD87 /* BioSwift_macOSTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BioSwift_macOSTests.swift; sourceTree = "<group>"; };
-		5D54694A23DFAF750000BD87 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		5D54695523DFAF8C0000BD87 /* BioSwift_iOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BioSwift_iOSTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		5D54695723DFAF8C0000BD87 /* BioSwift_iOSTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BioSwift_iOSTests.swift; sourceTree = "<group>"; };
-		5D54695923DFAF8C0000BD87 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		5D9F506323411679003F2A06 /* Chargeable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Chargeable.swift; sourceTree = "<group>"; };
-		5DDA8B6B21C5B421005B7064 /* BioSwift_macOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = BioSwift_macOS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		5DDA8B6E21C5B421005B7064 /* BioSwift.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BioSwift.h; sourceTree = "<group>"; };
-		5DDA8B6F21C5B421005B7064 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		5DDA8B8A21C5B468005B7064 /* BioSwift.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = BioSwift.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		5DDA8B8D21C5B468005B7064 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		5DDA8BDB21C5B4E1005B7064 /* Hydropathy.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Hydropathy.swift; sourceTree = "<group>"; };
-		5DDA8BDC21C5B4E1005B7064 /* ChemicalElement.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChemicalElement.swift; sourceTree = "<group>"; };
-		5DDA8BDE21C5B4E1005B7064 /* AminoAcid.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AminoAcid.swift; sourceTree = "<group>"; };
-		5DDA8BDF21C5B4E1005B7064 /* Formula.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Formula.swift; sourceTree = "<group>"; };
-		5DDA8BE021C5B4E1005B7064 /* Molecule.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Molecule.swift; sourceTree = "<group>"; };
-		5DDA8BE221C5B4E1005B7064 /* Array.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Array.swift; sourceTree = "<group>"; };
-		5DDA8BE321C5B4E1005B7064 /* String.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = String.swift; sourceTree = "<group>"; };
-		5DDA8BE721C5B4E1005B7064 /* Utilities.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Utilities.swift; sourceTree = "<group>"; };
-		5DDA8BE821C5B4E1005B7064 /* Webservice.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Webservice.swift; sourceTree = "<group>"; };
-		5DDA8BE921C5B4E1005B7064 /* Peptide.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Peptide.swift; sourceTree = "<group>"; };
-		5DDA8BEA21C5B4E1005B7064 /* BioSequence.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BioSequence.swift; sourceTree = "<group>"; };
-		5DDA8BEB21C5B4E1005B7064 /* Protein.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Protein.swift; sourceTree = "<group>"; };
-		5DDA8BEC21C5B4E1005B7064 /* Enzyme.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Enzyme.swift; sourceTree = "<group>"; };
-		5DDA8BED21C5B4E1005B7064 /* MassSearch.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MassSearch.swift; sourceTree = "<group>"; };
-		5DDA8BF021C5B4E1005B7064 /* Modification.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Modification.swift; sourceTree = "<group>"; };
-		5DDA8BF121C5B4E1005B7064 /* Digester.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Digester.swift; sourceTree = "<group>"; };
-		5DDA8BF521C5B4E1005B7064 /* Fasta.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Fasta.swift; sourceTree = "<group>"; };
-		C7175DCE22A5629A00F8EAE7 /* Double.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Double.swift; sourceTree = "<group>"; };
-		C731DDF722480D8D00040139 /* aminoacids-nonessential.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "aminoacids-nonessential.json"; sourceTree = "<group>"; };
-		C75850EF22C92A8200BDEF55 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
-		C762DBA32247BDA3006E95E8 /* Mass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Mass.swift; sourceTree = "<group>"; };
-		C77D737921C7D700002247CA /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		C795B3B222441F310032AB26 /* Symbol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Symbol.swift; sourceTree = "<group>"; };
-		C79DF0F82243FED9004EF40D /* JSON.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSON.swift; sourceTree = "<group>"; };
-		C7B7F88922034F22007BE60C /* Scanner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Scanner.swift; sourceTree = "<group>"; };
-		C7E147932261043A0092C846 /* Fragment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Fragment.swift; sourceTree = "<group>"; };
-		C7E476C422301844007041FB /* hydropathy.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = hydropathy.json; sourceTree = "<group>"; };
-		C7E476C522301844007041FB /* functionalgroups.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = functionalgroups.json; sourceTree = "<group>"; };
-		C7E476C622301844007041FB /* elements.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = elements.json; sourceTree = "<group>"; };
-		C7E476C722301844007041FB /* aminoacids.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = aminoacids.json; sourceTree = "<group>"; };
-		C7E476C822301844007041FB /* enzymes.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = enzymes.json; sourceTree = "<group>"; };
-		C7EAA9F12233F649002267DC /* FunctionalGroup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FunctionalGroup.swift; sourceTree = "<group>"; };
-		C7EB5502224C0F6300E21C41 /* Bundle+Decoding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Bundle+Decoding.swift"; sourceTree = "<group>"; };
+		5D3976F723E0F18300A6631C /* aminoacids.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = aminoacids.json; sourceTree = "<group>"; };
+		5D3976F823E0F18300A6631C /* hydropathy.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = hydropathy.json; sourceTree = "<group>"; };
+		5D3976FA23E0F18300A6631C /* functionalgroups.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = functionalgroups.json; sourceTree = "<group>"; };
+		5D3976FB23E0F18300A6631C /* elements.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = elements.json; sourceTree = "<group>"; };
+		5D3976FC23E0F18300A6631C /* unimod.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = unimod.xml; sourceTree = "<group>"; };
+		5D3976FD23E0F18300A6631C /* enzymes.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = enzymes.json; sourceTree = "<group>"; };
+		5D3976FE23E0F18300A6631C /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		5D96059B23E0F6FC00F6A93E /* ChemicalElement.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChemicalElement.swift; sourceTree = "<group>"; };
+		5D96059C23E0F6FC00F6A93E /* AminoAcid.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AminoAcid.swift; sourceTree = "<group>"; };
+		5D96059D23E0F6FC00F6A93E /* Formula.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Formula.swift; sourceTree = "<group>"; };
+		5D96059E23E0F6FC00F6A93E /* FunctionalGroup.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FunctionalGroup.swift; sourceTree = "<group>"; };
+		5D96059F23E0F6FC00F6A93E /* Modification.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Modification.swift; sourceTree = "<group>"; };
+		5D9605B023E0F70E00F6A93E /* JSON.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JSON.swift; sourceTree = "<group>"; };
+		5D9605B123E0F70E00F6A93E /* Fasta.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Fasta.swift; sourceTree = "<group>"; };
+		5D9605B323E0F70E00F6A93E /* Utilities.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Utilities.swift; sourceTree = "<group>"; };
+		5D9605B423E0F70E00F6A93E /* Bundle+Decoding.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Bundle+Decoding.swift"; sourceTree = "<group>"; };
+		5D9605B523E0F70E00F6A93E /* Webservice.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Webservice.swift; sourceTree = "<group>"; };
+		5D9605B723E0F70E00F6A93E /* Array.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Array.swift; sourceTree = "<group>"; };
+		5D9605B823E0F70E00F6A93E /* Scanner.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Scanner.swift; sourceTree = "<group>"; };
+		5D9605B923E0F70E00F6A93E /* String.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = String.swift; sourceTree = "<group>"; };
+		5D9605BA23E0F70E00F6A93E /* Double.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Double.swift; sourceTree = "<group>"; };
+		5D9605BC23E0F70E00F6A93E /* Residue.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Residue.swift; sourceTree = "<group>"; };
+		5D9605BD23E0F70E00F6A93E /* Modifiable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Modifiable.swift; sourceTree = "<group>"; };
+		5D9605BE23E0F70E00F6A93E /* Molecule.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Molecule.swift; sourceTree = "<group>"; };
+		5D9605BF23E0F70E00F6A93E /* Chargeable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Chargeable.swift; sourceTree = "<group>"; };
+		5D9605C023E0F70E00F6A93E /* Mass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Mass.swift; sourceTree = "<group>"; };
+		5D9605C123E0F70E00F6A93E /* Symbol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Symbol.swift; sourceTree = "<group>"; };
+		5D9605C323E0F70E00F6A93E /* Fragment.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Fragment.swift; sourceTree = "<group>"; };
+		5D9605C423E0F70E00F6A93E /* Peptide.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Peptide.swift; sourceTree = "<group>"; };
+		5D9605C523E0F70E00F6A93E /* BioSequence.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BioSequence.swift; sourceTree = "<group>"; };
+		5D9605C623E0F70E00F6A93E /* Protein.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Protein.swift; sourceTree = "<group>"; };
+		5D9605C823E0F70E00F6A93E /* Hydropathy.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Hydropathy.swift; sourceTree = "<group>"; };
+		5D9605C923E0F70E00F6A93E /* Digester.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Digester.swift; sourceTree = "<group>"; };
+		5D9605CA23E0F70E00F6A93E /* Enzyme.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Enzyme.swift; sourceTree = "<group>"; };
+		5D9605CB23E0F70E00F6A93E /* MassSearch.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MassSearch.swift; sourceTree = "<group>"; };
+		"BioSwift::BioSwift::Product" /* BioSwift.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = BioSwift.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		"BioSwift::BioSwiftTests::Product" /* BioSwiftTests.xctest */ = {isa = PBXFileReference; lastKnownFileType = file; path = BioSwiftTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		OBJ_12 /* BioSwiftTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BioSwiftTests.swift; sourceTree = "<group>"; };
+		OBJ_13 /* XCTestManifests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XCTestManifests.swift; sourceTree = "<group>"; };
+		OBJ_6 /* Package.swift */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; path = Package.swift; sourceTree = "<group>"; };
+		OBJ_9 /* BioSwift.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BioSwift.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		5D54694323DFAF750000BD87 /* Frameworks */ = {
+		OBJ_23 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				5D54694B23DFAF750000BD87 /* BioSwift_macOS.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		5D54695223DFAF8C0000BD87 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				5D54695A23DFAF8C0000BD87 /* BioSwift.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		5DDA8B6821C5B421005B7064 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
+			buildActionMask = 0;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		5DDA8B8721C5B468005B7064 /* Frameworks */ = {
+		OBJ_42 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
+			buildActionMask = 0;
 			files = (
+				OBJ_43 /* BioSwift.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		5D54694723DFAF750000BD87 /* BioSwift_macOSTests */ = {
+		5D3976F623E0F18300A6631C /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				5D54694823DFAF750000BD87 /* BioSwift_macOSTests.swift */,
-				5D54694A23DFAF750000BD87 /* Info.plist */,
-			);
-			path = BioSwift_macOSTests;
-			sourceTree = "<group>";
-		};
-		5D54695623DFAF8C0000BD87 /* BioSwift_iOSTests */ = {
-			isa = PBXGroup;
-			children = (
-				5D54695723DFAF8C0000BD87 /* BioSwift_iOSTests.swift */,
-				5D54695923DFAF8C0000BD87 /* Info.plist */,
-			);
-			path = BioSwift_iOSTests;
-			sourceTree = "<group>";
-		};
-		5DDA8B6121C5B421005B7064 = {
-			isa = PBXGroup;
-			children = (
-				C75850EF22C92A8200BDEF55 /* README.md */,
-				C77D737321C7D700002247CA /* Resources */,
-				5DDA8BD521C5B4E1005B7064 /* Sources */,
-				5DDA8B6D21C5B421005B7064 /* BioSwift */,
-				5DDA8B8B21C5B468005B7064 /* BioSwift-iOS */,
-				5D54694723DFAF750000BD87 /* BioSwift_macOSTests */,
-				5D54695623DFAF8C0000BD87 /* BioSwift_iOSTests */,
-				5DDA8B6C21C5B421005B7064 /* Products */,
-			);
-			sourceTree = "<group>";
-		};
-		5DDA8B6C21C5B421005B7064 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				5DDA8B6B21C5B421005B7064 /* BioSwift_macOS.framework */,
-				5DDA8B8A21C5B468005B7064 /* BioSwift.framework */,
-				5D54694623DFAF750000BD87 /* BioSwift_macOSTests.xctest */,
-				5D54695523DFAF8C0000BD87 /* BioSwift_iOSTests.xctest */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
-		5DDA8B6D21C5B421005B7064 /* BioSwift */ = {
-			isa = PBXGroup;
-			children = (
-				5DDA8B6E21C5B421005B7064 /* BioSwift.h */,
-				5DDA8B6F21C5B421005B7064 /* Info.plist */,
-			);
-			path = BioSwift;
-			sourceTree = "<group>";
-		};
-		5DDA8B8B21C5B468005B7064 /* BioSwift-iOS */ = {
-			isa = PBXGroup;
-			children = (
-				5D0E45FF234941FB00D67B65 /* BioSwift_iOS.h */,
-				5DDA8B8D21C5B468005B7064 /* Info.plist */,
-			);
-			path = "BioSwift-iOS";
-			sourceTree = "<group>";
-		};
-		5DDA8BD521C5B4E1005B7064 /* Sources */ = {
-			isa = PBXGroup;
-			children = (
-				C7B5E88721C81D1300F4E7DD /* Calculators */,
-				C79DF0F72243F758004EF40D /* Data */,
-				C7B5E88621C81D0700F4E7DD /* Building Blocks */,
-				C795B3B722441F750032AB26 /* Sequence */,
-				5DDA8BE121C5B4E1005B7064 /* Extensions */,
-				5DDA8BEE21C5B4E1005B7064 /* Protocols */,
-				5DDA8BE621C5B4E1005B7064 /* Support */,
-			);
-			path = Sources;
-			sourceTree = "<group>";
-		};
-		5DDA8BE121C5B4E1005B7064 /* Extensions */ = {
-			isa = PBXGroup;
-			children = (
-				5DDA8BE221C5B4E1005B7064 /* Array.swift */,
-				C7175DCE22A5629A00F8EAE7 /* Double.swift */,
-				C7B7F88922034F22007BE60C /* Scanner.swift */,
-				5DDA8BE321C5B4E1005B7064 /* String.swift */,
-			);
-			path = Extensions;
-			sourceTree = "<group>";
-		};
-		5DDA8BE621C5B4E1005B7064 /* Support */ = {
-			isa = PBXGroup;
-			children = (
-				C7EB5502224C0F6300E21C41 /* Bundle+Decoding.swift */,
-				5DDA8BE721C5B4E1005B7064 /* Utilities.swift */,
-				5DDA8BE821C5B4E1005B7064 /* Webservice.swift */,
-			);
-			path = Support;
-			sourceTree = "<group>";
-		};
-		5DDA8BEE21C5B4E1005B7064 /* Protocols */ = {
-			isa = PBXGroup;
-			children = (
-				5D9F506323411679003F2A06 /* Chargeable.swift */,
-				C762DBA32247BDA3006E95E8 /* Mass.swift */,
-				5DDA8BE021C5B4E1005B7064 /* Molecule.swift */,
-				5D14836E2336352C006B904B /* Residue.swift */,
-				C795B3B222441F310032AB26 /* Symbol.swift */,
-			);
-			path = Protocols;
-			sourceTree = "<group>";
-		};
-		C77D737321C7D700002247CA /* Resources */ = {
-			isa = PBXGroup;
-			children = (
-				C7E476C722301844007041FB /* aminoacids.json */,
-				C731DDF722480D8D00040139 /* aminoacids-nonessential.json */,
-				C7E476C622301844007041FB /* elements.json */,
-				C7E476C822301844007041FB /* enzymes.json */,
-				C7E476C522301844007041FB /* functionalgroups.json */,
-				C7E476C422301844007041FB /* hydropathy.json */,
-				C77D737921C7D700002247CA /* Info.plist */,
+				5D3976F723E0F18300A6631C /* aminoacids.json */,
+				5D3976F823E0F18300A6631C /* hydropathy.json */,
+				5D3976FA23E0F18300A6631C /* functionalgroups.json */,
+				5D3976FB23E0F18300A6631C /* elements.json */,
+				5D3976FC23E0F18300A6631C /* unimod.xml */,
+				5D3976FD23E0F18300A6631C /* enzymes.json */,
+				5D3976FE23E0F18300A6631C /* Info.plist */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
 		};
-		C795B3B722441F750032AB26 /* Sequence */ = {
+		5D96059A23E0F6FC00F6A93E /* Building Blocks */ = {
 			isa = PBXGroup;
 			children = (
-				5DDA8BEA21C5B4E1005B7064 /* BioSequence.swift */,
-				C7E147932261043A0092C846 /* Fragment.swift */,
-				5DDA8BE921C5B4E1005B7064 /* Peptide.swift */,
-				5DDA8BEB21C5B4E1005B7064 /* Protein.swift */,
+				5D96059B23E0F6FC00F6A93E /* ChemicalElement.swift */,
+				5D96059C23E0F6FC00F6A93E /* AminoAcid.swift */,
+				5D96059D23E0F6FC00F6A93E /* Formula.swift */,
+				5D96059E23E0F6FC00F6A93E /* FunctionalGroup.swift */,
+				5D96059F23E0F6FC00F6A93E /* Modification.swift */,
 			);
-			path = Sequence;
+			name = "Building Blocks";
+			path = "Sources/Building Blocks";
 			sourceTree = "<group>";
 		};
-		C79DF0F72243F758004EF40D /* Data */ = {
+		5D9605AF23E0F70E00F6A93E /* Data */ = {
 			isa = PBXGroup;
 			children = (
-				5DDA8BF521C5B4E1005B7064 /* Fasta.swift */,
-				C79DF0F82243FED9004EF40D /* JSON.swift */,
+				5D9605B023E0F70E00F6A93E /* JSON.swift */,
+				5D9605B123E0F70E00F6A93E /* Fasta.swift */,
 			);
-			path = Data;
+			name = Data;
+			path = Sources/Data;
 			sourceTree = "<group>";
 		};
-		C7B5E88621C81D0700F4E7DD /* Building Blocks */ = {
+		5D9605B223E0F70E00F6A93E /* Support */ = {
 			isa = PBXGroup;
 			children = (
-				5DDA8BDE21C5B4E1005B7064 /* AminoAcid.swift */,
-				5DDA8BDC21C5B4E1005B7064 /* ChemicalElement.swift */,
-				5DDA8BDF21C5B4E1005B7064 /* Formula.swift */,
-				C7EAA9F12233F649002267DC /* FunctionalGroup.swift */,
-				5DDA8BF021C5B4E1005B7064 /* Modification.swift */,
+				5D9605B323E0F70E00F6A93E /* Utilities.swift */,
+				5D9605B423E0F70E00F6A93E /* Bundle+Decoding.swift */,
+				5D9605B523E0F70E00F6A93E /* Webservice.swift */,
 			);
-			path = "Building Blocks";
+			name = Support;
+			path = Sources/Support;
 			sourceTree = "<group>";
 		};
-		C7B5E88721C81D1300F4E7DD /* Calculators */ = {
+		5D9605B623E0F70E00F6A93E /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
-				5DDA8BF121C5B4E1005B7064 /* Digester.swift */,
-				5DDA8BEC21C5B4E1005B7064 /* Enzyme.swift */,
-				5DDA8BDB21C5B4E1005B7064 /* Hydropathy.swift */,
-				5DDA8BED21C5B4E1005B7064 /* MassSearch.swift */,
+				5D9605B723E0F70E00F6A93E /* Array.swift */,
+				5D9605B823E0F70E00F6A93E /* Scanner.swift */,
+				5D9605B923E0F70E00F6A93E /* String.swift */,
+				5D9605BA23E0F70E00F6A93E /* Double.swift */,
 			);
-			path = Calculators;
+			name = Extensions;
+			path = Sources/Extensions;
 			sourceTree = "<group>";
+		};
+		5D9605BB23E0F70E00F6A93E /* Protocols */ = {
+			isa = PBXGroup;
+			children = (
+				5D9605BC23E0F70E00F6A93E /* Residue.swift */,
+				5D9605BD23E0F70E00F6A93E /* Modifiable.swift */,
+				5D9605BE23E0F70E00F6A93E /* Molecule.swift */,
+				5D9605BF23E0F70E00F6A93E /* Chargeable.swift */,
+				5D9605C023E0F70E00F6A93E /* Mass.swift */,
+				5D9605C123E0F70E00F6A93E /* Symbol.swift */,
+			);
+			name = Protocols;
+			path = Sources/Protocols;
+			sourceTree = "<group>";
+		};
+		5D9605C223E0F70E00F6A93E /* Sequence */ = {
+			isa = PBXGroup;
+			children = (
+				5D9605C323E0F70E00F6A93E /* Fragment.swift */,
+				5D9605C423E0F70E00F6A93E /* Peptide.swift */,
+				5D9605C523E0F70E00F6A93E /* BioSequence.swift */,
+				5D9605C623E0F70E00F6A93E /* Protein.swift */,
+			);
+			name = Sequence;
+			path = Sources/Sequence;
+			sourceTree = "<group>";
+		};
+		5D9605C723E0F70E00F6A93E /* Calculators */ = {
+			isa = PBXGroup;
+			children = (
+				5D9605C823E0F70E00F6A93E /* Hydropathy.swift */,
+				5D9605C923E0F70E00F6A93E /* Digester.swift */,
+				5D9605CA23E0F70E00F6A93E /* Enzyme.swift */,
+				5D9605CB23E0F70E00F6A93E /* MassSearch.swift */,
+			);
+			name = Calculators;
+			path = Sources/Calculators;
+			sourceTree = "<group>";
+		};
+		OBJ_10 /* Tests */ = {
+			isa = PBXGroup;
+			children = (
+				OBJ_11 /* BioSwiftTests */,
+			);
+			name = Tests;
+			sourceTree = SOURCE_ROOT;
+		};
+		OBJ_11 /* BioSwiftTests */ = {
+			isa = PBXGroup;
+			children = (
+				OBJ_12 /* BioSwiftTests.swift */,
+				OBJ_13 /* XCTestManifests.swift */,
+			);
+			name = BioSwiftTests;
+			path = Tests/BioSwiftTests;
+			sourceTree = SOURCE_ROOT;
+		};
+		OBJ_14 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				"BioSwift::BioSwiftTests::Product" /* BioSwiftTests.xctest */,
+				"BioSwift::BioSwift::Product" /* BioSwift.framework */,
+			);
+			name = Products;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		OBJ_5 = {
+			isa = PBXGroup;
+			children = (
+				OBJ_6 /* Package.swift */,
+				5D3976F623E0F18300A6631C /* Resources */,
+				OBJ_7 /* Sources */,
+				OBJ_10 /* Tests */,
+				OBJ_14 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		OBJ_7 /* Sources */ = {
+			isa = PBXGroup;
+			children = (
+				OBJ_8 /* BioSwift */,
+				5D96059A23E0F6FC00F6A93E /* Building Blocks */,
+				5D9605C723E0F70E00F6A93E /* Calculators */,
+				5D9605AF23E0F70E00F6A93E /* Data */,
+				5D9605B623E0F70E00F6A93E /* Extensions */,
+				5D9605BB23E0F70E00F6A93E /* Protocols */,
+				5D9605C223E0F70E00F6A93E /* Sequence */,
+				5D9605B223E0F70E00F6A93E /* Support */,
+			);
+			name = Sources;
+			sourceTree = SOURCE_ROOT;
+		};
+		OBJ_8 /* BioSwift */ = {
+			isa = PBXGroup;
+			children = (
+				OBJ_9 /* BioSwift.swift */,
+			);
+			name = BioSwift;
+			path = Sources/BioSwift;
+			sourceTree = SOURCE_ROOT;
 		};
 /* End PBXGroup section */
 
-/* Begin PBXHeadersBuildPhase section */
-		5DDA8B6621C5B421005B7064 /* Headers */ = {
-			isa = PBXHeadersBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				5DDA8B7C21C5B421005B7064 /* BioSwift.h in Headers */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		5DDA8B8521C5B468005B7064 /* Headers */ = {
-			isa = PBXHeadersBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				5D0E4601234941FB00D67B65 /* BioSwift_iOS.h in Headers */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXHeadersBuildPhase section */
-
 /* Begin PBXNativeTarget section */
-		5D54694523DFAF750000BD87 /* BioSwift_macOSTests */ = {
+		"BioSwift::BioSwift" /* BioSwift */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 5D54695023DFAF750000BD87 /* Build configuration list for PBXNativeTarget "BioSwift_macOSTests" */;
+			buildConfigurationList = OBJ_18 /* Build configuration list for PBXNativeTarget "BioSwift" */;
 			buildPhases = (
-				5D54694223DFAF750000BD87 /* Sources */,
-				5D54694323DFAF750000BD87 /* Frameworks */,
-				5D54694423DFAF750000BD87 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				5D54694D23DFAF750000BD87 /* PBXTargetDependency */,
-			);
-			name = BioSwift_macOSTests;
-			productName = BioSwift_macOSTests;
-			productReference = 5D54694623DFAF750000BD87 /* BioSwift_macOSTests.xctest */;
-			productType = "com.apple.product-type.bundle.unit-test";
-		};
-		5D54695423DFAF8C0000BD87 /* BioSwift_iOSTests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 5D54695D23DFAF8C0000BD87 /* Build configuration list for PBXNativeTarget "BioSwift_iOSTests" */;
-			buildPhases = (
-				5D54695123DFAF8C0000BD87 /* Sources */,
-				5D54695223DFAF8C0000BD87 /* Frameworks */,
-				5D54695323DFAF8C0000BD87 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				5D54695C23DFAF8C0000BD87 /* PBXTargetDependency */,
-			);
-			name = BioSwift_iOSTests;
-			productName = BioSwift_iOSTests;
-			productReference = 5D54695523DFAF8C0000BD87 /* BioSwift_iOSTests.xctest */;
-			productType = "com.apple.product-type.bundle.unit-test";
-		};
-		5DDA8B6A21C5B421005B7064 /* BioSwift_macOS */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 5DDA8B7F21C5B421005B7064 /* Build configuration list for PBXNativeTarget "BioSwift_macOS" */;
-			buildPhases = (
-				5DDA8B6621C5B421005B7064 /* Headers */,
-				5DDA8B6721C5B421005B7064 /* Sources */,
-				5DDA8B6821C5B421005B7064 /* Frameworks */,
-				5DDA8B6921C5B421005B7064 /* Resources */,
+				OBJ_21 /* Sources */,
+				OBJ_23 /* Frameworks */,
+				5D39778B23E0F39500A6631C /* Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
-			name = BioSwift_macOS;
-			productName = MassKit;
-			productReference = 5DDA8B6B21C5B421005B7064 /* BioSwift_macOS.framework */;
+			name = BioSwift;
+			productName = BioSwift;
+			productReference = "BioSwift::BioSwift::Product" /* BioSwift.framework */;
 			productType = "com.apple.product-type.framework";
 		};
-		5DDA8B8921C5B468005B7064 /* BioSwift_iOS */ = {
+		"BioSwift::BioSwiftTests" /* BioSwiftTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 5DDA8B9F21C5B469005B7064 /* Build configuration list for PBXNativeTarget "BioSwift_iOS" */;
+			buildConfigurationList = OBJ_36 /* Build configuration list for PBXNativeTarget "BioSwiftTests" */;
 			buildPhases = (
-				5DDA8B8521C5B468005B7064 /* Headers */,
-				5DDA8B8621C5B468005B7064 /* Sources */,
-				5DDA8B8721C5B468005B7064 /* Frameworks */,
-				5DDA8B8821C5B468005B7064 /* Resources */,
+				OBJ_39 /* Sources */,
+				OBJ_42 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				OBJ_44 /* PBXTargetDependency */,
+			);
+			name = BioSwiftTests;
+			productName = BioSwiftTests;
+			productReference = "BioSwift::BioSwiftTests::Product" /* BioSwiftTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		"BioSwift::SwiftPMPackageDescription" /* BioSwiftPackageDescription */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = OBJ_25 /* Build configuration list for PBXNativeTarget "BioSwiftPackageDescription" */;
+			buildPhases = (
+				OBJ_28 /* Sources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
-			name = BioSwift_iOS;
-			productName = "MassKit-iOS";
-			productReference = 5DDA8B8A21C5B468005B7064 /* BioSwift.framework */;
+			name = BioSwiftPackageDescription;
+			productName = BioSwiftPackageDescription;
 			productType = "com.apple.product-type.framework";
 		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
-		5DDA8B6221C5B421005B7064 /* Project object */ = {
+		OBJ_1 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastSwiftUpdateCheck = 1010;
-				LastUpgradeCheck = 1020;
-				ORGANIZATIONNAME = "Koen van der Drift";
+				LastUpgradeCheck = 9999;
 				TargetAttributes = {
-					5D54694523DFAF750000BD87 = {
-						CreatedOnToolsVersion = 10.1;
-					};
-					5D54695423DFAF8C0000BD87 = {
-						CreatedOnToolsVersion = 10.1;
-					};
-					5DDA8B6A21C5B421005B7064 = {
-						CreatedOnToolsVersion = 10.1;
-					};
-					5DDA8B8921C5B468005B7064 = {
-						CreatedOnToolsVersion = 10.1;
+					"BioSwift::BioSwift" = {
+						DevelopmentTeam = Z9FHH9AM7K;
 					};
 				};
 			};
-			buildConfigurationList = 5DDA8B6521C5B421005B7064 /* Build configuration list for PBXProject "BioSwift" */;
-			compatibilityVersion = "Xcode 9.3";
-			developmentRegion = en;
+			buildConfigurationList = OBJ_2 /* Build configuration list for PBXProject "BioSwift" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
-				Base,
 			);
-			mainGroup = 5DDA8B6121C5B421005B7064;
-			productRefGroup = 5DDA8B6C21C5B421005B7064 /* Products */;
+			mainGroup = OBJ_5;
+			productRefGroup = OBJ_14 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				5DDA8B6A21C5B421005B7064 /* BioSwift_macOS */,
-				5DDA8B8921C5B468005B7064 /* BioSwift_iOS */,
-				5D54694523DFAF750000BD87 /* BioSwift_macOSTests */,
-				5D54695423DFAF8C0000BD87 /* BioSwift_iOSTests */,
+				"BioSwift::BioSwift" /* BioSwift */,
+				"BioSwift::SwiftPMPackageDescription" /* BioSwiftPackageDescription */,
+				"BioSwift::BioSwiftPackageTests::ProductTarget" /* BioSwiftPackageTests */,
+				"BioSwift::BioSwiftTests" /* BioSwiftTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		5D54694423DFAF750000BD87 /* Resources */ = {
+		5D39778B23E0F39500A6631C /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		5D54695323DFAF8C0000BD87 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		5DDA8B6921C5B421005B7064 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				C7E476D522301844007041FB /* aminoacids.json in Resources */,
-				C7E476D122301844007041FB /* elements.json in Resources */,
-				C7E476D922301844007041FB /* enzymes.json in Resources */,
-				C7E476CD22301844007041FB /* functionalgroups.json in Resources */,
-				C7E476C922301844007041FB /* hydropathy.json in Resources */,
-				C75850F022C92A8300BDEF55 /* README.md in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		5DDA8B8821C5B468005B7064 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				C7E476D722301844007041FB /* aminoacids.json in Resources */,
-				C7E476DB22301844007041FB /* enzymes.json in Resources */,
-				C7E476D322301844007041FB /* elements.json in Resources */,
-				C7E476CF22301844007041FB /* functionalgroups.json in Resources */,
-				C7E476CB22301844007041FB /* hydropathy.json in Resources */,
-				C75850F222C92A8300BDEF55 /* README.md in Resources */,
+				5D39778C23E0F3A100A6631C /* aminoacids.json in Resources */,
+				5D39778F23E0F3B000A6631C /* elements.json in Resources */,
+				5D39779023E0F3B300A6631C /* enzymes.json in Resources */,
+				5D39778E23E0F3AD00A6631C /* functionalgroups.json in Resources */,
+				5D39778D23E0F3AB00A6631C /* hydropathy.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		5D54694223DFAF750000BD87 /* Sources */ = {
+		OBJ_21 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
+			buildActionMask = 0;
 			files = (
-				5D54694923DFAF750000BD87 /* BioSwift_macOSTests.swift in Sources */,
+				5D9605A923E0F6FC00F6A93E /* FunctionalGroup.swift in Sources */,
+				5D9605CC23E0F70E00F6A93E /* JSON.swift in Sources */,
+				5D96060E23E0F70E00F6A93E /* MassSearch.swift in Sources */,
+				5D9605D523E0F70E00F6A93E /* Bundle+Decoding.swift in Sources */,
+				5D9605A023E0F6FC00F6A93E /* ChemicalElement.swift in Sources */,
+				5D9605E123E0F70E00F6A93E /* String.swift in Sources */,
+				5D9605D823E0F70E00F6A93E /* Webservice.swift in Sources */,
+				5D9605A323E0F6FC00F6A93E /* AminoAcid.swift in Sources */,
+				5D9605ED23E0F70E00F6A93E /* Molecule.swift in Sources */,
+				5D9605EA23E0F70E00F6A93E /* Modifiable.swift in Sources */,
+				5D96060523E0F70E00F6A93E /* Hydropathy.swift in Sources */,
+				5D9605F323E0F70E00F6A93E /* Mass.swift in Sources */,
+				5D96060B23E0F70E00F6A93E /* Enzyme.swift in Sources */,
+				5D9605DE23E0F70E00F6A93E /* Scanner.swift in Sources */,
+				5D9605F623E0F70E00F6A93E /* Symbol.swift in Sources */,
+				5D9605AC23E0F6FC00F6A93E /* Modification.swift in Sources */,
+				5D9605E723E0F70E00F6A93E /* Residue.swift in Sources */,
+				5D9605CF23E0F70E00F6A93E /* Fasta.swift in Sources */,
+				5D9605D223E0F70E00F6A93E /* Utilities.swift in Sources */,
+				5D9605FC23E0F70E00F6A93E /* Peptide.swift in Sources */,
+				5D9605DB23E0F70E00F6A93E /* Array.swift in Sources */,
+				5D9605A623E0F6FC00F6A93E /* Formula.swift in Sources */,
+				5D9605E423E0F70E00F6A93E /* Double.swift in Sources */,
+				5D9605F923E0F70E00F6A93E /* Fragment.swift in Sources */,
+				5D96060823E0F70E00F6A93E /* Digester.swift in Sources */,
+				OBJ_22 /* BioSwift.swift in Sources */,
+				5D9605F023E0F70E00F6A93E /* Chargeable.swift in Sources */,
+				5D9605FF23E0F70E00F6A93E /* BioSequence.swift in Sources */,
+				5D96060223E0F70E00F6A93E /* Protein.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		5D54695123DFAF8C0000BD87 /* Sources */ = {
+		OBJ_28 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
+			buildActionMask = 0;
 			files = (
-				5D54695823DFAF8C0000BD87 /* BioSwift_iOSTests.swift in Sources */,
+				5D9605AA23E0F6FC00F6A93E /* FunctionalGroup.swift in Sources */,
+				5D9605CD23E0F70E00F6A93E /* JSON.swift in Sources */,
+				5D96060F23E0F70E00F6A93E /* MassSearch.swift in Sources */,
+				5D9605D623E0F70E00F6A93E /* Bundle+Decoding.swift in Sources */,
+				5D9605A123E0F6FC00F6A93E /* ChemicalElement.swift in Sources */,
+				5D9605E223E0F70E00F6A93E /* String.swift in Sources */,
+				5D9605D923E0F70E00F6A93E /* Webservice.swift in Sources */,
+				5D9605A423E0F6FC00F6A93E /* AminoAcid.swift in Sources */,
+				5D9605EE23E0F70E00F6A93E /* Molecule.swift in Sources */,
+				5D9605EB23E0F70E00F6A93E /* Modifiable.swift in Sources */,
+				5D96060623E0F70E00F6A93E /* Hydropathy.swift in Sources */,
+				5D9605F423E0F70E00F6A93E /* Mass.swift in Sources */,
+				5D96060C23E0F70E00F6A93E /* Enzyme.swift in Sources */,
+				5D9605DF23E0F70E00F6A93E /* Scanner.swift in Sources */,
+				5D9605F723E0F70E00F6A93E /* Symbol.swift in Sources */,
+				5D9605AD23E0F6FC00F6A93E /* Modification.swift in Sources */,
+				5D9605E823E0F70E00F6A93E /* Residue.swift in Sources */,
+				5D9605D023E0F70E00F6A93E /* Fasta.swift in Sources */,
+				5D9605D323E0F70E00F6A93E /* Utilities.swift in Sources */,
+				5D9605FD23E0F70E00F6A93E /* Peptide.swift in Sources */,
+				5D9605DC23E0F70E00F6A93E /* Array.swift in Sources */,
+				5D9605A723E0F6FC00F6A93E /* Formula.swift in Sources */,
+				5D9605E523E0F70E00F6A93E /* Double.swift in Sources */,
+				5D9605FA23E0F70E00F6A93E /* Fragment.swift in Sources */,
+				5D96060923E0F70E00F6A93E /* Digester.swift in Sources */,
+				OBJ_29 /* Package.swift in Sources */,
+				5D9605F123E0F70E00F6A93E /* Chargeable.swift in Sources */,
+				5D96060023E0F70E00F6A93E /* BioSequence.swift in Sources */,
+				5D96060323E0F70E00F6A93E /* Protein.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		5DDA8B6721C5B421005B7064 /* Sources */ = {
+		OBJ_39 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
+			buildActionMask = 0;
 			files = (
-				5DDA8C1521C5B4E1005B7064 /* AminoAcid.swift in Sources */,
-				5DDA8C2121C5B4E1005B7064 /* Array.swift in Sources */,
-				5DDA8C3D21C5B4E1005B7064 /* BioSequence.swift in Sources */,
-				C7EB5503224C0F6300E21C41 /* Bundle+Decoding.swift in Sources */,
-				5D9F506423411679003F2A06 /* Chargeable.swift in Sources */,
-				5DDA8C0D21C5B4E1005B7064 /* ChemicalElement.swift in Sources */,
-				5DDA8C5521C5B4E1005B7064 /* Digester.swift in Sources */,
-				C7175DCF22A5629A00F8EAE7 /* Double.swift in Sources */,
-				5DDA8C4521C5B4E1005B7064 /* Enzyme.swift in Sources */,
-				5DDA8C6521C5B4E1005B7064 /* Fasta.swift in Sources */,
-				5DDA8C1921C5B4E1005B7064 /* Formula.swift in Sources */,
-				C7E147942261043A0092C846 /* Fragment.swift in Sources */,
-				C7EAA9F22233F649002267DC /* FunctionalGroup.swift in Sources */,
-				5DDA8C0921C5B4E1005B7064 /* Hydropathy.swift in Sources */,
-				C79DF0F92243FED9004EF40D /* JSON.swift in Sources */,
-				C762DBA42247BDA3006E95E8 /* Mass.swift in Sources */,
-				5DDA8C4921C5B4E1005B7064 /* MassSearch.swift in Sources */,
-				5DDA8C5121C5B4E1005B7064 /* Modification.swift in Sources */,
-				5DDA8C1D21C5B4E1005B7064 /* Molecule.swift in Sources */,
-				5DDA8C4121C5B4E1005B7064 /* Protein.swift in Sources */,
-				5DDA8C3921C5B4E1005B7064 /* Peptide.swift in Sources */,
-				5D14836F2336352C006B904B /* Residue.swift in Sources */,
-				C7B7F88A22034F22007BE60C /* Scanner.swift in Sources */,
-				5DDA8C2521C5B4E1005B7064 /* String.swift in Sources */,
-				C795B3B322441F310032AB26 /* Symbol.swift in Sources */,
-				5DDA8C3121C5B4E1005B7064 /* Utilities.swift in Sources */,
-				5DDA8C3521C5B4E1005B7064 /* Webservice.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		5DDA8B8621C5B468005B7064 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				5DDA8C1721C5B4E1005B7064 /* AminoAcid.swift in Sources */,
-				5DDA8C2321C5B4E1005B7064 /* Array.swift in Sources */,
-				5DDA8C3F21C5B4E1005B7064 /* BioSequence.swift in Sources */,
-				C7EB5505224C0F6300E21C41 /* Bundle+Decoding.swift in Sources */,
-				5D9F506623411679003F2A06 /* Chargeable.swift in Sources */,
-				5DDA8C0F21C5B4E1005B7064 /* ChemicalElement.swift in Sources */,
-				5DDA8C5721C5B4E1005B7064 /* Digester.swift in Sources */,
-				C7175DD122A5629A00F8EAE7 /* Double.swift in Sources */,
-				5DDA8C4721C5B4E1005B7064 /* Enzyme.swift in Sources */,
-				5DDA8C6721C5B4E1005B7064 /* Fasta.swift in Sources */,
-				5DDA8C1B21C5B4E1005B7064 /* Formula.swift in Sources */,
-				5D54693B23DFA8810000BD87 /* Fragment.swift in Sources */,
-				5D54693C23DFA8A30000BD87 /* FunctionalGroup.swift in Sources */,
-				5DDA8C0B21C5B4E1005B7064 /* Hydropathy.swift in Sources */,
-				5D54693A23DFA7330000BD87 /* JSON.swift in Sources */,
-				C762DBA62247BDA3006E95E8 /* Mass.swift in Sources */,
-				5DDA8C4B21C5B4E1005B7064 /* MassSearch.swift in Sources */,
-				5DDA8C5321C5B4E1005B7064 /* Modification.swift in Sources */,
-				5DDA8C1F21C5B4E1005B7064 /* Molecule.swift in Sources */,
-				5DDA8C4321C5B4E1005B7064 /* Protein.swift in Sources */,
-				5DDA8C3B21C5B4E1005B7064 /* Peptide.swift in Sources */,
-				5D1483712336352C006B904B /* Residue.swift in Sources */,
-				5D54693D23DFA93B0000BD87 /* Scanner.swift in Sources */,
-				5DDA8C2721C5B4E1005B7064 /* String.swift in Sources */,
-				C795B3B522441F310032AB26 /* Symbol.swift in Sources */,
-				5DDA8C3321C5B4E1005B7064 /* Utilities.swift in Sources */,
-				5DDA8C3721C5B4E1005B7064 /* Webservice.swift in Sources */,
+				5D9605EF23E0F70E00F6A93E /* Molecule.swift in Sources */,
+				5D9605AB23E0F6FC00F6A93E /* FunctionalGroup.swift in Sources */,
+				OBJ_40 /* BioSwiftTests.swift in Sources */,
+				5D96061023E0F70E00F6A93E /* MassSearch.swift in Sources */,
+				5D9605E623E0F70E00F6A93E /* Double.swift in Sources */,
+				5D9605DA23E0F70E00F6A93E /* Webservice.swift in Sources */,
+				5D9605F223E0F70E00F6A93E /* Chargeable.swift in Sources */,
+				5D9605FB23E0F70E00F6A93E /* Fragment.swift in Sources */,
+				5D9605D723E0F70E00F6A93E /* Bundle+Decoding.swift in Sources */,
+				5D9605EC23E0F70E00F6A93E /* Modifiable.swift in Sources */,
+				5D96060723E0F70E00F6A93E /* Hydropathy.swift in Sources */,
+				OBJ_41 /* XCTestManifests.swift in Sources */,
+				5D9605A223E0F6FC00F6A93E /* ChemicalElement.swift in Sources */,
+				5D96060A23E0F70E00F6A93E /* Digester.swift in Sources */,
+				5D9605FE23E0F70E00F6A93E /* Peptide.swift in Sources */,
+				5D9605A823E0F6FC00F6A93E /* Formula.swift in Sources */,
+				5D9605AE23E0F6FC00F6A93E /* Modification.swift in Sources */,
+				5D96060123E0F70E00F6A93E /* BioSequence.swift in Sources */,
+				5D9605D123E0F70E00F6A93E /* Fasta.swift in Sources */,
+				5D9605DD23E0F70E00F6A93E /* Array.swift in Sources */,
+				5D96060423E0F70E00F6A93E /* Protein.swift in Sources */,
+				5D9605A523E0F6FC00F6A93E /* AminoAcid.swift in Sources */,
+				5D9605D423E0F70E00F6A93E /* Utilities.swift in Sources */,
+				5D9605E323E0F70E00F6A93E /* String.swift in Sources */,
+				5D9605F823E0F70E00F6A93E /* Symbol.swift in Sources */,
+				5D96060D23E0F70E00F6A93E /* Enzyme.swift in Sources */,
+				5D9605E023E0F70E00F6A93E /* Scanner.swift in Sources */,
+				5D9605E923E0F70E00F6A93E /* Residue.swift in Sources */,
+				5D9605CE23E0F70E00F6A93E /* JSON.swift in Sources */,
+				5D9605F523E0F70E00F6A93E /* Mass.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		5D54694D23DFAF750000BD87 /* PBXTargetDependency */ = {
+		OBJ_34 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 5DDA8B6A21C5B421005B7064 /* BioSwift_macOS */;
-			targetProxy = 5D54694C23DFAF750000BD87 /* PBXContainerItemProxy */;
+			target = "BioSwift::BioSwiftTests" /* BioSwiftTests */;
+			targetProxy = 5D3976F523E0F15300A6631C /* PBXContainerItemProxy */;
 		};
-		5D54695C23DFAF8C0000BD87 /* PBXTargetDependency */ = {
+		OBJ_44 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 5DDA8B8921C5B468005B7064 /* BioSwift_iOS */;
-			targetProxy = 5D54695B23DFAF8C0000BD87 /* PBXContainerItemProxy */;
+			target = "BioSwift::BioSwift" /* BioSwift */;
+			targetProxy = 5D3976F423E0F15200A6631C /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
-		5D54694E23DFAF750000BD87 /* Debug */ = {
+		OBJ_19 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "-";
-				CODE_SIGN_STYLE = Automatic;
-				COMBINE_HIDPI_IMAGES = YES;
-				INFOPLIST_FILE = BioSwift_macOSTests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/../Frameworks",
-					"@loader_path/../Frameworks",
-				);
-				PRODUCT_BUNDLE_IDENTIFIER = "koen.BioSwift-macOSTests";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 4.2;
-			};
-			name = Debug;
-		};
-		5D54694F23DFAF750000BD87 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_IDENTITY = "-";
-				CODE_SIGN_STYLE = Automatic;
-				COMBINE_HIDPI_IMAGES = YES;
-				INFOPLIST_FILE = BioSwift_macOSTests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/../Frameworks",
-					"@loader_path/../Frameworks",
-				);
-				PRODUCT_BUNDLE_IDENTIFIER = "koen.BioSwift-macOSTests";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 4.2;
-			};
-			name = Release;
-		};
-		5D54695E23DFAF8C0000BD87 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				CODE_SIGN_STYLE = Automatic;
-				INFOPLIST_FILE = BioSwift_iOSTests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.1;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				PRODUCT_BUNDLE_IDENTIFIER = "koen.BioSwift-iOSTests";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = iphoneos;
-				SWIFT_VERSION = 4.2;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Debug;
-		};
-		5D54695F23DFAF8C0000BD87 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				CODE_SIGN_STYLE = Automatic;
-				INFOPLIST_FILE = BioSwift_iOSTests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.1;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				PRODUCT_BUNDLE_IDENTIFIER = "koen.BioSwift-iOSTests";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = iphoneos;
-				SWIFT_VERSION = 4.2;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				VALIDATE_PRODUCT = YES;
-			};
-			name = Release;
-		};
-		5DDA8B7D21C5B421005B7064 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
-				CLANG_CXX_LIBRARY = "libc++";
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
-				CLANG_WARN_BOOL_CONVERSION = YES;
-				CLANG_WARN_COMMA = YES;
-				CLANG_WARN_CONSTANT_CONVERSION = YES;
-				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
-				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_EMPTY_BODY = YES;
-				CLANG_WARN_ENUM_CONVERSION = YES;
-				CLANG_WARN_INFINITE_RECURSION = YES;
-				CLANG_WARN_INT_CONVERSION = YES;
-				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
-				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
-				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
-				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
-				CLANG_WARN_STRICT_PROTOTYPES = YES;
-				CLANG_WARN_SUSPICIOUS_MOVE = YES;
-				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CLANG_WARN_UNREACHABLE_CODE = YES;
-				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_IDENTITY = "Mac Developer";
-				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 1;
-				DEBUG_INFORMATION_FORMAT = dwarf;
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				DEVELOPMENT_TEAM = Z9FHH9AM7K;
 				ENABLE_TESTABILITY = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu11;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_NO_COMMON_BLOCKS = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PLATFORM_DIR)/Developer/Library/Frameworks",
+				);
+				HEADER_SEARCH_PATHS = "$(inherited)";
+				INFOPLIST_FILE = BioSwift.xcodeproj/BioSwift_Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) $(TOOLCHAIN_DIR)/usr/lib/swift/macosx";
+				OTHER_CFLAGS = "$(inherited)";
+				OTHER_LDFLAGS = "$(inherited)";
+				OTHER_SWIFT_FLAGS = "$(inherited)";
+				PRODUCT_BUNDLE_IDENTIFIER = com.koenvanderdrift.BioSwift;
+				PRODUCT_MODULE_NAME = "$(TARGET_NAME:c99extidentifier)";
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited)";
+				SWIFT_VERSION = 4.2;
+				TARGET_NAME = BioSwift;
+			};
+			name = Debug;
+		};
+		OBJ_20 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "Mac Developer";
+				DEVELOPMENT_TEAM = Z9FHH9AM7K;
+				ENABLE_TESTABILITY = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PLATFORM_DIR)/Developer/Library/Frameworks",
+				);
+				HEADER_SEARCH_PATHS = "$(inherited)";
+				INFOPLIST_FILE = BioSwift.xcodeproj/BioSwift_Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) $(TOOLCHAIN_DIR)/usr/lib/swift/macosx";
+				OTHER_CFLAGS = "$(inherited)";
+				OTHER_LDFLAGS = "$(inherited)";
+				OTHER_SWIFT_FLAGS = "$(inherited)";
+				PRODUCT_BUNDLE_IDENTIFIER = com.koenvanderdrift.BioSwift;
+				PRODUCT_MODULE_NAME = "$(TARGET_NAME:c99extidentifier)";
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited)";
+				SWIFT_VERSION = 4.2;
+				TARGET_NAME = BioSwift;
+			};
+			name = Release;
+		};
+		OBJ_26 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				LD = /usr/bin/true;
+				OTHER_SWIFT_FLAGS = "-swift-version 4.2 -I $(TOOLCHAIN_DIR)/usr/lib/swift/pm/4_2 -target x86_64-apple-macosx10.10 -sdk /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.14.sdk";
+				SWIFT_VERSION = 4.2;
+			};
+			name = Debug;
+		};
+		OBJ_27 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				LD = /usr/bin/true;
+				OTHER_SWIFT_FLAGS = "-swift-version 4.2 -I $(TOOLCHAIN_DIR)/usr/lib/swift/pm/4_2 -target x86_64-apple-macosx10.10 -sdk /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.14.sdk";
+				SWIFT_VERSION = 4.2;
+			};
+			name = Release;
+		};
+		OBJ_3 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COMBINE_HIDPI_IMAGES = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_NS_ASSERTIONS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
 				);
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-				GCC_WARN_UNDECLARED_SELECTOR = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				GCC_WARN_UNUSED_FUNCTION = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.13;
-				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
-				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
+				OTHER_SWIFT_FLAGS = "-DXcode";
+				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SUPPORTED_PLATFORMS = "macosx iphoneos iphonesimulator appletvos appletvsimulator watchos watchsimulator";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "SWIFT_PACKAGE DEBUG";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
+				USE_HEADERMAP = NO;
 			};
 			name = Debug;
 		};
-		5DDA8B7E21C5B421005B7064 /* Release */ = {
+		OBJ_32 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
-				CLANG_CXX_LIBRARY = "libc++";
+			};
+			name = Debug;
+		};
+		OBJ_33 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+			};
+			name = Release;
+		};
+		OBJ_37 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
+				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PLATFORM_DIR)/Developer/Library/Frameworks",
+				);
+				HEADER_SEARCH_PATHS = "$(inherited)";
+				INFOPLIST_FILE = BioSwift.xcodeproj/BioSwiftTests_Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @loader_path/../Frameworks @loader_path/Frameworks";
+				OTHER_CFLAGS = "$(inherited)";
+				OTHER_LDFLAGS = "$(inherited)";
+				OTHER_SWIFT_FLAGS = "$(inherited)";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited)";
+				SWIFT_VERSION = 4.2;
+				TARGET_NAME = BioSwiftTests;
+			};
+			name = Debug;
+		};
+		OBJ_38 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PLATFORM_DIR)/Developer/Library/Frameworks",
+				);
+				HEADER_SEARCH_PATHS = "$(inherited)";
+				INFOPLIST_FILE = BioSwift.xcodeproj/BioSwiftTests_Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @loader_path/../Frameworks @loader_path/Frameworks";
+				OTHER_CFLAGS = "$(inherited)";
+				OTHER_LDFLAGS = "$(inherited)";
+				OTHER_SWIFT_FLAGS = "$(inherited)";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited)";
+				SWIFT_VERSION = 4.2;
+				TARGET_NAME = BioSwiftTests;
+			};
+			name = Release;
+		};
+		OBJ_4 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
 				CLANG_ENABLE_OBJC_ARC = YES;
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
-				CLANG_WARN_BOOL_CONVERSION = YES;
-				CLANG_WARN_COMMA = YES;
-				CLANG_WARN_CONSTANT_CONVERSION = YES;
-				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
-				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_EMPTY_BODY = YES;
-				CLANG_WARN_ENUM_CONVERSION = YES;
-				CLANG_WARN_INFINITE_RECURSION = YES;
-				CLANG_WARN_INT_CONVERSION = YES;
-				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
-				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
-				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
-				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
-				CLANG_WARN_STRICT_PROTOTYPES = YES;
-				CLANG_WARN_SUSPICIOUS_MOVE = YES;
-				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CLANG_WARN_UNREACHABLE_CODE = YES;
-				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "Mac Developer";
-				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 1;
+				COMBINE_HIDPI_IMAGES = YES;
+				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				ENABLE_NS_ASSERTIONS = NO;
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu11;
-				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-				GCC_WARN_UNDECLARED_SELECTOR = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				GCC_WARN_UNUSED_FUNCTION = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GCC_OPTIMIZATION_LEVEL = s;
 				MACOSX_DEPLOYMENT_TARGET = 10.13;
-				MTL_ENABLE_DEBUG_INFO = NO;
-				MTL_FAST_MATH = YES;
+				OTHER_SWIFT_FLAGS = "-DXcode";
+				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
-				SWIFT_COMPILATION_MODE = wholemodule;
-				SWIFT_OPTIMIZATION_LEVEL = "-O";
-				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
-			};
-			name = Release;
-		};
-		5DDA8B8021C5B421005B7064 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Automatic;
-				COMBINE_HIDPI_IMAGES = YES;
-				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = Z9FHH9AM7K;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				FRAMEWORK_VERSION = A;
-				INFOPLIST_FILE = BioSwift/Info.plist;
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/../Frameworks",
-					"@loader_path/Frameworks",
-				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.koenvanderdrift.BioSwift;
-				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
-				SKIP_INSTALL = YES;
-				SWIFT_VERSION = 4.2;
-			};
-			name = Debug;
-		};
-		5DDA8B8121C5B421005B7064 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Automatic;
-				COMBINE_HIDPI_IMAGES = YES;
-				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = Z9FHH9AM7K;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				FRAMEWORK_VERSION = A;
-				INFOPLIST_FILE = BioSwift/Info.plist;
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/../Frameworks",
-					"@loader_path/Frameworks",
-				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.koenvanderdrift.BioSwift;
-				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
-				SKIP_INSTALL = YES;
-				SWIFT_VERSION = 4.2;
-			};
-			name = Release;
-		};
-		5DDA8B9B21C5B469005B7064 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Automatic;
-				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = Z9FHH9AM7K;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				INFOPLIST_FILE = "BioSwift-iOS/Info.plist";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 12.1;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.koenvanderdrift.BioSwift-iOS";
-				PRODUCT_NAME = BioSwift;
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				SWIFT_VERSION = 4.2;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Debug;
-		};
-		5DDA8B9C21C5B469005B7064 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Automatic;
-				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = Z9FHH9AM7K;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				INFOPLIST_FILE = "BioSwift-iOS/Info.plist";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 12.1;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.koenvanderdrift.BioSwift-iOS";
-				PRODUCT_NAME = BioSwift;
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				SWIFT_VERSION = 4.2;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				VALIDATE_PRODUCT = YES;
+				SUPPORTED_PLATFORMS = "macosx iphoneos iphonesimulator appletvos appletvsimulator watchos watchsimulator";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = SWIFT_PACKAGE;
+				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
+				USE_HEADERMAP = NO;
 			};
 			name = Release;
 		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		5D54695023DFAF750000BD87 /* Build configuration list for PBXNativeTarget "BioSwift_macOSTests" */ = {
+		OBJ_18 /* Build configuration list for PBXNativeTarget "BioSwift" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				5D54694E23DFAF750000BD87 /* Debug */,
-				5D54694F23DFAF750000BD87 /* Release */,
+				OBJ_19 /* Debug */,
+				OBJ_20 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		5D54695D23DFAF8C0000BD87 /* Build configuration list for PBXNativeTarget "BioSwift_iOSTests" */ = {
+		OBJ_2 /* Build configuration list for PBXProject "BioSwift" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				5D54695E23DFAF8C0000BD87 /* Debug */,
-				5D54695F23DFAF8C0000BD87 /* Release */,
+				OBJ_3 /* Debug */,
+				OBJ_4 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		5DDA8B6521C5B421005B7064 /* Build configuration list for PBXProject "BioSwift" */ = {
+		OBJ_25 /* Build configuration list for PBXNativeTarget "BioSwiftPackageDescription" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				5DDA8B7D21C5B421005B7064 /* Debug */,
-				5DDA8B7E21C5B421005B7064 /* Release */,
+				OBJ_26 /* Debug */,
+				OBJ_27 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		5DDA8B7F21C5B421005B7064 /* Build configuration list for PBXNativeTarget "BioSwift_macOS" */ = {
+		OBJ_31 /* Build configuration list for PBXAggregateTarget "BioSwiftPackageTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				5DDA8B8021C5B421005B7064 /* Debug */,
-				5DDA8B8121C5B421005B7064 /* Release */,
+				OBJ_32 /* Debug */,
+				OBJ_33 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		5DDA8B9F21C5B469005B7064 /* Build configuration list for PBXNativeTarget "BioSwift_iOS" */ = {
+		OBJ_36 /* Build configuration list for PBXNativeTarget "BioSwiftTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				5DDA8B9B21C5B469005B7064 /* Debug */,
-				5DDA8B9C21C5B469005B7064 /* Release */,
+				OBJ_37 /* Debug */,
+				OBJ_38 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
-	rootObject = 5DDA8B6221C5B421005B7064 /* Project object */;
+	rootObject = OBJ_1 /* Project object */;
 }

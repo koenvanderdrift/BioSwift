@@ -2,6 +2,6 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "self:/Users/kvanderdrift/Dropbox/Programming/Swift/Frameworks/MassKit/BioSwift.xcodeproj">
+      location = "self:">
    </FileRef>
 </Workspace>

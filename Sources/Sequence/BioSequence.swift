@@ -101,7 +101,6 @@ extension BioSequence {
     }
     
     public func possibleFunctionalGroups(at index: Int) -> [FunctionalGroup]? {
-        return nil
         if let symbol = symbol(at: index) {
             var possibleFunctionalGroups = functionalGroupLibrary.filter { $0.sites.contains(symbol.identifier) == true }
          
@@ -140,8 +139,10 @@ extension BioSequence {
     }
     
     public func addModification(with name: String, at location: Int = -1) {
-        if let group = functionalGroupLibrary.first(where: { $0.name == name }) {
-            add(Modification(group: group, sites: [location]))
+        if let group = functionalGroupLibrary.first(where: { $0.name == name }), let possibleGroups = possibleFunctionalGroups(at: location) {
+            if possibleGroups.contains(group) {
+                add(Modification(group: group, sites: [location]))
+            }
         }
     }
     
