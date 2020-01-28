@@ -1,13 +1,18 @@
 import Foundation
 
-public class Protein: BioSequence, Chargeable, Modifiable {
+public class Protein: BioSequence, Chargeable {    
     public var adducts: [Adduct] = []
     
-    public required init(sequence: String) {
-        super.init(sequence: sequence)
-        
-        self.symbolLibrary = aminoAcidLibrary
-        self.sequenceType = .protein        
+    public required init(residues: [Residue]) {
+        super.init(residues: residues, library: aminoAcidLibrary)
+    }
+
+    public init(sequence: String) {
+        super.init(sequence: sequence, library: aminoAcidLibrary)
+    }
+    
+    public required init(residues: [Residue], library: [Symbol]) {
+        fatalError("init(residues:library:) has not been implemented")
     }
     
     public var masses: MassContainer {
@@ -15,7 +20,7 @@ public class Protein: BioSequence, Chargeable, Modifiable {
     }
     
     public func calculateMasses() -> MassContainer {
-        let result = mass(of: symbolSequence) + modificationMasses() + terminalMasses() + adductMasses()
+        let result = mass(of: residueSequence) + terminalMasses() + adductMasses()
 
         return result
     }
@@ -37,7 +42,6 @@ public class Protein: BioSequence, Chargeable, Modifiable {
 //        guard let fastaRecord = fasta.serializer() else { return nil }
 //
 //        self.sequenceString = fastaRecord.sequence
-//        self.sequenceType = .protein
 ////        super.init(sequence: fastaRecord.sequence, sequenceType: .protein)
 //    }
 //}

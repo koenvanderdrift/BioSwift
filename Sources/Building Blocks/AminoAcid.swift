@@ -10,7 +10,7 @@ public struct AminoAcid: Residue, Codable {
     public let represents: [String]
     public let representedBy: [String]
 
-    public var groups: [FunctionalGroup] = []
+    public var modifications: [Modification] = []
 
     private enum CodingKeys: String, CodingKey {
         case name

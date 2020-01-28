@@ -1,15 +1,15 @@
 //
-//  BioSwiftTests.swift
-//  BioSwiftTests
+//  BioSwift_iOSTests.swift
+//  BioSwift_iOSTests
 //
-//  Created by Koen van der Drift on 12/15/18.
-//  Copyright © 2018 Koen van der Drift. All rights reserved.
+//  Created by Koen van der Drift on 1/27/20.
+//  Copyright © 2020 Koen van der Drift. All rights reserved.
 //
 
-@testable import BioSwift
 import XCTest
 
-class BioSwiftTests: XCTestCase {
+class BioSwift_iOSTests: XCTestCase {
+
     override func setUp() {
         // Put setup code here. This method is called before the invocation of each test method in the class.
     }
@@ -25,8 +25,9 @@ class BioSwiftTests: XCTestCase {
 
     func testPerformanceExample() {
         // This is an example of a performance test case.
-        measure {
+        self.measure {
             // Put the code you want to measure the time of here.
         }
     }
+
 }

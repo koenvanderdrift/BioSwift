@@ -30,13 +30,7 @@ extension Mass {
     }
     
     public func mass(of mass: [Mass]) -> MassContainer {
-        var result = zeroMass
-        
-        for m in mass {
-            result += m.masses
-        }
-        
-        return result
+        return mass.reduce(zeroMass, { $0 + $1.masses })
     }
 }
 

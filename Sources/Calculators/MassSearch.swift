@@ -35,15 +35,13 @@ public struct SearchParameters {
     public let searchType: SearchType
     public var charge: Int
     public var massType: MassType
-    public let sequenceType: SequenceType
     
-    public init(searchValue: Double, tolerance: Tolerance, searchType: SearchType, charge: Int, massType: MassType, sequenceType: SequenceType) {
+    public init(searchValue: Double, tolerance: Tolerance, searchType: SearchType, charge: Int, massType: MassType) {
         self.searchValue = searchValue
         self.tolerance = tolerance
         self.searchType = searchType
         self.charge = charge
         self.massType = massType
-        self.sequenceType = sequenceType
     }
     
     func massRange() -> ClosedRange<Double> {
@@ -78,23 +76,23 @@ public struct MassSearch {
     
     public func searchMass() -> SearchResult {
         var result = SearchResult()
-        guard var symbolSequence = sequence.symbolSequence else { return result }
         
+        var residueSequence = sequence.residueSequence
         let sequenceString = sequence.sequenceString
         
         let range = params.massRange()
         var start = 0
         
-        while !symbolSequence.isEmpty {
+        while !residueSequence.isEmpty {
             var mass = nterm.masses + cterm.masses
             
             // correct way of doing this:
             // get slice of symbolSequence()
             // get pseudomolecular ion
             
-            symbolSequence.enumerated().forEach { index, symbol in
-                if let symbol = symbol as? Mass, let s = sequenceString.substring(from: start, to: start + index + 1) {
-                    mass += symbol.masses
+            residueSequence.enumerated().forEach { index, residue in
+                if let s = sequenceString.substring(from: start, to: start + index + 1) {
+                    mass += residue.masses
                     let chargedMass = params.charge > 0 ? mass / params.charge : mass
                     
                     switch params.massType {
@@ -116,7 +114,7 @@ public struct MassSearch {
                 }
             }
             
-            symbolSequence.removeFirst()
+            residueSequence.removeFirst()
             start += 1
         }
         

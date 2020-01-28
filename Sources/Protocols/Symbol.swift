@@ -19,9 +19,3 @@ public class SymbolSet: NSCountedSet {
         return self.count(for: symbol as Any)
     }
 }
-
-extension Array where Element: Symbol {
-    var description: String {
-        return map { $0.identifier }.joined()
-    }
-}

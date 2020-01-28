@@ -6,36 +6,30 @@ public class Peptide: Protein {
     }
 
     func precursorIons() -> [Fragment] {
-        var fragments = [Fragment]()
+        let fragment = Fragment(residues: residueSequence, type: .precursor)
         
-        let fragment = Fragment(type: .precursor, sequence: sequenceString)
-        
-        fragments.append(fragment)
-        
-        if self.canLoseAmmonia() {
-            let fragment = Fragment(type: .precursor, sequence: sequenceString)
-            fragment.modifications = [Modification(group: FunctionalGroup(name: "lossOfAmmonia", formula: Formula(stringValue: "-NH3")), location: 0)]
-            fragments.append(fragment)
-        }
+//        if self.canLoseAmmonia() {
+//            fragment.modifications = [Modification(group: FunctionalGroup(name: "lossOfAmmonia", formula: Formula(stringValue: "-NH3")))]
+//        }
+//
+//        if self.canLoseWater() {
+//            fragment.modifications = [Modification(group: FunctionalGroup(name: "lossOfWater", formula: Formula(stringValue: "-H2O")))]
+//        }
 
-        if self.canLoseWater() {
-            let fragment = Fragment(type: .precursor, sequence: self.sequenceString)
-            fragment.modifications = [Modification(group: FunctionalGroup(name: "lossOfWater", formula: Formula(stringValue: "-H2O")), location: 0)]
-            fragments.append(fragment)
-        }
-
-        return fragments
+        return [fragment]
     }
     
     func immoniumIons() -> [Fragment] {
         guard let symbols = self.symbolSet() as? Set<AminoAcid> else { return [] }
         
-        return symbols.map { symbol in
-            let fragment = Fragment(type: .immonium, sequence: symbol.oneLetterCode)
+        let fragments = symbols.map { symbol -> Fragment in
+            let fragment = Fragment(residues: [symbol], type: .immonium)
             fragment.adducts = self.adducts
             
             return fragment
         }
+        
+        return fragments
     }
 
     func nTerminalIons() -> [Fragment] { // b fragments
@@ -44,10 +38,11 @@ public class Peptide: Protein {
         guard self.adducts.count > 0 else { return fragments }
 
         for z in 1 ... min(2, self.adducts.count) {
-            for i in 2 ... sequenceString.count - 1 {
-                let index = sequenceString.index(sequenceString.startIndex, offsetBy: i) // let newStr = String(str[..<index])
-
-                let fragment = Fragment(type: .nTerminal, sequence: String(sequenceString[..<index]))
+            for i in 2 ... residueSequence.count - 1 {
+                let index = residueSequence.index(residueSequence.startIndex, offsetBy: i)
+                
+                let residues = residueSequence[..<index]
+                let fragment = Fragment(residues: Array(residues), type: .nTerminal)
                 
                 fragment.adducts.append(contentsOf: repeatElement(protonAdduct, count: z))
 
@@ -70,9 +65,11 @@ public class Peptide: Protein {
         guard self.adducts.count > 0 else { return fragments }
         
         for z in 1 ... min(2, self.adducts.count) {
-            for i in 1 ... sequenceString.count - 1 {
-                let index = sequenceString.index(sequenceString.endIndex, offsetBy: -i)
-                let fragment = Fragment(type: .cTerminal, sequence: String(sequenceString[..<index]))
+            for i in 1 ... residueSequence.count - 1 {
+                let index = residueSequence.index(residueSequence.endIndex, offsetBy: -i)
+
+                let residues = residueSequence[..<index]
+                let fragment = Fragment(residues: Array(residues), type: .cTerminal)
 
                 fragment.adducts.append(contentsOf: repeatElement(protonAdduct, count: z))
 

@@ -19,16 +19,20 @@ public enum FragmentType {
 public class Fragment: Peptide {
     public let fragmentType: FragmentType
     
-    public init(type: FragmentType, sequence: String) {
+    public init(residues: [Residue], type: FragmentType) {
         self.fragmentType = type
+        
+        super.init(residues: residues)
+    }
 
-        super.init(sequence: sequence)
+    public required init(residues: [Residue]) {
+        fatalError("init(residues:) has not been implemented")
     }
     
-    public required init(sequence: String) {
-        fatalError("init(sequence:) has not been implemented")
+    required init(residues: [Residue], library: [Symbol]) {
+        fatalError("init(residues:library:) has not been implemented")
     }
-
+    
     override func terminalMasses() -> MassContainer {
         var result = zeroMass
         if fragmentType == .nTerminal {
