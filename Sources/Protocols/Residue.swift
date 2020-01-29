@@ -27,4 +27,17 @@ extension Residue {
     private func modificationMasses() -> MassContainer {
         return mass(of: modifications.map { $0.group })
     }
+    
+    mutating func addModification(with group: FunctionalGroup, at site: Int) {
+        if group.sites.contains(self.identifier) {
+            let mod = Modification(group: group, sites: [site])
+            modifications.append(mod)
+        }
+    }
+    
+    mutating func removeModification(with group: FunctionalGroup, at location: Int = -1) {
+        if modifications[location].group.name == group.name {
+            modifications.remove(at: location)
+        }
+    }
 }

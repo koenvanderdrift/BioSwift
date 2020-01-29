@@ -123,9 +123,8 @@ extension BioSequence {
     
     public func add(_ modification: Modification) {
         for site in modification.sites {
-            residueSequence.modifyElement(atIndex: site) {
-                let mod = Modification(group: modification.group, sites: [site])
-                $0.modifications.append(mod)
+            residueSequence.modifyElement(atIndex: site) { residue in
+               residue.addModification(with: modification.group, at: site)
             }
         }
     }
@@ -133,16 +132,14 @@ extension BioSequence {
     public func remove(_ modification: Modification) {
         for site in modification.sites {
             residueSequence.modifyElement(atIndex: site) { residue in
-                residue.modifications = residue.modifications.filter { $0.sites.first != site }
+                residue.removeModification(with: modification.group)
             }
         }
     }
     
     public func addModification(with name: String, at location: Int = -1) {
-        if let group = functionalGroupLibrary.first(where: { $0.name == name }), let possibleGroups = possibleFunctionalGroups(at: location) {
-            if possibleGroups.contains(group) {
-                add(Modification(group: group, sites: [location]))
-            }
+        if let group = functionalGroupLibrary.first(where: { $0.name == name }) {
+            add(Modification(group: group, sites: [location]))
         }
     }
     
