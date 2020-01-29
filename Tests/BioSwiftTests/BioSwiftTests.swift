@@ -20,16 +20,24 @@ final class BioSwiftTests: XCTestCase {
     }
     
     func testProteinAverageMass() {
-        let protein = Protein(sequence: "DWSSD")
-        XCTAssertEqual(protein.masses.averageMass.roundToDecimal(4), 608.5558)
+        var protein = Protein(sequence: "DWSSD")
+        protein.addCharge(protonAdduct)
+
+        XCTAssertEqual(protein.pseudomolecularIon().monoisotopicMass.roundToDecimal(4), 609.2151)
     }
     
     func testProteinSerinePhosphorylationAverageMass() {
-        let protein = Protein(sequence: "DWSSD")
-        let site = 5
+        var protein = Protein(sequence: "DWSSD")
+        let site = 4
         
         protein.addModification(with: "Phosphorylation", at: site - 1) // zero-based
-        XCTAssertEqual(protein.masses.averageMass.roundToDecimal(4), 688.5357)
+        protein.addCharge(protonAdduct)
+
+        XCTAssertEqual(protein.pseudomolecularIon().monoisotopicMass.roundToDecimal(4), 689.1814)
+
+        protein.addCharge(protonAdduct)
+        
+        XCTAssertEqual(protein.pseudomolecularIon().monoisotopicMass.roundToDecimal(4), 345.0944)
     }
     
     

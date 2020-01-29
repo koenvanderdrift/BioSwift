@@ -16,7 +16,6 @@ public protocol Mass {
     func calculateMasses() -> MassContainer
 }
 
-
 extension Mass {
     // TO DO rename function calls
     public func mass(of symbols: [Symbol]?) -> MassContainer {

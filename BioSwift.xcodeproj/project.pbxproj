@@ -141,7 +141,6 @@
 		5D3976FB23E0F18300A6631C /* elements.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = elements.json; sourceTree = "<group>"; };
 		5D3976FC23E0F18300A6631C /* unimod.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = unimod.xml; sourceTree = "<group>"; };
 		5D3976FD23E0F18300A6631C /* enzymes.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = enzymes.json; sourceTree = "<group>"; };
-		5D3976FE23E0F18300A6631C /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		5D96059B23E0F6FC00F6A93E /* ChemicalElement.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChemicalElement.swift; sourceTree = "<group>"; };
 		5D96059C23E0F6FC00F6A93E /* AminoAcid.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AminoAcid.swift; sourceTree = "<group>"; };
 		5D96059D23E0F6FC00F6A93E /* Formula.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Formula.swift; sourceTree = "<group>"; };
@@ -201,12 +200,11 @@
 			isa = PBXGroup;
 			children = (
 				5D3976F723E0F18300A6631C /* aminoacids.json */,
-				5D3976F823E0F18300A6631C /* hydropathy.json */,
-				5D3976FA23E0F18300A6631C /* functionalgroups.json */,
 				5D3976FB23E0F18300A6631C /* elements.json */,
-				5D3976FC23E0F18300A6631C /* unimod.xml */,
 				5D3976FD23E0F18300A6631C /* enzymes.json */,
-				5D3976FE23E0F18300A6631C /* Info.plist */,
+				5D3976FA23E0F18300A6631C /* functionalgroups.json */,
+				5D3976F823E0F18300A6631C /* hydropathy.json */,
+				5D3976FC23E0F18300A6631C /* unimod.xml */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
