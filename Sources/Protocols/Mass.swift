@@ -31,6 +31,18 @@ extension Mass {
     public func mass(of mass: [Mass]) -> MassContainer {
         return mass.reduce(zeroMass, { $0 + $1.masses })
     }
+    
+    public var monoisotopicMass: Decimal {
+        return masses.monoisotopicMass
+    }
+
+    public var averageMass: Decimal {
+        return masses.averageMass
+    }
+
+    public var nominalMass: Decimal {
+        return masses.nominalMass
+    }
 }
 
 public enum MassType: String {
@@ -40,9 +52,9 @@ public enum MassType: String {
 }
 
 public struct MassContainer {
-    public var monoisotopicMass = 0.0
-    public var averageMass = 0.0
-    public var nominalMass = 0.0
+    public var monoisotopicMass = Decimal(0.0)
+    public var averageMass = Decimal(0.0)
+    public var nominalMass = Decimal(0.0)
 }
 
 extension MassContainer: Equatable {
@@ -63,10 +75,22 @@ extension MassContainer: Equatable {
     }
     
     public static func * (lhs: Int, rhs: MassContainer) -> MassContainer {
-        return MassContainer(monoisotopicMass: Double(lhs) * rhs.monoisotopicMass, averageMass: Double(lhs) * rhs.averageMass, nominalMass: Double(lhs) * rhs.nominalMass)
+        return MassContainer(monoisotopicMass: Decimal(lhs) * rhs.monoisotopicMass, averageMass: Decimal(lhs) * rhs.averageMass, nominalMass: Decimal(lhs) * rhs.nominalMass)
     }
     
     public static func / (lhs: MassContainer, rhs: Int) -> MassContainer {
-        return MassContainer(monoisotopicMass: lhs.monoisotopicMass / Double(rhs), averageMass: lhs.averageMass / Double(rhs), nominalMass: lhs.nominalMass / Double(rhs))
+        return MassContainer(monoisotopicMass: lhs.monoisotopicMass / Decimal(rhs), averageMass: lhs.averageMass / Decimal(rhs), nominalMass: lhs.nominalMass / Decimal(rhs))
+    }
+}
+
+
+extension Decimal {
+    public func roundedString(_ round: Int) -> String {
+        var rounded = Decimal()
+        var selfCopy = self
+        
+        NSDecimalRound(&rounded, &selfCopy, round, .plain)
+
+        return "\(rounded)"
     }
 }

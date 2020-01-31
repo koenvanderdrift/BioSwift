@@ -12,6 +12,7 @@ public let emptyGroup = FunctionalGroup(name: "empty", formula: Formula(stringVa
 public let hydroxyl = FunctionalGroup(name: "hydroxyl", formula: Formula(stringValue: "OH"))
 public let ammonia = FunctionalGroup(name: "ammonia", formula: Formula(stringValue: "NH3"))
 public let water = FunctionalGroup(name: "water", formula: Formula(stringValue: "H2O"))
+public let methyl = FunctionalGroup(name: "methyl", formula: Formula(stringValue: "CH3"))
 
 public let nterm = FunctionalGroup(name: "N-term", formula: Formula(stringValue: "H"), sites: ["NTerminal"])
 public let cterm = FunctionalGroup(name: "C-term", formula: Formula(stringValue: "OH"), sites: ["CTerminal"])

@@ -8,15 +8,6 @@ public struct Isotope: Codable {
     public let abundance: String
 }
 
-extension Isotope {
-    var massDouble: Double {
-        return Double(mass) ?? 0.0
-    }
-    var abundanceDouble: Double {
-        return Double(abundance) ?? 0.0
-    }
-}
-
 public struct ChemicalElement: Codable, Symbol {
     private(set) var _masses: MassContainer = zeroMass
 
@@ -64,27 +55,24 @@ extension ChemicalElement: Mass {
     }
 
     public func calculateMasses() -> MassContainer {
-        var currentMass = 0.0
-        var currentAbundance = 0.0
+        var currentAbundance = Decimal(0.0)
         
-        var monoisotopicMass = 0.0
-        var averageMass = 0.0
-        var nominalMass = 0.0
+        var monoisotopicMass = Decimal(0.0)
+        var averageMass = Decimal(0.0)
+        var nominalMass = Decimal(0.0)
         
         for i in isotopes {
-            let abundance = i.abundanceDouble * 0.01
-            let mass = i.massDouble
+            let abundance = Decimal(string: i.abundance)! * Decimal(0.01)
+            let mass = Decimal(string: i.mass)!
             
             if abundance > currentAbundance {
-                nominalMass = mass.rounded().nextDown
+                nominalMass = mass
                 monoisotopicMass = mass
                 currentAbundance = abundance
             }
             
-            currentMass += abundance * mass
+            averageMass += abundance * mass
         }
-        
-        averageMass = currentMass
         
         return MassContainer(monoisotopicMass: monoisotopicMass, averageMass: averageMass, nominalMass: nominalMass)
     }

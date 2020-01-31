@@ -14,7 +14,7 @@ public let protonAdduct = Adduct(group: proton, charge: 1)
 public let sodiumAdduct = Adduct(group: sodium, charge: 1)
 public let ammoniumAdduct = Adduct(group: ammonium, charge: 1)
 
-let e = 0.00054858026
+let e = Decimal(0.00054858026)
 public let electronMass = MassContainer(monoisotopicMass: e, averageMass: e, nominalMass: 0)
 
 public protocol Chargeable: Mass {
