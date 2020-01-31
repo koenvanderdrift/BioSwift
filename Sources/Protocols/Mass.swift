@@ -93,4 +93,8 @@ extension Decimal {
 
         return "\(rounded)"
     }
+    
+    public func doubleValue() -> Double {
+        return Double(truncating: self as NSNumber)
+    }
 }

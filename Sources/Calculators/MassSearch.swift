@@ -95,22 +95,22 @@ public struct MassSearch {
                     mass += residue.masses
                     let chargedMass = params.charge > 0 ? mass / params.charge : mass
                     
-//                    switch params.massType {
-//                    case .monoisotopic:
-//                        if range.contains(chargedMass.monoisotopicMass) {
-//                            result.insert(String(s))
-//                        }
-//                        
-//                    case .average:
-//                        if range.contains(chargedMass.averageMass) {
-//                            result.insert(String(s))
-//                        }
-//                        
-//                    case .nominal:
-//                        if range.contains(chargedMass.nominalMass) {
-//                            result.insert(String(s))
-//                        }
-//                    }
+                    switch params.massType {
+                    case .monoisotopic:
+                        if range.contains(chargedMass.monoisotopicMass.doubleValue()) {
+                            result.insert(String(s))
+                        }
+                        
+                    case .average:
+                        if range.contains(chargedMass.averageMass.doubleValue()) {
+                            result.insert(String(s))
+                        }
+                        
+                    case .nominal:
+                        if range.contains(chargedMass.nominalMass.doubleValue()) {
+                            result.insert(String(s))
+                        }
+                    }
                 }
             }
             
