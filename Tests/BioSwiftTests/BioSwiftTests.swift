@@ -78,10 +78,6 @@ bioswift (+el)      609.5641    609.2162
         XCTAssertEqual(group.averageMass.roundedString(4), "608.5557")
     }
 
-    // https://www.lfd.uci.edu/~gohlke/code/molmass.py.html
-    // https://www.lfd.uci.edu/~gohlke/code/elements.py.html
-    
-    
     func testWaterAverageMass() { // H2O
         XCTAssertEqual(water.averageMass.roundedString(4), "18.0153")
     }
