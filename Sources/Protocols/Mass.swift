@@ -16,6 +16,9 @@ public protocol Mass {
     func calculateMasses() -> MassContainer
 }
 
+// all masses from https://physics.nist.gov/cgi-bin/Compositions/stand_alone.pl
+
+
 extension Mass {
     // TO DO rename function calls
     public func mass(of symbols: [Symbol]?) -> MassContainer {

@@ -8,7 +8,13 @@
 
 import Foundation
 
-public class BioSequence {
+public class BioSequence: Molecule {
+    public var name: String = ""
+
+    public var formula: Formula {
+        return residueSequence.reduce(Formula(stringValue: ""), { $0 + $1.formula })
+    }
+    
     var symbolLibrary: [Symbol] = []
     
     var residueSequence = [Residue]()

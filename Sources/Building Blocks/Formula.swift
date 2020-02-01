@@ -14,10 +14,20 @@ public struct Formula {
     }
     
     var description: String {
-        return stringValue
+        return formula
     }
     
-    private typealias ElementInfo = (name: String, count: Int)
+    var formula: String {
+        let set = NSCountedSet(array: (elements.map{ $0.symbol }))
+        
+        var result = ""
+        
+        debugPrint(set.description)
+
+        return result
+    }
+    
+    private typealias ElementInfo = (element: ChemicalElement, count: Int)
 
     private func parse(_ string: String) -> [ChemicalElement] {
         // https://stackoverflow.com/questions/23602175/regex-for-parsing-chemical-formulas
@@ -34,10 +44,8 @@ public struct Formula {
                 let elementInfo = countOneElement(string: String(elementString))
                 else { break }
             
-            if let element = elementLibrary.first(where: { $0.identifier == elementInfo.name }) {
-                for _ in 1...elementInfo.count {
-                    result.append(element)
-                }
+            for _ in 1...elementInfo.count {
+                result.append(elementInfo.element)
             }
         }
         
@@ -48,11 +56,12 @@ public struct Formula {
         let scanner = Scanner(string: string)
         
         guard
-            let element = scanner.scanCharactersFromSet(set: CharacterSet.letters),
-            let elementCount = scanner.scanInt()
+            let elementName = scanner.scanCharactersFromSet(set: CharacterSet.letters),
+            let elementCount = scanner.scanInt(),
+            let element = elementLibrary.first(where: { $0.identifier == elementName as String})
             else { return nil }
-        
-        return ElementInfo(element as String, (elementCount == 0) ? 1 : elementCount)
+
+        return ElementInfo(element as ChemicalElement, (elementCount == 0) ? 1 : elementCount)
     }
 }
 
