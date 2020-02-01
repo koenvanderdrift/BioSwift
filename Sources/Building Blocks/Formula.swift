@@ -14,54 +14,111 @@ public struct Formula {
     }
     
     var description: String {
-        return formula
+        return stringValue
     }
     
-    var formula: String {
-        let set = NSCountedSet(array: (elements.map{ $0.symbol }))
-        
-        var result = ""
-        
-        debugPrint(set.description)
-
-        return result
-    }
-    
-    private typealias ElementInfo = (element: ChemicalElement, count: Int)
+    private typealias ElementInfo = (element: String, count: Int)
 
     private func parse(_ string: String) -> [ChemicalElement] {
-        // https://stackoverflow.com/questions/23602175/regex-for-parsing-chemical-formulas
-        let pattern = "([A-Z][a-z]*)([0-9]*)"
-//        let pattern =  "([0-9]?d*|[A-Z][a-z]{0,2}?d*)"
-//        let pattern = "[+-]?([A-Z][a-z]*)(\\d*)"
-//        let openingBrackets = "({["
-//        let closingBrackets = ")}]"
+
+        let characters = Array(string)
+        var i = characters.count
         
-        var result = [ChemicalElement]()
+        var parenthesisLevel = 0
+        var multiplication = [1]
+        var number = 0
+        var element = ""
+        var result = [ElementInfo]()
         
-        for match in string.matches(for: pattern) {
-            guard let elementString = string.substring(with: match.range),
-                let elementInfo = countOneElement(string: String(elementString))
-                else { break }
+        while i > 0 {
+            i -= 1
+            let char = characters[i]
             
-            for _ in 1...elementInfo.count {
-                result.append(elementInfo.element)
+            if  "({[<".contains(char) {
+                parenthesisLevel -= 1
+                if parenthesisLevel < 0 || number != 0 {
+                    // error no closing bracket
+                }
+            }
+            
+            else if ")}]>".contains(char) {
+                if number == 0 { number = 1 }
+                parenthesisLevel += 1
+                
+                if parenthesisLevel > multiplication.count - 1 {
+                    multiplication.append(0)
+                }
+                
+                multiplication[parenthesisLevel] = number * multiplication[parenthesisLevel - 1]
+                number = 0
+            }
+            
+            else if "0123456789".contains(char) {
+                let j = i
+                
+                while i > 0 && "0123456789".contains(characters[i-1]) {
+                    i -= 1
+                }
+                
+                number = Int(string[i..<j+1])!
+                if number == 0 {
+                    // error count is zero
+                }
+            }
+                
+            else if "abcdefghijklmnopqrstuvwxyz".contains(char) {
+                if !("ABCDEFGHIJKLMNOPQRSTUVWXYZ".contains(characters[i-1])) {
+                    // error unexpected character
+                }
+                
+                element = String(char)
+            }
+            else if "ABCDEFGHIJKLMNOPQRSTUVWXYZ".contains(char) {
+                element = String(char) + element
+                if number == 0 { number = 1 }
+                
+                var iso = ""
+                let j = i
+                
+                while i > 0 && "0123456789".contains(characters[i-1]) {
+                    i -= 1
+                    iso = String(string[i]) + iso
+                }
+                
+                if (iso.count > 0 && i > 0) && ("({[<".contains(characters[i-1]) == false) {
+                    i = j
+                    iso = ""
+                }
+                
+                let elementCount = number * multiplication[parenthesisLevel]
+                if var info = result.first(where: { $0.element == element }) {
+                    info.count += elementCount
+                    result.append(info)
+                }
+                else {
+                    let info = ElementInfo(element, elementCount)
+                    result.append(info)
+                }
+                
+                element = ""
+                number = 0
+            }
+            else {
+                // error invalid character
             }
         }
         
-        return result
-    }
-    
-    private func countOneElement(string: String) -> ElementInfo? {
-        let scanner = Scanner(string: string)
-        
-        guard
-            let elementName = scanner.scanCharactersFromSet(set: CharacterSet.letters),
-            let elementCount = scanner.scanInt(),
-            let element = elementLibrary.first(where: { $0.identifier == elementName as String})
-            else { return nil }
+        var elements = [ChemicalElement]()
 
-        return ElementInfo(element as ChemicalElement, (elementCount == 0) ? 1 : elementCount)
+        for info in result {
+            if let element = elementLibrary.first(where: { $0.identifier == info.element }) {
+                for _ in 1...info.count {
+                    elements.append(element)
+                }
+            }
+        }
+        
+        return elements
     }
 }
 
