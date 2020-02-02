@@ -83,6 +83,6 @@ extension FunctionalGroup: Hashable {
 
 extension FunctionalGroup: Mass {
     public func calculateMasses() -> MassContainer {
-        return formula.masses
+        return mass(of: formula.elements)
     }
 }

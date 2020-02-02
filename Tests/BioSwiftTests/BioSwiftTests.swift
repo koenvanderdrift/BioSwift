@@ -81,7 +81,7 @@ bioswift (+el)      609.5641    609.2162
     func testFormulaAverageMass() { // C4H5NO3 + C11H10N2O + C3H5NO2 + C3H5NO2 + C4H5NO3 + H2O
         
         let formula = Formula("C2112H3313N539O629S13H")
-        let masses = formula.masses
+        let masses = mass(of: formula.elements)
         debugPrint(masses)
         
         let group = FunctionalGroup(name: "", formula: Formula("C25H32N6O12"))

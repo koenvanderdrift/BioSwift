@@ -21,7 +21,7 @@ extension Residue {
     }
 
     public func calculateMasses() -> MassContainer {
-        return formula.masses + modificationMasses()
+        return mass(of: formula.elements) + modificationMasses()
     }
     
     private func modificationMasses() -> MassContainer {

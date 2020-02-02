@@ -4,7 +4,6 @@ public typealias Elements = [ChemicalElement]
 
 public struct Formula {
     private(set) var elements: [ChemicalElement] = []
-    private(set) var _masses: MassContainer = zeroMass
     
     public var string: String
     
@@ -22,8 +21,6 @@ public struct Formula {
         
             return result
         }()
-        
-        _masses = calculateMasses()
     }
     
     var description: String {
@@ -185,18 +182,6 @@ extension Formula {
     
     private func isClosingBracket(_ char: Character) -> Bool {
         return ")}]>".contains(char)
-    }
-}
-
-extension Formula: Mass {
-    public var masses: MassContainer {
-        return _masses
-    }
-    
-    public func calculateMasses() -> MassContainer {
-        let result = mass(of: elements)
-        
-        return string.hasPrefix("-") ? -1 * result : result
     }
 }
 
