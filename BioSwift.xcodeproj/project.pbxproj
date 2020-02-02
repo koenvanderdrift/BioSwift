@@ -214,8 +214,8 @@
 		5D96059A23E0F6FC00F6A93E /* Building Blocks */ = {
 			isa = PBXGroup;
 			children = (
-				5D96059B23E0F6FC00F6A93E /* ChemicalElement.swift */,
 				5D96059C23E0F6FC00F6A93E /* AminoAcid.swift */,
+				5D96059B23E0F6FC00F6A93E /* ChemicalElement.swift */,
 				5D96059D23E0F6FC00F6A93E /* Formula.swift */,
 				5D96059E23E0F6FC00F6A93E /* FunctionalGroup.swift */,
 				5D96059F23E0F6FC00F6A93E /* Modification.swift */,

@@ -46,7 +46,7 @@ bioswift (+el)      609.5641    609.2162
         peptide.addCharge(protonAdduct)
 
         XCTAssertEqual(peptide.pseudomolecularIon().averageMass.roundedString(4), "609.5636")
-    }// -0.0099
+    }// 609.563
 
     func testPeptideSerinePhosphorylationMonoisotopicMass() {
         var peptide = Peptide(sequence: "DWSSD")
@@ -76,7 +76,7 @@ bioswift (+el)      609.5641    609.2162
         protein.addCharge(protonAdduct)
 
         XCTAssertEqual(protein.pseudomolecularIon().averageMass.roundedString(4), "46737.9568")
-    }
+    } // 46737.0872
     
     func testFormulaAverageMass() { // C4H5NO3 + C11H10N2O + C3H5NO2 + C3H5NO2 + C4H5NO3 + H2O
         
@@ -86,7 +86,7 @@ bioswift (+el)      609.5641    609.2162
         
         let group = FunctionalGroup(name: "", formula: "C25H32N6O12")
         XCTAssertEqual(group.averageMass.roundedString(4), "608.5557")
-    }
+    } // 608.5556
 
     func testWaterAverageMass() { // H2O
         XCTAssertEqual(water.averageMass.roundedString(4), "18.0153")

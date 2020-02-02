@@ -1,31 +1,22 @@
 import Foundation
 
-public typealias Formula = String
 public typealias Elements = [ChemicalElement]
 
-public let formulaSeparator = " + "
-
-extension Formula: Mass {
-    public var masses: MassContainer {
-        return calculateMasses()
-    }
+public struct Formula {
+    public var string: String
     
-    public func calculateMasses() -> MassContainer {
-        let result = mass(of: elements)
-        
-        return self.hasPrefix("-") ? -1 * result : result
-    }
-    
-    public var elements: Elements {
+    public lazy var elements: Elements = {
         return parse()
-    }
+    }()
+
+    private(set) var _masses: MassContainer = zeroMass
     
     private func parse() -> Elements {
         
         // https://www.lfd.uci.edu/~gohlke/code/molmass.py.html
         // https://www.lfd.uci.edu/~gohlke/code/elements.py.html
         
-        let characters = Array(self)
+        let characters = Array(string)
         var i = characters.count
         
         var parenthesisLevel = 0
@@ -72,7 +63,7 @@ extension Formula: Mass {
                     i -= 1
                 }
                 
-                elementCount = Int(self[i..<j+1])!
+                elementCount = Int(string[i..<j+1])!
                 
                 if elementCount == 0 {
                     debugPrint("count is zero error")
@@ -86,7 +77,7 @@ extension Formula: Mass {
                 
                 elementName = String(char)
             }
-            
+                
             else if isUppercase(char) {
                 elementName = String(char) + elementName
                 
@@ -143,6 +134,24 @@ extension Formula: Mass {
     
     public func countFor(element: String) -> Int {
         return elements.map { $0.symbol }.filter{ $0 == element }.count
+    }
+
+}
+
+
+//public typealias Formula = String
+
+public let formulaSeparator = ""
+
+extension Formula: Mass {
+    public var masses: MassContainer {
+        return calculateMasses()
+    }
+    
+    public func calculateMasses() -> MassContainer {
+        let result = mass(of: elements)
+        
+        return string.hasPrefix("-") ? -1 * result : result
     }
 }
 
