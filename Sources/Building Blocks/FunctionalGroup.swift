@@ -8,18 +8,18 @@
 
 import Foundation
 
-public let emptyGroup = FunctionalGroup(name: "empty", formula: "")
-public let hydroxyl = FunctionalGroup(name: "hydroxyl", formula: "OH")
-public let ammonia = FunctionalGroup(name: "ammonia", formula: "NH3")
-public let water = FunctionalGroup(name: "water", formula: "H2O")
-public let methyl = FunctionalGroup(name: "methyl", formula: "CH3")
+public let emptyGroup = FunctionalGroup(name: "empty", formula: Formula(""))
+public let hydroxyl = FunctionalGroup(name: "hydroxyl", formula: Formula("OH"))
+public let ammonia = FunctionalGroup(name: "ammonia", formula: Formula("NH3"))
+public let water = FunctionalGroup(name: "water", formula: Formula("H2O"))
+public let methyl = FunctionalGroup(name: "methyl", formula: Formula("CH3"))
 
-public let nterm = FunctionalGroup(name: "N-term", formula: "H", sites: ["NTerminal"])
-public let cterm = FunctionalGroup(name: "C-term", formula: "OH", sites: ["CTerminal"])
+public let nterm = FunctionalGroup(name: "N-term", formula: Formula("H"), sites: ["NTerminal"])
+public let cterm = FunctionalGroup(name: "C-term", formula: Formula("OH"), sites: ["CTerminal"])
 
-public let proton = FunctionalGroup(name: "proton", formula: "H")
-public let sodium = FunctionalGroup(name: "Sodium", formula: "Na")
-public let ammonium = FunctionalGroup(name: "Ammonium", formula: "NH4")
+public let proton = FunctionalGroup(name: "proton", formula: Formula("H"))
+public let sodium = FunctionalGroup(name: "Sodium", formula: Formula("Na"))
+public let ammonium = FunctionalGroup(name: "Ammonium", formula: Formula("NH4"))
 
 public var functionalGroupLibrary: [FunctionalGroup] = loadJSONFromBundle(fileName: "functionalgroups")
 
@@ -40,8 +40,8 @@ public struct FunctionalGroup: Molecule, Codable {
         let container = try decoder.container(keyedBy: CodingKeys.self)
 
         name = try container.decode(String.self, forKey: .name)
-        formula = try container.decode(String.self, forKey: .formula)
         sites = try container.decode([String].self, forKey: .sites)
+        formula = Formula(try container.decode(String.self, forKey: .formula))
 
         _masses = calculateMasses()
     }
@@ -57,7 +57,7 @@ public struct FunctionalGroup: Molecule, Codable {
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(name, forKey: .name)
-        try container.encode(formula, forKey: .formula)
+        try container.encode(formula.string, forKey: .formula)
         try container.encode(sites, forKey: .sites)
     }
     
@@ -77,18 +77,12 @@ extension FunctionalGroup: Hashable {
     
     public func hash(into hasher: inout Hasher) {
         hasher.combine(name)
-        hasher.combine(formula)
+        hasher.combine(formula.string)
     }
 }
 
 extension FunctionalGroup: Mass {
     public func calculateMasses() -> MassContainer {
-        let components = formula.components(separatedBy: formulaSeparator)
-        
-        let result = components.indices.map { index in
-            return components[index].masses
-            }.reduce(zeroMass, +)
-        
-        return result
+        return formula.masses
     }
 }

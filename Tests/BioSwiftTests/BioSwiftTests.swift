@@ -23,7 +23,7 @@ bioswift (+el)      609.5641    609.2162
 
  */
     func testFormuls() {
-        let formula = "AgCuRu4(H)2[CO]12{PPh3}2"
+        let formula = Formula("AgCuRu4(H)2[CO]12{PPh3}2")
         
         XCTAssertEqual(formula.countFor(element: "C"), 12)
     }
@@ -80,11 +80,11 @@ bioswift (+el)      609.5641    609.2162
     
     func testFormulaAverageMass() { // C4H5NO3 + C11H10N2O + C3H5NO2 + C3H5NO2 + C4H5NO3 + H2O
         
-        let formula = "C25H32N6O12"
+        let formula = Formula("C25H32N6O12")
         let masses = formula.masses
         debugPrint(masses)
         
-        let group = FunctionalGroup(name: "", formula: "C25H32N6O12")
+        let group = FunctionalGroup(name: "", formula: Formula("C25H32N6O12"))
         XCTAssertEqual(group.averageMass.roundedString(4), "608.5557")
     } // 608.5556
 

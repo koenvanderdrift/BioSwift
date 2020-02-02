@@ -12,7 +12,7 @@ public class BioSequence: Molecule {
     public var name: String = ""
 
     public var formula: Formula {
-        return residueSequence.reduce("", { $0 + $1.formula })
+        return Formula(residueSequence.reduce("", { $0 + $1.formula.string }))
     }
     
     var symbolLibrary: [Symbol] = []

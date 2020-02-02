@@ -3,15 +3,50 @@ import Foundation
 public typealias Elements = [ChemicalElement]
 
 public struct Formula {
-    public var string: String
-    
-    public lazy var elements: Elements = {
-        return parse()
-    }()
-
+    private(set) var elements: [ChemicalElement] = []
     private(set) var _masses: MassContainer = zeroMass
     
-    private func parse() -> Elements {
+    public var string: String
+    
+    public init(_ string: String) {
+        self.string = string
+        self.elements = {
+            var result = Elements()
+            
+            do {
+                result = try parse()
+            }
+            catch {
+                debugPrint(error)
+            }
+        
+            return result
+        }()
+        
+        _masses = calculateMasses()
+    }
+    
+    var description: String {
+        return string
+    }
+}
+
+extension Formula {
+    public func countFor(element: String) -> Int {
+        return elements.map { $0.symbol }.filter{ $0 == element }.count
+    }
+    
+    enum ParseError: Error {
+        case missingClosingBracket
+        case missingOpeningBracket
+        case zeroCount
+        case invalidCharacterFound(Character)
+        case elementNotFound
+        case numberPrecedingFormula
+        case invalidFormula
+    }
+    
+    private func parse() throws -> Elements {
         
         // https://www.lfd.uci.edu/~gohlke/code/molmass.py.html
         // https://www.lfd.uci.edu/~gohlke/code/elements.py.html
@@ -36,7 +71,7 @@ public struct Formula {
             if isOpeningBracket(char) {
                 parenthesisLevel -= 1
                 if parenthesisLevel < 0 || elementCount != 0 {
-                    debugPrint("missing closing bracket error")
+                    throw ParseError.missingClosingBracket
                 }
             }
                 
@@ -66,13 +101,13 @@ public struct Formula {
                 elementCount = Int(string[i..<j+1])!
                 
                 if elementCount == 0 {
-                    debugPrint("count is zero error")
+                    throw ParseError.zeroCount
                 }
             }
                 
             else if isLowercase(char) {
                 if isUppercase(characters[i-1]) == false {
-                    // error unexpected character
+                    throw ParseError.invalidCharacterFound(char)
                 }
                 
                 elementName = String(char)
@@ -101,7 +136,7 @@ public struct Formula {
                     }
                 }
                 else {
-                    debugPrint("element not in library error")
+                    throw ParseError.elementNotFound
                 }
                 
                 elementName = ""
@@ -109,53 +144,29 @@ public struct Formula {
             }
                 
             else {
-                debugPrint("invalid character error")
+                throw ParseError.invalidCharacterFound(char)
             }
         }
         
         if elementCount != 0 {
-            debugPrint("number preceding formula error")
+            throw ParseError.numberPrecedingFormula
         }
         
         if parenthesisLevel != 0 {
-            debugPrint("missing opening parenthesis error")
+            throw ParseError.missingOpeningBracket
+        }
+        
+        if parenthesisLevel != 0 {
+            throw ParseError.missingOpeningBracket
         }
         
         if result.isEmpty {
-            debugPrint("invalid formula error")
-        }
-        
-        if parenthesisLevel != 0 {
-            debugPrint("missing opening parenthesis error")
+            throw ParseError.invalidFormula
         }
         
         return result
     }
     
-    public func countFor(element: String) -> Int {
-        return elements.map { $0.symbol }.filter{ $0 == element }.count
-    }
-
-}
-
-
-//public typealias Formula = String
-
-public let formulaSeparator = ""
-
-extension Formula: Mass {
-    public var masses: MassContainer {
-        return calculateMasses()
-    }
-    
-    public func calculateMasses() -> MassContainer {
-        let result = mass(of: elements)
-        
-        return string.hasPrefix("-") ? -1 * result : result
-    }
-}
-
-extension Formula {
     private func isUppercase(_ char: Character) -> Bool {
         return "ABCDEFGHIJKLMNOPQRSTUVWXYZ".contains(char)
     }
@@ -174,5 +185,29 @@ extension Formula {
     
     private func isClosingBracket(_ char: Character) -> Bool {
         return ")}]>".contains(char)
+    }
+}
+
+extension Formula: Mass {
+    public var masses: MassContainer {
+        return _masses
+    }
+    
+    public func calculateMasses() -> MassContainer {
+        let result = mass(of: elements)
+        
+        return string.hasPrefix("-") ? -1 * result : result
+    }
+}
+
+public let formulaSeparator = " + "
+
+extension Formula {
+    public static func + (lhs: Formula, rhs: Formula) -> Formula {
+        return Formula((lhs.string + formulaSeparator + rhs.string))
+    }
+    
+    public static func - (lhs: Formula, rhs: Formula) -> Formula {
+        return Formula((lhs.string + formulaSeparator + "-" + rhs.string))
     }
 }
