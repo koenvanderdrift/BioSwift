@@ -76,11 +76,11 @@ bioswift (+el)      609.5641    609.2162
         protein.addCharge(protonAdduct)
 
         XCTAssertEqual(protein.pseudomolecularIon().averageMass.roundedString(4), "46737.9568")
-    } // 46737.0872
+    } // 46737.0703"
     
     func testFormulaAverageMass() { // C4H5NO3 + C11H10N2O + C3H5NO2 + C3H5NO2 + C4H5NO3 + H2O
         
-        let formula = Formula("C25H32N6O12")
+        let formula = Formula("C2112H3313N539O629S13H")
         let masses = formula.masses
         debugPrint(masses)
         

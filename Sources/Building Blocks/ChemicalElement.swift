@@ -73,6 +73,6 @@ extension ChemicalElement: Mass {
             averageMass += abundance * mass
         }
         
-        return MassContainer(monoisotopicMass: monoisotopicMass, averageMass: averageMass, nominalMass: nominalMass)
+        return MassContainer(monoisotopicMass: monoisotopicMass, averageMass: averageMass, nominalMass: NSDecimalNumber(decimal: nominalMass).intValue)
     }
 }

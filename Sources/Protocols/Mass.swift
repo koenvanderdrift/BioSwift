@@ -8,7 +8,7 @@
 
 import Foundation
 
-public let zeroMass = MassContainer(monoisotopicMass: 0.0, averageMass: 0.0, nominalMass: 0.0)
+public let zeroMass = MassContainer(monoisotopicMass: 0.0, averageMass: 0.0, nominalMass: 0)
 
 public protocol Mass {
     var masses: MassContainer { get }
@@ -43,7 +43,7 @@ extension Mass {
         return masses.averageMass
     }
 
-    public var nominalMass: Decimal {
+    public var nominalMass: Int {
         return masses.nominalMass
     }
 }
@@ -57,7 +57,7 @@ public enum MassType: String {
 public struct MassContainer {
     public var monoisotopicMass = Decimal(0.0)
     public var averageMass = Decimal(0.0)
-    public var nominalMass = Decimal(0.0)
+    public var nominalMass = 0
 }
 
 extension MassContainer: Equatable {
@@ -78,11 +78,11 @@ extension MassContainer: Equatable {
     }
     
     public static func * (lhs: Int, rhs: MassContainer) -> MassContainer {
-        return MassContainer(monoisotopicMass: Decimal(lhs) * rhs.monoisotopicMass, averageMass: Decimal(lhs) * rhs.averageMass, nominalMass: Decimal(lhs) * rhs.nominalMass)
+        return MassContainer(monoisotopicMass: Decimal(lhs) * rhs.monoisotopicMass, averageMass: Decimal(lhs) * rhs.averageMass, nominalMass: lhs * rhs.nominalMass)
     }
     
     public static func / (lhs: MassContainer, rhs: Int) -> MassContainer {
-        return MassContainer(monoisotopicMass: lhs.monoisotopicMass / Decimal(rhs), averageMass: lhs.averageMass / Decimal(rhs), nominalMass: lhs.nominalMass / Decimal(rhs))
+        return MassContainer(monoisotopicMass: lhs.monoisotopicMass / Decimal(rhs), averageMass: lhs.averageMass / Decimal(rhs), nominalMass: Int(lhs.nominalMass / rhs))
     }
 }
 

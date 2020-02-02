@@ -107,7 +107,7 @@ public struct MassSearch {
                         }
                         
                     case .nominal:
-                        if range.contains(chargedMass.nominalMass.doubleValue()) {
+                        if range.contains(Double(chargedMass.nominalMass)) {
                             result.insert(String(s))
                         }
                     }

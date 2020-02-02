@@ -115,7 +115,7 @@
         "symbol": "P",
         "isotopes": [
             {
-                "mass": "30.973762",
+                "mass": "30.97376199842",
                 "ordinalNumber": "31",
                 "abundance": "100"
             }
@@ -126,24 +126,24 @@
         "symbol": "S",
         "isotopes": [
             {
-                "mass": "31.9720707",
+                "mass": "31.9720711744",
                 "ordinalNumber": "32",
-                "abundance": "94.93"
+                "abundance": "94.99"
             },
             {
-                "mass": "32.97145854",
+                "mass": "32.9714589098",
                 "ordinalNumber": "33",
-                "abundance": "0.76"
+                "abundance": "0.75"
             },
             {
-                "mass": "33.96786665",
+                "mass": "33.967867004",
                 "ordinalNumber": "34",
-                "abundance": "4.29"
+                "abundance": "4.25"
             },
             {
-                "mass": "35.96708062",
+                "mass": "35.96708071",
                 "ordinalNumber": "36",
-                "abundance": "0.02"
+                "abundance": "0.01"
             }
         ]
     },
