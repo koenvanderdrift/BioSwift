@@ -79,14 +79,15 @@ extension Formula: Mass {
                 }
             }
                 
-            else if isLower(char) {
-                if isUpper(characters[i-1]) == false {
+            else if isLowercase(char) {
+                if isUppercase(characters[i-1]) == false {
                     // error unexpected character
                 }
                 
                 elementName = String(char)
             }
-            else if isUpper(char) {
+            
+            else if isUppercase(char) {
                 elementName = String(char) + elementName
                 
                 if elementCount == 0 {
@@ -109,7 +110,7 @@ extension Formula: Mass {
                     }
                 }
                 else {
-                    // error element not in library
+                    debugPrint("element not in library error")
                 }
                 
                 elementName = ""
@@ -139,14 +140,18 @@ extension Formula: Mass {
         
         return result
     }
+    
+    public func countFor(element: String) -> Int {
+        return elements.map { $0.symbol }.filter{ $0 == element }.count
+    }
 }
 
 extension Formula {
-    private func isUpper(_ char: Character) -> Bool {
+    private func isUppercase(_ char: Character) -> Bool {
         return "ABCDEFGHIJKLMNOPQRSTUVWXYZ".contains(char)
     }
     
-    private func isLower(_ char: Character) -> Bool {
+    private func isLowercase(_ char: Character) -> Bool {
         return "abcdefghijklmnopqrstuvwxyz".contains(char)
     }
     

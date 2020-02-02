@@ -22,11 +22,16 @@ bioswift            609.5635    609.2156
 bioswift (+el)      609.5641    609.2162
 
  */
-    
+    func testFormuls() {
+        let formula = "AgCuRu4(H)2[CO]12{PPh3}2"
+        
+        XCTAssertEqual(formula.countFor(element: "C"), 12)
+    }
+
     func testPeptideFormula() {
         let peptide = Peptide(sequence: "DWSSD")
         
-        XCTAssertEqual(peptide.formula.description, "C25H32N6O12")
+        XCTAssertEqual(peptide.formula.countFor(element: "C"), 25)
     }
     
     func testPeptideMonoisotopicMass() {

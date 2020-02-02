@@ -4,35 +4,19 @@
         "symbol": "H",
         "isotopes": [
             {
-                "mass": "1.007825035",
+                "mass": "1.00782503223",
                 "ordinalNumber": "1",
                 "abundance": "99.9885"
             },
             {
-                "mass": "2.01410179",
+                "mass": "2.01410177812",
                 "ordinalNumber": "2",
                 "abundance": "0.0115"
             },
             {
-                "mass": "3.01604927",
+                "mass": "3.0160492779",
                 "ordinalNumber": "3",
                 "abundance": "0"
-            }
-        ]
-    },
-    {
-        "name": "Lithium",
-        "symbol": "Li",
-        "isotopes": [
-            {
-                "mass": "6.0151214",
-                "ordinalNumber": "6",
-                "abundance": "7.59"
-            },
-            {
-                "mass": "7.016003",
-                "ordinalNumber": "7",
-                "abundance": "92.41"
             }
         ]
     },
@@ -46,12 +30,12 @@
                 "abundance": "98.93"
             },
             {
-                "mass": "13.003354826",
+                "mass": "13.00335483507",
                 "ordinalNumber": "13",
                 "abundance": "1.07"
             },
             {
-                "mass": "14.003241982",
+                "mass": "14.0032419884",
                 "ordinalNumber": "14",
                 "abundance": "0"
             }
@@ -62,14 +46,14 @@
         "symbol": "N",
         "isotopes": [
             {
-                "mass": "14.003074002",
+                "mass": "14.00307400443",
                 "ordinalNumber": "14",
-                "abundance": "99.632"
+                "abundance": "99.636"
             },
             {
-                "mass": "15.00010897",
+                "mass": "15.00010889888",
                 "ordinalNumber": "15",
-                "abundance": "0.368"
+                "abundance": "0.364"
             }
         ]
     },
@@ -78,17 +62,17 @@
         "symbol": "O",
         "isotopes": [
             {
-                "mass": "15.99491463",
+                "mass": "15.99491461957",
                 "ordinalNumber": "16",
                 "abundance": "99.757"
             },
             {
-                "mass": "16.9991312",
+                "mass": "16.99913175650",
                 "ordinalNumber": "17",
                 "abundance": "0.038"
             },
             {
-                "mass": "17.9991603",
+                "mass": "17.99915961286",
                 "ordinalNumber": "18",
                 "abundance": "0.205"
             }

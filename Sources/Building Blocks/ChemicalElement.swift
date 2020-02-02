@@ -46,7 +46,6 @@ public struct ChemicalElement: Codable, Symbol {
     var description: String {
         return symbol
     }
-
 }
 
 extension ChemicalElement: Mass {
