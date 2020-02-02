@@ -1,38 +1,43 @@
 import Foundation
 
-public struct Formula {
-//    private(set) var elements: [ChemicalElement]
-    private(set) var _masses: MassContainer = zeroMass
+public typealias Formula = String
+public typealias Elements = [ChemicalElement]
 
-    public var stringValue: String
+public let formulaSeparator = " + "
 
-    public init(stringValue: String) {
-        self.stringValue = stringValue
-//        self.elements = parse(stringValue)
+extension Formula: Mass {
+    public var masses: MassContainer {
+        return calculateMasses()
+    }
+    
+    public func calculateMasses() -> MassContainer {
+        let result = mass(of: elements)
         
-        _masses = calculateMasses()
+        return self.hasPrefix("-") ? -1 * result : result
     }
     
-    var description: String {
-        return stringValue
+    public var elements: Elements {
+        return parse()
     }
     
-    private func parse(_ string: String) -> [ChemicalElement] {
-
+    private func parse() -> Elements {
+        
         // https://www.lfd.uci.edu/~gohlke/code/molmass.py.html
         // https://www.lfd.uci.edu/~gohlke/code/elements.py.html
-
-        let characters = Array(string)
+        
+        let characters = Array(self)
         var i = characters.count
         
         var parenthesisLevel = 0
         var multiplication = [1]
         
         var elementCount = 0
-        var element = ""
+        var elementName = ""
         
-        var result = [ChemicalElement]()
-
+        var result = Elements()
+        
+        // parse string backwards
+        
         while i > 0 {
             i -= 1
             let char = characters[i]
@@ -40,12 +45,15 @@ public struct Formula {
             if isOpeningBracket(char) {
                 parenthesisLevel -= 1
                 if parenthesisLevel < 0 || elementCount != 0 {
-                    // error no closing bracket
+                    debugPrint("missing closing bracket error")
                 }
             }
-            
+                
             else if isClosingBracket(char) {
-                if elementCount == 0 { elementCount = 1 }
+                if elementCount == 0 {
+                    elementCount = 1
+                }
+                
                 parenthesisLevel += 1
                 
                 if parenthesisLevel > multiplication.count - 1 {
@@ -53,9 +61,10 @@ public struct Formula {
                 }
                 
                 multiplication[parenthesisLevel] = elementCount * multiplication[parenthesisLevel - 1]
+                
                 elementCount = 0
             }
-            
+                
             else if isDigit(char) {
                 let j = i
                 
@@ -63,22 +72,26 @@ public struct Formula {
                     i -= 1
                 }
                 
-                elementCount = Int(string[i..<j+1])!
+                elementCount = Int(self[i..<j+1])!
+                
                 if elementCount == 0 {
-                    // error count is zero
+                    debugPrint("count is zero error")
                 }
             }
                 
             else if isLower(char) {
-                if !(isUpper(characters[i-1])) {
+                if isUpper(characters[i-1]) == false {
                     // error unexpected character
                 }
                 
-                element = String(char)
+                elementName = String(char)
             }
             else if isUpper(char) {
-                element = String(char) + element
-                if elementCount == 0 { elementCount = 1 }
+                elementName = String(char) + elementName
+                
+                if elementCount == 0 {
+                    elementCount = 1
+                }
                 
                 let j = i
                 
@@ -86,24 +99,42 @@ public struct Formula {
                     i -= 1
                 }
                 
-                if i > 0 && !(isOpeningBracket(characters[i-1])) {
+                if i > 0 && isOpeningBracket(characters[i-1]) == false {
                     i = j
                 }
                 
-                if let e = elementLibrary.first(where: { $0.identifier == element }) {
-                    let elementCount = elementCount * multiplication[parenthesisLevel]
-                    for _ in 0..<elementCount {
-                        result.append(e)
+                if let element = elementLibrary.first(where: { $0.identifier == elementName }) {
+                    for _ in 0..<(elementCount * multiplication[parenthesisLevel]) {
+                        result.append(element)
                     }
                 }
-            
-                element = ""
+                else {
+                    // error element not in library
+                }
+                
+                elementName = ""
                 elementCount = 0
             }
-            
+                
             else {
-                // error invalid character
+                debugPrint("invalid character error")
             }
+        }
+        
+        if elementCount != 0 {
+            debugPrint("number preceding formula error")
+        }
+        
+        if parenthesisLevel != 0 {
+            debugPrint("missing opening parenthesis error")
+        }
+        
+        if result.isEmpty {
+            debugPrint("invalid formula error")
+        }
+        
+        if parenthesisLevel != 0 {
+            debugPrint("missing opening parenthesis error")
         }
         
         return result
@@ -129,33 +160,5 @@ extension Formula {
     
     private func isClosingBracket(_ char: Character) -> Bool {
         return ")}]>".contains(char)
-    }
-
-
-
-
-}
-
-extension Formula: Mass {
-    public var masses: MassContainer {
-        return _masses
-    }
-
-    public func calculateMasses() -> MassContainer {
-        let result = mass(of: parse(stringValue))
-    
-        return stringValue.hasPrefix("-") ? -1 * result : result
-    }
-}
-
-public let formulaSeparator = " + "
-
-extension Formula {
-    public static func + (lhs: Formula, rhs: Formula) -> Formula {
-        return Formula(stringValue: (lhs.stringValue + formulaSeparator + rhs.stringValue))
-    }
-
-    public static func - (lhs: Formula, rhs: Formula) -> Formula {
-        return Formula(stringValue: (lhs.stringValue + formulaSeparator + "-" + rhs.stringValue))
     }
 }

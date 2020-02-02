@@ -1,6 +1,6 @@
 import Foundation
 
-public var elementLibrary: [ChemicalElement] = loadJSONFromBundle(fileName: "elements")
+public var elementLibrary: Elements = loadJSONFromBundle(fileName: "elements")
 
 public struct Isotope: Codable {
     public let mass: String
