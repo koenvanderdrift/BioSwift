@@ -1,26 +1,63 @@
 import Foundation
 
+let oxidation = Modification(name: "Oxidation", reactions: [Reaction.add(oxygen)], sites: ["M", "W", "Y"])
+let deamidation = Modification(name: "Deamidation", reactions: [Reaction.add(water), Reaction.remove(ammonia)], sites: ["N", "Q"])
+let reduction = Modification(name: "Reduction", reactions: [Reaction.remove(hydrogen)], sites: ["C"])
+let methylation = Modification(name: "Methylation", reactions: [Reaction.add(methyl)], sites: [])
+let acetylation = Modification(name: "Acetylation", reactions: [Reaction.add(acetyl)], sites: ["K", "NTerminal"])
+
+// TODO: generate from modifications.json
+public var modificationsLibrary = [oxidation, deamidation, reduction, methylation, acetylation]
+
+public enum Reaction {
+    case add(FunctionalGroup)
+    case remove(FunctionalGroup)
+    case link(Residue, Residue)
+}
+
 public struct Modification {
-    public let group: FunctionalGroup
-    public var sites: [Int]
+    public let name: String
+    public let reactions: [Reaction]
+    public let sites: [String] // sites it can attach to
     
-    public init(group: FunctionalGroup, sites: [Int] = []) {
-        self.group = group
+    public init(name: String, reactions: [Reaction], sites: [String] = []) {
+        self.name = name
+        self.reactions = reactions
         self.sites = sites
     }
 }
 
 extension Modification: Hashable {
     public static func == (lhs: Modification, rhs: Modification) -> Bool {
-        return lhs.group == rhs.group
+        return lhs.name == rhs.name
     }
 
     public func hash(into hasher: inout Hasher) {
-        hasher.combine(group)
+        hasher.combine(name)
+        hasher.combine(sites)
+    }
+}
+
+extension Modification: Mass {
+    public var masses: MassContainer {
+        return calculateMasses()
     }
     
-    public func isLink() -> Bool {
-        return sites.count > 1
+    public func calculateMasses() -> MassContainer {
+        var result = zeroMass
+        
+        for reaction in reactions {
+            switch reaction {
+            case .add(let group) :
+                result += group.masses
+            case .remove(let group):
+                result -= group.masses
+            case .link:
+                break
+            }
+        }
+        
+        return result
     }
 }
 

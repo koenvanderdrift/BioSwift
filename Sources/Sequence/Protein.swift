@@ -26,7 +26,7 @@ public class Protein: BioSequence, Chargeable {
     }
     
     func terminalMasses() -> MassContainer {
-        return nterm.masses + cterm.masses
+        return hydrogen.masses + hydroxyl.masses
     }
     
     func adductMasses() -> MassContainer {

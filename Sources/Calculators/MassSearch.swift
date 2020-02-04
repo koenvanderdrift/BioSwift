@@ -84,7 +84,7 @@ public struct MassSearch {
         var start = 0
         
         while !residueSequence.isEmpty {
-            var mass = nterm.masses + cterm.masses
+            var mass = hydrogen.masses + hydroxyl.masses
             
             // correct way of doing this:
             // get slice of symbolSequence()

@@ -36,7 +36,7 @@ public class Fragment: Peptide {
     override func terminalMasses() -> MassContainer {
         var result = zeroMass
         if fragmentType == .nTerminal {
-            result -= (nterm.masses + cterm.masses)
+            result -= (hydrogen.masses + hydroxyl.masses)
         }
         
         return result

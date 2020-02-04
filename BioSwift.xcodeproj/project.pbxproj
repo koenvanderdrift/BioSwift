@@ -23,9 +23,9 @@
 /* Begin PBXBuildFile section */
 		5D39778C23E0F3A100A6631C /* aminoacids.json in Resources */ = {isa = PBXBuildFile; fileRef = 5D3976F723E0F18300A6631C /* aminoacids.json */; };
 		5D39778D23E0F3AB00A6631C /* hydropathy.json in Resources */ = {isa = PBXBuildFile; fileRef = 5D3976F823E0F18300A6631C /* hydropathy.json */; };
-		5D39778E23E0F3AD00A6631C /* functionalgroups.json in Resources */ = {isa = PBXBuildFile; fileRef = 5D3976FA23E0F18300A6631C /* functionalgroups.json */; };
 		5D39778F23E0F3B000A6631C /* elements.json in Resources */ = {isa = PBXBuildFile; fileRef = 5D3976FB23E0F18300A6631C /* elements.json */; };
 		5D39779023E0F3B300A6631C /* enzymes.json in Resources */ = {isa = PBXBuildFile; fileRef = 5D3976FD23E0F18300A6631C /* enzymes.json */; };
+		5D682EEC23E8F23800D03F10 /* functionalgroups.json in Resources */ = {isa = PBXBuildFile; fileRef = 5D682EEB23E8F23800D03F10 /* functionalgroups.json */; };
 		5D9605A023E0F6FC00F6A93E /* ChemicalElement.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D96059B23E0F6FC00F6A93E /* ChemicalElement.swift */; };
 		5D9605A123E0F6FC00F6A93E /* ChemicalElement.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D96059B23E0F6FC00F6A93E /* ChemicalElement.swift */; };
 		5D9605A223E0F6FC00F6A93E /* ChemicalElement.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D96059B23E0F6FC00F6A93E /* ChemicalElement.swift */; };
@@ -71,9 +71,6 @@
 		5D9605E723E0F70E00F6A93E /* Residue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605BC23E0F70E00F6A93E /* Residue.swift */; };
 		5D9605E823E0F70E00F6A93E /* Residue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605BC23E0F70E00F6A93E /* Residue.swift */; };
 		5D9605E923E0F70E00F6A93E /* Residue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605BC23E0F70E00F6A93E /* Residue.swift */; };
-		5D9605EA23E0F70E00F6A93E /* Modifiable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605BD23E0F70E00F6A93E /* Modifiable.swift */; };
-		5D9605EB23E0F70E00F6A93E /* Modifiable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605BD23E0F70E00F6A93E /* Modifiable.swift */; };
-		5D9605EC23E0F70E00F6A93E /* Modifiable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605BD23E0F70E00F6A93E /* Modifiable.swift */; };
 		5D9605ED23E0F70E00F6A93E /* Molecule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605BE23E0F70E00F6A93E /* Molecule.swift */; };
 		5D9605EE23E0F70E00F6A93E /* Molecule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605BE23E0F70E00F6A93E /* Molecule.swift */; };
 		5D9605EF23E0F70E00F6A93E /* Molecule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605BE23E0F70E00F6A93E /* Molecule.swift */; };
@@ -137,10 +134,10 @@
 /* Begin PBXFileReference section */
 		5D3976F723E0F18300A6631C /* aminoacids.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = aminoacids.json; sourceTree = "<group>"; };
 		5D3976F823E0F18300A6631C /* hydropathy.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = hydropathy.json; sourceTree = "<group>"; };
-		5D3976FA23E0F18300A6631C /* functionalgroups.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = functionalgroups.json; sourceTree = "<group>"; };
 		5D3976FB23E0F18300A6631C /* elements.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = elements.json; sourceTree = "<group>"; };
 		5D3976FC23E0F18300A6631C /* unimod.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = unimod.xml; sourceTree = "<group>"; };
 		5D3976FD23E0F18300A6631C /* enzymes.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = enzymes.json; sourceTree = "<group>"; };
+		5D682EEB23E8F23800D03F10 /* functionalgroups.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = functionalgroups.json; sourceTree = "<group>"; };
 		5D96059B23E0F6FC00F6A93E /* ChemicalElement.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChemicalElement.swift; sourceTree = "<group>"; };
 		5D96059C23E0F6FC00F6A93E /* AminoAcid.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AminoAcid.swift; sourceTree = "<group>"; };
 		5D96059D23E0F6FC00F6A93E /* Formula.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Formula.swift; sourceTree = "<group>"; };
@@ -156,7 +153,6 @@
 		5D9605B923E0F70E00F6A93E /* String.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = String.swift; sourceTree = "<group>"; };
 		5D9605BA23E0F70E00F6A93E /* Double.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Double.swift; sourceTree = "<group>"; };
 		5D9605BC23E0F70E00F6A93E /* Residue.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Residue.swift; sourceTree = "<group>"; };
-		5D9605BD23E0F70E00F6A93E /* Modifiable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Modifiable.swift; sourceTree = "<group>"; };
 		5D9605BE23E0F70E00F6A93E /* Molecule.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Molecule.swift; sourceTree = "<group>"; };
 		5D9605BF23E0F70E00F6A93E /* Chargeable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Chargeable.swift; sourceTree = "<group>"; };
 		5D9605C023E0F70E00F6A93E /* Mass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Mass.swift; sourceTree = "<group>"; };
@@ -204,7 +200,7 @@
 				5D3976F723E0F18300A6631C /* aminoacids.json */,
 				5D3976FB23E0F18300A6631C /* elements.json */,
 				5D3976FD23E0F18300A6631C /* enzymes.json */,
-				5D3976FA23E0F18300A6631C /* functionalgroups.json */,
+				5D682EEB23E8F23800D03F10 /* functionalgroups.json */,
 				5D3976F823E0F18300A6631C /* hydropathy.json */,
 				5D3976FC23E0F18300A6631C /* unimod.xml */,
 			);
@@ -261,7 +257,6 @@
 			isa = PBXGroup;
 			children = (
 				5D9605BC23E0F70E00F6A93E /* Residue.swift */,
-				5D9605BD23E0F70E00F6A93E /* Modifiable.swift */,
 				5D9605BE23E0F70E00F6A93E /* Molecule.swift */,
 				5D9605BF23E0F70E00F6A93E /* Chargeable.swift */,
 				5D9605C023E0F70E00F6A93E /* Mass.swift */,
@@ -446,10 +441,10 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5D682EEC23E8F23800D03F10 /* functionalgroups.json in Resources */,
 				5D39778C23E0F3A100A6631C /* aminoacids.json in Resources */,
 				5D39778F23E0F3B000A6631C /* elements.json in Resources */,
 				5D39779023E0F3B300A6631C /* enzymes.json in Resources */,
-				5D39778E23E0F3AD00A6631C /* functionalgroups.json in Resources */,
 				5D39778D23E0F3AB00A6631C /* hydropathy.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -470,7 +465,6 @@
 				5D9605D823E0F70E00F6A93E /* Webservice.swift in Sources */,
 				5D9605A323E0F6FC00F6A93E /* AminoAcid.swift in Sources */,
 				5D9605ED23E0F70E00F6A93E /* Molecule.swift in Sources */,
-				5D9605EA23E0F70E00F6A93E /* Modifiable.swift in Sources */,
 				5D96060523E0F70E00F6A93E /* Hydropathy.swift in Sources */,
 				5D9605F323E0F70E00F6A93E /* Mass.swift in Sources */,
 				5D96060B23E0F70E00F6A93E /* Enzyme.swift in Sources */,
@@ -506,7 +500,6 @@
 				5D9605D923E0F70E00F6A93E /* Webservice.swift in Sources */,
 				5D9605A423E0F6FC00F6A93E /* AminoAcid.swift in Sources */,
 				5D9605EE23E0F70E00F6A93E /* Molecule.swift in Sources */,
-				5D9605EB23E0F70E00F6A93E /* Modifiable.swift in Sources */,
 				5D96060623E0F70E00F6A93E /* Hydropathy.swift in Sources */,
 				5D9605F423E0F70E00F6A93E /* Mass.swift in Sources */,
 				5D96060C23E0F70E00F6A93E /* Enzyme.swift in Sources */,
@@ -542,7 +535,6 @@
 				5D9605F223E0F70E00F6A93E /* Chargeable.swift in Sources */,
 				5D9605FB23E0F70E00F6A93E /* Fragment.swift in Sources */,
 				5D9605D723E0F70E00F6A93E /* Bundle+Decoding.swift in Sources */,
-				5D9605EC23E0F70E00F6A93E /* Modifiable.swift in Sources */,
 				5D96060723E0F70E00F6A93E /* Hydropathy.swift in Sources */,
 				OBJ_41 /* XCTestManifests.swift in Sources */,
 				5D9605A223E0F6FC00F6A93E /* ChemicalElement.swift in Sources */,

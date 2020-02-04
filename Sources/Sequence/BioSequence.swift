@@ -98,26 +98,18 @@ extension BioSequence {
         return result.flatMap { $0 }
     }
     
-    public func functionalGroups(at index: Int) -> [FunctionalGroup]? {
-        if let residue = symbol(at: index) as? Residue {
-            return residue.modifications.map { $0.group }
-        }
-
-        return nil
-    }
-    
-    public func possibleFunctionalGroups(at index: Int) -> [FunctionalGroup]? {
-        if let symbol = symbol(at: index) {
-            var possibleFunctionalGroups = functionalGroupLibrary.filter { $0.sites.contains(symbol.identifier) == true }
-         
+    public func possibleModifications(at index: Int) -> [Modification]? {
+        if let symbol = symbol(at: index) as? Residue {
+            var possibleFunctionalGroups = modificationsLibrary.filter { $0.sites.contains(symbol.identifier) == true }
+ 
          // add N and C term groups
             if index == 0 {
-                let nTermGroups = functionalGroupLibrary.filter { $0.sites.contains("NTerminal") == true }
+                let nTermGroups = modificationsLibrary.filter { $0.sites.contains("NTerminal") == true }
                 possibleFunctionalGroups.append(contentsOf: nTermGroups)
             }
-            
+
             if index == sequenceString.count - 1 {
-                let cTermGroups = functionalGroupLibrary.filter { $0.sites.contains("CTerminal") == true }
+                let cTermGroups = modificationsLibrary.filter { $0.sites.contains("CTerminal") == true }
                 possibleFunctionalGroups.append(contentsOf: cTermGroups)
             }
             
@@ -127,31 +119,30 @@ extension BioSequence {
         return nil
     }
     
-    public func add(_ modification: Modification) {
-        for site in modification.sites {
-            residueSequence.modifyElement(atIndex: site) { residue in
-               residue.addModification(with: modification.group, at: site)
-            }
+    public func addModification(_ modification: Modification, at location: Int = -1) {
+        residueSequence.modifyElement(atIndex: location) { residue in
+            residue.addModification(modification)
         }
     }
     
-    public func remove(_ modification: Modification) {
-        for site in modification.sites {
-            residueSequence.modifyElement(atIndex: site) { residue in
-                residue.removeModification(with: modification.group)
-            }
+    public func removeModification(_ modification: Modification, at location: Int = -1) {
+        residueSequence.modifyElement(atIndex: location) { residue in
+            residue.removeModification(modification)
         }
     }
     
     public func addModification(with name: String, at location: Int = -1) {
-        if let group = functionalGroupLibrary.first(where: { $0.name == name }) {
-            add(Modification(group: group, sites: [location]))
+        if let modification = modificationsLibrary.first(where: { $0.name == name }) {
+            addModification(modification, at: location)
         }
     }
     
     public func removeModification(with name: String, at location: Int = -1) {
-        if let group = functionalGroupLibrary.first(where: { $0.name == name }) {
-            remove(Modification(group: group, sites: [location]))
+        if let modification = modificationsLibrary.first(where: { $0.name == name }) {
+            removeModification(modification, at: location)
         }
     }
 }
+
+
+
