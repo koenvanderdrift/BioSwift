@@ -1,41 +1,42 @@
 [
     {
-        "name":"Carbamidomethylation",
-        "formula":"CH2CONH2",
-        "sites":[
-            "C"
-        ]
+        "name":"Empty",
+        "formula":"",
     },
     {
-        "name": "Acetylation",
+        "name": "Hydroxyl",
+        "formula":"OH",
+    },
+    {
+        "name" : "Ammonia",
+        "formula":"NH3",
+    },
+    {
+        "name" : "Water",
+        "formula":"H2O",
+    },
+    {
+        "name" : "Methyl",
+        "formula":"CH3",
+    },
+    {
+        "name" : "Acetyl",
         "formula":"CH2CO",
-        "sites":[
-            "K",
-            "NTerminal"
-        ]
     },
     {
-        "name" : "Phosphorylation",
-        "formula":"PO3H",
-        "sites":[
-            "S",
-            "T",
-            "Y"
-        ]
+        "name" : "Hydrogen",
+        "formula":"H",
     },
     {
-        "name": "Oxidation",
+        "name" : "Proton",
+        "formula":"H",
+    },
+    {
+        "name" : "Oxygen",
         "formula":"O",
-        "sites":[
-            "M",
-            "W"
-        ]
     },
     {
-        "name": "Carboxymethylation",
-        "formula":"CH2COOH",
-        "sites":[
-            "C"
-        ]
-    }
+        "name" : "Sodium",
+        "formula":"Na",
+    },
 ]

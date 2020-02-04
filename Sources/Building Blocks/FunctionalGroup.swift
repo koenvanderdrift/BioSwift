@@ -22,6 +22,8 @@ public let oxygen = FunctionalGroup(name: "oxygen", formula: Formula("O"))
 public let sodium = FunctionalGroup(name: "Sodium", formula: Formula("Na"))
 public let ammonium = FunctionalGroup(name: "Ammonium", formula: Formula("NH4"))
 
+public let cysteinyl = FunctionalGroup(name: "Cysteinyl", formula: Formula("C3H5NO2S"))
+
 // TODO: fix functionalgroups.json
 // public var functionalGroupLibrary: [FunctionalGroup] = loadJSONFromBundle(fileName: "functionalgroups")
 

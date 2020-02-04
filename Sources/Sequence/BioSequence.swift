@@ -143,6 +143,3 @@ extension BioSequence {
         }
     }
 }
-
-
-
