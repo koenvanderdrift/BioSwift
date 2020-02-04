@@ -3,7 +3,7 @@ import Foundation
 public let oxidation = Modification(name: "Oxidation", reactions: [Reaction.add(oxygen)], sites: ["M", "W", "Y"])
 public let deamidation = Modification(name: "Deamidation", reactions: [Reaction.add(water), Reaction.remove(ammonia)], sites: ["N", "Q"])
 public let reduction = Modification(name: "Reduction", reactions: [Reaction.remove(hydrogen)], sites: ["C"])
-public let methylation = Modification(name: "Methylation", reactions: [Reaction.add(methyl)], sites: [])
+public let methylation = Modification(name: "Methylation", reactions: [Reaction.add(methyl)], sites: ["K"])
 public let acetylation = Modification(name: "Acetylation", reactions: [Reaction.add(acetyl)], sites: ["K", "NTerminal"])
 
 public let pyroglutamateE = Modification(name: "Pyroglutamate (E)", reactions: [Reaction.remove(oxygen)], sites: ["E"])
@@ -18,6 +18,8 @@ public enum Reaction {
     case remove(FunctionalGroup)
     case link(Residue, Residue)
 }
+
+public typealias ModificationInfo = (name: String, location: Int)
 
 public struct Modification {
     public let name: String

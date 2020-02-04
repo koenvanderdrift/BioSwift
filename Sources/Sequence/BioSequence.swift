@@ -27,8 +27,16 @@ public class BioSequence: Molecule {
         return residueSequence.map { $0.identifier }.joined()
     }
     
-    public var modifications: [Modification] {
-        return residueSequence.flatMap { $0.modifications }
+    public var modifications: [ModificationInfo] {
+        var result = [ModificationInfo]()
+        
+        residueSequence.enumerated().forEach { index, residue in
+            for mod in residue.modifications {
+                result.append((mod.name, index) as ModificationInfo)
+            }
+        }
+        
+        return result
     }
     
     public required init(residues: [Residue], library: [Symbol] = []) {
@@ -45,7 +53,7 @@ public class BioSequence: Molecule {
 extension BioSequence: Equatable {
  // https://khawerkhaliq.com/blog/swift-protocols-equatable-part-one/
     public static func == (lhs: BioSequence, rhs: BioSequence) -> Bool {
-        return lhs.sequenceString == rhs.sequenceString && lhs.modifications == rhs.modifications
+        return lhs.sequenceString == rhs.sequenceString && lhs.name == rhs.name
     }
 }
 
@@ -84,6 +92,10 @@ extension BioSequence {
         return symbolSequence[index]
     }
     
+    public func residue(at index: Int) -> Residue? {
+        return residueSequence[index]
+    }
+
     public func residueSequence(with range: NSRange) -> [Residue]? {
         guard range.location < residueSequence.count, range.length > 0 else { return nil }
         
@@ -99,25 +111,23 @@ extension BioSequence {
     }
 }
 
-public typealias ModificationInfo = (name: String, location: Int)
-
 extension BioSequence {
     public func possibleModifications(at index: Int) -> [Modification]? {
-        if let symbol = symbol(at: index) as? Residue {
-            var possibleFunctionalGroups = modificationsLibrary.filter { $0.sites.contains(symbol.identifier) == true }
+        if let residue = residue(at: index) {
+            var modifications = modificationsLibrary.filter { $0.sites.contains(residue.identifier) == true }
  
          // add N and C term groups
             if index == 0 {
                 let nTermGroups = modificationsLibrary.filter { $0.sites.contains("NTerminal") == true }
-                possibleFunctionalGroups.append(contentsOf: nTermGroups)
+                modifications.append(contentsOf: nTermGroups)
             }
 
             if index == sequenceString.count - 1 {
                 let cTermGroups = modificationsLibrary.filter { $0.sites.contains("CTerminal") == true }
-                possibleFunctionalGroups.append(contentsOf: cTermGroups)
+                modifications.append(contentsOf: cTermGroups)
             }
             
-            return possibleFunctionalGroups
+            return modifications
         }
         
         return nil
