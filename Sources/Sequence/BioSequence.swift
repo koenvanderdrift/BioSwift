@@ -97,7 +97,11 @@ extension BioSequence {
 
         return result.flatMap { $0 }
     }
-    
+}
+
+public typealias ModificationInfo = (name: String, location: Int)
+
+extension BioSequence {
     public func possibleModifications(at index: Int) -> [Modification]? {
         if let symbol = symbol(at: index) as? Residue {
             var possibleFunctionalGroups = modificationsLibrary.filter { $0.sites.contains(symbol.identifier) == true }
@@ -119,27 +123,19 @@ extension BioSequence {
         return nil
     }
     
-    public func addModification(_ modification: Modification, at location: Int = -1) {
-        residueSequence.modifyElement(atIndex: location) { residue in
-            residue.addModification(modification)
+    public func addModification(with info: ModificationInfo) {
+        if let modification = modificationsLibrary.first(where: { $0.name == info.name }) {
+            residueSequence.modifyElement(atIndex: info.location) { residue in
+                residue.addModification(modification)
+            }
         }
     }
     
-    public func removeModification(_ modification: Modification, at location: Int = -1) {
-        residueSequence.modifyElement(atIndex: location) { residue in
-            residue.removeModification(modification)
-        }
-    }
-    
-    public func addModification(with name: String, at location: Int = -1) {
-        if let modification = modificationsLibrary.first(where: { $0.name == name }) {
-            addModification(modification, at: location)
-        }
-    }
-    
-    public func removeModification(with name: String, at location: Int = -1) {
-        if let modification = modificationsLibrary.first(where: { $0.name == name }) {
-            removeModification(modification, at: location)
+    public func removeModification(with info: ModificationInfo) {
+        if let modification = modificationsLibrary.first(where: { $0.name == info.name }) {
+            residueSequence.modifyElement(atIndex: info.location) { residue in
+                residue.removeModification(modification)
+            }
         }
     }
 }
