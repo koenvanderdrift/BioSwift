@@ -1,6 +1,9 @@
 import Foundation
 
 public class Peptide: Protein {
+    private let lossOfWater = Modification(name: "Loss of Water", reactions: [.remove(water)], sites: ["S", "T", "E", "D"])
+    private let lossOfAmmonia = Modification(name: "Loss of Ammonia", reactions: [.remove(ammonia)], sites: ["R", "Q", "N", "K"])
+
     public func fragment() -> [Fragment] {
         return precursorIons() + immoniumIons() + nTerminalIons() + cTerminalIons()
     }
@@ -8,13 +11,13 @@ public class Peptide: Protein {
     func precursorIons() -> [Fragment] {
         let fragment = Fragment(residues: residueSequence, type: .precursor)
         
-//        if self.canLoseAmmonia() {
-//            fragment.modifications = [Modification(group: FunctionalGroup(name: "lossOfAmmonia", formula: Formula(stringValue: "-NH3")))]
-//        }
-//
-//        if self.canLoseWater() {
-//            fragment.modifications = [Modification(group: FunctionalGroup(name: "lossOfWater", formula: Formula(stringValue: "-H2O")))]
-//        }
+        if self.canLoseAmmonia() {
+            fragment.setModification(with: (lossOfWater.name, -1))
+        }
+
+        if self.canLoseWater() {
+            fragment.setModification(with: (lossOfAmmonia.name, -1))
+        }
 
         return [fragment]
     }

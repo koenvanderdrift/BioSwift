@@ -12,7 +12,7 @@ public protocol Residue: Molecule, Symbol, Mass {
     var oneLetterCode: String { get }
     var threeLetterCode: String { get }
     
-    var modifications: [Modification] { get set }
+    var modification: Modification? { get set }
 }
 
 extension Residue {
@@ -25,15 +25,15 @@ extension Residue {
     }
     
     private func modificationMasses() -> MassContainer {
-        return mass(of: modifications)
+        return self.modification?.masses ?? zeroMass
     }
     
-    mutating func addModification(_ modification: Modification) {
-        modifications.append(modification)
+    mutating func setModification(_ info: ModificationInfo) {
+        if let modification = modificationsLibrary.first(where: { $0.name == info.name }) {
+            self.modification = modification
+        }
+        else {
+            self.modification = nil
+        }
     }
-    
-    mutating func removeModification(_ modification: Modification) {
-        guard let index = modifications.firstIndex(of: modification) else { return }
-        modifications.remove(at: index)
-     }
 }
