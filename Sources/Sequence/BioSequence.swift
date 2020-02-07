@@ -102,7 +102,7 @@ extension BioSequence {
         return Array(residueSequence[range.location..<range.location + range.length])
     }
     
-    public func symbolLocations(with identifiers: [String]) -> [Int] {
+    public func residueLocations(with identifiers: [String]) -> [Int] {
         let result = identifiers.map { i in
             return residueSequence.indices.filter { (residueSequence[$0].identifier) == i }
         }
@@ -112,7 +112,7 @@ extension BioSequence {
 }
 
 extension BioSequence {
-    public func possibleModifications(at index: Int) -> [Modification]? {
+    public func allowedModifications(at index: Int) -> [Modification]? {
         if let residue = residue(at: index) {
             var modifications = modificationsLibrary.filter { $0.sites.contains(residue.identifier) == true }
  
