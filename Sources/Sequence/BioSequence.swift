@@ -138,4 +138,8 @@ extension BioSequence {
             residue.setModification(info)
         }
     }
+    
+    public func currentModification(at location: Int) -> ModificationInfo? {
+        return self.modifications.filter ({ $0.location == location }).first
+    }
 }
