@@ -29,7 +29,7 @@ extension Reaction: Mass {
     
     public func calculateMasses() -> MassContainer {
         var result = zeroMass
-        
+
         switch self {
         case .add(let group) :
             result += group.masses
@@ -56,22 +56,13 @@ public struct Modification {
         self.reactions = reactions
         self.sites = sites
     }
-    
-    public var reactionName: String {
-        switch name {
-        case "Disulfide":
-            return "Reduction"
-        default:
-            return ""
-        }
-    }
 }
 
 extension Modification: Hashable {
     public static func == (lhs: Modification, rhs: Modification) -> Bool {
         return lhs.name == rhs.name
     }
-    
+
     public func hash(into hasher: inout Hasher) {
         hasher.combine(name)
         hasher.combine(sites)
