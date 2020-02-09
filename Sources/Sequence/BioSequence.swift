@@ -39,6 +39,8 @@ public class BioSequence: Molecule {
         return result
     }
     
+    public var bonds = [BondInfo]()
+    
     public required init(residues: [Residue], library: [Symbol] = []) {
         symbolLibrary = library
         residueSequence = residues
@@ -134,12 +136,28 @@ extension BioSequence {
     }
     
     public func setModification(with info: ModificationInfo) {
-        residueSequence.modifyElement(atIndex: info.location) { residue in
+        residueSequence.modifyElement(atIndex: info.at) { residue in
             residue.setModification(info)
         }
     }
     
-    public func currentModification(at location: Int) -> ModificationInfo? {
-        return self.modifications.filter ({ $0.location == location }).first
+    public func currentModification(at location: Int) -> ModificationInfo {
+        if let info = self.modifications.first(where: { $0.at == location }) {
+            return info
+        }
+        
+        return emptyModification
+    }
+
+    public func setBond(with info: BondInfo) {
+
+    }
+    
+    public func currentBond(at location: Int) -> BondInfo {
+        if let info = self.bonds.first(where: { $0.from == location }) {
+            return info
+        }
+        
+        return emptyBond
     }
 }

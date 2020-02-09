@@ -14,12 +14,17 @@ public let cysteinylation = Modification(name: "Cysteinylation", reactions: [.re
 // TODO: generate from modifications.json
 public var modificationsLibrary = [oxidation, deamidation, reduction, methylation, acetylation, pyroglutamateE, pyroglutamateQ, cysteinylation]
 
-public typealias BondInfo = (from: Int, to: Int, reaction: Reaction)
+public typealias BondInfo = (reaction: Reaction, from: Int, to: Int)
+public typealias ModificationInfo = (name: String, at: Int)
+
+public let emptyBond = BondInfo(.undefined, -1, -1)
+public let emptyModification = ModificationInfo("", -1)
 
 public indirect enum Reaction {
     case add(FunctionalGroup)
     case remove(FunctionalGroup)
     case bond(BondInfo)
+    case undefined
 }
 
 extension Reaction: Mass {
@@ -35,16 +40,16 @@ extension Reaction: Mass {
             result += group.masses
         case .remove(let group):
             result -= group.masses
-        case .bond(_, _, let reaction):
+        case .bond(let reaction, _, _):
             result += reaction.masses
-            break
+        case .undefined:
+            result += zeroMass
         }
         
         return result
     }
 }
 
-public typealias ModificationInfo = (name: String, location: Int)
 
 public struct Modification {
     public let name: String
