@@ -45,11 +45,11 @@ extension Reaction: Mass {
 
 public struct ModificationInfo {
     public let modification: Modification
-    public let at: Int
+    public let location: Int
     
-    public init(modification: Modification, at: Int) {
+    public init(modification: Modification, location: Int) {
         self.modification = modification
-        self.at = at
+        self.location = location
     }
 }
 

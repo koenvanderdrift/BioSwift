@@ -32,7 +32,7 @@ public class BioSequence: Molecule {
         
         residueSequence.enumerated().forEach { index, residue in
             if let mod = residue.modification {
-                result.append(ModificationInfo(modification: mod, at: index))
+                result.append(ModificationInfo(modification: mod, location: index))
             }
         }
         
@@ -135,7 +135,7 @@ extension BioSequence {
     
     public func setModification(with info: [ModificationInfo]) {
         for mod in info {
-            residueSequence.modifyElement(atIndex: mod.at) { residue in
+            residueSequence.modifyElement(atIndex: mod.location) { residue in
                 residue.setModification(mod.modification)
             }
         }
@@ -145,7 +145,7 @@ extension BioSequence {
         var result: [ModificationInfo] = []
         
         for location in locations {
-            result += self.modifications.filter( { $0.at == location } )
+            result += self.modifications.filter( { $0.location == location } )
         }
         
         return result
