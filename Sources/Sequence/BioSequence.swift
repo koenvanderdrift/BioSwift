@@ -32,7 +32,7 @@ public class BioSequence: Molecule {
         
         residueSequence.enumerated().forEach { index, residue in
             if let mod = residue.modification {
-                result.append((mod.name, index) as ModificationInfo)
+                result.append(ModificationInfo(name: mod.name, at: index))
             }
         }
         
