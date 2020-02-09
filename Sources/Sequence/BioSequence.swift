@@ -135,18 +135,16 @@ extension BioSequence {
         return nil
     }
     
-    public func setModification(with info: ModificationInfo) {
-        residueSequence.modifyElement(atIndex: info.at) { residue in
-            residue.setModification(info.modification)
+    public func setModification(with info: [ModificationInfo]) {
+        for mod in info {
+            residueSequence.modifyElement(atIndex: mod.at) { residue in
+                residue.setModification(mod.modification)
+            }
         }
     }
     
-    public func currentModification(at location: Int) -> ModificationInfo {
-        if let info = self.modifications.first(where: { $0.at == location }) {
-            return info
-        }
-        
-        return ModificationInfo(modification: noModification, at: location)
+    public func currentModifications(at location: Int) -> [ModificationInfo] {
+        return self.modifications.filter( { $0.at == location } )
     }
 
     public func setBond(with info: Bond) {

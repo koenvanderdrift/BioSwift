@@ -70,6 +70,9 @@ public struct Bond: Equatable {
 
 public let emptyBond = Bond(reaction: .undefined, from: -1, to: -1)
 
+// a bond is really only an array of ModificationInfo structs
+
+
 public struct ModificationInfo {
     public let modification: Modification
     public let at: Int
