@@ -14,34 +14,6 @@ public let cysteinylation = Modification(name: "Cysteinylation", reactions: [.re
 // TODO: generate from modifications.json
 public var modificationsLibrary = [oxidation, deamidation, reduction, methylation, acetylation, pyroglutamateE, pyroglutamateQ, cysteinylation]
 
-//public typealias BondInfo = (reaction: Reaction, from: Int, to: Int)
-//public typealias ModificationInfo = (name: String, at: Int)
-
-public struct ModificationInfo {
-    public let name: String
-    public let at: Int
-    
-    public init(name: String, at: Int) {
-        self.name = name
-        self.at = at
-    }
-}
-
-public struct BondInfo {
-    public let reaction: Reaction
-    public let from: Int
-    public let to: Int
-
-    public init(reaction: Reaction, from: Int, to: Int) {
-        self.reaction = reaction
-        self.from = from
-        self.to = to
-    }
-}
-
-public let emptyBond = BondInfo(reaction: .undefined, from: -1, to: -1)
-public let emptyModification = ModificationInfo(name: "", at: -1)
-
 public indirect enum Reaction {
     case add(FunctionalGroup)
     case remove(FunctionalGroup)
@@ -72,6 +44,31 @@ extension Reaction: Mass {
     }
 }
 
+public struct BondInfo {
+    public let reaction: Reaction
+    public let from: Int
+    public let to: Int
+    
+    public init(reaction: Reaction, from: Int, to: Int) {
+        self.reaction = reaction
+        self.from = from
+        self.to = to
+    }
+}
+
+public let emptyBond = BondInfo(reaction: .undefined, from: -1, to: -1)
+
+public struct ModificationInfo {
+    public let name: String
+    public let at: Int
+    
+    public init(name: String, at: Int) {
+        self.name = name
+        self.at = at
+    }
+}
+
+public let emptyModification = ModificationInfo(name: "", at: -1)
 
 public struct Modification {
     public let name: String
