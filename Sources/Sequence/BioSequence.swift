@@ -32,7 +32,7 @@ public class BioSequence: Molecule {
         
         residueSequence.enumerated().forEach { index, residue in
             if let mod = residue.modification {
-                result.append(ModificationInfo(name: mod.name, at: index))
+                result.append(ModificationInfo(modification: mod, at: index))
             }
         }
         
@@ -137,7 +137,7 @@ extension BioSequence {
     
     public func setModification(with info: ModificationInfo) {
         residueSequence.modifyElement(atIndex: info.at) { residue in
-            residue.setModification(info)
+            residue.setModification(info.modification)
         }
     }
     
@@ -146,11 +146,28 @@ extension BioSequence {
             return info
         }
         
-        return emptyModification
+        return ModificationInfo(modification: noModification, at: location)
     }
 
     public func setBond(with info: BondInfo) {
-
+        if bonds.contains(info) {
+            debugPrint("bond already exists")
+            return
+        }
+        
+        for bond in bonds {
+            if bond.overlaps(with: info) {
+                debugPrint("found partial bond")
+                return
+            }
+        }
+        
+        debugPrint("adding new bond")
+        
+        // magical code insert here
+        // turn bondinfo into ModificationInfo
+        
+        bonds.append(info)
     }
     
     public func currentBond(at location: Int) -> BondInfo {

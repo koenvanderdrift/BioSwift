@@ -1,5 +1,7 @@
 import Foundation
 
+public let noModification = Modification(name: "None", reactions: [], sites: [])
+
 public let oxidation = Modification(name: "Oxidation", reactions: [.add(oxygen)], sites: ["M", "W", "Y"])
 public let deamidation = Modification(name: "Deamidation", reactions: [.add(water), .remove(ammonia)], sites: ["N", "Q"])
 public let reduction = Modification(name: "Reduction", reactions: [.remove(hydrogen)], sites: ["C"])
@@ -44,31 +46,39 @@ extension Reaction: Mass {
     }
 }
 
-public struct BondInfo {
+public struct BondInfo: Equatable {
     public let reaction: Reaction
     public let from: Int
     public let to: Int
-    
+
+    //    public let modifications: [ModificationInfo]
+
     public init(reaction: Reaction, from: Int, to: Int) {
         self.reaction = reaction
         self.from = from
         self.to = to
+    }
+
+    public static func == (lhs: BondInfo, rhs: BondInfo) -> Bool {
+        return (lhs.from == rhs.from) && (lhs.to == rhs.to)
+    }
+    
+    public func overlaps(with other: BondInfo) -> Bool {
+        return (self.from == other.to) || (self.to == other.from) || (self.from == other.from) || (self.to == other.to)
     }
 }
 
 public let emptyBond = BondInfo(reaction: .undefined, from: -1, to: -1)
 
 public struct ModificationInfo {
-    public let name: String
+    public let modification: Modification
     public let at: Int
     
-    public init(name: String, at: Int) {
-        self.name = name
+    public init(modification: Modification, at: Int) {
+        self.modification = modification
         self.at = at
     }
 }
-
-public let emptyModification = ModificationInfo(name: "", at: -1)
 
 public struct Modification {
     public let name: String

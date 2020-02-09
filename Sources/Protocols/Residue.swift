@@ -28,12 +28,7 @@ extension Residue {
         return self.modification?.masses ?? zeroMass
     }
     
-    mutating func setModification(_ info: ModificationInfo) {
-        if let modification = modificationsLibrary.first(where: { $0.name == info.name }) {
-            self.modification = modification
-        }
-        else {
-            self.modification = nil
-        }
+    mutating func setModification(_ modification: Modification) {
+        self.modification = modification
     }
 }
