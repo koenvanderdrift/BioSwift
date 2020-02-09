@@ -28,6 +28,8 @@ public struct AminoAcid: Residue, Codable {
         self.formula = formula
         self.represents = represents
         self.representedBy = representedBy
+        
+        self.modification = noModification
     }
 
     public init(from decoder: Decoder) throws {
@@ -38,6 +40,8 @@ public struct AminoAcid: Residue, Codable {
         threeLetterCode = try container.decode(String.self, forKey: .threeLetterCode)
         formula = Formula(try container.decode(String.self, forKey: .formula))
         name = try container.decode(String.self, forKey: .name)
+
+        self.modification = noModification
     }
     
     public func encode(to encoder: Encoder) throws {

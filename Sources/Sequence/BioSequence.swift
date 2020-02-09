@@ -39,8 +39,6 @@ public class BioSequence: Molecule {
         return result
     }
     
-    public var bonds = [Bond]()
-    
     public required init(residues: [Residue], library: [Symbol] = []) {
         symbolLibrary = library
         residueSequence = residues
@@ -143,36 +141,13 @@ extension BioSequence {
         }
     }
     
-    public func currentModifications(at location: Int) -> [ModificationInfo] {
-        return self.modifications.filter( { $0.at == location } )
-    }
-
-    public func setBond(with info: Bond) {
-        if bonds.contains(info) {
-            debugPrint("bond already exists")
-            return
+    public func currentModifications(at locations: [Int]) -> [ModificationInfo] {
+        var result: [ModificationInfo] = []
+        
+        for location in locations {
+            result += self.modifications.filter( { $0.at == location } )
         }
         
-        for bond in bonds {
-            if bond.overlaps(with: info) {
-                debugPrint("found partial bond")
-                return
-            }
-        }
-        
-        debugPrint("adding new bond")
-        
-        // magical code insert here
-        // turn Bondinfo into ModificationInfo
-        
-        bonds.append(info)
-    }
-    
-    public func currentBond(at location: Int) -> Bond {
-        if let info = self.bonds.first(where: { $0.from == location }) {
-            return info
-        }
-        
-        return emptyBond
+        return result
     }
 }
