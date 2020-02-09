@@ -39,7 +39,7 @@ public class BioSequence: Molecule {
         return result
     }
     
-    public var bonds = [BondInfo]()
+    public var bonds = [Bond]()
     
     public required init(residues: [Residue], library: [Symbol] = []) {
         symbolLibrary = library
@@ -149,7 +149,7 @@ extension BioSequence {
         return ModificationInfo(modification: noModification, at: location)
     }
 
-    public func setBond(with info: BondInfo) {
+    public func setBond(with info: Bond) {
         if bonds.contains(info) {
             debugPrint("bond already exists")
             return
@@ -165,12 +165,12 @@ extension BioSequence {
         debugPrint("adding new bond")
         
         // magical code insert here
-        // turn bondinfo into ModificationInfo
+        // turn Bondinfo into ModificationInfo
         
         bonds.append(info)
     }
     
-    public func currentBond(at location: Int) -> BondInfo {
+    public func currentBond(at location: Int) -> Bond {
         if let info = self.bonds.first(where: { $0.from == location }) {
             return info
         }

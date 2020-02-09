@@ -19,7 +19,7 @@ public var modificationsLibrary = [oxidation, deamidation, reduction, methylatio
 public indirect enum Reaction {
     case add(FunctionalGroup)
     case remove(FunctionalGroup)
-    case bond(BondInfo)
+    case bond(Bond)
     case undefined
 }
 
@@ -46,7 +46,7 @@ extension Reaction: Mass {
     }
 }
 
-public struct BondInfo: Equatable {
+public struct Bond: Equatable {
     public let reaction: Reaction
     public let from: Int
     public let to: Int
@@ -59,16 +59,16 @@ public struct BondInfo: Equatable {
         self.to = to
     }
 
-    public static func == (lhs: BondInfo, rhs: BondInfo) -> Bool {
+    public static func == (lhs: Bond, rhs: Bond) -> Bool {
         return (lhs.from == rhs.from) && (lhs.to == rhs.to)
     }
     
-    public func overlaps(with other: BondInfo) -> Bool {
+    public func overlaps(with other: Bond) -> Bool {
         return (self.from == other.to) || (self.to == other.from) || (self.from == other.from) || (self.to == other.to)
     }
 }
 
-public let emptyBond = BondInfo(reaction: .undefined, from: -1, to: -1)
+public let emptyBond = Bond(reaction: .undefined, from: -1, to: -1)
 
 public struct ModificationInfo {
     public let modification: Modification
