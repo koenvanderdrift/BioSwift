@@ -27,12 +27,12 @@ public class BioSequence: Molecule {
         return residueSequence.map { $0.identifier }.joined()
     }
     
-    public var modifications: [ModificationInfo] {
-        var result = [ModificationInfo]()
+    public var modifications: [LocalizedModification] {
+        var result = [LocalizedModification]()
         
         residueSequence.enumerated().forEach { index, residue in
             if let mod = residue.modification {
-                result.append(ModificationInfo(modification: mod, location: index))
+                result.append(LocalizedModification(modification: mod, location: index))
             }
         }
         
@@ -114,7 +114,7 @@ extension BioSequence {
 extension BioSequence {
     public func allowedModifications(at index: Int) -> [Modification]? {
         if let residue = residue(at: index) {
-            var modifications = modificationsLibrary.filter { $0.sites.contains(residue.identifier) == true }
+            var modifications = residue.allowedModifications()
  
          // add N and C term groups
             if index == 0 {
@@ -133,16 +133,16 @@ extension BioSequence {
         return nil
     }
     
-    public func setModification(with info: [ModificationInfo]) {
-        for mod in info {
+    public func modify(with mods: [LocalizedModification]) {
+        for mod in mods {
             residueSequence.modifyElement(atIndex: mod.location) { residue in
                 residue.setModification(mod.modification)
             }
         }
     }
     
-    public func currentModifications(at locations: [Int]) -> [ModificationInfo] {
-        var result: [ModificationInfo] = []
+    public func currentModifications(at locations: [Int]) -> [LocalizedModification] {
+        var result: [LocalizedModification] = []
         
         for location in locations {
             result += self.modifications.filter( { $0.location == location } )

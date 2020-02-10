@@ -29,7 +29,7 @@ public struct AminoAcid: Residue, Codable {
         self.represents = represents
         self.representedBy = representedBy
         
-        self.modification = noModification
+        self.modification = emptyModification
     }
 
     public init(from decoder: Decoder) throws {
@@ -41,7 +41,7 @@ public struct AminoAcid: Residue, Codable {
         formula = Formula(try container.decode(String.self, forKey: .formula))
         name = try container.decode(String.self, forKey: .name)
 
-        self.modification = noModification
+        self.modification = emptyModification
     }
     
     public func encode(to encoder: Encoder) throws {
@@ -56,6 +56,10 @@ public struct AminoAcid: Residue, Codable {
     
     var description: String {
         return threeLetterCode
+    }
+    
+    public func allowedModifications() -> [Modification] {
+        return modificationsLibrary.filter { $0.sites.contains(identifier) == true }
     }
 }
 

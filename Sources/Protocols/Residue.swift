@@ -13,6 +13,8 @@ public protocol Residue: Molecule, Symbol, Mass {
     var threeLetterCode: String { get }
     
     var modification: Modification? { get set }
+    
+    func allowedModifications() -> [Modification]
 }
 
 extension Residue {
