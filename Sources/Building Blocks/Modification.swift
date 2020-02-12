@@ -1,6 +1,6 @@
 import Foundation
 
-public let emptyModification = Modification(name: "None", reactions: [], sites: [])
+//public let emptyModification = Modification(name: "None", reactions: [], sites: [])
 
 public let oxidation = Modification(name: "Oxidation", reactions: [.add(oxygen)], sites: ["M", "W", "Y"])
 public let deamidation = Modification(name: "Deamidation", reactions: [.add(water), .remove(ammonia)], sites: ["N", "Q"])
@@ -44,10 +44,10 @@ extension Reaction: Mass {
 }
 
 public struct LocalizedModification: Comparable {
-    public let modification: Modification
+    public let modification: Modification?
     public let location: Int
 
-    public init(modification: Modification, location: Int) {
+    public init(modification: Modification?, location: Int) {
         self.modification = modification
         self.location = location
     }

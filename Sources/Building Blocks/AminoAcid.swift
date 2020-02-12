@@ -10,7 +10,7 @@ public struct AminoAcid: Residue, Codable {
     public let represents: [String]
     public let representedBy: [String]
 
-    public var modification: Modification?
+    public var modification: Modification? = nil
 
     private enum CodingKeys: String, CodingKey {
         case name
@@ -28,8 +28,6 @@ public struct AminoAcid: Residue, Codable {
         self.formula = formula
         self.represents = represents
         self.representedBy = representedBy
-        
-        self.modification = emptyModification
     }
 
     public init(from decoder: Decoder) throws {
@@ -40,8 +38,6 @@ public struct AminoAcid: Residue, Codable {
         threeLetterCode = try container.decode(String.self, forKey: .threeLetterCode)
         formula = Formula(try container.decode(String.self, forKey: .formula))
         name = try container.decode(String.self, forKey: .name)
-
-        self.modification = emptyModification
     }
     
     public func encode(to encoder: Encoder) throws {

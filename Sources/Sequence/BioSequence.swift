@@ -136,7 +136,9 @@ extension BioSequence {
     public func modify(with mods: [LocalizedModification]) {
         for mod in mods {
             residueSequence.modifyElement(atIndex: mod.location) { residue in
-                residue.setModification(mod.modification)
+                if let modification = mod.modification {
+                    residue.setModification(modification)
+                }
             }
         }
     }
