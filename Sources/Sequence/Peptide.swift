@@ -12,11 +12,11 @@ public class Peptide: Protein {
         let fragment = Fragment(residues: residueSequence, type: .precursor)
         
         if self.canLoseAmmonia() {
-            fragment.modify(with: [LocalizedModification(modification: lossOfWater, location: -1)])
+//            fragment.modify(with: [LocalizedModification(modification: lossOfWater, location: -1)])
         }
 
         if self.canLoseWater() {
-            fragment.modify(with: [LocalizedModification(modification: lossOfAmmonia, location: -1)])
+//            fragment.modify(with: [LocalizedModification(modification: lossOfAmmonia, location: -1)])
         }
 
         return [fragment]

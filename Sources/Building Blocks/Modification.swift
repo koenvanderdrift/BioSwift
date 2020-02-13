@@ -1,7 +1,5 @@
 import Foundation
 
-//public let emptyModification = Modification(name: "None", reactions: [], sites: [])
-
 public let oxidation = Modification(name: "Oxidation", reactions: [.add(oxygen)], sites: ["M", "W", "Y"])
 public let deamidation = Modification(name: "Deamidation", reactions: [.add(water), .remove(ammonia)], sites: ["N", "Q"])
 public let reduction = Modification(name: "Reduction", reactions: [.remove(hydrogen)], sites: ["C"])
@@ -54,6 +52,36 @@ public struct LocalizedModification: Comparable {
 
     public static func < (lhs: LocalizedModification, rhs: LocalizedModification) -> Bool {
         return lhs.location < rhs.location
+    }
+}
+
+public struct Link: Equatable {
+    public let from: LocalizedModification
+    public let to: LocalizedModification
+    
+    public init(from: LocalizedModification, to: LocalizedModification) {
+        self.from = from
+        self.to = to
+    }
+    
+    public enum LinkOverlap {
+        case none
+        case partial
+        case complete
+    }
+    
+    public func overlaps(with other: Link) -> LinkOverlap {
+        if self == other {
+            return .complete
+        }
+        
+        else if (self.from.location != other.from.location && self.to.location != other.to.location) || (self.from.location != other.to.location && self.to.location != other.from.location) {
+            return .none
+        }
+            
+        else {
+            return .partial
+        }
     }
 }
 

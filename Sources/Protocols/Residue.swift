@@ -30,7 +30,11 @@ extension Residue {
         return self.modification?.masses ?? zeroMass
     }
     
-    mutating func setModification(_ modification: Modification) {
+    mutating func setModification(_ modification: Modification?) {
         self.modification = modification
+    }
+
+    mutating func removeModification() {
+        self.modification = nil
     }
 }
