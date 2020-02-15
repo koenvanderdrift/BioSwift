@@ -88,7 +88,7 @@ public struct LocalizedModification: Comparable, Hashable {
     }
 }
 
-public struct Link {
+public struct Link: Hashable {
     // https://codereview.stackexchange.com/questions/237295/comparing-two-structs-in-swift#
     public let mods: Set<LocalizedModification>
     
