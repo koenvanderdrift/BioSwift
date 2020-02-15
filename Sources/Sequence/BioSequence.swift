@@ -27,7 +27,7 @@ public class BioSequence: Molecule {
         return residueSequence.map { $0.identifier }.joined()
     }
     
-    public var modifications: Set<LocalizedModification>  = [] {
+    public var modifications: Set<LocalizedModification> = [] {
         didSet {
             oldValue.forEach {
                 removeModification(at: $0.location )
@@ -148,13 +148,7 @@ extension BioSequence {
         }
     }
 
-    public func modifications(at locations: [Int]) -> Set<LocalizedModification> {
-        var result: Set<LocalizedModification> = []
-        
-        for location in locations {
-            result = result.union(self.modifications.filter( { $0.location == location } ))
-        }
-        
-        return result
+    public func modifications(at locations: [Int]) -> Set<LocalizedModification>? {
+        return modifications.filter( { locations.contains( $0.location ) } )
     }
 }
