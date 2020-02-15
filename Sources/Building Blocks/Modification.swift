@@ -41,50 +41,6 @@ extension Reaction: Mass {
     }
 }
 
-public struct LocalizedModification: Comparable {
-    public let modification: Modification?
-    public let location: Int
-
-    public init(modification: Modification?, location: Int) {
-        self.modification = modification
-        self.location = location
-    }
-
-    public static func < (lhs: LocalizedModification, rhs: LocalizedModification) -> Bool {
-        return lhs.location < rhs.location
-    }
-}
-
-public struct Link: Equatable {
-    public let from: LocalizedModification
-    public let to: LocalizedModification
-    
-    public init(from: LocalizedModification, to: LocalizedModification) {
-        self.from = from
-        self.to = to
-    }
-    
-    public enum LinkOverlap {
-        case none
-        case partial
-        case complete
-    }
-    
-    public func overlaps(with other: Link) -> LinkOverlap {
-        if self == other {
-            return .complete
-        }
-        
-        else if (self.from.location != other.from.location && self.to.location != other.to.location) || (self.from.location != other.to.location && self.to.location != other.from.location) {
-            return .none
-        }
-            
-        else {
-            return .partial
-        }
-    }
-}
-
 public struct Modification {
     public let name: String
     public let reactions: [Reaction]
@@ -115,5 +71,46 @@ extension Modification: Mass {
     
     public func calculateMasses() -> MassContainer {
         return reactions.reduce(zeroMass, { $0 + $1.masses })
+    }
+}
+
+public struct LocalizedModification: Comparable, Hashable {
+    public let modification: Modification?
+    public let location: Int
+    
+    public init(modification: Modification?, location: Int) {
+        self.modification = modification
+        self.location = location
+    }
+    
+    public static func < (lhs: LocalizedModification, rhs: LocalizedModification) -> Bool {
+        return lhs.location < rhs.location
+    }
+}
+
+public struct Link {
+    // https://codereview.stackexchange.com/questions/237295/comparing-two-structs-in-swift#
+    public let mods: Set<LocalizedModification>
+    
+    public init(_ mods: Set<LocalizedModification>) {
+        self.mods = mods
+    }
+}
+
+extension Link {
+    public enum CompareResult {
+        case equal
+        case intersect
+        case disjoint
+    }
+    
+    public func compareLocations(with other: Link) -> CompareResult {
+        if mods == other.mods {
+            return .equal
+        } else if mods.isDisjoint(with: other.mods) {
+            return .disjoint
+        } else {
+            return .intersect
+        }
     }
 }
