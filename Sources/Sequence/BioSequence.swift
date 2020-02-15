@@ -27,16 +27,16 @@ public class BioSequence: Molecule {
         return residueSequence.map { $0.identifier }.joined()
     }
     
-    public var modifications: [LocalizedModification] {
-        var result = [LocalizedModification]()
-        
-        residueSequence.enumerated().forEach { index, residue in
-            if let mod = residue.modification {
-                result.append(LocalizedModification(modification: mod, location: index))
+    public var modifications: Set<LocalizedModification>  = [] {
+        didSet {
+            oldValue.forEach {
+                removeModification(at: $0.location )
+            }
+            
+            modifications.forEach {
+                addModification($0)
             }
         }
-        
-        return result
     }
     
     public required init(residues: [Residue], library: [Symbol] = []) {
@@ -139,6 +139,7 @@ extension BioSequence {
                 residue.setModification(modification)
             }
         }
+        
     }
     
     public func removeModification(at location: Int) {
@@ -147,11 +148,11 @@ extension BioSequence {
         }
     }
 
-    public func currentModifications(at locations: [Int]) -> [LocalizedModification] {
-        var result: [LocalizedModification] = []
+    public func modifications(at locations: [Int]) -> Set<LocalizedModification> {
+        var result: Set<LocalizedModification> = []
         
         for location in locations {
-            result += self.modifications.filter( { $0.location == location } )
+            result = result.union(self.modifications.filter( { $0.location == location } ))
         }
         
         return result
