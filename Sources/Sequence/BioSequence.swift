@@ -112,17 +112,17 @@ extension BioSequence {
 }
 
 extension BioSequence {
-    public func allowedModifications(at index: Int) -> [Modification]? {
-        if let residue = residue(at: index) {
+    public func allowedModifications(at location: Int) -> [Modification]? {
+        if let residue = residue(at: location) {
             var modifications = residue.allowedModifications()
  
          // add N and C term groups
-            if index == 0 {
+            if location == 0 {
                 let nTermGroups = modificationsLibrary.filter { $0.sites.contains("NTerminal") == true }
                 modifications.append(contentsOf: nTermGroups)
             }
 
-            if index == sequenceString.count - 1 {
+            if location == sequenceString.count - 1 {
                 let cTermGroups = modificationsLibrary.filter { $0.sites.contains("CTerminal") == true }
                 modifications.append(contentsOf: cTermGroups)
             }
@@ -148,7 +148,7 @@ extension BioSequence {
         }
     }
 
-    public func modifications(at locations: [Int]) -> Set<LocalizedModification>? {
-        return modifications.filter( { locations.contains( $0.location ) } )
+    public func modifications(at locations: [Int]) -> [LocalizedModification]? {
+        return Array(modifications.filter( { locations.contains( $0.location ) } ))
     }
 }
