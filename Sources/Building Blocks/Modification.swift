@@ -90,7 +90,7 @@ public struct LocalizedModification: Comparable, Hashable {
 
 public struct Link: Hashable {
     // https://codereview.stackexchange.com/questions/237295/comparing-two-structs-in-swift#
-    public let mods: Set<LocalizedModification>
+    public var mods: Set<LocalizedModification>
     
     public init(_ mods: Set<LocalizedModification>) {
         self.mods = mods
@@ -112,5 +112,15 @@ extension Link {
         } else {
             return .intersect
         }
+    }
+    
+    public func contains(_ location: Int) -> Bool {
+        for mod in mods {
+            if mod.location == location {
+                return true
+            }
+        }
+        
+        return false
     }
 }
