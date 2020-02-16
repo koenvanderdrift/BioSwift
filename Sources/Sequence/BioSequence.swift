@@ -133,13 +133,24 @@ extension BioSequence {
         return nil
     }
     
+    public func currentModifications() -> Set<LocalizedModification> {
+        var result: Set<LocalizedModification> = []
+        
+        for (index, residue) in residueSequence.enumerated() {
+            if let mod = residue.modification {
+               result.insert(LocalizedModification(modification: mod, location: index))
+            }
+        }
+
+        return result
+    }
+    
     public func addModification(_ mod: LocalizedModification) {
         residueSequence.modifyElement(atIndex: mod.location) { residue in
             if let modification = mod.modification {
                 residue.setModification(modification)
             }
         }
-        
     }
     
     public func removeModification(at location: Int) {
