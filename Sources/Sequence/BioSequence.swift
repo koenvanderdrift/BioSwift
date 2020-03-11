@@ -114,20 +114,20 @@ extension BioSequence {
 extension BioSequence {
     public func allowedModifications(at location: Int) -> [Modification]? {
         if let residue = residue(at: location) {
-            var modifications = residue.allowedModifications()
+//            var modifications = residue.allowedModifications()
  
-         // add N and C term groups
-            if location == 0 {
-                let nTermGroups = modificationsLibrary.filter { $0.sites.contains("NTerminal") == true }
-                modifications.append(contentsOf: nTermGroups)
-            }
-
-            if location == sequenceString.count - 1 {
-                let cTermGroups = modificationsLibrary.filter { $0.sites.contains("CTerminal") == true }
-                modifications.append(contentsOf: cTermGroups)
-            }
+//         // add N and C term groups
+//            if location == 0 {
+//                let nTermGroups = modificationsLibrary.filter { $0.sites.contains("NTerminal") == true }
+//                modifications.append(contentsOf: nTermGroups)
+//            }
+//
+//            if location == sequenceString.count - 1 {
+//                let cTermGroups = modificationsLibrary.filter { $0.sites.contains("CTerminal") == true }
+//                modifications.append(contentsOf: cTermGroups)
+//            }
             
-            return modifications
+            return residue.allowedModifications()
         }
         
         return nil
@@ -159,7 +159,11 @@ extension BioSequence {
         }
     }
 
-    public func modifications(at locations: [Int]) -> [LocalizedModification]? {
-        return Array(modifications.filter( { locations.contains( $0.location ) } ))
+//    public func modifications(at locations: [Int]) -> [LocalizedModification]? {
+//        return Array(modifications.filter( { locations.contains( $0.location ) } ))
+//    }
+
+    public func modification(at location: Int) -> LocalizedModification? {
+        return modifications.first(where: { $0.location == location } )
     }
 }
