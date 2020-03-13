@@ -14,7 +14,8 @@ public let ammonia = FunctionalGroup(name: "ammonia", formula: Formula("NH3"))
 public let water = FunctionalGroup(name: "water", formula: Formula("H2O"))
 public let methyl = FunctionalGroup(name: "methyl", formula: Formula("CH3"))
 public let acetyl = FunctionalGroup(name: "acetyl", formula: Formula("CH2CO"))
-
+public let amide = FunctionalGroup(name: "amide", formula: Formula("NH2"))
+public let carboxyl = FunctionalGroup(name: "carbonyl", formula: Formula("COOH"))
 public let hydrogen = FunctionalGroup(name: "hydrogen", formula: Formula("H"))
 
 public let proton = FunctionalGroup(name: "proton", formula: Formula("H"))

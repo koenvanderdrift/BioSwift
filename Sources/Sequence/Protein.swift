@@ -2,6 +2,8 @@ import Foundation
 
 public class Protein: BioSequence, Chargeable {    
     public var adducts: [Adduct] = []
+    public var nTerminalModification: Modification?
+    public var cTerminalModification: Modification?
     
     public required init(residues: [Residue]) {
         super.init(residues: residues, library: aminoAcidLibrary)
@@ -26,7 +28,21 @@ public class Protein: BioSequence, Chargeable {
     }
     
     func terminalMasses() -> MassContainer {
-        return hydrogen.masses + hydroxyl.masses
+        var result = hydrogen.masses + hydroxyl.masses
+        
+        if let n = nTerminalModification {
+            if n.reactions.isEmpty == false {
+                result += n.masses
+            }
+        }
+        
+        if let c = cTerminalModification {
+            if c.reactions.isEmpty == false {
+                result += c.masses
+            }
+        }
+
+        return result
     }
     
     func adductMasses() -> MassContainer {
