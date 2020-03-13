@@ -31,15 +31,11 @@ public class Protein: BioSequence, Chargeable {
         var result = hydrogen.masses + hydroxyl.masses
         
         if let n = nTerminalModification {
-            if n.reactions.isEmpty == false {
-                result += n.masses
-            }
+            result += n.masses
         }
         
         if let c = cTerminalModification {
-            if c.reactions.isEmpty == false {
-                result += c.masses
-            }
+            result += c.masses
         }
 
         return result
