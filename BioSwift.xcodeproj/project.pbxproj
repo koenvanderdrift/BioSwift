@@ -21,6 +21,10 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		5D09C373241D1BF0006F0D5C /* UnimodParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D09C372241D1BF0006F0D5C /* UnimodParser.swift */; };
+		5D09C374241D1BF0006F0D5C /* UnimodParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D09C372241D1BF0006F0D5C /* UnimodParser.swift */; };
+		5D09C375241D1BF0006F0D5C /* UnimodParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D09C372241D1BF0006F0D5C /* UnimodParser.swift */; };
+		5D09C377241D1C1D006F0D5C /* unimod.xml in Resources */ = {isa = PBXBuildFile; fileRef = 5D09C376241D1C1D006F0D5C /* unimod.xml */; };
 		5D39778C23E0F3A100A6631C /* aminoacids.json in Resources */ = {isa = PBXBuildFile; fileRef = 5D3976F723E0F18300A6631C /* aminoacids.json */; };
 		5D39778D23E0F3AB00A6631C /* hydropathy.json in Resources */ = {isa = PBXBuildFile; fileRef = 5D3976F823E0F18300A6631C /* hydropathy.json */; };
 		5D39778F23E0F3B000A6631C /* elements.json in Resources */ = {isa = PBXBuildFile; fileRef = 5D3976FB23E0F18300A6631C /* elements.json */; };
@@ -132,10 +136,12 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		5D09C371241D1BEF006F0D5C /* BioSwiftPackageTests-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "BioSwiftPackageTests-Bridging-Header.h"; sourceTree = "<group>"; };
+		5D09C372241D1BF0006F0D5C /* UnimodParser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UnimodParser.swift; sourceTree = "<group>"; };
+		5D09C376241D1C1D006F0D5C /* unimod.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = unimod.xml; sourceTree = "<group>"; };
 		5D3976F723E0F18300A6631C /* aminoacids.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = aminoacids.json; sourceTree = "<group>"; };
 		5D3976F823E0F18300A6631C /* hydropathy.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = hydropathy.json; sourceTree = "<group>"; };
 		5D3976FB23E0F18300A6631C /* elements.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = elements.json; sourceTree = "<group>"; };
-		5D3976FC23E0F18300A6631C /* unimod.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = unimod.xml; sourceTree = "<group>"; };
 		5D3976FD23E0F18300A6631C /* enzymes.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = enzymes.json; sourceTree = "<group>"; };
 		5D682EEB23E8F23800D03F10 /* functionalgroups.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = functionalgroups.json; sourceTree = "<group>"; };
 		5D96059B23E0F6FC00F6A93E /* ChemicalElement.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChemicalElement.swift; sourceTree = "<group>"; };
@@ -202,7 +208,7 @@
 				5D3976FD23E0F18300A6631C /* enzymes.json */,
 				5D682EEB23E8F23800D03F10 /* functionalgroups.json */,
 				5D3976F823E0F18300A6631C /* hydropathy.json */,
-				5D3976FC23E0F18300A6631C /* unimod.xml */,
+				5D09C376241D1C1D006F0D5C /* unimod.xml */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -233,8 +239,9 @@
 		5D9605B223E0F70E00F6A93E /* Support */ = {
 			isa = PBXGroup;
 			children = (
-				5D9605B323E0F70E00F6A93E /* Utilities.swift */,
 				5D9605B423E0F70E00F6A93E /* Bundle+Decoding.swift */,
+				5D09C372241D1BF0006F0D5C /* UnimodParser.swift */,
+				5D9605B323E0F70E00F6A93E /* Utilities.swift */,
 				5D9605B523E0F70E00F6A93E /* Webservice.swift */,
 			);
 			name = Support;
@@ -301,6 +308,7 @@
 		OBJ_11 /* BioSwiftTests */ = {
 			isa = PBXGroup;
 			children = (
+				5D09C371241D1BEF006F0D5C /* BioSwiftPackageTests-Bridging-Header.h */,
 				OBJ_12 /* BioSwiftTests.swift */,
 				OBJ_13 /* XCTestManifests.swift */,
 			);
@@ -414,6 +422,9 @@
 					"BioSwift::BioSwift" = {
 						DevelopmentTeam = Z9FHH9AM7K;
 					};
+					"BioSwift::BioSwiftPackageTests::ProductTarget" = {
+						LastSwiftMigration = 1010;
+					};
 				};
 			};
 			buildConfigurationList = OBJ_2 /* Build configuration list for PBXProject "BioSwift" */;
@@ -444,6 +455,7 @@
 				5D682EEC23E8F23800D03F10 /* functionalgroups.json in Resources */,
 				5D39778C23E0F3A100A6631C /* aminoacids.json in Resources */,
 				5D39778F23E0F3B000A6631C /* elements.json in Resources */,
+				5D09C377241D1C1D006F0D5C /* unimod.xml in Resources */,
 				5D39779023E0F3B300A6631C /* enzymes.json in Resources */,
 				5D39778D23E0F3AB00A6631C /* hydropathy.json in Resources */,
 			);
@@ -466,6 +478,7 @@
 				5D9605A323E0F6FC00F6A93E /* AminoAcid.swift in Sources */,
 				5D9605ED23E0F70E00F6A93E /* Molecule.swift in Sources */,
 				5D96060523E0F70E00F6A93E /* Hydropathy.swift in Sources */,
+				5D09C373241D1BF0006F0D5C /* UnimodParser.swift in Sources */,
 				5D9605F323E0F70E00F6A93E /* Mass.swift in Sources */,
 				5D96060B23E0F70E00F6A93E /* Enzyme.swift in Sources */,
 				5D9605DE23E0F70E00F6A93E /* Scanner.swift in Sources */,
@@ -501,6 +514,7 @@
 				5D9605A423E0F6FC00F6A93E /* AminoAcid.swift in Sources */,
 				5D9605EE23E0F70E00F6A93E /* Molecule.swift in Sources */,
 				5D96060623E0F70E00F6A93E /* Hydropathy.swift in Sources */,
+				5D09C374241D1BF0006F0D5C /* UnimodParser.swift in Sources */,
 				5D9605F423E0F70E00F6A93E /* Mass.swift in Sources */,
 				5D96060C23E0F70E00F6A93E /* Enzyme.swift in Sources */,
 				5D9605DF23E0F70E00F6A93E /* Scanner.swift in Sources */,
@@ -554,6 +568,7 @@
 				5D9605E023E0F70E00F6A93E /* Scanner.swift in Sources */,
 				5D9605E923E0F70E00F6A93E /* Residue.swift in Sources */,
 				5D9605CE23E0F70E00F6A93E /* JSON.swift in Sources */,
+				5D09C375241D1BF0006F0D5C /* UnimodParser.swift in Sources */,
 				5D9605F523E0F70E00F6A93E /* Mass.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -674,12 +689,21 @@
 		OBJ_32 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				SWIFT_OBJC_BRIDGING_HEADER = "Sources/Support/BioSwiftPackageTests-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 4.2;
 			};
 			name = Debug;
 		};
 		OBJ_33 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				SWIFT_OBJC_BRIDGING_HEADER = "Sources/Support/BioSwiftPackageTests-Bridging-Header.h";
+				SWIFT_VERSION = 4.2;
 			};
 			name = Release;
 		};

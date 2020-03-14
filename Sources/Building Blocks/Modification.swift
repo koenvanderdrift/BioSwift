@@ -1,20 +1,5 @@
 import Foundation
 
-public let oxidation = Modification(name: "Oxidation", reactions: [.add(oxygen)], sites: ["M", "W", "Y"])
-public let deamidation = Modification(name: "Deamidation", reactions: [.add(water), .remove(ammonia)], sites: ["N", "Q"])
-public let reduction = Modification(name: "Reduction", reactions: [.remove(hydrogen)], sites: ["C"])
-public let methylation = Modification(name: "Methylation", reactions: [.add(methyl)], sites: ["K"])
-public let acetylation = Modification(name: "Acetylation", reactions: [.add(acetyl)], sites: ["K", "NTerminal"])
-public let amidation = Modification(name: "Amidation", reactions: [.add(amide), .remove(hydroxyl)], sites: ["CTerminal"])
-
-public let pyroglutamateE = Modification(name: "Pyroglutamate (E)", reactions: [.remove(water)], sites: ["E"])
-public let pyroglutamateQ = Modification(name: "Pyroglutamate (Q)", reactions: [.remove(ammonia)], sites: ["Q"])
-
-public let cysteinylation = Modification(name: "Cysteinylation", reactions: [.remove(cysteinyl)], sites: ["C"])
-
-// TODO: generate from modifications.json
-public var modificationsLibrary = [oxidation, deamidation, reduction, methylation, acetylation, amidation, pyroglutamateE, pyroglutamateQ, cysteinylation]
-
 public indirect enum Reaction {
     case add(FunctionalGroup)
     case remove(FunctionalGroup)
