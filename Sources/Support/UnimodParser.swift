@@ -16,7 +16,6 @@ public class UnimodParser: NSObject, XMLParserDelegate {
     var name = ""
     var sites = [String]()
     var delta = [String : Int]()
-    var reactions = [Reaction]()
     
     public init(xml: String) {
         let xmlData = xml.data(using: String.Encoding.utf8)!
@@ -35,21 +34,22 @@ public class UnimodParser: NSObject, XMLParserDelegate {
     
     public func parser(_ parser: XMLParser, didStartElement elementName: String, namespaceURI: String?, qualifiedName qName: String?, attributes attributeDict: [String : String] = [:]) {
         if elementName == "umod:mod" {
-            if let title = attributeDict["title"] {
+            if let title = attributeDict["title"],
+                title.starts(with: "Unknown") == false,
+                title.starts(with: "Xlink") == false {
                 name = title
             }
         }
-        
+            
         else if elementName == "umod:specificity" {
-            if let site = attributeDict["site"], let classification = attributeDict["classification"] {
-                if classification.contains("Isotopic label") == false {
-                    sites.append(site)
-                }
+            if let site = attributeDict["site"], let classification = attributeDict["classification"], classification.contains("Isotopic label") == false {
+                sites.append(site)
             }
         }
-        
+            
         else if elementName == "umod:element" {
-            if let symbol = attributeDict["symbol"], let number = attributeDict["number"] {
+            if let symbol = attributeDict["symbol"],
+                let number = attributeDict["number"] {
                 delta[symbol] = Int(number)
             }
         }
@@ -58,43 +58,14 @@ public class UnimodParser: NSObject, XMLParserDelegate {
     public func parser(_ parser: XMLParser, didEndElement elementName: String, namespaceURI: String?, qualifiedName qName: String?) {
         
         if elementName == "umod:mod" {
-            
-            // todo -> move this code to Formula
-            let negativeElements = delta.filter({ $0.value < 0 })
-            if negativeElements.count > 0 {
-                var formula = ""
-                for (element, count) in negativeElements {
-                    formula.append(element)
-                    if count > 1 {
-                        formula.append(String(abs(count)))
-                    }
-                }
+            if name.isEmpty == false {
+                let mod = Modification(name: name, dict: delta, sites: sites)
+                uniModifications.append(mod)
                 
-                let group = FunctionalGroup(name: "", formula: Formula(formula))
-                reactions.append(Reaction.remove(group))
+                name.removeAll()
+                sites.removeAll()
+                delta.removeAll()
             }
-            
-            let postiveElements = delta.filter { $0.value > 0 }
-            if postiveElements.count > 0 {
-                var formula = ""
-                for (element, count) in postiveElements {
-                    formula.append(element)
-                    if count > 1 {
-                        formula.append(String(abs(count)))
-                    }
-                }
-                
-                let group = FunctionalGroup(name: "", formula: Formula(formula))
-                reactions.append(Reaction.add(group))
-            }
-            
-            let mod = Modification(name: name, reactions: reactions, sites: sites)
-            uniModifications.append(mod)
-            
-            name = ""
-            sites.removeAll()
-            delta.removeAll()
-            reactions.removeAll()
         }
     }
 }

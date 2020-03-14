@@ -71,7 +71,7 @@ public struct AminoAcid: Residue, Codable {
     }
     
     public func allowedModifications() -> [Modification] {
-        return aminoAcidModifications.filter { $0.sites.contains(identifier) == true }
+        return uniModifications.filter { $0.sites.contains(identifier) == true }
     }
 }
 
