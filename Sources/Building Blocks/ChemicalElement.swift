@@ -28,6 +28,14 @@ public struct ChemicalElement: Codable, Symbol {
         
         _masses = calculateMasses()
     }
+    
+    public init(name: String, symbol: String, masses: MassContainer) {
+        self.name = name
+        self.symbol = symbol
+        self.isotopes = []
+        
+        _masses = masses
+    }
 
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)

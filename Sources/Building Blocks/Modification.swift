@@ -51,7 +51,7 @@ public struct Modification {
                 }
             }
             
-            let group = FunctionalGroup(name: "", formula: Formula(formula))
+            let group = FunctionalGroup(name: name, formula: Formula(formula))
             reactions.append(Reaction.remove(group))
         }
         
@@ -65,7 +65,7 @@ public struct Modification {
                 }
             }
             
-            let group = FunctionalGroup(name: "", formula: Formula(formula))
+            let group = FunctionalGroup(name: name, formula: Formula(formula))
             reactions.append(Reaction.add(group))
         }
         
