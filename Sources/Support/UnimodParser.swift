@@ -16,6 +16,7 @@ public class UnimodParser: NSObject, XMLParserDelegate {
     var name = ""
     var sites = [String]()
     var delta = [String : Int]()
+    var neutralLoss = false
     
     public init(xml: String) {
         let xmlData = xml.data(using: String.Encoding.utf8)!
@@ -47,8 +48,12 @@ public class UnimodParser: NSObject, XMLParserDelegate {
             }
         }
             
+        else if elementName == "umod:NeutralLoss" {
+            neutralLoss = true
+        }
+
         else if elementName == "umod:element" {
-            if let symbol = attributeDict["symbol"],
+            if neutralLoss == false, let symbol = attributeDict["symbol"],
                 let number = attributeDict["number"] {
                 delta[symbol] = Int(number)
             }
@@ -57,7 +62,11 @@ public class UnimodParser: NSObject, XMLParserDelegate {
     
     public func parser(_ parser: XMLParser, didEndElement elementName: String, namespaceURI: String?, qualifiedName qName: String?) {
         
-        if elementName == "umod:mod" {
+        if elementName == "umod:NeutralLoss" {
+            neutralLoss = false
+        }
+        
+        else if elementName == "umod:mod" {
             if name.isEmpty == false {
                 let mod = Modification(name: name, dict: delta, sites: sites)
                 uniModifications.append(mod)
