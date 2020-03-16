@@ -9,14 +9,6 @@
 import Foundation
 
 public var uniModifications = [Modification]()
-public var uniElements = [ChemicalElement]()
-
-private let elemElement = "umod:elem"
-
-private let elementSymbolAttributeKey = "title"
-private let elementFullNameAttributeKey = "full_name"
-private let monoIsotopicMassAttributeKey = "mono_mass"
-private let averageMassAttributeKey = "avge_mass"
 
 private let modificationElement = "umod:mod"
 private let specificityElement = "umod:specificity"
@@ -66,22 +58,7 @@ public class UnimodParser: NSObject {
 extension UnimodParser: XMLParserDelegate {
     public func parser(_ parser: XMLParser, didStartElement elementName: String, namespaceURI: String?, qualifiedName qName: String?, attributes attributeDict: [String : String] = [:]) {
         
-        if elementName == elemElement {
-            if let symbol = attributeDict[elementSymbolAttributeKey] {
-                elementSymbol = symbol
-            }
-            if let fullName = attributeDict[elementFullNameAttributeKey] {
-                elementFullName = fullName
-            }
-            if let monoMass = attributeDict[monoIsotopicMassAttributeKey] {
-                elementMonoisotopicMass = monoMass
-            }
-            if let avgMass = attributeDict[averageMassAttributeKey] {
-                elementAverageMass = avgMass
-            }
-        }
-        
-        else if elementName == modificationElement {
+        if elementName == modificationElement {
             if let title = attributeDict[modificationTitleAttributeKey],
                 shouldUse(title) {
                 modificationName = title
@@ -113,18 +90,6 @@ extension UnimodParser: XMLParserDelegate {
             isNeutralLoss = false
         }
         
-        else if elementName == elemElement {
-            if let monoMass = Decimal(string: elementMonoisotopicMass),
-                let avgMass = Decimal(string: elementAverageMass) {
-                let masses = MassContainer(monoisotopicMass: monoMass,
-                                           averageMass: avgMass,
-                                           nominalMass: (monoMass as NSDecimalNumber).intValue)
-                
-                let chemicalElement = ChemicalElement(name: elementFullName, symbol: elementSymbol, masses: masses)
-                uniElements.append(chemicalElement)
-            }
-        }
-            
         else if elementName == modificationElement {
             if modificationName.isEmpty == false {
                 let mod = Modification(name: modificationName, dict: modificationElements, sites: modificationSites)
