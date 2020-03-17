@@ -9,22 +9,27 @@
 import Foundation
 
 public var uniModifications = [Modification]()
+public var uniAminoAcids = [AminoAcid]()
 
-private let modificationElement = "umod:mod"
-private let specificityElement = "umod:specificity"
-private let neutralLossElement = "umod:NeutralLoss"
-private let elementElement = "umod:element"
+private let modification = "umod:mod"
+private let specificity = "umod:specificity"
+private let neutralLoss = "umod:NeutralLoss"
+private let element = "umod:element"
 
-private let modificationTitleAttributeKey = "title"
-private let modificationSiteAttributeKey = "site"
+private let titleAttributeKey = "title"
+private let siteAttributeKey = "site"
 private let classificationAttributeKey = "classification"
 private let symbolAttributeKey = "symbol"
 private let numberAttributeKey = "number"
 
-private let unknownTitle = "Unknown"
-private let xlinkTitle = "Xlink"
+private let aminoAcid = "umod:aa"
+private let fullNameAttributeKey = "full_name"
+private let threeLetterAttributeKey = "three_letter"
 
-private let skipTitleStrings = [unknownTitle, xlinkTitle]
+private let unknown = "Unknown"
+private let xlink = "Xlink"
+
+private let skipTitleStrings = [unknown, xlink]
 
 public class UnimodParser: NSObject {
     let parser: XMLParser
@@ -37,8 +42,15 @@ public class UnimodParser: NSObject {
     var modificationName = ""
     var modificationSites = [String]()
     var modificationElements = [String : Int]()
+
+    var aminoAcidName = ""
+    var aminoAcidOneLetterCode = ""
+    var aminoAcidThreeLetterCode = ""
+    var aminoAcidElements = [String : Int]()
+
     var isNeutralLoss = false
-    
+    var isAminoAcid = false
+
     public init(xml: String) {
         let xmlData = xml.data(using: String.Encoding.utf8)!
         parser = XMLParser(data: xmlData)
@@ -58,46 +70,77 @@ public class UnimodParser: NSObject {
 extension UnimodParser: XMLParserDelegate {
     public func parser(_ parser: XMLParser, didStartElement elementName: String, namespaceURI: String?, qualifiedName qName: String?, attributes attributeDict: [String : String] = [:]) {
         
-        if elementName == modificationElement {
-            if let title = attributeDict[modificationTitleAttributeKey],
+        if elementName == modification {
+            if let title = attributeDict[titleAttributeKey],
                 shouldUse(title) {
                 modificationName = title
             }
         }
             
-        else if elementName == specificityElement {
-            if let site = attributeDict[modificationSiteAttributeKey],
+        else if elementName == specificity {
+            if let site = attributeDict[siteAttributeKey],
                 let classification = attributeDict[classificationAttributeKey], classification.contains("Isotopic label") == false {
                 modificationSites.append(site)
             }
         }
             
-        else if elementName == neutralLossElement {
+        else if elementName == neutralLoss {
             isNeutralLoss = true
         }
             
-        else if elementName == elementElement {
+        else if elementName == element {
             if isNeutralLoss == false, let symbol = attributeDict[symbolAttributeKey],
                 let number = attributeDict[numberAttributeKey] {
-                modificationElements[symbol] = Int(number)
+                if isAminoAcid == true {
+                    aminoAcidElements[symbol] = Int(number)
+                }
+                else {
+                    modificationElements[symbol] = Int(number)
+                }
+            }
+            
+        }
+
+        else if elementName == aminoAcid {
+            isAminoAcid = true
+            
+            if let title = attributeDict[titleAttributeKey], let threeLetterCode = attributeDict[threeLetterAttributeKey], let name = attributeDict[fullNameAttributeKey] {
+                
+                aminoAcidName = name
+                aminoAcidOneLetterCode = title
+                aminoAcidThreeLetterCode = threeLetterCode
             }
         }
     }
     
     public func parser(_ parser: XMLParser, didEndElement elementName: String, namespaceURI: String?, qualifiedName qName: String?) {
         
-        if elementName == neutralLossElement {
+        if elementName == neutralLoss {
             isNeutralLoss = false
         }
         
-        else if elementName == modificationElement {
+        else if elementName == modification {
             if modificationName.isEmpty == false {
-                let mod = Modification(name: modificationName, dict: modificationElements, sites: modificationSites)
+                let mod = Modification(name: modificationName, elements: modificationElements, sites: modificationSites)
                 uniModifications.append(mod)
                 
                 modificationName.removeAll()
                 modificationSites.removeAll()
                 modificationElements.removeAll()
+            }
+        }
+        else if elementName == aminoAcid {
+            if aminoAcidName.isEmpty == false {
+                let aa = AminoAcid(name: aminoAcidName, oneLetterCode: aminoAcidOneLetterCode, threeLetterCode: aminoAcidThreeLetterCode, elements: aminoAcidElements)
+                
+                uniAminoAcids.append(aa)
+                
+                aminoAcidName.removeAll()
+                aminoAcidOneLetterCode.removeAll()
+                aminoAcidThreeLetterCode.removeAll()
+                aminoAcidElements.removeAll()
+                
+                isAminoAcid = false
             }
         }
     }

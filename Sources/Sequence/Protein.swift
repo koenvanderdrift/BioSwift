@@ -6,11 +6,11 @@ public class Protein: BioSequence, Chargeable {
     public var cTerminalModification: Modification?
     
     public required init(residues: [Residue]) {
-        super.init(residues: residues, library: aminoAcidLibrary)
+        super.init(residues: residues)
     }
 
     public init(sequence: String) {
-        super.init(sequence: sequence, library: aminoAcidLibrary)
+        super.init(sequence: sequence)
     }
     
     public required init(residues: [Residue], library: [Symbol]) {
@@ -22,6 +22,10 @@ public class Protein: BioSequence, Chargeable {
     }
     
     public func calculateMasses() -> MassContainer {
+        if symbolLibrary.count == 0 {
+            symbolLibrary = uniAminoAcids
+        }
+        
         let result = mass(of: residueSequence) + terminalMasses() + adductMasses()
 
         return result

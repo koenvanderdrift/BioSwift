@@ -23,6 +23,30 @@ public struct Formula {
         }()
     }
     
+    public init(_ dict: [String:Int]) {
+        var formula = ""
+        for (element, count) in dict {
+            formula.append(element)
+            if count > 1 {
+                formula.append(String(abs(count)))
+            }
+        }
+
+        self.string = formula
+        self.elements = {
+            var result = Elements()
+            
+            do {
+                result = try parse()
+            }
+            catch {
+                debugPrint(error)
+            }
+            
+            return result
+        }()
+    }
+    
     var description: String {
         return string
     }

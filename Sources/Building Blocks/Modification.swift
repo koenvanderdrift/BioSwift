@@ -38,34 +38,18 @@ public struct Modification {
         self.sites = sites
     }
     
-    public init(name: String, dict: [String: Int], sites: [String] = []) {        
+    public init(name: String, elements: [String: Int], sites: [String] = []) {
         var reactions = [Reaction]()
 
-        let negativeElements = dict.filter({ $0.value < 0 })
+        let negativeElements = elements.filter({ $0.value < 0 })
         if negativeElements.count > 0 {
-            var formula = ""
-            for (element, count) in negativeElements {
-                formula.append(element)
-                if count > 1 {
-                    formula.append(String(abs(count)))
-                }
-            }
-            
-            let group = FunctionalGroup(name: name, formula: Formula(formula))
+            let group = FunctionalGroup(name: name, formula: Formula(negativeElements))
             reactions.append(Reaction.remove(group))
         }
         
-        let postiveElements = dict.filter { $0.value > 0 }
+        let postiveElements = elements.filter { $0.value > 0 }
         if postiveElements.count > 0 {
-            var formula = ""
-            for (element, count) in postiveElements {
-                formula.append(element)
-                if count > 1 {
-                    formula.append(String(abs(count)))
-                }
-            }
-            
-            let group = FunctionalGroup(name: name, formula: Formula(formula))
+            let group = FunctionalGroup(name: name, formula: Formula(postiveElements))
             reactions.append(Reaction.add(group))
         }
         

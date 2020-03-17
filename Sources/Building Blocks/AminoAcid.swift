@@ -1,6 +1,6 @@
 import Foundation
 
-public var aminoAcidLibrary: [AminoAcid] = loadJSONFromBundle(fileName: "aminoacids")
+//public var aminoAcidLibrary: [AminoAcid] = loadJSONFromBundle(fileName: "aminoacids")
 
 public struct AminoAcid: Residue, Codable {
     public let formula: Formula
@@ -40,6 +40,22 @@ public struct AminoAcid: Residue, Codable {
         name = try container.decode(String.self, forKey: .name)
     }
     
+    public init(name: String, oneLetterCode: String, threeLetterCode: String = "", elements: [String:Int]) {
+        
+        var formulaString = ""
+        
+        for (element, count) in elements {
+            formulaString.append(element)
+            if count > 1 {
+                formulaString.append(String(abs(count)))
+            }
+        }
+        
+        let formula = Formula(formulaString)
+        
+        self.init(name: name, oneLetterCode: oneLetterCode, threeLetterCode: threeLetterCode, formula: formula)
+    }
+
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(name, forKey: .name)
