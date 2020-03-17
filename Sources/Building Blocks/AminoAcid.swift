@@ -2,6 +2,8 @@ import Foundation
 
 //public var aminoAcidLibrary: [AminoAcid] = loadJSONFromBundle(fileName: "aminoacids")
 
+public let zeroAminoAcid = AminoAcid(name: "", oneLetterCode: "", elements: [:])
+
 public struct AminoAcid: Residue, Codable {
     public let formula: Formula
     public let name: String
