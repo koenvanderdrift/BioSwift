@@ -2,6 +2,8 @@ import Foundation
 
 public var elementLibrary: Elements = loadJSONFromBundle(fileName: "elements")
 
+public let electron = ChemicalElement(name: "electron", symbol: "e", masses: MassContainer(monoisotopicMass: Decimal(0.00054858026), averageMass: Decimal(0.00054858026), nominalMass: 0))
+
 public struct Isotope: Codable {
     public let mass: String
     public let ordinalNumber: String

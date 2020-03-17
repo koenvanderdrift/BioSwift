@@ -48,8 +48,9 @@ public class UnimodParser: NSObject {
     var aminoAcidThreeLetterCode = ""
     var aminoAcidElements = [String : Int]()
 
-    var isNeutralLoss = false
     var isAminoAcid = false
+    var isModification = false
+    var isNeutralLoss = false
 
     public init(xml: String) {
         let xmlData = xml.data(using: String.Encoding.utf8)!
@@ -71,6 +72,8 @@ extension UnimodParser: XMLParserDelegate {
     public func parser(_ parser: XMLParser, didStartElement elementName: String, namespaceURI: String?, qualifiedName qName: String?, attributes attributeDict: [String : String] = [:]) {
         
         if elementName == modification {
+            isModification = true
+            
             if let title = attributeDict[titleAttributeKey],
                 shouldUse(title) {
                 modificationName = title
@@ -89,22 +92,26 @@ extension UnimodParser: XMLParserDelegate {
         }
             
         else if elementName == element {
-            if isNeutralLoss == false, let symbol = attributeDict[symbolAttributeKey],
+            if isNeutralLoss == false,
+                let symbol = attributeDict[symbolAttributeKey],
                 let number = attributeDict[numberAttributeKey] {
+
                 if isAminoAcid == true {
                     aminoAcidElements[symbol] = Int(number)
                 }
-                else {
+                
+                else if isModification == true {
                     modificationElements[symbol] = Int(number)
                 }
             }
-            
         }
 
         else if elementName == aminoAcid {
             isAminoAcid = true
             
-            if let title = attributeDict[titleAttributeKey], let threeLetterCode = attributeDict[threeLetterAttributeKey], let name = attributeDict[fullNameAttributeKey] {
+            if let title = attributeDict[titleAttributeKey],
+                let threeLetterCode = attributeDict[threeLetterAttributeKey],
+                let name = attributeDict[fullNameAttributeKey] {
                 
                 aminoAcidName = name
                 aminoAcidOneLetterCode = title
@@ -122,13 +129,17 @@ extension UnimodParser: XMLParserDelegate {
         else if elementName == modification {
             if modificationName.isEmpty == false {
                 let mod = Modification(name: modificationName, elements: modificationElements, sites: modificationSites)
+
                 uniModifications.append(mod)
                 
                 modificationName.removeAll()
                 modificationSites.removeAll()
                 modificationElements.removeAll()
+                
+                isModification = false
             }
         }
+            
         else if elementName == aminoAcid {
             if aminoAcidName.isEmpty == false {
                 let aa = AminoAcid(name: aminoAcidName, oneLetterCode: aminoAcidOneLetterCode, threeLetterCode: aminoAcidThreeLetterCode, elements: aminoAcidElements)
