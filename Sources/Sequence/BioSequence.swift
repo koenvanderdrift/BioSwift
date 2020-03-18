@@ -81,11 +81,11 @@ extension BioSequence {
     }
     
     public func residueSequence(from string: String) -> [Residue] {
-        let result = string.compactMap { char in
-            return symbolLibrary.first(where: { $0.identifier == String(char) })
+        let result = string.map { char -> Residue in
+            return symbolLibrary.first(where: { $0.identifier == String(char) }) as! Residue
         }
         
-        return (result as? [Residue])!
+        return result
     }
     
     public func symbol(at index: Int) -> Symbol? {
