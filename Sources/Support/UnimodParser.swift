@@ -75,7 +75,7 @@ extension UnimodParser: XMLParserDelegate {
             isModification = true
             
             if let title = attributeDict[titleAttributeKey],
-                shouldUse(title) {
+                skipTitleStrings.contains(where: title.hasPrefix) == false {
                 modificationName = title
             }
         }
@@ -154,9 +154,5 @@ extension UnimodParser: XMLParserDelegate {
                 isAminoAcid = false
             }
         }
-    }
-    
-    private func shouldUse(_ title: String) -> Bool {
-        return skipTitleStrings.contains(where: title.hasPrefix) == false
     }
 }
