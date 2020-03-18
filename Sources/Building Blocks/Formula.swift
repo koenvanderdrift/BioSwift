@@ -83,6 +83,10 @@ extension Formula {
         
         var result = Elements()
         
+        if i == 0 {
+            return result
+        }
+        
         // parse string backwards
         
         while i > 0 {
