@@ -61,12 +61,12 @@ public class UnimodParser: NSObject {
         parser.delegate = self
     }
     
-    public func parseXML() {
-        parser.parse()
+    public func parseXML() -> Bool {
+        return parser.parse()
     }
-    
-    // MARK: XML Parser Delegate
 }
+
+// MARK: XML Parser Delegate
 
 extension UnimodParser: XMLParserDelegate {
     public func parser(_ parser: XMLParser, didStartElement elementName: String, namespaceURI: String?, qualifiedName qName: String?, attributes attributeDict: [String : String] = [:]) {
