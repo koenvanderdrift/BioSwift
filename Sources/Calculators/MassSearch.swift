@@ -77,22 +77,18 @@ public struct MassSearch {
     public func searchMass() -> SearchResult {
         var result = SearchResult()
         
-        var residueSequence = sequence.residueSequence
         let sequenceString = sequence.sequenceString
-        
+        var massSequence = sequence.residueSequence.map { $0.masses }
+
         let range = params.massRange()
         var start = 0
         
-        while !residueSequence.isEmpty {
+        while !massSequence.isEmpty {
             var mass = hydrogen.masses + hydroxyl.masses
             
-            // correct way of doing this:
-            // get slice of symbolSequence()
-            // get pseudomolecular ion
-            
-            residueSequence.enumerated().forEach { index, residue in
+            massSequence.enumerated().forEach { index, m in
                 if let s = sequenceString.substring(from: start, to: start + index + 1) {
-                    mass += residue.masses
+                    mass += m
                     let chargedMass = params.charge > 0 ? mass / params.charge : mass
                     
                     switch params.massType {
@@ -114,7 +110,7 @@ public struct MassSearch {
                 }
             }
             
-            residueSequence.removeFirst()
+            massSequence.removeFirst()
             start += 1
         }
         
