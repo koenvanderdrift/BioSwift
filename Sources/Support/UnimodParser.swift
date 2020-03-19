@@ -28,8 +28,9 @@ private let threeLetterAttributeKey = "three_letter"
 
 private let unknown = "Unknown"
 private let xlink = "Xlink"
+private let cation = "Cation"
 
-private let skipTitleStrings = [unknown, xlink]
+private let skipTitleStrings = [cation, unknown, xlink]
 
 public class UnimodParser: NSObject {
     let parser: XMLParser
