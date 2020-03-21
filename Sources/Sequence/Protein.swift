@@ -40,18 +40,32 @@ public class Protein: BioSequence, Chargeable {
     public func setCTerminalModification(_ mod: Modification) {
         termini?.1.setModification(mod)
     }
+    
+    public func nTerminalModification() -> Modification? {
+        if let mod = termini?.0.modification {
+            return mod
+        }
+        
+        return nil
+    }
+
+    public func cTerminalModification() -> Modification? {
+        if let mod = termini?.1.modification {
+            return mod
+        }
+        
+        return nil
+    }
 
     func terminalMasses() -> MassContainer {
         var result = zeroMass
         
-        if let nTerminal = termini?.0, nTerminal.name.isEmpty,
-            let res = uniAminoAcids.first(where: { $0.name == "N-term" }) {
-            result += res.masses
+        if let nTerminal = termini?.0, nTerminal.name.isEmpty {
+            result += nTerminal.masses
         }
         
-        if let cTerminal = termini?.1, cTerminal.name.isEmpty,
-            let res = uniAminoAcids.first(where: { $0.name == "C-term" }) {
-            result += res.masses
+        if let cTerminal = termini?.1, cTerminal.name.isEmpty {
+            result += cTerminal.masses
         }
         
         return result
