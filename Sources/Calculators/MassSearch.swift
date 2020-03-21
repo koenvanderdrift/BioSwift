@@ -79,18 +79,35 @@ public struct MassSearch {
         
         let sequenceString = sequence.sequenceString
         var massSequence = sequence.residueSequence.map { $0.masses }
-
+        
+        let termini = sequence.termini
+        
         let range = params.massRange()
         var start = 0
-
-        //807.9348
-
+        
+        // Nterm: 1102.3525
+        // 807.9348
+        // Cterm: 979.0476
+        
         while !massSequence.isEmpty {
             var mass = hydrogen.masses + hydroxyl.masses
             
+            if massSequence.count == sequenceString.count, let term = termini?.0 {
+                mass -= hydrogen.masses
+                mass += term.masses
+            }
+
             for index in 0...massSequence.count {
-                if let s = sequenceString.substring(from: start, to: start + index + 1) {
+                let to = start + index + 1
+
+                if let s = sequenceString.substring(from: start, to: to) {
                     mass += massSequence[index]
+
+                    if to == sequenceString.count, let term = termini?.1 {
+                        mass -= hydroxyl.masses
+                        mass += term.masses
+                    }
+                    
                     let chargedMass = params.charge > 0 ? mass / params.charge : mass
                     
                     if chargedMass.averageMass > range.upperBound {
