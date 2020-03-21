@@ -3,15 +3,16 @@ import Foundation
 public class Protein: BioSequence, Chargeable {    
     public var adducts: [Adduct] = []
     
-    public var nTerminal = zeroAminoAcid
-    public var cTerminal = zeroAminoAcid
-   
     public required init(residues: [Residue]) {
         super.init(residues: residues)
+        
+        self.termini = (zeroAminoAcid, zeroAminoAcid)
     }
 
     public init(sequence: String) {
         super.init(sequence: sequence)
+
+        self.termini = (zeroAminoAcid, zeroAminoAcid)
     }
     
     public required init(residues: [Residue], library: [Symbol]) {
@@ -33,23 +34,23 @@ public class Protein: BioSequence, Chargeable {
     }
     
     public func setNTerminalModification(_ mod: Modification) {
-        nTerminal.setModification(mod)
+        termini?.0.setModification(mod)
     }
     
     public func setCTerminalModification(_ mod: Modification) {
-        cTerminal.setModification(mod)
+        termini?.1.setModification(mod)
     }
 
     func terminalMasses() -> MassContainer {
-        if nTerminal.name.isEmpty, let res = uniAminoAcids.first(where: { $0.name == "N-term" }) {
-            nTerminal = res
+        if let nTerminal = termini?.0, nTerminal.name.isEmpty, let res = uniAminoAcids.first(where: { $0.name == "N-term" }) {
+            termini?.0 = res
         }
         
-        if cTerminal.name.isEmpty, let res = uniAminoAcids.first(where: { $0.name == "C-term" }) {
-            cTerminal = res
+        if let cTerminal = termini?.1, cTerminal.name.isEmpty, let res = uniAminoAcids.first(where: { $0.name == "C-term" }) {
+            termini?.1 = res
         }
         
-        return nTerminal.masses + cTerminal.masses
+        return (termini?.0.masses ?? zeroMass) + (termini?.1.masses ?? zeroMass)
     }
     
     func adductMasses() -> MassContainer {

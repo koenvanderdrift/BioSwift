@@ -18,6 +18,7 @@ public class BioSequence: Molecule {
     var symbolLibrary: [Symbol] = []
     
     var residueSequence = [Residue]()
+    var termini: (Residue, Residue)?
     
     var symbolSequence: [Symbol] {
         return residueSequence
