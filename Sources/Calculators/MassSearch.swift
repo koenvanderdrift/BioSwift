@@ -21,6 +21,25 @@ public enum ToleranceType: String {
     case mmu = "mmu"
 }
 
+extension ToleranceType {
+    public var minValue: Double {
+        return 0.0
+    }
+
+    public var maxValue: Double {
+        switch self {
+        case .ppm:
+            return 10000.0
+        case .dalton:
+            return 10.0
+        case .percent:
+            return 1.0
+        case .mmu:
+            return 10000.0
+        }
+    }
+}
+
 public struct Tolerance {
     public var type: ToleranceType
     public var value: Double
@@ -62,10 +81,10 @@ public struct SearchParameters {
             maxMass = searchValue + toleranceValue
         
         case .percent:
-            minMass = searchValue - ((toleranceValue * searchValue) / 100)
-            maxMass = searchValue + ((toleranceValue * searchValue) / 100)
+            minMass = searchValue - toleranceValue * searchValue / 100
+            maxMass = searchValue + toleranceValue * searchValue / 100
 
-        case .mmu: //millimass units (that's units of .001 of a Dalton)
+        case .mmu:
             minMass = searchValue - toleranceValue / 1000
             maxMass = searchValue + toleranceValue / 1000
         }
