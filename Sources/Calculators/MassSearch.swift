@@ -44,7 +44,7 @@ public struct SearchParameters {
         self.massType = massType
     }
     
-    func massRange() -> ClosedRange<Double> {
+    func massRange() -> ClosedRange<Decimal> {
         var minMass = 0.0
         var maxMass = 0.0
         let toleranceValue = Double(tolerance.value)
@@ -59,7 +59,7 @@ public struct SearchParameters {
             maxMass = searchValue + toleranceValue / 1000
         }
         
-        return minMass ... maxMass
+        return Decimal(minMass) ... Decimal(maxMass)
     }
 }
 
@@ -79,43 +79,35 @@ public struct MassSearch {
         
         let sequenceString = sequence.sequenceString
         var massSequence = sequence.residueSequence.map { $0.masses }
-        
+
         let range = params.massRange()
         var start = 0
-        
-        let trp = uniAminoAcids.first(where: { $0.oneLetterCode == "W" } )
-        let trpMass = trp?.masses.monoisotopicMass.doubleValue()
-        let minimumLength = Int(range.lowerBound / trpMass!)
-        
+
+        //807.9348
+
         while !massSequence.isEmpty {
             var mass = hydrogen.masses + hydroxyl.masses
             
             for index in 0...massSequence.count {
-                var to = start + index + 1
-//                if to >= massSequence.count {
-//                    to = massSequence.count - 1
-//                }
-    //807.9348
-                if let s = sequenceString.substring(from: start, to: to) {
-                    print(s)
+                if let s = sequenceString.substring(from: start, to: start + index + 1) {
                     mass += massSequence[index]
                     let chargedMass = params.charge > 0 ? mass / params.charge : mass
                     
-                    if mass.averageMass.doubleValue() > range.upperBound {
+                    if chargedMass.averageMass > range.upperBound {
                         break
                     }
                     
                     switch params.massType {
                     case .monoisotopic:
-                        if range.contains(chargedMass.monoisotopicMass.doubleValue()) {
+                        if range.contains(chargedMass.monoisotopicMass) {
                             result.insert(String(s))
                         }
                     case .average:
-                        if range.contains(chargedMass.averageMass.doubleValue()) {
+                        if range.contains(chargedMass.averageMass) {
                             result.insert(String(s))
                         }
                     case .nominal:
-                        if range.contains(Double(chargedMass.nominalMass)) {
+                        if range.contains(Decimal(chargedMass.nominalMass)) {
                             result.insert(String(s))
                         }
                     }
