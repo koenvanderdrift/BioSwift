@@ -28,7 +28,7 @@ public class Protein: BioSequence, Chargeable {
             symbolLibrary = uniAminoAcids
         }
         
-        let result = mass(of: residueSequence) + terminalMasses() + adductMasses()
+        let result = mass(of: residueSequence) + terminalMasses()
 
         return result
     }
@@ -42,19 +42,19 @@ public class Protein: BioSequence, Chargeable {
     }
 
     func terminalMasses() -> MassContainer {
-        if let nTerminal = termini?.0, nTerminal.name.isEmpty, let res = uniAminoAcids.first(where: { $0.name == "N-term" }) {
-            termini?.0 = res
+        var result = zeroMass
+        
+        if let nTerminal = termini?.0, nTerminal.name.isEmpty,
+            let res = uniAminoAcids.first(where: { $0.name == "N-term" }) {
+            result += res.masses
         }
         
-        if let cTerminal = termini?.1, cTerminal.name.isEmpty, let res = uniAminoAcids.first(where: { $0.name == "C-term" }) {
-            termini?.1 = res
+        if let cTerminal = termini?.1, cTerminal.name.isEmpty,
+            let res = uniAminoAcids.first(where: { $0.name == "C-term" }) {
+            result += res.masses
         }
         
-        return (termini?.0.masses ?? zeroMass) + (termini?.1.masses ?? zeroMass)
-    }
-    
-    func adductMasses() -> MassContainer {
-        return adducts.reduce(zeroMass, {$0 + $1.group.masses})
+        return result
     }
 }
 

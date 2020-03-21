@@ -54,14 +54,14 @@ public struct SearchParameters {
     public var searchValue: Double
     public var tolerance: Tolerance
     public let searchType: SearchType
-    public var charge: Int
+    public var adducts: [Adduct]
     public var massType: MassType
     
-    public init(searchValue: Double, tolerance: Tolerance, searchType: SearchType, charge: Int, massType: MassType) {
+    public init(searchValue: Double, tolerance: Tolerance, searchType: SearchType, adducts: [Adduct], massType: MassType) {
         self.searchValue = searchValue
         self.tolerance = tolerance
         self.searchType = searchType
-        self.charge = charge
+        self.adducts = adducts
         self.massType = massType
     }
     
@@ -72,7 +72,7 @@ public struct SearchParameters {
         
         switch tolerance.type {
         case .ppm:
-            let delta = toleranceValue / 1_000_000
+            let delta = toleranceValue / 1000000
             minMass = (1 - delta) * searchValue
             maxMass = (1 + delta) * searchValue
         
@@ -81,8 +81,8 @@ public struct SearchParameters {
             maxMass = searchValue + toleranceValue
         
         case .percent:
-            minMass = searchValue - toleranceValue * searchValue / 100
-            maxMass = searchValue + toleranceValue * searchValue / 100
+            minMass = searchValue - (toleranceValue * searchValue) / 100
+            maxMass = searchValue + (toleranceValue * searchValue) / 100
 
         case .mmu:
             minMass = searchValue - toleranceValue / 1000
@@ -136,8 +136,8 @@ public struct MassSearch {
                         mass += (term.masses - hydroxyl.masses)
                     }
                     
-                    let chargedMass = params.charge > 0 ? mass / params.charge : mass
-                    
+                    let chargedMass = mass.charged(with: params.adducts)
+
                     if chargedMass.averageMass > range.upperBound {
                         break
                     }

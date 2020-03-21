@@ -18,21 +18,13 @@ public protocol Chargeable: Mass {
     var adducts: [Adduct] { get set }
 }
 
-extension Chargeable {
-    public func mass(over charge: Int) -> MassContainer {
-        let masses = calculateMasses()
-        
-        return masses / (charge == 0 ? 1 : charge)
-    }
-    
+extension Chargeable {    
     public mutating func addCharge(_ adduct: Adduct) {
         adducts.append(adduct)
     }
     
     public func pseudomolecularIon() -> MassContainer {
-        let charge = adducts.reduce(0) { $0 + $1.charge }
-
-        return mass(over: charge) - electron.masses // remove electron mass, since we are adding H+, not H
+        return calculateMasses().charged(with: adducts)
     }
 }
 
