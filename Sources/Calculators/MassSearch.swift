@@ -15,8 +15,10 @@ public enum SearchType: Int {
 }
 
 public enum ToleranceType: String {
-    case ppm
-    case mDa
+    case ppm = "ppm"
+    case dalton = "Da"
+    case percent = "%"
+    case mmu = "mmu"
 }
 
 public struct Tolerance {
@@ -54,7 +56,16 @@ public struct SearchParameters {
             let delta = toleranceValue / 1_000_000
             minMass = (1 - delta) * searchValue
             maxMass = (1 + delta) * searchValue
-        case .mDa:
+        
+        case .dalton:
+            minMass = searchValue - toleranceValue
+            maxMass = searchValue + toleranceValue
+        
+        case .percent:
+            minMass = searchValue - ((toleranceValue * searchValue) / 100)
+            maxMass = searchValue + ((toleranceValue * searchValue) / 100)
+
+        case .mmu: //millimass units (that's units of .001 of a Dalton)
             minMass = searchValue - toleranceValue / 1000
             maxMass = searchValue + toleranceValue / 1000
         }
@@ -93,8 +104,7 @@ public struct MassSearch {
             var mass = hydrogen.masses + hydroxyl.masses
             
             if massSequence.count == sequenceString.count, let term = termini?.0 {
-                mass -= hydrogen.masses
-                mass += term.masses
+                mass += (term.masses - hydrogen.masses)
             }
 
             for index in 0...massSequence.count {
@@ -104,8 +114,7 @@ public struct MassSearch {
                     mass += massSequence[index]
 
                     if to == sequenceString.count, let term = termini?.1 {
-                        mass -= hydroxyl.masses
-                        mass += term.masses
+                        mass += (term.masses - hydroxyl.masses)
                     }
                     
                     let chargedMass = params.charge > 0 ? mass / params.charge : mass

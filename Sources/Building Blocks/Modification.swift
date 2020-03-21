@@ -41,7 +41,7 @@ public struct Modification {
     public init(name: String, elements: [String: Int], sites: [String] = []) {
         var reactions = [Reaction]()
 
-        let negativeElements = elements.filter({ $0.value < 0 })
+        let negativeElements = elements.filter { $0.value < 0 }
         if negativeElements.count > 0 {
             let group = FunctionalGroup(name: name, formula: Formula(negativeElements))
             reactions.append(Reaction.remove(group))
