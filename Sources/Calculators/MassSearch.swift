@@ -79,29 +79,41 @@ public struct MassSearch {
         
         let sequenceString = sequence.sequenceString
         var massSequence = sequence.residueSequence.map { $0.masses }
-
+        
         let range = params.massRange()
         var start = 0
+        
+        let trp = uniAminoAcids.first(where: { $0.oneLetterCode == "W" } )
+        let trpMass = trp?.masses.monoisotopicMass.doubleValue()
+        let minimumLength = Int(range.lowerBound / trpMass!)
         
         while !massSequence.isEmpty {
             var mass = hydrogen.masses + hydroxyl.masses
             
-            massSequence.enumerated().forEach { index, m in
-                if let s = sequenceString.substring(from: start, to: start + index + 1) {
-                    mass += m
+            for index in 0...massSequence.count {
+                var to = start + index + 1
+//                if to >= massSequence.count {
+//                    to = massSequence.count - 1
+//                }
+    //807.9348
+                if let s = sequenceString.substring(from: start, to: to) {
+                    print(s)
+                    mass += massSequence[index]
                     let chargedMass = params.charge > 0 ? mass / params.charge : mass
+                    
+                    if mass.averageMass.doubleValue() > range.upperBound {
+                        break
+                    }
                     
                     switch params.massType {
                     case .monoisotopic:
                         if range.contains(chargedMass.monoisotopicMass.doubleValue()) {
                             result.insert(String(s))
                         }
-                        
                     case .average:
                         if range.contains(chargedMass.averageMass.doubleValue()) {
                             result.insert(String(s))
                         }
-                        
                     case .nominal:
                         if range.contains(Double(chargedMass.nominalMass)) {
                             result.insert(String(s))

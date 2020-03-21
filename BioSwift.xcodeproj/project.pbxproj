@@ -170,7 +170,7 @@
 		5D9605C823E0F70E00F6A93E /* Hydropathy.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Hydropathy.swift; sourceTree = "<group>"; };
 		5D9605C923E0F70E00F6A93E /* Digester.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Digester.swift; sourceTree = "<group>"; };
 		5D9605CA23E0F70E00F6A93E /* Enzyme.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Enzyme.swift; sourceTree = "<group>"; };
-		5D9605CB23E0F70E00F6A93E /* MassSearch.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MassSearch.swift; sourceTree = "<group>"; };
+		5D9605CB23E0F70E00F6A93E /* MassSearch.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MassSearch.swift; sourceTree = "<group>"; wrapsLines = 0; };
 		5DE85C4A23E713DA00645496 /* elements.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = elements.txt; sourceTree = "<group>"; };
 		"BioSwift::BioSwift::Product" /* BioSwift.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = BioSwift.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		"BioSwift::BioSwiftTests::Product" /* BioSwiftTests.xctest */ = {isa = PBXFileReference; lastKnownFileType = file; path = BioSwiftTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
