@@ -31,7 +31,7 @@ private let xlink = "Xlink"
 private let cation = "Cation"
 private let atypeion = "a-type-ion"
 
-private let skipTitleStrings = [cation, unknown, xlink, atypeion]
+private let skipTitleStrings = [cation, unknown, xlink, atypeion, "2H", "13C", "15N"]
 
 public class UnimodParser: NSObject {
     let url: URL
@@ -82,7 +82,7 @@ extension UnimodParser: XMLParserDelegate {
             isModification = true
             
             if let title = attributeDict[titleAttributeKey],
-                skipTitleStrings.contains(where: title.hasPrefix) == false {
+                skipTitleStrings.contains(where: title.contains) == false {
                 modificationName = title
             }
         }
