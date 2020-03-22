@@ -1,22 +1,32 @@
 import Foundation
 
+public let nTermMod = Modification(name: "N-Term", reactions: [.add(hydrogen)])
+public let cTermMod = Modification(name: "C-Term", reactions: [.add(hydroxyl)])
+
 public class Protein: BioSequence, Chargeable {    
     public var adducts: [Adduct] = []
     
     public required init(residues: [Residue]) {
         super.init(residues: residues)
-        
-        self.termini = (zeroAminoAcid, zeroAminoAcid)
+
+        setUpTermini()
     }
 
     public init(sequence: String) {
         super.init(sequence: sequence)
 
-        self.termini = (zeroAminoAcid, zeroAminoAcid)
+        setUpTermini()
     }
     
     public required init(residues: [Residue], library: [Symbol]) {
         fatalError("init(residues:library:) has not been implemented")
+    }
+    
+    private func setUpTermini() {
+        self.termini = (zeroAminoAcid, zeroAminoAcid)
+        
+        setNTerminalModification(nTermMod)
+        setCTerminalModification(cTermMod)
     }
     
     public var masses: MassContainer {
