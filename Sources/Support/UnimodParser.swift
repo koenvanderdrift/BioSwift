@@ -29,8 +29,9 @@ private let threeLetterAttributeKey = "three_letter"
 private let unknown = "Unknown"
 private let xlink = "Xlink"
 private let cation = "Cation"
+private let atypeion = "a-type-ion"
 
-private let skipTitleStrings = [cation, unknown, xlink]
+private let skipTitleStrings = [cation, unknown, xlink, atypeion]
 
 public class UnimodParser: NSObject {
     let url: URL
