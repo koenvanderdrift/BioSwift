@@ -63,9 +63,6 @@
 		5D9605DB23E0F70E00F6A93E /* Array.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605B723E0F70E00F6A93E /* Array.swift */; };
 		5D9605DC23E0F70E00F6A93E /* Array.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605B723E0F70E00F6A93E /* Array.swift */; };
 		5D9605DD23E0F70E00F6A93E /* Array.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605B723E0F70E00F6A93E /* Array.swift */; };
-		5D9605DE23E0F70E00F6A93E /* Scanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605B823E0F70E00F6A93E /* Scanner.swift */; };
-		5D9605DF23E0F70E00F6A93E /* Scanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605B823E0F70E00F6A93E /* Scanner.swift */; };
-		5D9605E023E0F70E00F6A93E /* Scanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605B823E0F70E00F6A93E /* Scanner.swift */; };
 		5D9605E123E0F70E00F6A93E /* String.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605B923E0F70E00F6A93E /* String.swift */; };
 		5D9605E223E0F70E00F6A93E /* String.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605B923E0F70E00F6A93E /* String.swift */; };
 		5D9605E323E0F70E00F6A93E /* String.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605B923E0F70E00F6A93E /* String.swift */; };
@@ -158,7 +155,6 @@
 		5D9605B423E0F70E00F6A93E /* Bundle+Decoding.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Bundle+Decoding.swift"; sourceTree = "<group>"; };
 		5D9605B523E0F70E00F6A93E /* Webservice.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Webservice.swift; sourceTree = "<group>"; };
 		5D9605B723E0F70E00F6A93E /* Array.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Array.swift; sourceTree = "<group>"; };
-		5D9605B823E0F70E00F6A93E /* Scanner.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Scanner.swift; sourceTree = "<group>"; };
 		5D9605B923E0F70E00F6A93E /* String.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = String.swift; sourceTree = "<group>"; };
 		5D9605BA23E0F70E00F6A93E /* Double.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Double.swift; sourceTree = "<group>"; };
 		5D9605BC23E0F70E00F6A93E /* Residue.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Residue.swift; sourceTree = "<group>"; };
@@ -257,7 +253,6 @@
 			isa = PBXGroup;
 			children = (
 				5D9605B723E0F70E00F6A93E /* Array.swift */,
-				5D9605B823E0F70E00F6A93E /* Scanner.swift */,
 				5D9605B923E0F70E00F6A93E /* String.swift */,
 				5D9605BA23E0F70E00F6A93E /* Double.swift */,
 			);
@@ -487,7 +482,6 @@
 				5D09C373241D1BF0006F0D5C /* UnimodParser.swift in Sources */,
 				5D9605F323E0F70E00F6A93E /* Mass.swift in Sources */,
 				5D96060B23E0F70E00F6A93E /* Enzyme.swift in Sources */,
-				5D9605DE23E0F70E00F6A93E /* Scanner.swift in Sources */,
 				5D9605F623E0F70E00F6A93E /* Symbol.swift in Sources */,
 				5D9605AC23E0F6FC00F6A93E /* Modification.swift in Sources */,
 				5D9605E723E0F70E00F6A93E /* Residue.swift in Sources */,
@@ -524,7 +518,6 @@
 				5D09C374241D1BF0006F0D5C /* UnimodParser.swift in Sources */,
 				5D9605F423E0F70E00F6A93E /* Mass.swift in Sources */,
 				5D96060C23E0F70E00F6A93E /* Enzyme.swift in Sources */,
-				5D9605DF23E0F70E00F6A93E /* Scanner.swift in Sources */,
 				5D9605F723E0F70E00F6A93E /* Symbol.swift in Sources */,
 				5D9605AD23E0F6FC00F6A93E /* Modification.swift in Sources */,
 				5D9605E823E0F70E00F6A93E /* Residue.swift in Sources */,
@@ -573,7 +566,6 @@
 				5D9605E323E0F70E00F6A93E /* String.swift in Sources */,
 				5D9605F823E0F70E00F6A93E /* Symbol.swift in Sources */,
 				5D96060D23E0F70E00F6A93E /* Enzyme.swift in Sources */,
-				5D9605E023E0F70E00F6A93E /* Scanner.swift in Sources */,
 				5D9605E923E0F70E00F6A93E /* Residue.swift in Sources */,
 				5D9605CE23E0F70E00F6A93E /* JSON.swift in Sources */,
 				5D09C375241D1BF0006F0D5C /* UnimodParser.swift in Sources */,
