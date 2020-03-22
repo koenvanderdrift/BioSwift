@@ -27,13 +27,20 @@ public struct Molecule: Structure, Codable {
         _masses = calculateMasses()
     }
     
-    public init(name: String, formula: Formula) {
+    public init(name: String, formula: String) {
         self.name = name
-        self.formula = formula
+        self.formula = Formula(formula)
         
         _masses = calculateMasses()
     }
     
+    public init(name: String, formula: [String:Int]) {
+        self.name = name
+        self.formula = Formula(formula)
+        
+        _masses = calculateMasses()
+    }
+
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(name, forKey: .name)

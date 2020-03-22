@@ -1,7 +1,7 @@
 Atomic Weights and Isotopic Compositions for All Elements
 Column Descriptions
 
-via https://physics.nist.gov/cgi-bin/Compositions/stand_alone.pl?ele=&ascii=ascii
+via https://physics.nist.gov/cgi-bin/Compositions/stand_alone.pl
 
                                                                          
              Relative           Isotopic      Standard                   

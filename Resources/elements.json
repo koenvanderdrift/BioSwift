@@ -69,21 +69,6 @@
     ]
 },
 {
-    "name": "Fluoride",
-    "symbol": "F",
-    "isotopes": [{
-        "mass": "18.99840316273",
-        "ordinalNumber": "19",
-        "abundance": "100"
-    },
-    {
-        "mass": "15.00010889888",
-        "ordinalNumber": "15",
-        "abundance": "0.364"
-    }
-    ]
-},
-{
     "name": "Nitrogen",
     "symbol": "N",
     "isotopes": [{
@@ -115,6 +100,21 @@
         "mass": "17.99915961286",
         "ordinalNumber": "18",
         "abundance": "0.205"
+    }
+    ]
+},
+{
+    "name": "Fluoride",
+    "symbol": "F",
+    "isotopes": [{
+        "mass": "18.99840316273",
+        "ordinalNumber": "19",
+        "abundance": "100"
+    },
+    {
+        "mass": "15.00010889888",
+        "ordinalNumber": "15",
+        "abundance": "0.364"
     }
     ]
 },

@@ -33,7 +33,7 @@ private let cation = "Cation"
 private let skipTitleStrings = [cation, unknown, xlink]
 
 public class UnimodParser: NSObject {
-    let parser: XMLParser
+    let url: URL
     
     var elementSymbol = ""
     var elementFullName = ""
@@ -53,17 +53,22 @@ public class UnimodParser: NSObject {
     var isModification = false
     var isNeutralLoss = false
 
-    public init(xml: String) {
-        let xmlData = xml.data(using: String.Encoding.utf8)!
-        parser = XMLParser(data: xmlData)
+    public init(with url: URL) {
+        self.url = url
         
         super.init()
-        
-        parser.delegate = self
     }
     
     public func parseXML() -> Bool {
-        return parser.parse()
+        var result = false
+        
+        if let parser = XMLParser(contentsOf: url) {
+            parser.delegate = self
+
+            result = parser.parse()
+        }
+        
+        return result
     }
 }
 
