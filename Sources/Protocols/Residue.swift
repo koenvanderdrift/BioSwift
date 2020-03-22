@@ -8,7 +8,7 @@
 
 import Foundation
 
-public protocol Residue: Molecule, Symbol, Mass {
+public protocol Residue: Structure, Symbol, Mass {
     var oneLetterCode: String { get }
     var threeLetterCode: String { get }
     

@@ -8,7 +8,7 @@
 
 import Foundation
 
-public class BioSequence: Molecule {
+public class BioSequence: Structure {
     public var name: String = ""
 
     public var formula: Formula {

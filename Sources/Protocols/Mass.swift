@@ -8,6 +8,7 @@
 
 import Foundation
 
+public typealias Dalton = Double
 public let zeroMass = MassContainer(monoisotopicMass: 0.0, averageMass: 0.0, nominalMass: 0)
 
 public protocol Mass {
@@ -17,7 +18,6 @@ public protocol Mass {
 }
 
 // all masses from https://physics.nist.gov/cgi-bin/Compositions/stand_alone.pl
-
 
 extension Mass {
     // TO DO rename function calls

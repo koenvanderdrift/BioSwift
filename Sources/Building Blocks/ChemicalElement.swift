@@ -10,8 +10,6 @@ public struct Isotope: Codable {
     public let abundance: String
 }
 
-public typealias Dalton = Double
-
 public struct ChemicalElement: Codable, Symbol {
     private(set) var _masses: MassContainer = zeroMass
 
