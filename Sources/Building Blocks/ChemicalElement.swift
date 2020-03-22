@@ -68,14 +68,13 @@ extension ChemicalElement: Mass {
         
         var monoisotopicMass = Dalton(0.0)
         var averageMass = Dalton(0.0)
-        var nominalMass = 0
-        //The nominal mass for an element is the mass number of its most abundant naturally occurring stable isotope
+        
+        // The nominal mass for an element is the mass number of its most abundant naturally occurring stable isotope
         for i in isotopes {
             let abundance = Dalton(i.abundance)! * Dalton(0.01)
             let mass = Dalton(i.mass)!
             
             if abundance > currentAbundance {
-                nominalMass = Int(mass)
                 monoisotopicMass = mass
                 currentAbundance = abundance
             }
@@ -83,6 +82,6 @@ extension ChemicalElement: Mass {
             averageMass += abundance * mass
         }
         
-        return MassContainer(monoisotopicMass: monoisotopicMass, averageMass: averageMass, nominalMass: nominalMass)
+        return MassContainer(monoisotopicMass: monoisotopicMass, averageMass: averageMass, nominalMass: Int(round(monoisotopicMass)))
     }
 }
