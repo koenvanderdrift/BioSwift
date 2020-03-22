@@ -35,11 +35,11 @@ extension Mass {
         return mass.reduce(zeroMass, { $0 + $1.masses })
     }
     
-    public var monoisotopicMass: Decimal {
+    public var monoisotopicMass: Dalton {
         return masses.monoisotopicMass
     }
 
-    public var averageMass: Decimal {
+    public var averageMass: Dalton {
         return masses.averageMass
     }
 
@@ -55,8 +55,8 @@ public enum MassType: String {
 }
 
 public struct MassContainer {
-    public var monoisotopicMass = Decimal(0.0)
-    public var averageMass = Decimal(0.0)
+    public var monoisotopicMass = Dalton(0.0)
+    public var averageMass = Dalton(0.0)
     public var nominalMass = 0
 }
 
@@ -78,11 +78,11 @@ extension MassContainer: Equatable {
     }
     
     public static func * (lhs: Int, rhs: MassContainer) -> MassContainer {
-        return MassContainer(monoisotopicMass: Decimal(lhs) * rhs.monoisotopicMass, averageMass: Decimal(lhs) * rhs.averageMass, nominalMass: lhs * rhs.nominalMass)
+        return MassContainer(monoisotopicMass: Dalton(lhs) * rhs.monoisotopicMass, averageMass: Dalton(lhs) * rhs.averageMass, nominalMass: lhs * rhs.nominalMass)
     }
     
     public static func / (lhs: MassContainer, rhs: Int) -> MassContainer {
-        return MassContainer(monoisotopicMass: lhs.monoisotopicMass / Decimal(rhs), averageMass: lhs.averageMass / Decimal(rhs), nominalMass: Int(lhs.nominalMass / rhs))
+        return MassContainer(monoisotopicMass: lhs.monoisotopicMass / Dalton(rhs), averageMass: lhs.averageMass / Dalton(rhs), nominalMass: Int(lhs.nominalMass / rhs))
     }
     
     public func charged(with adducts: [Adduct]) -> MassContainer {
@@ -94,21 +94,5 @@ extension MassContainer: Equatable {
         }
         
         return self
-    }
-}
-
-
-extension Decimal {
-    public func roundedString(_ round: Int) -> String {
-        var rounded = Decimal()
-        var selfCopy = self
-        
-        NSDecimalRound(&rounded, &selfCopy, round, .plain)
-
-        return "\(rounded)"
-    }
-    
-    public func doubleValue() -> Double {
-        return Double(truncating: self as NSNumber)
     }
 }

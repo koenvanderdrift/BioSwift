@@ -2,13 +2,15 @@ import Foundation
 
 public var elementLibrary: Elements = loadJSONFromBundle(fileName: "elements")
 
-public let electron = ChemicalElement(name: "electron", symbol: "e", masses: MassContainer(monoisotopicMass: Decimal(0.00054858026), averageMass: Decimal(0.00054858026), nominalMass: 0))
+public let electron = ChemicalElement(name: "electron", symbol: "e", masses: MassContainer(monoisotopicMass: Dalton(0.00054858026), averageMass: Dalton(0.00054858026), nominalMass: 0))
 
 public struct Isotope: Codable {
     public let mass: String
     public let ordinalNumber: String
     public let abundance: String
 }
+
+public typealias Dalton = Double
 
 public struct ChemicalElement: Codable, Symbol {
     private(set) var _masses: MassContainer = zeroMass
@@ -64,18 +66,18 @@ extension ChemicalElement: Mass {
     }
 
     public func calculateMasses() -> MassContainer {
-        var currentAbundance = Decimal(0.0)
+        var currentAbundance = Dalton(0.0)
         
-        var monoisotopicMass = Decimal(0.0)
-        var averageMass = Decimal(0.0)
-        var nominalMass = Decimal(0.0)
-        
+        var monoisotopicMass = Dalton(0.0)
+        var averageMass = Dalton(0.0)
+        var nominalMass = 0
+        //The nominal mass for an element is the mass number of its most abundant naturally occurring stable isotope
         for i in isotopes {
-            let abundance = Decimal(string: i.abundance)! * Decimal(0.01)
-            let mass = Decimal(string: i.mass)!
+            let abundance = Dalton(i.abundance)! * Dalton(0.01)
+            let mass = Dalton(i.mass)!
             
             if abundance > currentAbundance {
-                nominalMass = mass
+                nominalMass = Int(mass)
                 monoisotopicMass = mass
                 currentAbundance = abundance
             }
@@ -83,6 +85,6 @@ extension ChemicalElement: Mass {
             averageMass += abundance * mass
         }
         
-        return MassContainer(monoisotopicMass: monoisotopicMass, averageMass: averageMass, nominalMass: NSDecimalNumber(decimal: nominalMass).intValue)
+        return MassContainer(monoisotopicMass: monoisotopicMass, averageMass: averageMass, nominalMass: nominalMass)
     }
 }

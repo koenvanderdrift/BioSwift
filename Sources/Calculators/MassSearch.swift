@@ -65,7 +65,7 @@ public struct SearchParameters {
         self.massType = massType
     }
     
-    func massRange() -> ClosedRange<Decimal> {
+    func massRange() -> ClosedRange<Dalton> {
         var minMass = 0.0
         var maxMass = 0.0
         let toleranceValue = Double(tolerance.value)
@@ -89,7 +89,7 @@ public struct SearchParameters {
             maxMass = searchValue + toleranceValue / 1000
         }
         
-        return Decimal(minMass) ... Decimal(maxMass)
+        return Dalton(minMass) ... Dalton(maxMass)
     }
 }
 
@@ -152,7 +152,7 @@ public struct MassSearch {
                             result.insert(String(s))
                         }
                     case .nominal:
-                        if range.contains(Decimal(chargedMass.nominalMass)) {
+                        if range.contains(Dalton(chargedMass.nominalMass)) {
                             result.insert(String(s))
                         }
                     }
