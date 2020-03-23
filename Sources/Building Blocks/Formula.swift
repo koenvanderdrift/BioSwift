@@ -9,7 +9,7 @@ public struct Formula {
     
     public init(_ string: String) {
         self.string = string
-        self.elements = elementsFromString(string)
+        self.elements = elements(from: string)
     }
     
     public init(_ dict: [String:Int]) {
@@ -17,12 +17,12 @@ public struct Formula {
         for (element, count) in dict {
             formula.append(element)
             if count > 1 {
-                formula.append(String(abs(count)))
+                formula.append(String(count))
             }
         }
 
         self.string = formula
-        self.elements = elementsFromString(formula)
+        self.elements = elements(from: formula)
     }
     
     var description: String {
@@ -31,7 +31,7 @@ public struct Formula {
 }
 
 extension Formula {
-    private func elementsFromString(_ formula: String) -> Elements {
+    private func elements(from formula: String) -> Elements {
         var result = Elements()
         
         do {
