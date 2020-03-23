@@ -9,18 +9,7 @@ public struct Formula {
     
     public init(_ string: String) {
         self.string = string
-        self.elements = {
-            var result = Elements()
-            
-            do {
-                result = try parse()
-            }
-            catch {
-                debugPrint(error)
-            }
-        
-            return result
-        }()
+        self.elements = elementsFromString(string)
     }
     
     public init(_ dict: [String:Int]) {
@@ -33,18 +22,7 @@ public struct Formula {
         }
 
         self.string = formula
-        self.elements = {
-            var result = Elements()
-            
-            do {
-                result = try parse()
-            }
-            catch {
-                debugPrint(error)
-            }
-            
-            return result
-        }()
+        self.elements = elementsFromString(formula)
     }
     
     var description: String {
@@ -53,11 +31,24 @@ public struct Formula {
 }
 
 extension Formula {
-    public func countFor(element: String) -> Int {
+    private func elementsFromString(_ formula: String) -> Elements {
+        var result = Elements()
+        
+        do {
+            result = try parse(formula)
+        }
+        catch {
+            debugPrint(error)
+        }
+        
+        return result
+    }
+
+    private func countFor(element: String) -> Int {
         return elements.map { $0.symbol }.filter{ $0 == element }.count
     }
     
-    enum ParseError: Error {
+    private enum ParseError: Error {
         case missingClosingBracket
         case missingOpeningBracket
         case zeroCount
@@ -67,12 +58,12 @@ extension Formula {
         case invalidFormula
     }
     
-    private func parse() throws -> Elements {
+    private func parse(_ formula: String) throws -> Elements {
         
         // https://www.lfd.uci.edu/~gohlke/code/molmass.py.html
         // https://www.lfd.uci.edu/~gohlke/code/elements.py.html
         
-        let characters = Array(string)
+        let characters = Array(formula)
         var i = characters.count
         
         var parenthesisLevel = 0
@@ -123,7 +114,7 @@ extension Formula {
                     i -= 1
                 }
                 
-                elementCount = Int(string[i..<j+1])!
+                elementCount = Int(formula[i..<j+1])!
                 
                 if elementCount == 0 {
                     throw ParseError.zeroCount
