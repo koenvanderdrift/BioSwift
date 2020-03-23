@@ -4,6 +4,9 @@ import Foundation
 
 public let zeroAminoAcid = AminoAcid(name: "", oneLetterCode: "", elements: [:])
 
+public let nTermString = "N-Term"
+public let cTermString = "C-Term"
+
 public struct AminoAcid: Residue, Codable {
     public let formula: Formula
     public let name: String

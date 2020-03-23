@@ -1,7 +1,7 @@
 import Foundation
 
-public let nTermMod = Modification(name: "N-Term", reactions: [.add(hydrogen)])
-public let cTermMod = Modification(name: "C-Term", reactions: [.add(hydroxyl)])
+public let nTermMod = Modification(name: nTermString, reactions: [.add(hydrogen)])
+public let cTermMod = Modification(name: cTermString, reactions: [.add(hydroxyl)])
 
 public class Protein: BioSequence, Chargeable {    
     public var adducts: [Adduct] = []
