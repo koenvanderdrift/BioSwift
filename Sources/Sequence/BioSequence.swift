@@ -15,7 +15,7 @@ public class BioSequence: Structure {
         return Formula(residueSequence.reduce("", { $0 + $1.formula.string }))
     }
     
-    var symbolLibrary: [Symbol] = []
+    private var symbolLibrary: [Symbol] = []
     
     var residueSequence = [Residue]()
     var termini: (Residue, Residue)?
@@ -24,7 +24,7 @@ public class BioSequence: Structure {
         return residueSequence
     }
     
-    var sequenceString: String {
+    public var sequenceString: String {
         return residueSequence.map { $0.identifier }.joined()
     }
     
@@ -40,15 +40,15 @@ public class BioSequence: Structure {
         }
     }
     
+    public init(sequence: String, library: [Symbol] = []) {
+        symbolLibrary = library
+        residueSequence = residueSequence(from: sequence)
+    }
+
     public required init(residues: [Residue], library: [Symbol] = []) {
         symbolLibrary = library
         residueSequence = residues
     }
-
-    public init(sequence: String, library: [Symbol] = []) {
-        symbolLibrary = library
-        residueSequence = residueSequence(from: sequence)
-    }    
 }
 
 extension BioSequence: Equatable {

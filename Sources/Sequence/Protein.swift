@@ -6,20 +6,22 @@ public let cTermMod = Modification(name: cTermString, reactions: [.add(hydroxyl)
 public class Protein: BioSequence, Chargeable {    
     public var adducts: [Adduct] = []
     
-    public required init(residues: [Residue]) {
-        super.init(residues: residues)
+    public convenience init(residues: [Residue]) {
+        self.init(residues: residues, library: uniAminoAcids)
 
         setUpTermini()
     }
 
     public init(sequence: String) {
-        super.init(sequence: sequence)
+        super.init(sequence: sequence, library: uniAminoAcids)
 
         setUpTermini()
     }
     
     public required init(residues: [Residue], library: [Symbol]) {
-        fatalError("init(residues:library:) has not been implemented")
+        super.init(residues: residues, library: uniAminoAcids)
+        
+        setUpTermini()
     }
     
     private func setUpTermini() {
@@ -34,9 +36,9 @@ public class Protein: BioSequence, Chargeable {
     }
     
     public func calculateMasses() -> MassContainer {
-        if symbolLibrary.count == 0 {
-            symbolLibrary = uniAminoAcids
-        }
+//        if symbolLibrary.count == 0 {
+//            symbolLibrary = uniAminoAcids
+//        }
         
         let result = mass(of: residueSequence) + terminalMasses()
 

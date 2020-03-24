@@ -22,14 +22,16 @@ public class Fragment: Peptide {
     public init(residues: [Residue], type: FragmentType) {
         self.fragmentType = type
         
-        super.init(residues: residues)
-    }
-
-    public required init(residues: [Residue]) {
-        fatalError("init(residues:) has not been implemented")
+        super.init(residues: residues, library: uniAminoAcids)
     }
     
-    required init(residues: [Residue], library: [Symbol]) {
+    public init(sequence: String, type: FragmentType) {
+        self.fragmentType = type
+        
+        super.init(sequence: sequence)
+    }
+
+    public required init(residues: [Residue], library: [Symbol]) {
         fatalError("init(residues:library:) has not been implemented")
     }
     
