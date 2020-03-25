@@ -26,6 +26,10 @@ extension Chargeable {
     public func pseudomolecularIon() -> MassContainer {
         return calculateMasses().charged(with: adducts)
     }
+    
+    public var charge: Int {
+        return adducts.reduce(0, { $0 + $1.charge })
+    }
 }
 
 extension Collection where Element: BioSequence & Chargeable {
