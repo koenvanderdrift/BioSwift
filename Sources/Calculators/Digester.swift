@@ -20,7 +20,6 @@ public struct DigestParameters {
     }
 }
 
-//protocol Digest {} ?
 public struct Digester<T: BioSequence> {
     let parameters: DigestParameters
     
