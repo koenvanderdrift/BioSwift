@@ -1,23 +1,27 @@
 import Foundation
 
 public struct DigestParameters {
-    let sequence: String
+    let sequence: BioSequence
     let missedCleavages: Int
     let regex: String
 
-    public init(sequence: String, missedCleavages: Int, regex: String) {
+    public init(sequence: BioSequence, missedCleavages: Int, regex: String) {
         self.sequence = sequence
         self.missedCleavages = missedCleavages
         self.regex = regex
     }
     
+    var string: String {
+        return sequence.sequenceString
+    }
+    
     func cleavageSites() -> [Int] {
-        return sequence.matches(for: regex).map { $0.range.location }
+        return string.matches(for: regex).map { $0.range.location }
     }
 }
 
 //protocol Digest {} ?
-public struct Digester {
+public struct Digester<T: BioSequence> {
     let parameters: DigestParameters
     
     public init(parameters: DigestParameters) {
@@ -26,44 +30,51 @@ public struct Digester {
 }
 
 extension Digester {
-    public func digest() -> [String] {
+    public func digest() -> [T] {
         let subSequences = createSubSequences(sites: parameters.cleavageSites(), missedCleavages: parameters.missedCleavages)
 
         return subSequences
     }
 
-    func createSubSequences(sites: [Int], missedCleavages: Int) -> [String] {
-        var subSequences = [String]()
-
-        var start = parameters.sequence.startIndex
+    func createSubSequences(sites: [Int], missedCleavages: Int) -> [T] {
+        var subSequences = [T]()
+        let residues = parameters.sequence.residueSequence
+        
+        var start = residues.startIndex
         var end = start
 
         for site in sites {
-            end = parameters.sequence.index(parameters.sequence.startIndex, offsetBy: site)
+            end = residues.index(residues.startIndex, offsetBy: site)
 
-            subSequences.append(String(parameters.sequence[start ..< end]))
+            let new: T = parameters.sequence.subSequence(from: start, to: end)
+            subSequences.append(new)
 
             start = end
         }
 
-        subSequences.append(String(parameters.sequence[start ..< parameters.sequence.endIndex]))
+        let final: T = parameters.sequence.subSequence(from: start, to: residues.endIndex)
+        
+        subSequences.append(final)
 
         guard missedCleavages > 0 else {
             return subSequences
         }
         
-        var joinedSubSequences = [String]()
+        var joinedSubSequences = [T]()
 
         for mc in 0 ... missedCleavages {
             for (index, _) in subSequences.enumerated() {
                 let newIndex = index + mc
-
                 if subSequences.indices.contains(newIndex) {
-                    joinedSubSequences.append(subSequences[index ... newIndex].joined())
+                    let res = subSequences[index...newIndex]
+                        .reduce([], { $0 + $1.residueSequence })
+                    let new = T(residues: res, library: parameters.sequence.symbolLibrary)
+                    
+                    joinedSubSequences.append(new)
                 }
             }
         }
-
+        
         return joinedSubSequences
     }
 }

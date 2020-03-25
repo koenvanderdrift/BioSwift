@@ -15,7 +15,7 @@ public class BioSequence: Structure {
         return Formula(residueSequence.reduce("", { $0 + $1.formula.string }))
     }
     
-    private var symbolLibrary: [Symbol] = []
+    public var symbolLibrary: [Symbol] = []
     
     var residueSequence = [Residue]()
     var termini: (Residue, Residue)?
@@ -109,6 +109,12 @@ extension BioSequence {
         }
 
         return result.flatMap { $0 }
+    }
+    
+    public func subSequence<T: BioSequence>(from: Int, to: Int) -> T {
+        let sub = Array(self.residueSequence[from..<to])
+        
+        return T(residues: sub, library: self.symbolLibrary)
     }
 }
 
