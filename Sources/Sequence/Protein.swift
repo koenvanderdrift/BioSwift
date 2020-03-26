@@ -36,13 +36,7 @@ public class Protein: BioSequence, Chargeable {
     }
     
     public func calculateMasses() -> MassContainer {
-//        if symbolLibrary.count == 0 {
-//            symbolLibrary = uniAminoAcids
-//        }
-        
-        let result = mass(of: residueSequence) + terminalMasses()
-
-        return result
+        return mass(of: residueSequence) + terminalMasses()
     }
     
     public func setNTerminalModification(_ mod: Modification) {

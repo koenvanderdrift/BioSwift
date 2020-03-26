@@ -37,6 +37,14 @@ extension Collection where Element: BioSequence & Chargeable {
         return self.flatMap { item in
             (minCharge...maxCharge).map { charge in
                 var el = Element.init(residues: item.residueSequence)
+                
+                if let mod0 = item.termini?.0.modification {
+                    el.termini?.0.modification = mod0
+                }
+                if let mod1 = item.termini?.1.modification {
+                    el.termini?.1.modification = mod1
+                }
+
                 el.adducts.append(contentsOf: repeatElement(protonAdduct, count: charge))
                 
                 return el
