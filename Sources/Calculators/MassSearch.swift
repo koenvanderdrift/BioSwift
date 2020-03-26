@@ -122,7 +122,7 @@ public struct MassSearch {
         while !massSequence.isEmpty {
             var mass = hydrogen.masses + hydroxyl.masses
             
-            if massSequence.count == sequenceString.count, let term = termini?.0 {
+            if massSequence.count == sequenceString.count, let term = termini?.first {
                 mass += (term.masses - hydrogen.masses)
             }
 
@@ -132,7 +132,7 @@ public struct MassSearch {
                 if let s = sequenceString.substring(from: start, to: to) {
                     mass += massSequence[index]
 
-                    if to == sequenceString.count, let term = termini?.1 {
+                    if to == sequenceString.count, let term = termini?.last {
                         mass += (term.masses - hydroxyl.masses)
                     }
                     

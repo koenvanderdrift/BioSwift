@@ -49,7 +49,7 @@ extension Digester {
             let new: T = parameters.sequence.subSequence(from: start, to: end)
 
             if start == 0 {
-                new.termini?.0.modification = termini?.0.modification
+                new.termini?.first.modification = termini?.first.modification
             }
 
             subSequences.append(new)
@@ -58,7 +58,7 @@ extension Digester {
         }
 
         let final: T = parameters.sequence.subSequence(from: start, to: residues.endIndex)
-        final.termini?.1.modification = termini?.1.modification
+        final.termini?.last.modification = termini?.last.modification
 
         subSequences.append(final)
 
@@ -77,11 +77,11 @@ extension Digester {
                     let new = T(residues: res, library: parameters.sequence.symbolLibrary)
                     
                     if index == 0 {
-                        new.termini?.0.modification = termini?.0.modification
+                        new.termini?.first.modification = termini?.first.modification
                     }
                     
                     if newIndex == subSequences.count - 1 {
-                        new.termini?.1.modification = termini?.1.modification
+                        new.termini?.last.modification = termini?.last.modification
                     }
                     
                     joinedSubSequences.append(new)

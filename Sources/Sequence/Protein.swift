@@ -25,7 +25,7 @@ public class Protein: BioSequence, Chargeable {
     }
     
     private func setUpTermini() {
-        self.termini = (nTerm, cTerm)
+        self.termini = (first: nTerm, last: cTerm)
     }
     
     public var masses: MassContainer {
@@ -37,15 +37,15 @@ public class Protein: BioSequence, Chargeable {
     }
     
     public func setNTerminalModification(_ mod: Modification) {
-        termini?.0.setModification(mod)
+        termini?.first.setModification(mod)
     }
     
     public func setCTerminalModification(_ mod: Modification) {
-        termini?.1.setModification(mod)
+        termini?.last.setModification(mod)
     }
     
     public func nTerminalModification() -> Modification? {
-        if let mod = termini?.0.modification {
+        if let mod = termini?.first.modification {
             return mod
         }
         
@@ -53,7 +53,7 @@ public class Protein: BioSequence, Chargeable {
     }
 
     public func cTerminalModification() -> Modification? {
-        if let mod = termini?.1.modification {
+        if let mod = termini?.last.modification {
             return mod
         }
         
@@ -63,11 +63,11 @@ public class Protein: BioSequence, Chargeable {
     func terminalMasses() -> MassContainer {
         var result = zeroMass
         
-        if let nTerminal = termini?.0 {
+        if let nTerminal = termini?.first {
             result += nTerminal.masses
         }
         
-        if let cTerminal = termini?.1 {
+        if let cTerminal = termini?.last {
             result += cTerminal.masses
         }
         

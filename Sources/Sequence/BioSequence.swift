@@ -18,7 +18,7 @@ public class BioSequence: Structure {
     public var symbolLibrary: [Symbol] = []
     
     var residueSequence = [Residue]()
-    var termini: (Residue, Residue)?
+    var termini: (first: Residue, last: Residue)?
     
     var symbolSequence: [Symbol] {
         return residueSequence
