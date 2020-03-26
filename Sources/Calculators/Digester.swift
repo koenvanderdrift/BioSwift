@@ -80,7 +80,7 @@ extension Digester {
                         new.termini?.0.modification = termini?.0.modification
                     }
                     
-                    if index == subSequences.count - 1 {
+                    if newIndex == subSequences.count - 1 {
                         new.termini?.1.modification = termini?.1.modification
                     }
                     
