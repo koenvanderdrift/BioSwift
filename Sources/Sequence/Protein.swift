@@ -1,7 +1,7 @@
 import Foundation
 
-public let nTermMod = Modification(name: nTermString, reactions: [.add(hydrogen)])
-public let cTermMod = Modification(name: cTermString, reactions: [.add(hydroxyl)])
+public let nTerm = AminoAcid(name: nTermString, oneLetterCode: "", formula: Formula("H"))
+public let cTerm = AminoAcid(name: cTermString, oneLetterCode: "", formula: Formula("OH"))
 
 public class Protein: BioSequence, Chargeable {    
     public var adducts: [Adduct] = []
@@ -25,10 +25,7 @@ public class Protein: BioSequence, Chargeable {
     }
     
     private func setUpTermini() {
-        self.termini = (zeroAminoAcid, zeroAminoAcid)
-        
-        setNTerminalModification(nTermMod)
-        setCTerminalModification(cTermMod)
+        self.termini = (nTerm, cTerm)
     }
     
     public var masses: MassContainer {
@@ -66,11 +63,11 @@ public class Protein: BioSequence, Chargeable {
     func terminalMasses() -> MassContainer {
         var result = zeroMass
         
-        if let nTerminal = termini?.0, nTerminal.name.isEmpty {
+        if let nTerminal = termini?.0 {
             result += nTerminal.masses
         }
         
-        if let cTerminal = termini?.1, cTerminal.name.isEmpty {
+        if let cTerminal = termini?.1 {
             result += cTerminal.masses
         }
         
