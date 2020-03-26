@@ -32,7 +32,7 @@ extension String {
         return subStrings
     }
 
-    func matches(for regex: String) -> [NSTextCheckingResult] {
+    public func matches(for regex: String) -> [NSTextCheckingResult] {
         // https://www.raywenderlich.com/86205/nsregularexpression-swift-tutorial
 
         let string = self as NSString
