@@ -11,21 +11,22 @@ import Foundation
 public class BioSequence: Structure {
     public var name: String = ""
 
-    public var formula: Formula {
-        return Formula(residueSequence.reduce("", { $0 + $1.formula.string }))
-    }
-    
     public var symbolLibrary: [Symbol] = []
+
+    public var residueSequence: [Residue] = [] {
+        didSet {
+            sequenceString = residueSequence.map { $0.identifier }.joined()
+            formula = Formula(residueSequence.reduce("", { $0 + $1.formula.string }))
+        }
+    }
+
+    public var sequenceString: String = ""
+    public var formula: Formula = Formula("")
     
-    var residueSequence = [Residue]()
     var termini: (first: Residue, last: Residue)?
     
     var symbolSequence: [Symbol] {
         return residueSequence
-    }
-    
-    public var sequenceString: String {
-        return residueSequence.map { $0.identifier }.joined()
     }
     
     public var modifications: Set<LocalizedModification> = [] {
@@ -42,12 +43,18 @@ public class BioSequence: Structure {
     
     public init(sequence: String, library: [Symbol] = []) {
         symbolLibrary = library
-        residueSequence = residueSequence(from: sequence)
+        
+        defer {
+            residueSequence = residueSequence(from: sequence)
+        }
     }
 
     public required init(residues: [Residue], library: [Symbol] = []) {
         symbolLibrary = library
-        residueSequence = residues
+
+        defer {
+            residueSequence = residues
+        }
     }
 }
 
@@ -60,6 +67,10 @@ extension BioSequence: Equatable {
 
 extension BioSequence {
     public func update(with sequence: String, in editedRange: NSRange, changeInLength: Int) {
+        if sequence == sequenceString {
+            return
+        }
+        
         switch changeInLength {
         case Int.min..<0:
             let range = editedRange.location..<editedRange.location - changeInLength
