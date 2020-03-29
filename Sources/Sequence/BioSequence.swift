@@ -29,7 +29,7 @@ public class BioSequence: Structure {
         return residueSequence
     }
     
-    public var modifications: Set<LocalizedModification> = [] {
+    public var modifications: ModificationSet = [] {
         didSet {
             oldValue.forEach {
                 removeModification(at: $0.location )
@@ -138,8 +138,8 @@ extension BioSequence {
         return nil
     }
     
-    public func currentModifications() -> Set<LocalizedModification> {
-        var result: Set<LocalizedModification> = []
+    public func currentModifications() -> ModificationSet {
+        var result: ModificationSet = []
         
         for (index, residue) in residueSequence.enumerated() {
             if let mod = residue.modification {

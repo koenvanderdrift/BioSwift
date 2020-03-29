@@ -1,5 +1,7 @@
 import Foundation
 
+public typealias ModificationSet = Set<LocalizedModification>
+
 public indirect enum Reaction {
     case add(FunctionalGroup)
     case remove(FunctionalGroup)
