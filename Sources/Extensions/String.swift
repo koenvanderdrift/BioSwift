@@ -8,6 +8,9 @@
 
 import Foundation
 
+public let zeroNSRange = NSMakeRange(NSNotFound, 0)
+public let zeroStringRange: Range<String.Index> = String().startIndex..<String().endIndex
+
 extension String {
     // via: https://gist.github.com/robertmryan/1ca0deab3e3e53d54dccf421a5c64144
     func uniqueSubStrings(size: Int, allowDuplicates: Bool = false) -> [String] {
