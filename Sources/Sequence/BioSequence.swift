@@ -29,6 +29,8 @@ public class BioSequence: Structure {
         return residueSequence
     }
     
+    public var range: ClosedRange<Int> = 0...0
+    
     public var modifications: ModificationSet = [] {
         didSet {
             oldValue.forEach {

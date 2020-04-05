@@ -52,6 +52,7 @@ extension Digester {
                 new.termini?.first.modification = termini?.first.modification
             }
 
+            new.range = start...end - 1
             subSequences.append(new)
 
             start = end
@@ -59,6 +60,7 @@ extension Digester {
 
         let final: T = parameters.sequence.subSequence(from: start, to: residues.endIndex)
         final.termini?.last.modification = termini?.last.modification
+        final.range = start...residues.endIndex
 
         subSequences.append(final)
 
@@ -75,7 +77,11 @@ extension Digester {
                     let res = subSequences[index...newIndex]
                         .reduce([], { $0 + $1.residueSequence })
                     let new = T(residues: res, library: parameters.sequence.symbolLibrary)
-                    
+
+                    let from = subSequences[index].range.lowerBound
+                    let to = subSequences[newIndex].range.upperBound
+                    new.range = from...to
+
                     if index == 0 {
                         new.termini?.first.modification = termini?.first.modification
                     }

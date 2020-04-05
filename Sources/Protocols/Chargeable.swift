@@ -38,7 +38,7 @@ extension Collection where Element: BioSequence & Chargeable {
             (minCharge...maxCharge).map { charge in
                 var el = Element.init(residues: item.residueSequence)
                 el.termini = item.termini
-
+                el.range = item.range
                 el.adducts.append(contentsOf: repeatElement(protonAdduct, count: charge))
                 
                 return el
