@@ -87,10 +87,12 @@ extension MassContainer: Equatable {
     
     public func charged(with adducts: [Adduct]) -> MassContainer {
         if adducts.count > 0 {
-            let chargedMass = (self + adducts.map( { $0.group.masses })
-                .reduce(zeroMass, { $0 + $1 }) - electron.masses) / adducts.count // remove electron mass, since we are adding adduct+, not adduct
+            let chargedMass = (
+                self + adducts.map( { $0.group.masses })
+                .reduce(zeroMass, { $0 + $1 })
+                ) / adducts.count
          
-            return chargedMass
+            return chargedMass - electron.masses // remove one electron mass, for first H+ adduct
         }
         
         return self
