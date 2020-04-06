@@ -124,10 +124,16 @@ extension BioSequence {
         return result.flatMap { $0 }
     }
     
-    public func subSequence<T: BioSequence>(from: Int, to: Int) -> T {
-        let sub = Array(self.residueSequence[from..<to])
+    public func subSequence<T: BioSequence>(with range: NSRange) -> T {
+        let sub = residueSequence(with: range)
         
-        return T(residues: sub, library: self.symbolLibrary)
+        return T(residues: sub ?? [], library: self.symbolLibrary)
+    }
+
+    public func subSequence<T: BioSequence>(from: Int, to: Int) -> T {
+        let range = NSMakeRange(from, from + to - 1)
+
+        return subSequence(with: range)
     }
 }
 
