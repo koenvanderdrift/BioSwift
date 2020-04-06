@@ -10,16 +10,16 @@ import Foundation
 
 public class BioSequence: Structure {
     public var name: String = ""
-
+    
     public var symbolLibrary: [Symbol] = []
-
+    
     public var residueSequence: [Residue] = [] {
         didSet {
             sequenceString = residueSequence.map { $0.identifier }.joined()
             formula = Formula(residueSequence.reduce("", { $0 + $1.formula.string }))
         }
     }
-
+    
     public var sequenceString: String = ""
     public var formula: Formula = Formula("")
     
@@ -50,10 +50,10 @@ public class BioSequence: Structure {
             residueSequence = residueSequence(from: sequence)
         }
     }
-
+    
     public required init(residues: [Residue], library: [Symbol] = []) {
         symbolLibrary = library
-
+        
         defer {
             residueSequence = residues
         }
@@ -61,7 +61,7 @@ public class BioSequence: Structure {
 }
 
 extension BioSequence: Equatable {
- // https://khawerkhaliq.com/blog/swift-protocols-equatable-part-one/
+    // https://khawerkhaliq.com/blog/swift-protocols-equatable-part-one/
     public static func == (lhs: BioSequence, rhs: BioSequence) -> Bool {
         return lhs.sequenceString == rhs.sequenceString && lhs.name == rhs.name
     }
@@ -109,7 +109,7 @@ extension BioSequence {
     public func residue(at index: Int) -> Residue? {
         return residueSequence[index]
     }
-
+    
     public func residueSequence(with range: NSRange) -> [Residue]? {
         guard range.location < residueSequence.count, range.length > 0 else { return nil }
         
@@ -120,20 +120,14 @@ extension BioSequence {
         let result = identifiers.map { i in
             return residueSequence.indices.filter { (residueSequence[$0].identifier) == i }
         }
-
+        
         return result.flatMap { $0 }
     }
     
-    public func subSequence<T: BioSequence>(with range: NSRange) -> T {
-        let sub = residueSequence(with: range)
-        
-        return T(residues: sub ?? [], library: self.symbolLibrary)
-    }
-
     public func subSequence<T: BioSequence>(from: Int, to: Int) -> T {
-        let range = NSMakeRange(from, from + to - 1)
-
-        return subSequence(with: range)
+        let sub = Array(self.residueSequence[from..<to])
+        
+        return T(residues: sub, library: self.symbolLibrary)
     }
 }
 
@@ -151,10 +145,10 @@ extension BioSequence {
         
         for (index, residue) in residueSequence.enumerated() {
             if let mod = residue.modification {
-               result.insert(LocalizedModification(modification: mod, location: index))
+                result.insert(LocalizedModification(modification: mod, location: index))
             }
         }
-
+        
         return result
     }
     
@@ -171,8 +165,9 @@ extension BioSequence {
             residue.setModification(nil)
         }
     }
-
+    
     public func modification(at location: Int) -> LocalizedModification? {
         return modifications.first(where: { $0.location == location } )
     }
 }
+
