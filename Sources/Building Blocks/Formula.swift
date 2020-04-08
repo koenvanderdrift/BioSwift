@@ -28,6 +28,16 @@ public struct Formula {
     var description: String {
         return string
     }
+    
+    public func countedElements() -> NSCountedSet {
+        let set = NSCountedSet()
+        
+        for element in elements {
+            set.add(element.symbol)
+        }
+        
+        return set
+    }
 }
 
 extension Formula {

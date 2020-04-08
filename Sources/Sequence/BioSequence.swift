@@ -16,7 +16,7 @@ public class BioSequence: Structure {
     public var residueSequence: [Residue] = [] {
         didSet {
             sequenceString = residueSequence.map { $0.identifier }.joined()
-            formula = Formula(residueSequence.reduce("", { $0 + $1.formula.string }))
+            formula = Formula(residueSequence.reduce("", { $0 + $1.formula.string })) + (termini?.first.formula)! + (termini?.last.formula)!
         }
     }
     
