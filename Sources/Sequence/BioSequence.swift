@@ -20,6 +20,9 @@ public class BioSequence: Structure {
             if let termini = termini {
                 formula = formula + termini.first.formula + termini.last.formula
             }
+            else {
+                formula = Formula(formula.string + water.formula.string)
+            }
         }
     }
     
