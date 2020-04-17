@@ -8,6 +8,8 @@
 
 import Foundation
 
+public let bioSwiftbundleIdentifier = "com.koenvanderdrift.BioSwift"
+
 // via https://www.hackingwithswift.com/example-code/system/how-to-decode-json-from-your-app-bundle-the-easy-way
 
 extension Bundle {

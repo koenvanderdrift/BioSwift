@@ -9,9 +9,7 @@
 import Foundation
 
 public func loadJSONFromBundle<A: Decodable>(fileName: String) -> [A] {
-    let bundleIdentifier = "com.koenvanderdrift.BioSwift"
-
-    guard let bundle = Bundle(identifier: bundleIdentifier) else {
+    guard let bundle = Bundle(identifier: bioSwiftbundleIdentifier) else {
         fatalError("Unable to load bundle")
     }
 
