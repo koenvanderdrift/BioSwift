@@ -21,7 +21,7 @@ public class BioSequence: Structure {
                 formula = formula + termini.first.formula + termini.last.formula
             }
             else {
-                formula = Formula(formula.string + water.formula.string)
+                formula = formula + water.formula
             }
         }
     }

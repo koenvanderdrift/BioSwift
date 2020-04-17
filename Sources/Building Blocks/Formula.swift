@@ -214,14 +214,8 @@ extension Formula {
     }
 }
 
-public let formulaSeparator = " + "
-
 extension Formula {
     public static func + (lhs: Formula, rhs: Formula) -> Formula {
-        return Formula((lhs.string + formulaSeparator + rhs.string))
-    }
-    
-    public static func - (lhs: Formula, rhs: Formula) -> Formula {
-        return Formula((lhs.string + formulaSeparator + "-" + rhs.string))
+        return Formula((lhs.string + rhs.string))
     }
 }
