@@ -1,7 +1,7 @@
 // import Foundation
 //
 //// public func loadPListFromBundle(filename: String) -> [String: AnyObject]? {
-////    if let bundle = Bundle(identifier: bioSwiftbundleIdentifier) {
+////    if let bundle = Bundle(identifier: bioSwiftBundleIdentifier) {
 ////        do {
 ////            let url = bundle.url(forResource: filename, withExtension: "plist")
 ////            let data = try Data(contentsOf: url!)
