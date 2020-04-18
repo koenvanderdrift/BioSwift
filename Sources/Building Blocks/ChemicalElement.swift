@@ -27,15 +27,15 @@ public struct ChemicalElement: Codable, Symbol {
         self.name = name
         self.symbol = symbol
         self.isotopes = isotopes
-        
+
         _masses = calculateMasses()
     }
-    
+
     public init(name: String, symbol: String, masses: MassContainer) {
         self.name = name
         self.symbol = symbol
-        self.isotopes = []
-        
+        isotopes = []
+
         _masses = masses
     }
 
@@ -48,11 +48,11 @@ public struct ChemicalElement: Codable, Symbol {
 
         _masses = calculateMasses()
     }
-    
+
     public var identifier: String {
         return symbol
     }
-    
+
     var description: String {
         return symbol
     }
@@ -65,10 +65,10 @@ extension ChemicalElement: Mass {
 
     public func calculateMasses() -> MassContainer {
         var currentAbundance = Dalton(0.0)
-        
+
         var monoisotopicMass = Dalton(0.0)
         var averageMass = Dalton(0.0)
-        
+
         // The nominal mass for an element is the mass number of its most abundant naturally occurring stable isotope
         for i in isotopes {
             if let abundance = Double(i.abundance), let mass = Double(i.mass) {
@@ -76,11 +76,11 @@ extension ChemicalElement: Mass {
                     monoisotopicMass = mass
                     currentAbundance = abundance
                 }
-            
+
                 averageMass += abundance * mass
             }
         }
-        
+
         return MassContainer(monoisotopicMass: monoisotopicMass, averageMass: averageMass / 100.0, nominalMass: Int(round(monoisotopicMass)))
     }
 }

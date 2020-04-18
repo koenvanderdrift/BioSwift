@@ -13,7 +13,7 @@ public let zeroMass = MassContainer(monoisotopicMass: 0.0, averageMass: 0.0, nom
 
 public protocol Mass {
     var masses: MassContainer { get }
-    
+
     func calculateMasses() -> MassContainer
 }
 
@@ -23,18 +23,18 @@ extension Mass {
     // TO DO rename function calls
     public func mass(of symbols: [Symbol]?) -> MassContainer {
         var result = zeroMass
-        
+
         if let massSymbols = symbols?.compactMap({ $0 as? Mass }) {
             result = mass(of: massSymbols)
         }
-            
+
         return result
     }
-    
+
     public func mass(of mass: [Mass]) -> MassContainer {
-        return mass.reduce(zeroMass, { $0 + $1.masses })
+        return mass.reduce(zeroMass) { $0 + $1.masses }
     }
-    
+
     public var monoisotopicMass: Dalton {
         return masses.monoisotopicMass
     }
@@ -64,37 +64,37 @@ extension MassContainer: Equatable {
     public static func + (lhs: MassContainer, rhs: MassContainer) -> MassContainer {
         return MassContainer(monoisotopicMass: lhs.monoisotopicMass + rhs.monoisotopicMass, averageMass: lhs.averageMass + rhs.averageMass, nominalMass: lhs.nominalMass + rhs.nominalMass)
     }
-    
+
     public static func += (lhs: inout MassContainer, rhs: MassContainer) {
         lhs = lhs + rhs
     }
-    
+
     public static func - (lhs: MassContainer, rhs: MassContainer) -> MassContainer {
         return MassContainer(monoisotopicMass: lhs.monoisotopicMass - rhs.monoisotopicMass, averageMass: lhs.averageMass - rhs.averageMass, nominalMass: lhs.nominalMass - rhs.nominalMass)
     }
-    
+
     public static func -= (lhs: inout MassContainer, rhs: MassContainer) {
         lhs = lhs - rhs
     }
-    
+
     public static func * (lhs: Int, rhs: MassContainer) -> MassContainer {
         return MassContainer(monoisotopicMass: Dalton(lhs) * rhs.monoisotopicMass, averageMass: Dalton(lhs) * rhs.averageMass, nominalMass: lhs * rhs.nominalMass)
     }
-    
+
     public static func / (lhs: MassContainer, rhs: Int) -> MassContainer {
         return MassContainer(monoisotopicMass: lhs.monoisotopicMass / Dalton(rhs), averageMass: lhs.averageMass / Dalton(rhs), nominalMass: Int(lhs.nominalMass / rhs))
     }
-    
+
     public func charged(with adducts: [Adduct]) -> MassContainer {
         if adducts.count > 0 {
             let chargedMass = (
-                self + adducts.map( { $0.group.masses })
-                .reduce(zeroMass, { $0 + $1 })
-                ) / adducts.count
-         
+                self + adducts.map { $0.group.masses }
+                    .reduce(zeroMass) { $0 + $1 }
+            ) / adducts.count
+
             return chargedMass - electron.masses // remove one electron mass, for first H+ adduct
         }
-        
+
         return self
     }
 }

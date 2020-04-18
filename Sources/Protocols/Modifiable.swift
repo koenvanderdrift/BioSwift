@@ -14,6 +14,6 @@ protocol Modifiable {
 
 extension Modifiable {
     public func modificationMasses() -> MassContainer {
-        return modifications.reduce(zeroMass, {$0 + $1.group.masses})
+        return modifications.reduce(zeroMass) { $0 + $1.group.masses }
     }
 }

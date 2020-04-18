@@ -9,7 +9,7 @@
 import Foundation
 
 public let zeroNSRange = NSMakeRange(NSNotFound, 0)
-public let zeroStringRange: Range<String.Index> = String().startIndex..<String().endIndex
+public let zeroStringRange: Range<String.Index> = String().startIndex ..< String().endIndex
 
 extension String {
     // via: https://gist.github.com/robertmryan/1ca0deab3e3e53d54dccf421a5c64144
@@ -54,7 +54,7 @@ extension String {
 
     public func ranges(of substring: String, options: CompareOptions = [], locale: Locale? = nil) -> [Range<Index>] {
         var ranges: [Range<Index>] = []
-        while let range = self.range(of: substring, options: options, range: (ranges.last?.upperBound ?? self.startIndex) ..< self.endIndex, locale: locale) {
+        while let range = self.range(of: substring, options: options, range: (ranges.last?.upperBound ?? startIndex) ..< endIndex, locale: locale) {
             ranges.append(range)
         }
         return ranges
@@ -78,7 +78,7 @@ extension String {
 
         return self[range]
     }
-    
+
     public func range(from nsRange: NSRange) -> Range<Index>? {
         return Range(nsRange, in: self)
     }
@@ -108,41 +108,44 @@ extension String {
 //        }
 //
 //        return result
-//    }    
+//    }
 }
 
 extension StringProtocol {
     subscript(offset: Int) -> Element {
         return self[index(startIndex, offsetBy: offset)]
     }
+
     subscript(_ range: Range<Int>) -> SubSequence {
         return prefix(range.lowerBound + range.count)
             .suffix(range.count)
     }
+
     subscript(range: ClosedRange<Int>) -> SubSequence {
         return prefix(range.lowerBound + range.count)
             .suffix(range.count)
     }
+
     subscript(range: PartialRangeThrough<Int>) -> SubSequence {
         return prefix(range.upperBound.advanced(by: 1))
     }
+
     subscript(range: PartialRangeUpTo<Int>) -> SubSequence {
         return prefix(range.upperBound)
     }
+
     subscript(range: PartialRangeFrom<Int>) -> SubSequence {
         return suffix(Swift.max(0, count - range.lowerBound))
     }
 }
 
-
-
 /*
  let string = "Hello, world!"
- 
+
  let secondIndex = string.index(after: string.startIndex)
  let thirdIndex = string.index(string.startIndex, offsetBy: 2)
  let lastIndex = string.index(before: string.endIndex)
- 
+
  print(string[secondIndex]) // e
  print(string[thirdIndex]) // l
  print(string[lastIndex]) // !
@@ -150,11 +153,8 @@ extension StringProtocol {
  let range = secondIndex..<lastIndex
  let substring = string[range]
  print(substring) // ello, world
- 
+
  */
-
-
-
 
 //    func substring(with nsrange: NSRange) -> Substring? {
 //        guard nsrange.location != NSNotFound else { return nil }

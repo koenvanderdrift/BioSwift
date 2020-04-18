@@ -1,4 +1,4 @@
-//import Foundation
+// import Foundation
 //
 //// public func loadPListFromBundle(filename: String) -> [String: AnyObject]? {
 ////    if let bundle = Bundle(identifier: bioSwiftbundleIdentifier) {
@@ -32,7 +32,7 @@
 ////    return text
 //// }
 //
-//@discardableResult public func time<Result>(name: StaticString = #function, line: Int = #line, _ f: () -> Result) -> Result {
+// @discardableResult public func time<Result>(name: StaticString = #function, line: Int = #line, _ f: () -> Result) -> Result {
 //    // via: https://talk.objc.io/episodes/S01E90-concurrent-map
 //    let startTime = DispatchTime.now()
 //    let result = f()
@@ -40,7 +40,7 @@
 //    let diff = Double(endTime.uptimeNanoseconds - startTime.uptimeNanoseconds) / 1_000_000_000 as Double
 //    debugPrint("\(name) (line \(line)): \(diff) sec")
 //    return result
-//}
+// }
 //
 //
 //// via:  http://stackoverflow.com/questions/41402770/swift-parse-string-with-different-formats/41402868#41402868
@@ -71,9 +71,10 @@ typealias BoolInstanceMethod<T, U> = (_ instance: T) -> (_ arg: U) -> Bool
 func apply<T, U>(instanceMethod: @escaping BoolInstanceMethod<T, U>) -> (_ arg: U) -> (_ instance: T) -> Bool {
     return { arg in { instance in
         instanceMethod(instance)(arg)
-        }
+    }
     }
 }
+
 //
 //// This pattern matching operator defines what it means to have a closure as a pattern.  If the closure evaluates to true when called
 //// with `value` as an arg, then the `pattern` matches the `value`.
@@ -81,6 +82,7 @@ func apply<T, U>(instanceMethod: @escaping BoolInstanceMethod<T, U>) -> (_ arg: 
 func ~= <T>(pattern: (T) -> Bool, value: T) -> Bool {
     return pattern(value)
 }
+
 //
 ////typealias SortDescriptor<A> = (A, A) -> Bool
 ////
@@ -107,11 +109,11 @@ func ~= <T>(pattern: (T) -> Bool, value: T) -> Bool {
 ////    }
 //// }
 //
-//@discardableResult
-//public func measure<A>(_ name: String = "", _ block: () -> A) -> A {
+// @discardableResult
+// public func measure<A>(_ name: String = "", _ block: () -> A) -> A {
 //    let startTime = CACurrentMediaTime()
 //    let result = block()
 //    let timeElapsed = CACurrentMediaTime() - startTime
 //    debugPrint("Time: \(name) - \(timeElapsed)")
 //    return result
-//}
+// }

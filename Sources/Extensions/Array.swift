@@ -8,7 +8,7 @@
 
 import Foundation
 
-//final class ThreadSafe<A> {
+// final class ThreadSafe<A> {
 //    // via: https://talk.objc.io/episodes/S01E90-concurrent-map
 //    private var _value: A
 //    private let queue = DispatchQueue(label: "ThreadSafe")
@@ -25,7 +25,7 @@ import Foundation
 //            transform(&self._value)
 //        }
 //    }
-//}
+// }
 //
 extension Array {
 //    // via: https://talk.objc.io/episodes/S01E90-concurrent-map
@@ -60,7 +60,7 @@ extension Array {
         var combinations: [[Element]] = []
 
         var i = startIndex
-        var indices = [self.startIndex]
+        var indices = [startIndex]
 
         while true {
             // build out array of indices (if not complete)
@@ -86,14 +86,14 @@ extension Array {
             indices.append(i)
         }
     }
-    
-    mutating func modifyForEach(_ body: (_ index: Index, _ element: inout Element) -> ()) {
+
+    mutating func modifyForEach(_ body: (_ index: Index, _ element: inout Element) -> Void) {
         for index in indices {
             modifyElement(atIndex: index) { body(index, &$0) }
         }
     }
-    
-    mutating func modifyElement(atIndex index: Index, _ modifyElement: (_ element: inout Element) -> ()) {
+
+    mutating func modifyElement(atIndex index: Index, _ modifyElement: (_ element: inout Element) -> Void) {
         var element = self[index]
         modifyElement(&element)
         self[index] = element
@@ -111,6 +111,6 @@ extension Array where Element: StringProtocol {
 
 extension Collection {
     func count(where test: (Element) throws -> Bool) rethrows -> Int {
-        return try self.filter(test).count
+        return try filter(test).count
     }
 }

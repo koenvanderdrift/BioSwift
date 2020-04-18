@@ -11,9 +11,9 @@ import Foundation
 public protocol Residue: Structure, Symbol, Mass {
     var oneLetterCode: String { get }
     var threeLetterCode: String { get }
-    
+
     var modification: Modification? { get set }
-    
+
     func allowedModifications() -> [Modification]
 }
 
@@ -25,16 +25,16 @@ extension Residue {
     public func calculateMasses() -> MassContainer {
         return mass(of: formula.elements) + modificationMasses()
     }
-    
+
     private func modificationMasses() -> MassContainer {
-        return self.modification?.masses ?? zeroMass
+        return modification?.masses ?? zeroMass
     }
-    
+
     mutating func setModification(_ modification: Modification?) {
         self.modification = modification
     }
 
     mutating func removeModification() {
-        self.modification = nil
+        modification = nil
     }
 }

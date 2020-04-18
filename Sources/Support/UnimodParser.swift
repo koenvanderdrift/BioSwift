@@ -35,20 +35,20 @@ private let skipTitleStrings = [cation, unknown, xlink, atypeion, "2H", "13C", "
 
 public class UnimodParser: NSObject {
     let url: URL
-    
+
     var elementSymbol = ""
     var elementFullName = ""
     var elementMonoisotopicMass = ""
     var elementAverageMass = ""
-    
+
     var modificationName = ""
     var modificationSites = [String]()
-    var modificationElements = [String : Int]()
+    var modificationElements = [String: Int]()
 
     var aminoAcidName = ""
     var aminoAcidOneLetterCode = ""
     var aminoAcidThreeLetterCode = ""
-    var aminoAcidElements = [String : Int]()
+    var aminoAcidElements = [String: Int]()
 
     var isAminoAcid = false
     var isModification = false
@@ -56,19 +56,19 @@ public class UnimodParser: NSObject {
 
     public init(with url: URL) {
         self.url = url
-        
+
         super.init()
     }
-    
+
     public func parseXML() -> Bool {
         var result = false
-        
+
         if let parser = XMLParser(contentsOf: url) {
             parser.delegate = self
 
             result = parser.parse()
         }
-        
+
         return result
     }
 }
@@ -76,88 +76,70 @@ public class UnimodParser: NSObject {
 // MARK: XML Parser Delegate
 
 extension UnimodParser: XMLParserDelegate {
-    public func parser(_ parser: XMLParser, didStartElement elementName: String, namespaceURI: String?, qualifiedName qName: String?, attributes attributeDict: [String : String] = [:]) {
-        
+    public func parser(_: XMLParser, didStartElement elementName: String, namespaceURI _: String?, qualifiedName _: String?, attributes attributeDict: [String: String] = [:]) {
         if elementName == modification {
             isModification = true
-            
+
             if let title = attributeDict[titleAttributeKey],
                 skipTitleStrings.contains(where: title.contains) == false {
                 modificationName = title
             }
-        }
-            
-        else if elementName == specificity {
+        } else if elementName == specificity {
             if let site = attributeDict[siteAttributeKey],
                 let classification = attributeDict[classificationAttributeKey], classification.contains("Isotopic label") == false {
                 modificationSites.append(site)
             }
-        }
-            
-        else if elementName == neutralLoss {
+        } else if elementName == neutralLoss {
             isNeutralLoss = true
-        }
-            
-        else if elementName == element {
+        } else if elementName == element {
             if isNeutralLoss == false,
                 let symbol = attributeDict[symbolAttributeKey],
                 let number = attributeDict[numberAttributeKey] {
-
                 if isAminoAcid == true {
                     aminoAcidElements[symbol] = Int(number)
-                }
-                
-                else if isModification == true {
+                } else if isModification == true {
                     modificationElements[symbol] = Int(number)
                 }
             }
-        }
-
-        else if elementName == aminoAcid {
+        } else if elementName == aminoAcid {
             isAminoAcid = true
-            
+
             if let title = attributeDict[titleAttributeKey],
                 let threeLetterCode = attributeDict[threeLetterAttributeKey],
                 let name = attributeDict[fullNameAttributeKey] {
-                
                 aminoAcidName = name
                 aminoAcidOneLetterCode = title
                 aminoAcidThreeLetterCode = threeLetterCode
             }
         }
     }
-    
-    public func parser(_ parser: XMLParser, didEndElement elementName: String, namespaceURI: String?, qualifiedName qName: String?) {
-        
+
+    public func parser(_: XMLParser, didEndElement elementName: String, namespaceURI _: String?, qualifiedName _: String?) {
         if elementName == neutralLoss {
             isNeutralLoss = false
-        }
-        
-        else if elementName == modification {
+        } else if elementName == modification {
             if modificationName.isEmpty == false {
                 let mod = Modification(name: modificationName, elements: modificationElements, sites: modificationSites)
 
                 uniModifications.append(mod)
-                
+
                 modificationName.removeAll()
                 modificationSites.removeAll()
                 modificationElements.removeAll()
-                
+
                 isModification = false
             }
-        }
-            
-        else if elementName == aminoAcid {
+        } else if elementName == aminoAcid {
             if aminoAcidName.isEmpty == false {
                 let aa = AminoAcid(name: aminoAcidName, oneLetterCode: aminoAcidOneLetterCode, threeLetterCode: aminoAcidThreeLetterCode, elements: aminoAcidElements)
-                
+
                 uniAminoAcids.append(aa)
-                
+
                 aminoAcidName.removeAll()
                 aminoAcidOneLetterCode.removeAll()
                 aminoAcidThreeLetterCode.removeAll()
                 aminoAcidElements.removeAll()
-                
+
                 isAminoAcid = false
             }
         }

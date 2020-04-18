@@ -10,34 +10,34 @@ import Foundation
 public struct Molecule: Structure, Codable {
     public let name: String
     public let formula: Formula
-    
+
     private(set) var _masses: MassContainer = zeroMass
-    
+
     private enum CodingKeys: String, CodingKey {
         case name
         case formula
     }
-    
+
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        
+
         name = try container.decode(String.self, forKey: .name)
         formula = Formula(try container.decode(String.self, forKey: .formula))
-        
+
         _masses = calculateMasses()
     }
-    
+
     public init(name: String, formula: String) {
         self.name = name
         self.formula = Formula(formula)
-        
+
         _masses = calculateMasses()
     }
-    
-    public init(name: String, formula: [String:Int]) {
+
+    public init(name: String, formula: [String: Int]) {
         self.name = name
         self.formula = Formula(formula)
-        
+
         _masses = calculateMasses()
     }
 
@@ -46,11 +46,11 @@ public struct Molecule: Structure, Codable {
         try container.encode(name, forKey: .name)
         try container.encode(formula.string, forKey: .formula)
     }
-    
+
     public var masses: MassContainer {
         return _masses
     }
-    
+
     var description: String {
         return name
     }
@@ -60,7 +60,7 @@ extension Molecule: Hashable {
     public static func == (lhs: FunctionalGroup, rhs: FunctionalGroup) -> Bool {
         return lhs.name == rhs.name
     }
-    
+
     public func hash(into hasher: inout Hasher) {
         hasher.combine(name)
         hasher.combine(formula.string)

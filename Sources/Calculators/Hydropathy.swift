@@ -17,17 +17,17 @@ public struct Hydro: Codable {
 
 public class Hydropathy {
     public var residues = [Residue]()
-    
+
     public init(residues: [Residue]) {
         self.residues = residues
     }
-    
+
     public func isoElectricPoint() -> Double {
         if residues.count == 0 {
             return 0.0
         }
-// http://isoelectric.org/www_old/files/practise-isoelectric-point.html
-// https://stackoverflow.com/questions/30545518/how-to-count-occurrences-of-an-element-in-a-swift-array
+        // http://isoelectric.org/www_old/files/practise-isoelectric-point.html
+        // https://stackoverflow.com/questions/30545518/how-to-count-occurrences-of-an-element-in-a-swift-array
         guard
             let pKaValues = hydropathyLibrary.first(where: { $0.name == "pKa" })?.values,
             let cTerminalpKa = Double(pKaValues["CTerminal"]!),
@@ -41,13 +41,13 @@ public class Hydropathy {
             let argininepKa = Double(pKaValues["R"]!)
         else { return 0.0 }
 
-        let numberOfAsparticAcid = Double(residues.count {$0.oneLetterCode == "D"})
-        let numberOfGlutamicAcid = Double(residues.count {$0.oneLetterCode == "E"})
-            let numberOfCysteine = Double(residues.count {$0.oneLetterCode == "C"})
-            let numberOfTyrosine = Double(residues.count {$0.oneLetterCode == "Y"})
-            let numberOfHistidine = Double(residues.count {$0.oneLetterCode == "H"})
-            let numberOfLysine = Double(residues.count {$0.oneLetterCode == "K"})
-            let numberOfArginine = Double(residues.count {$0.oneLetterCode == "R"})
+        let numberOfAsparticAcid = Double(residues.count { $0.oneLetterCode == "D" })
+        let numberOfGlutamicAcid = Double(residues.count { $0.oneLetterCode == "E" })
+        let numberOfCysteine = Double(residues.count { $0.oneLetterCode == "C" })
+        let numberOfTyrosine = Double(residues.count { $0.oneLetterCode == "Y" })
+        let numberOfHistidine = Double(residues.count { $0.oneLetterCode == "H" })
+        let numberOfLysine = Double(residues.count { $0.oneLetterCode == "K" })
+        let numberOfArginine = Double(residues.count { $0.oneLetterCode == "R" })
 
         // starting point pI = 6.5 - theoretically it should be 7, but average protein pI is 6.5 so we increase the probability of finding the solution
         var pH = 6.5
@@ -59,7 +59,7 @@ public class Hydropathy {
             if pH >= 14.0 {
                 break
             }
-            
+
             let cTerminalCharge = -1 * (1 / (1 + pow(10, cTerminalpKa - pH)))
             let asparticAcidCharge = -1 * (numberOfAsparticAcid / (1 + pow(10, asparticAcidpKa - pH)))
             let glutamicAcidCharge = -1 * (numberOfGlutamicAcid / (1 + pow(10, glutamicAcidpKa - pH)))

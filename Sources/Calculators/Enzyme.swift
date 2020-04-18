@@ -2,11 +2,10 @@ import Foundation
 
 public var enzymeLibrary: [Enzyme] = loadJSONFromBundle(fileName: "enzymes")
 
-
-//enum CleaveDirection {
+// enum CleaveDirection {
 //    case C
 //    case N
-//}
+// }
 
 public class Enzyme: Codable {
     public let name: String
@@ -15,7 +14,7 @@ public class Enzyme: Codable {
     public let cleaveDirection: String
     public let fullName: String
     public let alternativeName: String
-    
+
     private enum CodingKeys: String, CodingKey {
         case name
         case cleaveAt
@@ -24,7 +23,7 @@ public class Enzyme: Codable {
         case fullName
         case alternativeName
     }
-    
+
     public init(name: String, cleaveAt: [String], dontCleaveBefore: [String] = [], cleaveDirection: String, fullName: String = "", alternativeName: String = "") {
         self.name = name
         self.cleaveAt = cleaveAt
@@ -33,10 +32,10 @@ public class Enzyme: Codable {
         self.fullName = fullName
         self.alternativeName = alternativeName
     }
-    
-    required public init(from decoder: Decoder) throws {
+
+    public required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        
+
         name = try container.decode(String.self, forKey: .name)
         cleaveAt = try container.decode([String].self, forKey: .cleaveAt)
         dontCleaveBefore = try container.decode([String].self, forKey: .dontCleaveBefore)

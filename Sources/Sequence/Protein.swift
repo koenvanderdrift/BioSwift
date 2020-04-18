@@ -3,9 +3,9 @@ import Foundation
 public let nTerm = AminoAcid(name: nTermString, oneLetterCode: "", formula: Formula("H"))
 public let cTerm = AminoAcid(name: cTermString, oneLetterCode: "", formula: Formula("OH"))
 
-public class Protein: BioSequence, Chargeable {    
+public class Protein: BioSequence, Chargeable {
     public var adducts: [Adduct] = []
-    
+
     public convenience init(residues: [Residue]) {
         self.init(residues: residues, library: uniAminoAcids)
 
@@ -17,38 +17,38 @@ public class Protein: BioSequence, Chargeable {
 
         setUpTermini()
     }
-    
-    public required init(residues: [Residue], library: [Symbol]) {
+
+    public required init(residues: [Residue], library _: [Symbol]) {
         super.init(residues: residues, library: uniAminoAcids)
-        
+
         setUpTermini()
     }
-    
+
     private func setUpTermini() {
-        self.termini = (first: nTerm, last: cTerm)
+        termini = (first: nTerm, last: cTerm)
     }
-    
+
     public var masses: MassContainer {
         return calculateMasses()
     }
-    
+
     public func calculateMasses() -> MassContainer {
         return mass(of: residueSequence) + terminalMasses()
     }
-    
+
     public func setNTerminalModification(_ mod: Modification) {
         termini?.first.setModification(mod)
     }
-    
+
     public func setCTerminalModification(_ mod: Modification) {
         termini?.last.setModification(mod)
     }
-    
+
     public func nTerminalModification() -> Modification? {
         if let mod = termini?.first.modification {
             return mod
         }
-        
+
         return nil
     }
 
@@ -56,26 +56,26 @@ public class Protein: BioSequence, Chargeable {
         if let mod = termini?.last.modification {
             return mod
         }
-        
+
         return nil
     }
 
     func terminalMasses() -> MassContainer {
         var result = zeroMass
-        
+
         if let nTerminal = termini?.first {
             result += nTerminal.masses
         }
-        
+
         if let cTerminal = termini?.last {
             result += cTerminal.masses
         }
-        
+
         return result
     }
 }
 
-//extension Protein {
+// extension Protein {
 
 // let url = URL(string: "http://www.uniprot.org/uniprot/P01009.fasta")!
 
@@ -85,9 +85,9 @@ public class Protein: BioSequence, Chargeable {
 //        self.sequenceString = fastaRecord.sequence
 ////        super.init(sequence: fastaRecord.sequence, sequenceType: .protein)
 //    }
-//}
+// }
 
-//public struct ProteinInfo {
+// public struct ProteinInfo {
 //    public var fullName: String
 //    public var altName: String
 //    public var organism: String
@@ -115,6 +115,4 @@ public class Protein: BioSequence, Chargeable {
 //        url = ""
 //        sequence = Protein(sequence: fasta.sequence, type: .protein)
 //    }
-//}
-
-
+// }

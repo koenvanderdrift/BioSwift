@@ -1,6 +1,6 @@
 import Foundation
 
-//public var aminoAcidLibrary: [AminoAcid] = loadJSONFromBundle(fileName: "aminoacids")
+// public var aminoAcidLibrary: [AminoAcid] = loadJSONFromBundle(fileName: "aminoacids")
 
 public let zeroAminoAcid = AminoAcid(name: "", oneLetterCode: "", elements: [:])
 
@@ -44,20 +44,19 @@ public struct AminoAcid: Residue, Codable {
         formula = Formula(try container.decode(String.self, forKey: .formula))
         name = try container.decode(String.self, forKey: .name)
     }
-    
-    public init(name: String, oneLetterCode: String, threeLetterCode: String = "", elements: [String:Int]) {
-        
+
+    public init(name: String, oneLetterCode: String, threeLetterCode: String = "", elements: [String: Int]) {
         var formulaString = ""
-        
+
         for (element, count) in elements {
             formulaString.append(element)
             if count > 1 {
                 formulaString.append(String(abs(count)))
             }
         }
-        
+
         let formula = Formula(formulaString)
-        
+
         self.init(name: name, oneLetterCode: oneLetterCode, threeLetterCode: threeLetterCode, formula: formula)
     }
 
@@ -70,11 +69,11 @@ public struct AminoAcid: Residue, Codable {
         try container.encode(represents, forKey: .represents)
         try container.encode(representedBy, forKey: .representedBy)
     }
-    
+
     var description: String {
         return threeLetterCode
     }
-    
+
     public func allowedModifications() -> [Modification] {
         return uniModifications.filter { $0.sites.contains(identifier) == true }
     }
@@ -84,7 +83,7 @@ extension AminoAcid: Hashable {
     public static func == (lhs: AminoAcid, rhs: AminoAcid) -> Bool {
         return lhs.threeLetterCode == rhs.threeLetterCode
     }
-    
+
     public func hash(into hasher: inout Hasher) {
         hasher.combine(threeLetterCode)
     }
