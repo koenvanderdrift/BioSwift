@@ -7,6 +7,27 @@ public let zeroAminoAcid = AminoAcid(name: "", oneLetterCode: "", elements: [:])
 public let nTermString = "N-term"
 public let cTermString = "C-term"
 
+public struct AminoAcidProperties: OptionSet {
+    public let rawValue: Int
+    
+    public init(rawValue: Int) {
+        self.rawValue = rawValue
+    }
+
+    public static let polar        = AminoAcidProperties(rawValue: 1 << 0)
+    public static let nonpolar     = AminoAcidProperties(rawValue: 1 << 1)
+    public static let hydrophobic  = AminoAcidProperties(rawValue: 1 << 2)
+    public static let small        = AminoAcidProperties(rawValue: 1 << 3)
+    public static let tiny         = AminoAcidProperties(rawValue: 1 << 4)
+    public static let aromatic     = AminoAcidProperties(rawValue: 1 << 5)
+    public static let aliphatic    = AminoAcidProperties(rawValue: 1 << 6)
+    public static let negative     = AminoAcidProperties(rawValue: 1 << 7)
+    public static let positive     = AminoAcidProperties(rawValue: 1 << 8)
+    public static let uncharged    = AminoAcidProperties(rawValue: 1 << 9)
+    public static let chargedPos   = AminoAcidProperties(rawValue: 1 << 10)
+    public static let chargedNeg   = AminoAcidProperties(rawValue: 1 << 11)
+}
+
 public struct AminoAcid: Residue, Codable {
     public let formula: Formula
     public let name: String
@@ -15,8 +36,9 @@ public struct AminoAcid: Residue, Codable {
     public let represents: [String]
     public let representedBy: [String]
 
+    public var properties: [AminoAcidProperties] = []
     public var modification: Modification? = nil
-
+    
     private enum CodingKeys: String, CodingKey {
         case name
         case oneLetterCode
@@ -33,6 +55,8 @@ public struct AminoAcid: Residue, Codable {
         self.formula = formula
         self.represents = represents
         self.representedBy = representedBy
+
+        setProperties()
     }
 
     public init(from decoder: Decoder) throws {
@@ -43,6 +67,8 @@ public struct AminoAcid: Residue, Codable {
         threeLetterCode = try container.decode(String.self, forKey: .threeLetterCode)
         formula = Formula(try container.decode(String.self, forKey: .formula))
         name = try container.decode(String.self, forKey: .name)
+
+        setProperties()
     }
 
     public init(name: String, oneLetterCode: String, threeLetterCode: String = "", elements: [String: Int]) {
@@ -58,6 +84,25 @@ public struct AminoAcid: Residue, Codable {
         let formula = Formula(formulaString)
 
         self.init(name: name, oneLetterCode: oneLetterCode, threeLetterCode: threeLetterCode, formula: formula)
+
+        self.setProperties()
+    }
+    
+    private mutating func setProperties() {
+        switch oneLetterCode {
+        case "A", "G", "L", "V", "M", "I":
+            properties += [.small, .aliphatic, .hydrophobic]
+        case "S", "T", "C", "P", "N", "Q":
+            properties += [.polar, .uncharged]
+        case "K", "R", "H":
+            properties += [.polar, .chargedPos]
+        case "E", "D":
+            properties += [.polar, .chargedNeg]
+        case "F", "Y", "W":
+            properties += [.nonpolar, .aromatic]
+        default:
+            break
+        }
     }
 
     public func encode(to encoder: Encoder) throws {
@@ -73,7 +118,7 @@ public struct AminoAcid: Residue, Codable {
     var description: String {
         return threeLetterCode
     }
-
+    
     public func allowedModifications() -> [Modification] {
         return uniModifications.filter { $0.sites.contains(identifier) == true }
     }
