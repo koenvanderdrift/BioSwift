@@ -16,31 +16,64 @@ public enum FragmentType {
     case undefined
 }
 
-public class Fragment: Peptide {
-    public let fragmentType: FragmentType
+public struct Fragment: BioSequence, Chargeable {
+    public var name: String = ""
+    public var symbolLibrary: [Symbol] = uniAminoAcids
+    public var residueSequence: [Residue] = []
+    
+    public var modifications: ModificationSet = ModificationSet()
+    public var termini: (first: Residue, last: Residue)? = (nTerm, cTerm)
+    public var adducts: [Adduct] = []
+    public var rangeInParent: Range<Int> = 0..<0
 
-    public init(residues: [Residue], type: FragmentType) {
-        fragmentType = type
+    public let fragmentType: FragmentType = .undefined
+}
 
-        super.init(residues: residues, library: uniAminoAcids)
+extension Fragment {
+    public var masses: MassContainer {
+        return calculateMasses()
     }
-
-    public init(sequence: String, type: FragmentType) {
-        fragmentType = type
-
-        super.init(sequence: sequence)
+    
+    public func calculateMasses() -> MassContainer {
+        return mass(of: residueSequence) + terminalMasses()
     }
-
-    public required init(residues _: [Residue], library _: [Symbol]) {
-        fatalError("init(residues:library:) has not been implemented")
-    }
-
-    override func terminalMasses() -> MassContainer {
+    
+    public func terminalMasses() -> MassContainer {
         var result = zeroMass
         if fragmentType == .nTerminal {
             result -= (hydrogen.masses + hydroxyl.masses)
         }
-
+        
         return result
     }
 }
+
+
+//public class Fragment: Peptide {
+//    public let fragmentType: FragmentType
+//
+//    public init(residues: [Residue], type: FragmentType) {
+//        fragmentType = type
+//
+//        super.init(residues: residues, library: uniAminoAcids)
+//    }
+//
+//    public init(sequence: String, type: FragmentType) {
+//        fragmentType = type
+//
+//        super.init(sequence: sequence)
+//    }
+//
+//    public required init(residues _: [Residue], library _: [Symbol]) {
+//        fatalError("init(residues:library:) has not been implemented")
+//    }
+//
+//    override func terminalMasses() -> MassContainer {
+//        var result = zeroMass
+//        if fragmentType == .nTerminal {
+//            result -= (hydrogen.masses + hydroxyl.masses)
+//        }
+//
+//        return result
+//    }
+//}

@@ -205,4 +205,8 @@ extension Formula {
     public static func + (lhs: Formula, rhs: Formula) -> Formula {
         return Formula(lhs.string + rhs.string)
     }
+
+    public static func += (lhs: inout Formula, rhs: Formula) {
+        lhs = lhs + rhs
+    }
 }
