@@ -8,7 +8,6 @@
 
 import Foundation
 
-public let zeroNSRange = NSMakeRange(NSNotFound, 0)
 public let zeroStringRange: Range<String.Index> = String().startIndex ..< String().endIndex
 
 extension String {
