@@ -20,16 +20,31 @@ public struct Fragment: BioSequence, Chargeable {
     public var name: String = ""
     public var symbolLibrary: [Symbol] = uniAminoAcids
     public var residueSequence: [Residue] = []
-    
+    public var sequence: String = ""
+
     public var modifications: ModificationSet = ModificationSet()
     public var termini: (first: Residue, last: Residue)? = (nTerm, cTerm)
     public var adducts: [Adduct] = []
     public var rangeInParent: Range<Int> = 0..<0
 
-    public let fragmentType: FragmentType = .undefined
+    public var fragmentType: FragmentType = .undefined
 }
 
 extension Fragment {
+    public init(sequence: String) {
+        self.sequence = sequence
+    }
+    
+    public init(residues: [Residue]) {
+        self.residueSequence = residues
+    }
+
+    public init(residues: [Residue], type: FragmentType, adducts: [Adduct]) {
+        self.residueSequence = residues
+        self.fragmentType = type
+        self.adducts = adducts
+    }
+
     public var masses: MassContainer {
         return calculateMasses()
     }

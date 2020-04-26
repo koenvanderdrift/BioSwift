@@ -11,19 +11,24 @@ import Foundation
 public protocol BioSequence: Equatable, Structure {
     var symbolLibrary: [Symbol]  { get set }
     var residueSequence: [Residue] { get set }
+    var sequence: String { get set }
+
     var modifications: ModificationSet { get set }
     var termini: (first: Residue, last: Residue)?  { get set }
     var rangeInParent: Range<Int> { get set }
+    
+    init(residues: [Residue]) 
+    init(sequence: String)
 }
 
 extension BioSequence {
     // Extensions can add new computed properties, but they cannot add stored properties, or add property observers to existing properties.
     
-    var symbolSequence: [Symbol] {
+    public var symbolSequence: [Symbol] {
         return residueSequence
     }
     
-    var sequenceString: String {
+    public var sequenceString: String {
         return residueSequence.map { $0.identifier }.joined()
     }
     
@@ -37,6 +42,10 @@ extension BioSequence {
         }
         
         return f
+    }
+    
+    public var symbolSet: SymbolSet? {
+        return SymbolSet(array: symbolSequence)
     }
 }
 
@@ -65,10 +74,6 @@ extension BioSequence {
         default:
             fatalError()
         }
-    }
-    
-    public func symbolSet() -> SymbolSet? {
-        return SymbolSet(array: symbolSequence)
     }
     
     public func createResidueSequence(from string: String) -> [Residue] {
@@ -104,7 +109,7 @@ extension BioSequence {
     public func subSequence<T: BioSequence>(from: Int, to: Int) -> T {
         let sub = Array(residueSequence[from ..< to])
         
-        return T(residues: sub, library: symbolLibrary)
+        return T.init(residues: sub)
     }
 }
 

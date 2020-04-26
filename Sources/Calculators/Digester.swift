@@ -1,11 +1,11 @@
 import Foundation
 
-public struct DigestParameters {
-    let sequence: BioSequence
+public struct DigestParameters <T:BioSequence> {
+    let sequence: T
     let missedCleavages: Int
     let regex: String
 
-    public init(sequence: BioSequence, missedCleavages: Int, regex: String) {
+    public init(sequence: T, missedCleavages: Int, regex: String) {
         self.sequence = sequence
         self.missedCleavages = missedCleavages
         self.regex = regex
@@ -21,9 +21,9 @@ public struct DigestParameters {
 }
 
 public struct Digester<T: BioSequence> {
-    let parameters: DigestParameters
+    let parameters: DigestParameters<T>
 
-    public init(parameters: DigestParameters) {
+    public init(parameters: DigestParameters<T>) {
         self.parameters = parameters
     }
 }
@@ -46,7 +46,7 @@ extension Digester {
         for site in sites {
             end = residues.index(residues.startIndex, offsetBy: site)
 
-            let new: T = parameters.sequence.subSequence(from: start, to: end)
+            var new: T = parameters.sequence.subSequence(from: start, to: end)
 
             if start == 0 {
                 new.termini?.first.modification = termini?.first.modification
@@ -58,7 +58,7 @@ extension Digester {
             start = end
         }
 
-        let final: T = parameters.sequence.subSequence(from: start, to: residues.endIndex)
+        var final: T = parameters.sequence.subSequence(from: start, to: residues.endIndex)
         final.termini?.last.modification = termini?.last.modification
         final.rangeInParent = start ..< residues.endIndex - 1
 
@@ -76,7 +76,7 @@ extension Digester {
                 if subSequences.indices.contains(newIndex) {
                     let res = subSequences[index ... newIndex]
                         .reduce([]) { $0 + $1.residueSequence }
-                    let new = T(residues: res, library: parameters.sequence.symbolLibrary)
+                    var new = T.init(residues: res)
 
                     new.rangeInParent = subSequences[index].rangeInParent.lowerBound ..< subSequences[newIndex].rangeInParent.upperBound
 

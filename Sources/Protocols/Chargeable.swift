@@ -36,7 +36,7 @@ extension Collection where Element: BioSequence & Chargeable {
     public func charge(minCharge: Int, maxCharge: Int) -> [Element] {
         return flatMap { item in
             (minCharge ... maxCharge).map { charge in
-                var el = Element(residues: item.residueSequence)
+                var el = Element.init(residues: item.residueSequence)
                 el.termini = item.termini
                 el.rangeInParent = item.rangeInParent
                 el.adducts.append(contentsOf: repeatElement(protonAdduct, count: charge))

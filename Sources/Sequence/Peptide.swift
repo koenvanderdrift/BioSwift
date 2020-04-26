@@ -7,7 +7,8 @@ public struct Peptide: BioSequence, Chargeable {
     public var name: String = ""
     public var symbolLibrary: [Symbol] = uniAminoAcids
     public var residueSequence: [Residue] = []
-    
+    public var sequence: String = ""
+
     public var modifications: ModificationSet = ModificationSet()
     public var termini: (first: Residue, last: Residue)? = (nTerm, cTerm)
     public var adducts: [Adduct] = []
@@ -15,6 +16,14 @@ public struct Peptide: BioSequence, Chargeable {
 }
 
 extension Peptide {
+    public init(sequence: String) {
+        self.sequence = sequence
+    }
+    
+    public init(residues: [Residue]) {
+        self.residueSequence = residues
+    }
+
     public var masses: MassContainer {
         return calculateMasses()
     }
@@ -28,7 +37,7 @@ extension Peptide {
     }
     
     func precursorIons() -> [Fragment] {
-        let fragment = Fragment(residues: residueSequence, type: .precursor)
+        let fragment = Fragment(residues: residueSequence, type: .precursor, adducts: self.adducts)
         
         if canLoseAmmonia() {
             //            fragment.modify(with: [LocalizedModification(modification: lossOfWater, location: -1)])
@@ -42,11 +51,10 @@ extension Peptide {
     }
     
     func immoniumIons() -> [Fragment] {
-        guard let symbols = symbolSet() as? Set<AminoAcid> else { return [] }
+        guard let symbols = symbolSet as? Set<AminoAcid> else { return [] }
         
         let fragments = symbols.map { symbol -> Fragment in
-            let fragment = Fragment(residues: [symbol], type: .immonium)
-            fragment.adducts = self.adducts
+            let fragment = Fragment(residues: [symbol], type: .immonium, adducts: self.adducts)
             
             return fragment
         }
@@ -64,9 +72,7 @@ extension Peptide {
                 let index = residueSequence.index(residueSequence.startIndex, offsetBy: i)
                 
                 let residues = residueSequence[..<index]
-                let fragment = Fragment(residues: Array(residues), type: .nTerminal)
-                
-                fragment.adducts.append(contentsOf: repeatElement(protonAdduct, count: z))
+                let fragment = Fragment(residues: Array(residues), type: .nTerminal, adducts: Array(repeatElement(protonAdduct, count: z)))
                 
                 if z == 1 {
                     fragments.append(fragment)
@@ -91,9 +97,7 @@ extension Peptide {
                 let index = residueSequence.index(residueSequence.endIndex, offsetBy: -i)
                 
                 let residues = residueSequence[..<index]
-                let fragment = Fragment(residues: Array(residues), type: .cTerminal)
-                
-                fragment.adducts.append(contentsOf: repeatElement(protonAdduct, count: z))
+                let fragment = Fragment(residues: Array(residues), type: .cTerminal, adducts: Array(repeatElement(protonAdduct, count: z)))
                 
                 fragments.append(fragment)
             }

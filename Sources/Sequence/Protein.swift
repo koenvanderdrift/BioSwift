@@ -4,20 +4,25 @@ public let nTerm = AminoAcid(name: nTermString, oneLetterCode: "", formula: Form
 public let cTerm = AminoAcid(name: cTermString, oneLetterCode: "", formula: Formula("OH"))
 
 public struct Protein: BioSequence, Chargeable {
-    public var name: String
+    public var name: String = ""
     public var symbolLibrary: [Symbol] = uniAminoAcids
-    public var residueSequence: [Residue]
+    public var residueSequence: [Residue] = []
+    public var sequence: String = ""
 
-    public var modifications: ModificationSet
+    public var modifications: ModificationSet = ModificationSet()
     public var termini: (first: Residue, last: Residue)? = (nTerm, cTerm)
-    public var adducts: [Adduct]
+    public var adducts: [Adduct] = []
     public var rangeInParent: Range<Int> = 0..<0
 }
 
 extension Protein {
-//    public init(sequence: String) {
-//        residueSequence = createResidueSequence(from: sequence)
-//    }
+    public init(sequence: String) {
+        self.sequence = sequence
+    }
+    
+    public init(residues: [Residue]) {
+        self.residueSequence = residues
+    }
 
     public var masses: MassContainer {
         return calculateMasses()

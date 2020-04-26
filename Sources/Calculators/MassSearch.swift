@@ -95,11 +95,11 @@ public struct SearchParameters {
 
 public typealias SearchResult = Set<String>
 
-public struct MassSearch {
-    public let sequence: BioSequence
+public struct MassSearch <T:BioSequence> {
+    public let sequence: T
     public let params: SearchParameters
 
-    public init(sequence: BioSequence, params: SearchParameters) {
+    public init(sequence: T, params: SearchParameters) {
         self.sequence = sequence
         self.params = params
     }
