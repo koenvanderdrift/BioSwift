@@ -15,7 +15,6 @@ public protocol BioSequence: Structure, Equatable {
     var termini: (first: Residue, last: Residue)?  { get set }
 
     var modifications: ModificationSet { get set }
-    var adducts: [Adduct] { get set }
 
     var rangeInParent: Range<Int> { get set }
     
@@ -24,6 +23,14 @@ public protocol BioSequence: Structure, Equatable {
 }
 
 extension BioSequence {
+    public var name: String {
+        return ""
+    }
+    
+    public static func == (lhs: Self, rhs: Self) -> Bool {
+        return lhs.sequenceString == rhs.sequenceString && lhs.name == rhs.name
+    }
+    
     public var symbolSequence: [Symbol] {
         return residueSequence
     }
@@ -46,12 +53,6 @@ extension BioSequence {
     
     public var symbolSet: SymbolSet? {
         return SymbolSet(array: symbolSequence)
-    }
-}
-
-extension BioSequence {
-    public static func == (lhs: Self, rhs: Self) -> Bool {
-        return lhs.sequenceString == rhs.sequenceString && lhs.name == rhs.name
     }
 
     public mutating func update(with sequence: String, in editedRange: NSRange, changeInLength: Int) {
@@ -111,17 +112,11 @@ extension BioSequence {
         
         return T.init(residues: sub)
     }
-}
 
-extension BioSequence {
     public mutating func setTermini(first: Residue, last: Residue) {
         termini = (first: first, last: last)
     }
     
-    public mutating func setAdducts(type: Adduct, count: Int) {
-        adducts = [Adduct](repeating: type, count: count)
-    }
-
     public func terminalMasses() -> MassContainer {
         var result = zeroMass
         

@@ -30,6 +30,10 @@ extension Chargeable {
     public var charge: Int {
         return adducts.reduce(0) { $0 + $1.charge }
     }
+    
+    public mutating func setAdducts(type: Adduct, count: Int) {
+        adducts = [Adduct](repeating: type, count: count)
+    }
 }
 
 extension Collection where Element: BioSequence & Chargeable {
