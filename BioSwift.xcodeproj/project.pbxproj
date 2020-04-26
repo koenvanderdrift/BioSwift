@@ -263,6 +263,7 @@
 		5D9605BB23E0F70E00F6A93E /* Protocols */ = {
 			isa = PBXGroup;
 			children = (
+				5D9605C523E0F70E00F6A93E /* BioSequence.swift */,
 				5D9605BF23E0F70E00F6A93E /* Chargeable.swift */,
 				5D9605C023E0F70E00F6A93E /* Mass.swift */,
 				5D9605BC23E0F70E00F6A93E /* Residue.swift */,
@@ -278,7 +279,6 @@
 			children = (
 				5D9605C323E0F70E00F6A93E /* Fragment.swift */,
 				5D9605C423E0F70E00F6A93E /* Peptide.swift */,
-				5D9605C523E0F70E00F6A93E /* BioSequence.swift */,
 				5D9605C623E0F70E00F6A93E /* Protein.swift */,
 			);
 			name = Sequence;
