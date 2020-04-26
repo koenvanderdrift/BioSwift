@@ -19,20 +19,18 @@ public enum FragmentType {
 public struct Fragment: BioSequence, Chargeable {
     public var symbolLibrary: [Symbol] = uniAminoAcids
     public var residueSequence: [Residue] = []
-    public var sequenceString: String = ""
     public var termini: (first: Residue, last: Residue)? = (nTerm, cTerm)
 
     public var modifications: ModificationSet = ModificationSet()
     public var adducts: [Adduct] = []
 
-    public var rangeInParent: Range<Int> = 0..<0
+    public var rangeInParent: Range<Int> = zeroSequenceRange
 
     public var fragmentType: FragmentType = .undefined
 }
 
 extension Fragment {
     public init(sequence: String) {
-        self.sequenceString = sequence
         self.residueSequence = createResidueSequence(from: sequence)
     }
     

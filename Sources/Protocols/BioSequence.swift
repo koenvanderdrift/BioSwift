@@ -8,10 +8,12 @@
 
 import Foundation
 
+public let zeroSequenceRange: Range<Int> = 0..<0
+
+
 public protocol BioSequence: Structure, Equatable {
     var symbolLibrary: [Symbol]  { get set }
     var residueSequence: [Residue] { get set }
-    var sequenceString: String { get set }
     var termini: (first: Residue, last: Residue)?  { get set }
 
     var modifications: ModificationSet { get set }
