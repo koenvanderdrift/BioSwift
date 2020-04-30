@@ -138,7 +138,7 @@ public struct MassSearch <T:BioSequence> {
 
                     let chargedMass = mass.charged(with: params.adducts)
 
-                    if chargedMass.averageMass > range.upperBound {
+                    if chargedMass.averageMass > 1.05 * range.upperBound {
                         break
                     }
 
