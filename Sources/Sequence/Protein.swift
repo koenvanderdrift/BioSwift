@@ -8,7 +8,18 @@ public struct Protein: BioSequence, Chargeable {
     public var residueSequence: [Residue] = []
     public var termini: (first: Residue, last: Residue)? = (nTerm, cTerm)
     
-    public var modifications: ModificationSet = ModificationSet()
+    public var modifications: ModificationSet = [] {
+        didSet {
+            oldValue.forEach {
+                removeModification(at: $0.location)
+            }
+            
+            modifications.forEach {
+                addModification($0)
+            }
+        }
+    }
+
     public var adducts: [Adduct] = []
     
     public var rangeInParent: Range<Int> = zeroSequenceRange
