@@ -37,7 +37,7 @@ extension Digester {
 
     func createSubSequences(sites: [Int], missedCleavages: Int) -> [T] {
         var subSequences = [T]()
-        let residues = parameters.sequence.residueSequence
+        let residues = parameters.sequence.residues
         let termini = parameters.sequence.termini
 
         var start = residues.startIndex
@@ -75,7 +75,7 @@ extension Digester {
                 let newIndex = index + mc
                 if subSequences.indices.contains(newIndex) {
                     let res = subSequences[index ... newIndex]
-                        .reduce([]) { $0 + $1.residueSequence }
+                        .reduce([]) { $0 + $1.residues }
                     var new = T.init(residues: res)
 
                     new.rangeInParent = subSequences[index].rangeInParent.lowerBound ..< subSequences[newIndex].rangeInParent.upperBound

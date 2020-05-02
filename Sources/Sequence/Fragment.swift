@@ -16,9 +16,9 @@ public enum FragmentType {
     case undefined
 }
 
-public struct Fragment: BioSequence, Chargeable {
+public struct Fragment: BioSequence {
     public var symbolLibrary: [Symbol] = uniAminoAcids
-    public var residueSequence: [Residue] = []
+    public var residues: [Residue] = []
     public var termini: (first: Residue, last: Residue)? = (nTerm, cTerm)
 
     public var modifications: ModificationSet = ModificationSet()
@@ -31,25 +31,27 @@ public struct Fragment: BioSequence, Chargeable {
 
 extension Fragment {
     public init(sequence: String) {
-        self.residueSequence = createResidueSequence(from: sequence)
+        self.residues = createResidues(from: sequence)
     }
     
     public init(residues: [Residue]) {
-        self.residueSequence = residues
+        self.residues = residues
     }
 
     public init(residues: [Residue], type: FragmentType, adducts: [Adduct]) {
-        self.residueSequence = residues
+        self.residues = residues
         self.fragmentType = type
         self.adducts = adducts
     }
+}
 
+extension Fragment: Chargeable {
     public var masses: MassContainer {
         return calculateMasses()
     }
     
     public func calculateMasses() -> MassContainer {
-        return mass(of: residueSequence) + terminalMasses()
+        return mass(of: residues) + terminalMasses()
     }
     
     public func terminalMasses() -> MassContainer {

@@ -3,9 +3,9 @@ import Foundation
 private let lossOfWater = Modification(name: "Loss of Water", reactions: [.remove(water)], sites: ["S", "T", "E", "D"])
 private let lossOfAmmonia = Modification(name: "Loss of Ammonia", reactions: [.remove(ammonia)], sites: ["R", "Q", "N", "K"])
 
-public struct Peptide: BioSequence, Chargeable {
+public struct Peptide: BioSequence {
     public var symbolLibrary: [Symbol] = uniAminoAcids
-    public var residueSequence: [Residue] = []
+    public var residues: [Residue] = []
     public var termini: (first: Residue, last: Residue)? = (nTerm, cTerm)
     
     public var modifications: ModificationSet = ModificationSet()
@@ -16,19 +16,11 @@ public struct Peptide: BioSequence, Chargeable {
 
 extension Peptide {
     public init(sequence: String) {
-        self.residueSequence = createResidueSequence(from: sequence)
+        self.residues = createResidues(from: sequence)
     }
     
     public init(residues: [Residue]) {
-        self.residueSequence = residues
-    }
-
-    public var masses: MassContainer {
-        return calculateMasses()
-    }
-    
-    public func calculateMasses() -> MassContainer {
-        return mass(of: residueSequence) + terminalMasses()
+        self.residues = residues
     }
 
     public func fragment() -> [Fragment] {
@@ -36,7 +28,7 @@ extension Peptide {
     }
     
     func precursorIons() -> [Fragment] {
-        let fragment = Fragment(residues: residueSequence, type: .precursor, adducts: self.adducts)
+        let fragment = Fragment(residues: residues, type: .precursor, adducts: self.adducts)
         
         if canLoseAmmonia() {
             //            fragment.modify(with: [LocalizedModification(modification: lossOfWater, location: -1)])
@@ -66,12 +58,13 @@ extension Peptide {
         
         guard adducts.count > 0 else { return fragments }
         
+        let startIndex = residues.startIndex
+        
         for z in 1 ... min(2, adducts.count) {
-            for i in 2 ... residueSequence.count - 1 {
-                let index = residueSequence.index(residueSequence.startIndex, offsetBy: i)
+            for i in 2 ... residues.count - 1 {
+                let index = residues.index(startIndex, offsetBy: i)
                 
-                let residues = residueSequence[..<index]
-                let fragment = Fragment(residues: Array(residues), type: .nTerminal, adducts: Array(repeatElement(protonAdduct, count: z)))
+                let fragment = Fragment(residues: Array(residues[..<index]), type: .nTerminal, adducts: Array(repeatElement(protonAdduct, count: z)))
                 
                 if z == 1 {
                     fragments.append(fragment)
@@ -91,12 +84,13 @@ extension Peptide {
         
         guard adducts.count > 0 else { return fragments }
         
+        let endIndex = residues.endIndex
+        
         for z in 1 ... min(2, adducts.count) {
-            for i in 1 ... residueSequence.count - 1 {
-                let index = residueSequence.index(residueSequence.endIndex, offsetBy: -i)
+            for i in 1 ... residues.count - 1 {
+                let index = residues.index(endIndex, offsetBy: -i)
                 
-                let residues = residueSequence[..<index]
-                let fragment = Fragment(residues: Array(residues), type: .cTerminal, adducts: Array(repeatElement(protonAdduct, count: z)))
+                let fragment = Fragment(residues: Array(residues[..<index]), type: .cTerminal, adducts: Array(repeatElement(protonAdduct, count: z)))
                 
                 fragments.append(fragment)
             }
@@ -118,5 +112,15 @@ extension Peptide {
     //
     //        return hydropathy.isoElectricPoint()
     //    }
+    
+}
 
+extension Peptide: Chargeable {
+    public var masses: MassContainer {
+        return calculateMasses()
+    }
+    
+    public func calculateMasses() -> MassContainer {
+        return mass(of: residues) + terminalMasses()
+    }
 }

@@ -1,5 +1,5 @@
 //
-//  BioSequence.swift
+//  ResidueSequence.swift
 //  BioSwift
 //
 //  Created by Koen van der Drift on 5/22/17.
@@ -10,21 +10,24 @@ import Foundation
 
 public let zeroSequenceRange: Range<Int> = 0..<0
 
+public protocol Rangeable {
+    var rangeInParent: Range<Int> { get set }
+}
 
-public protocol BioSequence: Structure, Equatable {
+public typealias BioSequence = ResidueSequence & Rangeable
+
+public protocol ResidueSequence: Structure, Equatable {
     var symbolLibrary: [Symbol]  { get set }
-    var residueSequence: [Residue] { get set }
+    var residues: [Residue] { get set }
     var termini: (first: Residue, last: Residue)?  { get set }
 
     var modifications: ModificationSet { get set }
 
-    var rangeInParent: Range<Int> { get set }
-    
-    init(residues: [Residue]) 
+    init(residues: [Residue])
     init(sequence: String)
 }
 
-extension BioSequence {
+extension ResidueSequence {
     public var name: String {
         return ""
     }
@@ -34,15 +37,15 @@ extension BioSequence {
     }
     
     public var symbolSequence: [Symbol] {
-        return residueSequence
+        return residues
     }
     
     public var sequenceString: String {
-        return residueSequence.map { $0.identifier }.joined()
+        return residues.map { $0.identifier }.joined()
     }
     
     public var formula: Formula {
-        var f = Formula(residueSequence.reduce("") { $0 + $1.formula.string })
+        var f = Formula(residues.reduce("") { $0 + $1.formula.string })
         
         if let termini = termini {
             f += termini.first.formula + termini.last.formula
@@ -65,21 +68,21 @@ extension BioSequence {
         switch changeInLength {
         case Int.min ..< 0:
             let range = editedRange.location ..< editedRange.location - changeInLength
-            residueSequence.removeSubrange(range)
+            residues.removeSubrange(range)
             
         case 0 ..< Int.max:
             let range = editedRange.location ..< editedRange.location + changeInLength
             let s = String(sequence[range])
             
-            let newResidues = createResidueSequence(from: s)
-            residueSequence.insert(contentsOf: newResidues, at: editedRange.location)
+            let newResidues = createResidues(from: s)
+            residues.insert(contentsOf: newResidues, at: editedRange.location)
             
         default:
             fatalError()
         }
     }
     
-    public func createResidueSequence(from string: String) -> [Residue] {
+    public func createResidues(from string: String) -> [Residue] {
         let result = string.map { char -> Residue in
             symbolLibrary.first(where: { $0.identifier == String(char) }) as! Residue
         }
@@ -92,25 +95,25 @@ extension BioSequence {
     }
     
     public func residue(at index: Int) -> Residue? {
-        return residueSequence[index]
+        return residues[index]
     }
     
     public func residueSequence(with range: NSRange) -> [Residue]? {
-        guard range.location < residueSequence.count, range.length > 0 else { return nil }
+        guard range.location < residues.count, range.length > 0 else { return nil }
         
-        return Array(residueSequence[range.location ..< range.location + range.length])
+        return Array(residues[range.location ..< range.location + range.length])
     }
     
     public func residueLocations(with identifiers: [String]) -> [Int] {
         let result = identifiers.map { i in
-            residueSequence.indices.filter { (residueSequence[$0].identifier) == i }
+            residues.indices.filter { (residues[$0].identifier) == i }
         }
         
         return result.flatMap { $0 }
     }
     
-    public func subSequence<T: BioSequence>(from: Int, to: Int) -> T {
-        let sub = Array(residueSequence[from ..< to])
+    public func subSequence<T: ResidueSequence>(from: Int, to: Int) -> T {
+        let sub = Array(residues[from ..< to])
         
         return T.init(residues: sub)
     }
@@ -144,7 +147,7 @@ extension BioSequence {
     public func currentModifications() -> ModificationSet {
         var result: ModificationSet = []
         
-        for (index, residue) in residueSequence.enumerated() {
+        for (index, residue) in residues.enumerated() {
             if let mod = residue.modification {
                 result.insert(LocalizedModification(modification: mod, location: index))
             }
@@ -154,7 +157,7 @@ extension BioSequence {
     }
     
     public mutating func addModification(_ mod: LocalizedModification) {
-        residueSequence.modifyElement(atIndex: mod.location) { residue in
+        residues.modifyElement(atIndex: mod.location) { residue in
             if let modification = mod.modification {
                 residue.setModification(modification)
             }
@@ -162,7 +165,7 @@ extension BioSequence {
     }
     
     public mutating func removeModification(at location: Int) {
-        residueSequence.modifyElement(atIndex: location) { residue in
+        residues.modifyElement(atIndex: location) { residue in
             residue.setModification(nil)
         }
     }

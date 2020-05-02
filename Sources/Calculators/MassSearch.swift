@@ -95,7 +95,7 @@ public struct SearchParameters {
 
 public typealias SearchResult = Set<String>
 
-public struct MassSearch <T:BioSequence> {
+public struct MassSearch <T:ResidueSequence> {
     public let sequence: T
     public let params: SearchParameters
 
@@ -108,7 +108,7 @@ public struct MassSearch <T:BioSequence> {
         var result = SearchResult()
 
         let sequenceString = sequence.sequenceString
-        var massSequence = sequence.residueSequence.map { $0.masses }
+        var massSequence = sequence.residues.map { $0.masses }
 
         let termini = sequence.termini
 
