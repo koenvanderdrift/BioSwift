@@ -95,7 +95,7 @@ public struct SearchParameters {
 
 public typealias SearchResult = Set<String>
 
-public struct MassSearch <T:ResidueSequence> {
+public struct MassSearch <T:BioSequence> {
     public let sequence: T
     public let params: SearchParameters
 

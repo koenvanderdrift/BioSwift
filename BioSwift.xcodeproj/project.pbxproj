@@ -90,18 +90,18 @@
 		5D9605FC23E0F70E00F6A93E /* Peptide.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605C423E0F70E00F6A93E /* Peptide.swift */; };
 		5D9605FD23E0F70E00F6A93E /* Peptide.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605C423E0F70E00F6A93E /* Peptide.swift */; };
 		5D9605FE23E0F70E00F6A93E /* Peptide.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605C423E0F70E00F6A93E /* Peptide.swift */; };
-		5D9605FF23E0F70E00F6A93E /* ResidueSequence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605C523E0F70E00F6A93E /* ResidueSequence.swift */; };
-		5D96060023E0F70E00F6A93E /* ResidueSequence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605C523E0F70E00F6A93E /* ResidueSequence.swift */; };
-		5D96060123E0F70E00F6A93E /* ResidueSequence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605C523E0F70E00F6A93E /* ResidueSequence.swift */; };
+		5D9605FF23E0F70E00F6A93E /* BioSequence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605C523E0F70E00F6A93E /* BioSequence.swift */; };
+		5D96060023E0F70E00F6A93E /* BioSequence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605C523E0F70E00F6A93E /* BioSequence.swift */; };
+		5D96060123E0F70E00F6A93E /* BioSequence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605C523E0F70E00F6A93E /* BioSequence.swift */; };
 		5D96060223E0F70E00F6A93E /* Protein.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605C623E0F70E00F6A93E /* Protein.swift */; };
 		5D96060323E0F70E00F6A93E /* Protein.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605C623E0F70E00F6A93E /* Protein.swift */; };
 		5D96060423E0F70E00F6A93E /* Protein.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605C623E0F70E00F6A93E /* Protein.swift */; };
 		5D96060523E0F70E00F6A93E /* Hydropathy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605C823E0F70E00F6A93E /* Hydropathy.swift */; };
 		5D96060623E0F70E00F6A93E /* Hydropathy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605C823E0F70E00F6A93E /* Hydropathy.swift */; };
 		5D96060723E0F70E00F6A93E /* Hydropathy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605C823E0F70E00F6A93E /* Hydropathy.swift */; };
-		5D96060823E0F70E00F6A93E /* Digester.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605C923E0F70E00F6A93E /* Digester.swift */; };
-		5D96060923E0F70E00F6A93E /* Digester.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605C923E0F70E00F6A93E /* Digester.swift */; };
-		5D96060A23E0F70E00F6A93E /* Digester.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605C923E0F70E00F6A93E /* Digester.swift */; };
+		5D96060823E0F70E00F6A93E /* Digest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605C923E0F70E00F6A93E /* Digest.swift */; };
+		5D96060923E0F70E00F6A93E /* Digest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605C923E0F70E00F6A93E /* Digest.swift */; };
+		5D96060A23E0F70E00F6A93E /* Digest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605C923E0F70E00F6A93E /* Digest.swift */; };
 		5D96060B23E0F70E00F6A93E /* Enzyme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605CA23E0F70E00F6A93E /* Enzyme.swift */; };
 		5D96060C23E0F70E00F6A93E /* Enzyme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605CA23E0F70E00F6A93E /* Enzyme.swift */; };
 		5D96060D23E0F70E00F6A93E /* Enzyme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605CA23E0F70E00F6A93E /* Enzyme.swift */; };
@@ -164,10 +164,10 @@
 		5D9605C123E0F70E00F6A93E /* Symbol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Symbol.swift; sourceTree = "<group>"; };
 		5D9605C323E0F70E00F6A93E /* Fragment.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Fragment.swift; sourceTree = "<group>"; };
 		5D9605C423E0F70E00F6A93E /* Peptide.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Peptide.swift; sourceTree = "<group>"; };
-		5D9605C523E0F70E00F6A93E /* ResidueSequence.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ResidueSequence.swift; sourceTree = "<group>"; };
+		5D9605C523E0F70E00F6A93E /* BioSequence.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BioSequence.swift; sourceTree = "<group>"; };
 		5D9605C623E0F70E00F6A93E /* Protein.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Protein.swift; sourceTree = "<group>"; };
 		5D9605C823E0F70E00F6A93E /* Hydropathy.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Hydropathy.swift; sourceTree = "<group>"; };
-		5D9605C923E0F70E00F6A93E /* Digester.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Digester.swift; sourceTree = "<group>"; };
+		5D9605C923E0F70E00F6A93E /* Digest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Digest.swift; sourceTree = "<group>"; };
 		5D9605CA23E0F70E00F6A93E /* Enzyme.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Enzyme.swift; sourceTree = "<group>"; };
 		5D9605CB23E0F70E00F6A93E /* MassSearch.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MassSearch.swift; sourceTree = "<group>"; wrapsLines = 0; };
 		5DDAB6E62427CF5900BC0480 /* Molecule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Molecule.swift; sourceTree = "<group>"; };
@@ -263,7 +263,7 @@
 		5D9605BB23E0F70E00F6A93E /* Protocols */ = {
 			isa = PBXGroup;
 			children = (
-				5D9605C523E0F70E00F6A93E /* ResidueSequence.swift */,
+				5D9605C523E0F70E00F6A93E /* BioSequence.swift */,
 				5D9605BF23E0F70E00F6A93E /* Chargeable.swift */,
 				5D9605C023E0F70E00F6A93E /* Mass.swift */,
 				5D9605BC23E0F70E00F6A93E /* Residue.swift */,
@@ -289,7 +289,7 @@
 			isa = PBXGroup;
 			children = (
 				5D9605C823E0F70E00F6A93E /* Hydropathy.swift */,
-				5D9605C923E0F70E00F6A93E /* Digester.swift */,
+				5D9605C923E0F70E00F6A93E /* Digest.swift */,
 				5D9605CA23E0F70E00F6A93E /* Enzyme.swift */,
 				5D9605CB23E0F70E00F6A93E /* MassSearch.swift */,
 			);
@@ -492,10 +492,10 @@
 				5D9605A623E0F6FC00F6A93E /* Formula.swift in Sources */,
 				5D9605E423E0F70E00F6A93E /* Double.swift in Sources */,
 				5D9605F923E0F70E00F6A93E /* Fragment.swift in Sources */,
-				5D96060823E0F70E00F6A93E /* Digester.swift in Sources */,
+				5D96060823E0F70E00F6A93E /* Digest.swift in Sources */,
 				OBJ_22 /* BioSwift.swift in Sources */,
 				5D9605F023E0F70E00F6A93E /* Chargeable.swift in Sources */,
-				5D9605FF23E0F70E00F6A93E /* ResidueSequence.swift in Sources */,
+				5D9605FF23E0F70E00F6A93E /* BioSequence.swift in Sources */,
 				5D96060223E0F70E00F6A93E /* Protein.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -528,10 +528,10 @@
 				5D9605A723E0F6FC00F6A93E /* Formula.swift in Sources */,
 				5D9605E523E0F70E00F6A93E /* Double.swift in Sources */,
 				5D9605FA23E0F70E00F6A93E /* Fragment.swift in Sources */,
-				5D96060923E0F70E00F6A93E /* Digester.swift in Sources */,
+				5D96060923E0F70E00F6A93E /* Digest.swift in Sources */,
 				OBJ_29 /* Package.swift in Sources */,
 				5D9605F123E0F70E00F6A93E /* Chargeable.swift in Sources */,
-				5D96060023E0F70E00F6A93E /* ResidueSequence.swift in Sources */,
+				5D96060023E0F70E00F6A93E /* BioSequence.swift in Sources */,
 				5D96060323E0F70E00F6A93E /* Protein.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -553,11 +553,11 @@
 				5D96060723E0F70E00F6A93E /* Hydropathy.swift in Sources */,
 				OBJ_41 /* XCTestManifests.swift in Sources */,
 				5D9605A223E0F6FC00F6A93E /* ChemicalElement.swift in Sources */,
-				5D96060A23E0F70E00F6A93E /* Digester.swift in Sources */,
+				5D96060A23E0F70E00F6A93E /* Digest.swift in Sources */,
 				5D9605FE23E0F70E00F6A93E /* Peptide.swift in Sources */,
 				5D9605A823E0F6FC00F6A93E /* Formula.swift in Sources */,
 				5D9605AE23E0F6FC00F6A93E /* Modification.swift in Sources */,
-				5D96060123E0F70E00F6A93E /* ResidueSequence.swift in Sources */,
+				5D96060123E0F70E00F6A93E /* BioSequence.swift in Sources */,
 				5D9605D123E0F70E00F6A93E /* Fasta.swift in Sources */,
 				5D9605DD23E0F70E00F6A93E /* Array.swift in Sources */,
 				5D96060423E0F70E00F6A93E /* Protein.swift in Sources */,
