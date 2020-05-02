@@ -1,75 +1,49 @@
+//
+//  Digest.swift
+//  BioSwift
+//
+//  Created by Koen van der Drift on 7/12/18.
+//  Copyright © 2018 Koen van der Drift. All rights reserved.
+//
+
 import Foundation
 
-public struct DigestParameters <T:BioSequence> {
-    let sequence: T
-    let missedCleavages: Int
-    let regex: String
-
-    public init(sequence: T, missedCleavages: Int, regex: String) {
-        self.sequence = sequence
-        self.missedCleavages = missedCleavages
-        self.regex = regex
-    }
-
-    var string: String {
-        return sequence.sequenceString
-    }
-
-    func cleavageSites() -> [Int] {
-        return string.matches(for: regex).map { $0.range.location }
-    }
-}
-
-public struct Digester<T: BioSequence> {
-    let parameters: DigestParameters<T>
-
-    public init(parameters: DigestParameters<T>) {
-        self.parameters = parameters
-    }
-}
-
-extension Digester {
-    public func digest() -> [T] {
-        let subSequences = createSubSequences(sites: parameters.cleavageSites(), missedCleavages: parameters.missedCleavages)
-
-        return subSequences
-    }
-
-    func createSubSequences(sites: [Int], missedCleavages: Int) -> [T] {
+extension BioSequence {
+    public func digest<T: RangeableSequence>(using regex: String, with missedCleavages: Int) -> [T] {
+        let sites = cleavageSites(for: regex)
+        
         var subSequences = [T]()
-        let residues = parameters.sequence.residues
-        let termini = parameters.sequence.termini
-
+        
         var start = residues.startIndex
         var end = start
-
+        
         for site in sites {
             end = residues.index(residues.startIndex, offsetBy: site)
-
-            var new: T = parameters.sequence.subSequence(from: start, to: end)
-
+            
+            var new: T = subSequence(from: start, to: end)
+            
             if start == 0 {
                 new.termini?.first.modification = termini?.first.modification
             }
-
+            
             new.rangeInParent = start ..< end - 1
             subSequences.append(new)
-
+            
             start = end
         }
-
-        var final: T = parameters.sequence.subSequence(from: start, to: residues.endIndex)
+        
+        var final: T = subSequence(from: start, to: residues.endIndex)
         final.termini?.last.modification = termini?.last.modification
         final.rangeInParent = start ..< residues.endIndex - 1
-
+        
         subSequences.append(final)
-
+        
         guard missedCleavages > 0 else {
             return subSequences
         }
-
+        
         var joinedSubSequences = [T]()
-
+        
         for mc in 0 ... missedCleavages {
             for (index, _) in subSequences.enumerated() {
                 let newIndex = index + mc
@@ -77,22 +51,26 @@ extension Digester {
                     let res = subSequences[index ... newIndex]
                         .reduce([]) { $0 + $1.residues }
                     var new = T.init(residues: res)
-
+                    
                     new.rangeInParent = subSequences[index].rangeInParent.lowerBound ..< subSequences[newIndex].rangeInParent.upperBound
-
+                    
                     if index == 0 {
                         new.termini?.first.modification = termini?.first.modification
                     }
-
+                    
                     if newIndex == subSequences.count - 1 {
                         new.termini?.last.modification = termini?.last.modification
                     }
-
+                    
                     joinedSubSequences.append(new)
                 }
             }
         }
-
+        
         return joinedSubSequences
+    }
+    
+    func cleavageSites(for regex: String) -> [Int] {
+        return sequenceString.matches(for: regex).map { $0.range.location }
     }
 }
