@@ -9,7 +9,7 @@
 import Foundation
 
 extension BioSequence {
-    public func digest<T: RangeableSequence>(using regex: String, with missedCleavages: Int) -> [T] {
+    public func digest<T: RangedSequence>(using regex: String, with missedCleavages: Int) -> [T] {
         let sites = cleavageSites(for: regex)
         
         var subSequences = [T]()

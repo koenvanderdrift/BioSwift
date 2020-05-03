@@ -10,9 +10,7 @@ import Foundation
 
 public let zeroSequenceRange: Range<Int> = 0..<0
 
-public typealias RangeableSequence = BioSequence & Rangeable
-
-public protocol Rangeable {
+public protocol RangedSequence: BioSequence {
     var rangeInParent: Range<Int> { get set }
 }
 

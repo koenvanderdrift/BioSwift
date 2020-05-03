@@ -16,7 +16,7 @@ public enum FragmentType {
     case undefined
 }
 
-public struct Fragment: RangeableSequence {
+public struct Fragment: RangedSequence {
     public var symbolLibrary: [Symbol] = uniAminoAcids
     public var residues: [Residue] = []
     public var termini: (first: Residue, last: Residue)? = (nTerm, cTerm)

@@ -3,7 +3,7 @@ import Foundation
 private let lossOfWater = Modification(name: "Loss of Water", reactions: [.remove(water)], sites: ["S", "T", "E", "D"])
 private let lossOfAmmonia = Modification(name: "Loss of Ammonia", reactions: [.remove(ammonia)], sites: ["R", "Q", "N", "K"])
 
-public struct Peptide: RangeableSequence {
+public struct Peptide: RangedSequence {
     public var symbolLibrary: [Symbol] = uniAminoAcids
     public var residues: [Residue] = []
     public var termini: (first: Residue, last: Residue)? = (nTerm, cTerm)
