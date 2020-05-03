@@ -19,20 +19,31 @@ public protocol Chargeable: Mass {
 }
 
 extension Chargeable {
-    public mutating func addCharge(_ adduct: Adduct) {
-        adducts.append(adduct)
-    }
-
-    public func pseudomolecularIon() -> MassContainer {
-        return calculateMasses().charged(with: adducts)
-    }
-
     public var charge: Int {
         return adducts.reduce(0) { $0 + $1.charge }
     }
     
     public mutating func setAdducts(type: Adduct, count: Int) {
         adducts = [Adduct](repeating: type, count: count)
+    }
+    
+    public func pseudomolecularIon() -> MassContainer {
+        return chargedMass()
+    }
+    
+    public func chargedMass() -> MassContainer {
+        let result = calculateMasses()
+        
+        if adducts.count > 0 {
+            let chargedMass = (
+                result + adducts.map { $0.group.masses }
+                    .reduce(zeroMass) { $0 + $1 }
+                ) / adducts.count
+            
+            return chargedMass - electron.masses // remove one electron mass, for first H+ adduct
+        }
+        
+        return result
     }
 }
 

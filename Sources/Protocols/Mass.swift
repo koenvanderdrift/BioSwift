@@ -84,17 +84,4 @@ extension MassContainer: Equatable {
     public static func / (lhs: MassContainer, rhs: Int) -> MassContainer {
         return MassContainer(monoisotopicMass: lhs.monoisotopicMass / Dalton(rhs), averageMass: lhs.averageMass / Dalton(rhs), nominalMass: Int(lhs.nominalMass / rhs))
     }
-
-    public func charged(with adducts: [Adduct]) -> MassContainer {
-        if adducts.count > 0 {
-            let chargedMass = (
-                self + adducts.map { $0.group.masses }
-                    .reduce(zeroMass) { $0 + $1 }
-            ) / adducts.count
-
-            return chargedMass - electron.masses // remove one electron mass, for first H+ adduct
-        }
-
-        return self
-    }
 }
