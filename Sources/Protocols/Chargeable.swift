@@ -36,16 +36,14 @@ extension Chargeable {
     }
 }
 
-extension Collection where Element: RangeableSequence & Chargeable {
+extension Collection where Element: BioSequence & Chargeable {
     public func charge(minCharge: Int, maxCharge: Int) -> [Element] {
-        return flatMap { item in
-            (minCharge ... maxCharge).map { charge in
-                var el = Element.init(residues: item.residues)
-                el.termini = item.termini
-                el.rangeInParent = item.rangeInParent
-                el.adducts.append(contentsOf: repeatElement(protonAdduct, count: charge))
+        return flatMap { sequence in
+            (minCharge...maxCharge).map { charge in
+                var chargedSequence = sequence
+                chargedSequence.adducts.append(contentsOf: repeatElement(protonAdduct, count: charge))
 
-                return el
+                return chargedSequence
             }
         }
     }

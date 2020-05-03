@@ -21,8 +21,6 @@ public struct Protein: BioSequence {
     }
 
     public var adducts: [Adduct] = []
-    
-    public var rangeInParent: Range<Int> = zeroSequenceRange
 }
 
 extension Protein {
@@ -75,4 +73,4 @@ extension Protein: Chargeable {
     public func calculateMasses() -> MassContainer {
         return mass(of: residues) + terminalMasses()
     }
-    }
+}
