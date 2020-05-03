@@ -20,7 +20,8 @@ public protocol BioSequence: Structure, Equatable {
     var symbolLibrary: [Symbol]  { get set }
     var residues: [Residue] { get set }
     var termini: (first: Residue, last: Residue)?  { get set }
-
+    var zeroResidue: Residue { get }
+    
     var modifications: ModificationSet { get set }
 
     init(residues: [Residue])
@@ -112,10 +113,24 @@ extension BioSequence {
         return result.flatMap { $0 }
     }
     
+    public func numberOfResidues() -> Int {
+        return residues.count
+    }
+    
     public func subSequence<T: BioSequence>(from: Int, to: Int) -> T {
-        let sub = Array(residues[from ..< to])
+        var sub = T.init(residues: Array(residues[from ..< to]))
         
-        return T.init(residues: sub)
+        sub.termini = self.termini
+        
+        if from == 0 {
+            sub.termini?.last = zeroResidue
+        }
+        
+        if to == numberOfResidues() {
+            sub.termini?.first = zeroResidue
+        }
+        
+        return sub
     }
 
     public mutating func setTermini(first: Residue, last: Residue) {

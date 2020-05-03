@@ -7,7 +7,9 @@ public struct Protein: BioSequence {
     public var symbolLibrary: [Symbol] = uniAminoAcids
     public var residues: [Residue] = []
     public var termini: (first: Residue, last: Residue)? = (nTerm, cTerm)
-    
+
+    public var zeroResidue: Residue = zeroAminoAcid
+
     public var modifications: ModificationSet = [] {
         didSet {
             oldValue.forEach {

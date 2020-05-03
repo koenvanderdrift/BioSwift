@@ -22,10 +22,6 @@ extension BioSequence {
             
             var new: T = subSequence(from: start, to: end)
             
-            if start == 0 {
-                new.termini?.first.modification = termini?.first.modification
-            }
-            
             new.rangeInParent = start ..< end - 1
             subSequences.append(new)
             
@@ -33,7 +29,6 @@ extension BioSequence {
         }
         
         var final: T = subSequence(from: start, to: residues.endIndex)
-        final.termini?.last.modification = termini?.last.modification
         final.rangeInParent = start ..< residues.endIndex - 1
         
         subSequences.append(final)

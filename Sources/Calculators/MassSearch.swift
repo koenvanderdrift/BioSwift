@@ -95,7 +95,7 @@ public struct SearchParameters {
 
 public typealias SearchResult = Set<String>
 
-public struct MassSearch <T:BioSequence> {
+public struct MassSearch <T:BioSequence & Chargeable> {
     public let sequence: T
     public let params: SearchParameters
 
@@ -106,60 +106,42 @@ public struct MassSearch <T:BioSequence> {
 
     public func searchMass() -> SearchResult {
         var result = SearchResult()
-
-        let sequenceString = sequence.sequenceString
-        var massSequence = sequence.residues.map { $0.masses }
-
-        let termini = sequence.termini
-
         let range = params.massRange()
+        let count = sequence.numberOfResidues()
+        
         var start = 0
-
+        
         // Nterm: 1102.3525
         // 807.9348
         // Cterm: 979.0476
-
-        while !massSequence.isEmpty {
-            var mass = hydrogen.masses + hydroxyl.masses
-
-            if massSequence.count == sequenceString.count, let term = termini?.first {
-                mass += (term.masses - hydrogen.masses)
-            }
-
-            for index in 0 ... massSequence.count {
-                let to = start + index + 1
-
-                if let s = sequenceString.substring(from: start, to: to) {
-                    mass += massSequence[index]
-
-                    if to == sequenceString.count, let term = termini?.last {
-                        mass += (term.masses - hydroxyl.masses)
+        
+        while start < count {
+            for index in start+1...count {
+                var sub: T = sequence.subSequence(from: start, to: index)
+                sub.adducts = sequence.adducts
+                
+                let chargedMass = sub.chargedMass()
+    
+                if chargedMass.averageMass > 1.05 * range.upperBound {
+                    break
+                }
+                
+                switch params.massType {
+                case .monoisotopic:
+                    if range.contains(chargedMass.monoisotopicMass) {
+                        result.insert(sub.sequenceString)
                     }
-
-                    let chargedMass = mass.charged(with: params.adducts)
-
-                    if chargedMass.averageMass > 1.05 * range.upperBound {
-                        break
+                case .average:
+                    if range.contains(chargedMass.averageMass) {
+                        result.insert(sub.sequenceString)
                     }
-
-                    switch params.massType {
-                    case .monoisotopic:
-                        if range.contains(chargedMass.monoisotopicMass) {
-                            result.insert(String(s))
-                        }
-                    case .average:
-                        if range.contains(chargedMass.averageMass) {
-                            result.insert(String(s))
-                        }
-                    case .nominal:
-                        if range.contains(Dalton(chargedMass.nominalMass)) {
-                            result.insert(String(s))
-                        }
+                case .nominal:
+                    if range.contains(Dalton(chargedMass.nominalMass)) {
+                        result.insert(sub.sequenceString)
                     }
                 }
             }
-
-            massSequence.removeFirst()
+            
             start += 1
         }
 
