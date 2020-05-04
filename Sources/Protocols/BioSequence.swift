@@ -97,12 +97,6 @@ extension BioSequence {
         return residues[index]
     }
     
-    public func residueSequence(with range: NSRange) -> [Residue]? {
-        guard range.location < residues.count, range.length > 0 else { return nil }
-        
-        return Array(residues[range.location ..< range.location + range.length])
-    }
-    
     public func residueLocations(with identifiers: [String]) -> [Int] {
         let result = identifiers.map { i in
             residues.indices.filter { (residues[$0].identifier) == i }
@@ -115,8 +109,17 @@ extension BioSequence {
         return residues.count
     }
     
-    public func subSequence<T: BioSequence>(from: Int, to: Int) -> T {
-        var sub = T.init(residues: Array(residues[from ..< to]))
+    public func subSequence<T: BioSequence>(with range: NSRange) -> T? {
+        let from = range.location
+        let to = range.location + range.length - 1
+        
+        return subSequence(from: from, to: to)
+    }
+    
+    public func subSequence<T: BioSequence>(from: Int, to: Int) -> T? {
+        guard let res = residueSequence(from: from, to: to) else { return nil}
+        
+        var sub = T.init(residues: Array(res))
         
         sub.termini = self.termini
         
@@ -131,6 +134,19 @@ extension BioSequence {
         return sub
     }
 
+    public func residueSequence(with range: NSRange) -> [Residue]? {
+        let from = range.location
+        let to = range.location + range.length - 1
+
+        return residueSequence(from: from, to: to)
+    }
+    
+    public func residueSequence(from: Int, to: Int) -> [Residue]? {
+        guard from < numberOfResidues(), to >= from else { return nil }
+
+        return Array(residues[from..<to])
+    }
+    
     public mutating func setTermini(first: Residue, last: Residue) {
         termini = (first: first, last: last)
     }

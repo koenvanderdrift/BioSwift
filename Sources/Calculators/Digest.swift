@@ -20,18 +20,18 @@ extension BioSequence {
         for site in sites {
             end = residues.index(residues.startIndex, offsetBy: site)
             
-            var new: T = subSequence(from: start, to: end)
+            if var new: T = subSequence(from: start, to: end) {
+                new.rangeInParent = start..<end - 1
+                subSequences.append(new)
             
-            new.rangeInParent = start ..< end - 1
-            subSequences.append(new)
-            
-            start = end
+                start = end
+            }
         }
         
-        var final: T = subSequence(from: start, to: residues.endIndex)
-        final.rangeInParent = start ..< residues.endIndex - 1
-        
-        subSequences.append(final)
+        if var final: T = subSequence(from: start, to: residues.endIndex) {
+            final.rangeInParent = start ..< residues.endIndex - 1
+            subSequences.append(final)
+        }
         
         guard missedCleavages > 0 else {
             return subSequences
@@ -43,7 +43,7 @@ extension BioSequence {
             for (index, _) in subSequences.enumerated() {
                 let newIndex = index + mc
                 if subSequences.indices.contains(newIndex) {
-                    let res = subSequences[index ... newIndex]
+                    let res = subSequences[index...newIndex]
                         .reduce([]) { $0 + $1.residues }
                     var new = T.init(residues: res)
                     

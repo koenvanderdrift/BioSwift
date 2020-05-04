@@ -117,7 +117,7 @@ public struct MassSearch <T:BioSequence & Chargeable> {
         
         while start < count {
             for index in start+1...count {
-                var sub: T = sequence.subSequence(from: start, to: index)
+                guard var sub: T = sequence.subSequence(from: start, to: index) else { break }
                 sub.adducts = sequence.adducts
                 
                 let chargedMass = sub.chargedMass()
