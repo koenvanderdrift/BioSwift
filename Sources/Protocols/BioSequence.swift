@@ -18,7 +18,6 @@ public protocol BioSequence: Structure, Equatable {
     var symbolLibrary: [Symbol]  { get set }
     var residues: [Residue] { get set }
     var termini: (first: Residue, last: Residue)?  { get set }
-    var zeroResidue: Residue { get }
     
     var modifications: ModificationSet { get set }
 
@@ -124,11 +123,11 @@ extension BioSequence {
         sub.termini = self.termini
         
         if from == 0 {
-            sub.termini?.last = zeroResidue
+            sub.termini?.first.modification = self.termini?.first.modification
         }
         
         if to == numberOfResidues() {
-            sub.termini?.first = zeroResidue
+            sub.termini?.last.modification = self.termini?.last.modification
         }
         
         return sub

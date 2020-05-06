@@ -2,8 +2,6 @@ import Foundation
 
 // public var aminoAcidLibrary: [AminoAcid] = loadJSONFromBundle(fileName: "aminoacids")
 
-public let zeroAminoAcid = AminoAcid(name: "", oneLetterCode: "", elements: [:])
-
 public let nTermString = "N-term"
 public let cTermString = "C-term"
 

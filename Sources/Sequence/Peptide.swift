@@ -12,7 +12,6 @@ public struct Peptide: RangedSequence {
     public var adducts: [Adduct] = []
     
     public var rangeInParent: Range<Int> = zeroSequenceRange
-    public var zeroResidue: Residue = zeroAminoAcid
 }
 
 extension Peptide {
