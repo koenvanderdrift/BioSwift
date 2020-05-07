@@ -45,7 +45,7 @@ extension Fragment {
     }
 }
 
-extension Fragment: Chargeable {
+extension Fragment: Mass {
     public var masses: MassContainer {
         return calculateMasses()
     }
@@ -63,3 +63,5 @@ extension Fragment: Chargeable {
         return result
     }
 }
+
+extension Fragment: Chargeable {}

@@ -65,7 +65,7 @@ extension Protein {
     }
 }
 
-extension Protein: Chargeable {
+extension Protein: Mass {
     public var masses: MassContainer {
         return calculateMasses()
     }
@@ -74,3 +74,5 @@ extension Protein: Chargeable {
         return mass(of: residues) + terminalMasses()
     }
 }
+
+extension Protein: Chargeable {}

@@ -15,10 +15,10 @@ public protocol RangedSequence: BioSequence {
 }
 
 public protocol BioSequence: Structure, Equatable {
-    var symbolLibrary: [Symbol]  { get set }
+    var symbolLibrary: [Symbol]  { get }
     var residues: [Residue] { get set }
-    var termini: (first: Residue, last: Residue)?  { get set }
     
+    var termini: (first: Residue, last: Residue)?  { get set }
     var modifications: ModificationSet { get set }
 
     init(residues: [Residue])

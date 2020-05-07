@@ -115,7 +115,7 @@ extension Peptide {
     
 }
 
-extension Peptide: Chargeable {
+extension Peptide: Mass {
     public var masses: MassContainer {
         return calculateMasses()
     }
@@ -124,3 +124,5 @@ extension Peptide: Chargeable {
         return mass(of: residues) + terminalMasses()
     }
 }
+
+extension Peptide: Chargeable {}
