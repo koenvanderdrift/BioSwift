@@ -54,6 +54,8 @@ public class UnimodParser: NSObject {
     var isModification = false
     var isNeutralLoss = false
 
+    let rightArrow = "\u{2192}"
+    
     public init(with url: URL) {
         self.url = url
 
@@ -82,7 +84,7 @@ extension UnimodParser: XMLParserDelegate {
 
             if let title = attributeDict[titleAttributeKey],
                 skipTitleStrings.contains(where: title.contains) == false {
-                modificationName = title
+                modificationName = title.replacingOccurrences(of: "->", with: " " + rightArrow + " ")
             }
         } else if elementName == specificity {
             if let site = attributeDict[siteAttributeKey],
