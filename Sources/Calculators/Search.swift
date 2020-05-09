@@ -99,7 +99,7 @@ extension BioSequence {
         
         for range in sequenceString.nsRanges(of: searchString) {
             if var sub: T = subSequence(with: range) {
-                sub.rangeInParent = range.location..<range.location + range.length - 1
+                sub.rangeInParent = range.lowerBound..<range.upperBound
                 result.append(sub)
             }
         }
@@ -112,7 +112,7 @@ extension BioSequence where Self: Chargeable {
     public func searchMass<T: RangedSequence & Chargeable>(params: MassSearchParameters) -> [T] {
         var result = [T]()
 
-        let range = params.massRange()
+        let massRange = params.massRange()
         let count = self.numberOfResidues()
         
         var start = 0
@@ -129,21 +129,21 @@ extension BioSequence where Self: Chargeable {
                 
                 let chargedMass = sub.chargedMass()
                 
-                if chargedMass.averageMass > 1.05 * range.upperBound {
+                if chargedMass.averageMass > 1.05 * massRange.upperBound {
                     break
                 }
                 
                 switch params.massType {
                 case .monoisotopic:
-                    if range.contains(chargedMass.monoisotopicMass) {
+                    if massRange.contains(chargedMass.monoisotopicMass) {
                         result.append(sub)
                     }
                 case .average:
-                    if range.contains(chargedMass.averageMass) {
+                    if massRange.contains(chargedMass.averageMass) {
                         result.append(sub)
                     }
                 case .nominal:
-                    if range.contains(Dalton(chargedMass.nominalMass)) {
+                    if massRange.contains(Dalton(chargedMass.nominalMass)) {
                         result.append(sub)
                     }
                 }
