@@ -93,8 +93,6 @@ public struct MassSearchParameters {
     }
 }
 
-public typealias SearchResult = [Peptide] // todo make this work with RangedSequence
-
 extension BioSequence {
     public func searchSequence<T: RangedSequence>(searchString: String) -> [T] {
         var result = [T]()
