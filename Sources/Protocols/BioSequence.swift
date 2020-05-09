@@ -110,52 +110,46 @@ extension BioSequence {
     }
     
     public func subSequence<T: BioSequence>(with range: SequenceRange) -> T? {
-        let from = range.lowerBound
-        let to = range.upperBound
+        guard let residues = residueSequence(with: range) else { return nil }
         
-        return subSequence(from: from, to: to)
-    }
-
-    public func subSequence<T: BioSequence>(with range: NSRange) -> T? {
-        let from = range.location
-        let to = range.location + range.length - 1
-        
-        return subSequence(from: from, to: to)
-    }
-    
-    public func subSequence<T: BioSequence>(from: Int, to: Int) -> T? {
-        guard let res = residueSequence(from: from, to: to) else { return nil}
-        
-        var sub = T.init(residues: Array(res))
-        
+        var sub = T.init(residues: residues)
         sub.termini = self.termini
         
-        if from == 0 {
+        if range.lowerBound == 0 {
             sub.termini?.first.modification = self.termini?.first.modification
         }
         
-        if to == numberOfResidues() {
+        if range.upperBound == numberOfResidues() {
             sub.termini?.last.modification = self.termini?.last.modification
         }
         
         return sub
     }
 
+    public func subSequence<T: BioSequence>(with range: NSRange) -> T? {
+        return subSequence(with: range.location..<range.location + range.length)
+    }
+    
+    public func subSequence<T: BioSequence>(from: Int, to: Int) -> T? {
+        guard from < numberOfResidues(), to >= from else { return nil }
+        
+        return subSequence(with: from..<to)
+    }
+
     public func residueSequence(with range: SequenceRange) -> [Residue]? {
+        guard range.lowerBound < range.upperBound else { return nil }
+        
         return Array(residues[range])
     }
 
     public func residueSequence(with range: NSRange) -> [Residue]? {
-        let from = range.location
-        let to = range.location + range.length - 1
-
-        return residueSequence(from: from, to: to)
+        return residueSequence(with: range.location..<range.location + range.length)
     }
     
     public func residueSequence(from: Int, to: Int) -> [Residue]? {
         guard from < numberOfResidues(), to >= from else { return nil }
 
-        return Array(residues[from..<to])
+        return residueSequence(with: from..<to)
     }
     
     public mutating func setTermini(first: Residue, last: Residue) {

@@ -253,8 +253,8 @@
 			isa = PBXGroup;
 			children = (
 				5D9605B723E0F70E00F6A93E /* Array.swift */,
-				5D9605B923E0F70E00F6A93E /* String.swift */,
 				5D9605BA23E0F70E00F6A93E /* Double.swift */,
+				5D9605B923E0F70E00F6A93E /* String.swift */,
 			);
 			name = Extensions;
 			path = Sources/Extensions;
