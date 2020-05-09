@@ -105,9 +105,9 @@
 		5D96060B23E0F70E00F6A93E /* Enzyme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605CA23E0F70E00F6A93E /* Enzyme.swift */; };
 		5D96060C23E0F70E00F6A93E /* Enzyme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605CA23E0F70E00F6A93E /* Enzyme.swift */; };
 		5D96060D23E0F70E00F6A93E /* Enzyme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605CA23E0F70E00F6A93E /* Enzyme.swift */; };
-		5D96060E23E0F70E00F6A93E /* MassSearch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605CB23E0F70E00F6A93E /* MassSearch.swift */; };
-		5D96060F23E0F70E00F6A93E /* MassSearch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605CB23E0F70E00F6A93E /* MassSearch.swift */; };
-		5D96061023E0F70E00F6A93E /* MassSearch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605CB23E0F70E00F6A93E /* MassSearch.swift */; };
+		5D96060E23E0F70E00F6A93E /* Search.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605CB23E0F70E00F6A93E /* Search.swift */; };
+		5D96060F23E0F70E00F6A93E /* Search.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605CB23E0F70E00F6A93E /* Search.swift */; };
+		5D96061023E0F70E00F6A93E /* Search.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605CB23E0F70E00F6A93E /* Search.swift */; };
 		5DDAB6E72427CF5900BC0480 /* Molecule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DDAB6E62427CF5900BC0480 /* Molecule.swift */; };
 		5DDAB6E82427CF5900BC0480 /* Molecule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DDAB6E62427CF5900BC0480 /* Molecule.swift */; };
 		5DDAB6E92427CF5900BC0480 /* Molecule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DDAB6E62427CF5900BC0480 /* Molecule.swift */; };
@@ -169,7 +169,7 @@
 		5D9605C823E0F70E00F6A93E /* Hydropathy.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Hydropathy.swift; sourceTree = "<group>"; };
 		5D9605C923E0F70E00F6A93E /* Digest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Digest.swift; sourceTree = "<group>"; };
 		5D9605CA23E0F70E00F6A93E /* Enzyme.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Enzyme.swift; sourceTree = "<group>"; };
-		5D9605CB23E0F70E00F6A93E /* MassSearch.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MassSearch.swift; sourceTree = "<group>"; wrapsLines = 0; };
+		5D9605CB23E0F70E00F6A93E /* Search.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Search.swift; sourceTree = "<group>"; wrapsLines = 0; };
 		5DDAB6E62427CF5900BC0480 /* Molecule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Molecule.swift; sourceTree = "<group>"; };
 		5DE85C4A23E713DA00645496 /* elements.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = elements.txt; sourceTree = "<group>"; };
 		"BioSwift::BioSwift::Product" /* BioSwift.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = BioSwift.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -291,7 +291,7 @@
 				5D9605C823E0F70E00F6A93E /* Hydropathy.swift */,
 				5D9605C923E0F70E00F6A93E /* Digest.swift */,
 				5D9605CA23E0F70E00F6A93E /* Enzyme.swift */,
-				5D9605CB23E0F70E00F6A93E /* MassSearch.swift */,
+				5D9605CB23E0F70E00F6A93E /* Search.swift */,
 			);
 			name = Calculators;
 			path = Sources/Calculators;
@@ -470,7 +470,7 @@
 			files = (
 				5D9605A923E0F6FC00F6A93E /* FunctionalGroup.swift in Sources */,
 				5D9605CC23E0F70E00F6A93E /* JSON.swift in Sources */,
-				5D96060E23E0F70E00F6A93E /* MassSearch.swift in Sources */,
+				5D96060E23E0F70E00F6A93E /* Search.swift in Sources */,
 				5D9605D523E0F70E00F6A93E /* Bundle+Decoding.swift in Sources */,
 				5D9605A023E0F6FC00F6A93E /* ChemicalElement.swift in Sources */,
 				5D9605E123E0F70E00F6A93E /* String.swift in Sources */,
@@ -506,7 +506,7 @@
 			files = (
 				5D9605AA23E0F6FC00F6A93E /* FunctionalGroup.swift in Sources */,
 				5D9605CD23E0F70E00F6A93E /* JSON.swift in Sources */,
-				5D96060F23E0F70E00F6A93E /* MassSearch.swift in Sources */,
+				5D96060F23E0F70E00F6A93E /* Search.swift in Sources */,
 				5D9605D623E0F70E00F6A93E /* Bundle+Decoding.swift in Sources */,
 				5D9605A123E0F6FC00F6A93E /* ChemicalElement.swift in Sources */,
 				5D9605E223E0F70E00F6A93E /* String.swift in Sources */,
@@ -543,7 +543,7 @@
 				5D9605EF23E0F70E00F6A93E /* Structure.swift in Sources */,
 				5D9605AB23E0F6FC00F6A93E /* FunctionalGroup.swift in Sources */,
 				OBJ_40 /* BioSwiftTests.swift in Sources */,
-				5D96061023E0F70E00F6A93E /* MassSearch.swift in Sources */,
+				5D96061023E0F70E00F6A93E /* Search.swift in Sources */,
 				5D9605E623E0F70E00F6A93E /* Double.swift in Sources */,
 				5D9605DA23E0F70E00F6A93E /* Webservice.swift in Sources */,
 				5DDAB6E92427CF5900BC0480 /* Molecule.swift in Sources */,

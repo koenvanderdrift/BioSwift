@@ -59,6 +59,16 @@ extension String {
         return ranges
     }
 
+    public func nsRanges(of substring: String, options: CompareOptions = [], locale: Locale? = nil) -> [NSRange] {
+        var nsRanges: [NSRange] = []
+        
+        for range in ranges(of: substring, options: options, locale: locale) {
+            nsRanges.append(NSRange(range, in: self))
+        }
+        
+        return nsRanges
+    }
+
     func containsCharactersFrom(substring: String) -> Bool {
         let set = CharacterSet(charactersIn: substring)
 

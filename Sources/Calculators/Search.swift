@@ -1,5 +1,5 @@
 //
-//  MassSearch.swift
+//  Search.swift
 //  BioSwift
 //
 //  Created by Koen van der Drift on 4/28/18.
@@ -14,14 +14,14 @@ public enum SearchType: Int {
     case exhaustive
 }
 
-public enum ToleranceType: String {
+public enum MassToleranceType: String {
     case ppm
     case dalton = "Da"
     case percent = "%"
     case mmu
 }
 
-extension ToleranceType {
+extension MassToleranceType {
     public var minValue: Double {
         return 0.0
     }
@@ -40,24 +40,24 @@ extension ToleranceType {
     }
 }
 
-public struct Tolerance {
-    public var type: ToleranceType
+public struct MassTolerance {
+    public var type: MassToleranceType
     public var value: Double
 
-    public init(type: ToleranceType, value: Double) {
+    public init(type: MassToleranceType, value: Double) {
         self.type = type
         self.value = value
     }
 }
 
-public struct SearchParameters {
+public struct MassSearchParameters {
     public var searchValue: Double
-    public var tolerance: Tolerance
+    public var tolerance: MassTolerance
     public let searchType: SearchType
     public var adducts: [Adduct]
     public var massType: MassType
 
-    public init(searchValue: Double, tolerance: Tolerance, searchType: SearchType, adducts: [Adduct], massType: MassType) {
+    public init(searchValue: Double, tolerance: MassTolerance, searchType: SearchType, adducts: [Adduct], massType: MassType) {
         self.searchValue = searchValue
         self.tolerance = tolerance
         self.searchType = searchType
@@ -93,21 +93,29 @@ public struct SearchParameters {
     }
 }
 
-public typealias SearchResult = Set<String>
+public typealias SearchResult = [Peptide] // todo make this work with RangedSequence
 
-public struct MassSearch <T:BioSequence & Chargeable> {
-    public let sequence: T
-    public let params: SearchParameters
+extension BioSequence {
+    public func searchSequence<T: RangedSequence>(searchString: String) -> [T] {
+        var result = [T]()
+        
+        for range in sequenceString.nsRanges(of: searchString) {
+            if var sub: T = subSequence(with: range) {
+                sub.rangeInParent = range.location..<range.location + range.length - 1
+                result.append(sub)
+            }
+        }
 
-    public init(sequence: T, params: SearchParameters) {
-        self.sequence = sequence
-        self.params = params
+        return result
     }
+}
 
-    public func searchMass() -> SearchResult {
-        var result = SearchResult()
+extension BioSequence where Self: Chargeable {
+    public func searchMass<T: RangedSequence & Chargeable>(params: MassSearchParameters) -> [T] {
+        var result = [T]()
+
         let range = params.massRange()
-        let count = sequence.numberOfResidues()
+        let count = self.numberOfResidues()
         
         var start = 0
         
@@ -117,11 +125,12 @@ public struct MassSearch <T:BioSequence & Chargeable> {
         
         while start < count {
             for index in start+1...count {
-                guard var sub: T = sequence.subSequence(from: start, to: index) else { break }
-                sub.adducts = sequence.adducts
+                guard var sub: T = subSequence(from: start, to: index) else { break }
+                sub.adducts = adducts
+                sub.rangeInParent = start..<index - 1
                 
                 let chargedMass = sub.chargedMass()
-    
+                
                 if chargedMass.averageMass > 1.05 * range.upperBound {
                     break
                 }
@@ -129,15 +138,15 @@ public struct MassSearch <T:BioSequence & Chargeable> {
                 switch params.massType {
                 case .monoisotopic:
                     if range.contains(chargedMass.monoisotopicMass) {
-                        result.insert(sub.sequenceString)
+                        result.append(sub)
                     }
                 case .average:
                     if range.contains(chargedMass.averageMass) {
-                        result.insert(sub.sequenceString)
+                        result.append(sub)
                     }
                 case .nominal:
                     if range.contains(Dalton(chargedMass.nominalMass)) {
-                        result.insert(sub.sequenceString)
+                        result.append(sub)
                     }
                 }
             }
