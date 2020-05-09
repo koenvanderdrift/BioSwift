@@ -82,14 +82,26 @@ extension String {
         return substring(with: nsrange)
     }
 
+    public func substring(with sequenceRange: SequenceRange) -> Substring? {
+        guard let nsrange = range(from: sequenceRange),
+        let r = range(from: nsrange)
+            else { return nil }
+
+        return self[r]
+    }
+
     public func substring(with nsrange: NSRange) -> Substring? {
         guard let range = range(from: nsrange) else { return nil }
 
         return self[range]
     }
 
-    public func range(from nsRange: NSRange) -> Range<Index>? {
-        return Range(nsRange, in: self)
+    public func range(from sequenceRange: SequenceRange) -> NSRange? {
+        return NSMakeRange(sequenceRange.lowerBound, sequenceRange.upperBound - sequenceRange.lowerBound + 1)
+    }
+
+    public func range(from nsrange: NSRange) -> Range<Index>? {
+        return Range(nsrange, in: self)
     }
 
 //    func indices(of string: String, options: CompareOptions = .literal) -> [Index] {
