@@ -8,10 +8,11 @@
 
 import Foundation
 
-public let zeroSequenceRange: Range<Int> = 0..<0
+public typealias SequenceRange = Range<Int>
+public let zeroSequenceRange: SequenceRange = 0..<0
 
 public protocol RangedSequence: BioSequence {
-    var rangeInParent: Range<Int> { get set }
+    var rangeInParent: SequenceRange { get set }
 }
 
 public protocol BioSequence: Structure, Equatable {
@@ -108,7 +109,7 @@ extension BioSequence {
         return residues.count
     }
     
-    public func subSequence<T: BioSequence>(with range: Range<Int>) -> T? {
+    public func subSequence<T: BioSequence>(with range: SequenceRange) -> T? {
         let from = range.lowerBound
         let to = range.upperBound
         
@@ -140,7 +141,7 @@ extension BioSequence {
         return sub
     }
 
-    public func residueSequence(with range: Range<Int>) -> [Residue]? {
+    public func residueSequence(with range: SequenceRange) -> [Residue]? {
         return Array(residues[range])
     }
 

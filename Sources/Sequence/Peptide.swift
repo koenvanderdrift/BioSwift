@@ -11,7 +11,7 @@ public struct Peptide: RangedSequence {
     public var modifications: ModificationSet = ModificationSet()
     public var adducts: [Adduct] = []
     
-    public var rangeInParent: Range<Int> = zeroSequenceRange
+    public var rangeInParent: SequenceRange = zeroSequenceRange
 }
 
 extension Peptide {

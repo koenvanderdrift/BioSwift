@@ -24,7 +24,7 @@ public struct Fragment: RangedSequence {
     public var modifications: ModificationSet = ModificationSet()
     public var adducts: [Adduct] = []
 
-    public var rangeInParent: Range<Int> = zeroSequenceRange
+    public var rangeInParent: SequenceRange = zeroSequenceRange
 
     public var fragmentType: FragmentType = .undefined
 }
