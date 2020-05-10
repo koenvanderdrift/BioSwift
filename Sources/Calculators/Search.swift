@@ -97,9 +97,9 @@ extension BioSequence {
     public func searchSequence<T: RangedSequence>(searchString: String) -> [T] {
         var result = [T]()
         
-        for range in sequenceString.nsRanges(of: searchString) {
-            if var sub: T = subSequence(with: range) {
-                sub.rangeInParent = range.lowerBound..<range.upperBound
+        for nsrange in sequenceString.nsRanges(of: searchString) {
+            if var sub: T = subSequence(with: nsrange) {
+                sub.rangeInParent = nsrange.sequenceRange()
                 result.append(sub)
             }
         }
@@ -122,10 +122,10 @@ extension BioSequence where Self: Chargeable {
         // Cterm: 979.0476
         
         while start < count {
-            for index in start+1...count {
+            for index in start...count {
                 guard var sub: T = subSequence(from: start, to: index) else { break }
                 sub.adducts = adducts
-                sub.rangeInParent = start..<index - 1
+                sub.rangeInParent = start...index
                 
                 let chargedMass = sub.chargedMass()
                 

@@ -21,15 +21,15 @@ extension BioSequence {
             end = residues.index(residues.startIndex, offsetBy: site)
             
             if var new: T = subSequence(from: start, to: end) {
-                new.rangeInParent = start..<end - 1
+                new.rangeInParent = start...end - 1
                 subSequences.append(new)
             
                 start = end
             }
         }
         
-        if var final: T = subSequence(from: start, to: residues.endIndex) {
-            final.rangeInParent = start ..< residues.endIndex - 1
+        if var final: T = subSequence(from: start, to: residues.endIndex - 1) {
+            final.rangeInParent = start...residues.endIndex - 1
             subSequences.append(final)
         }
         
@@ -47,7 +47,7 @@ extension BioSequence {
                         .reduce([]) { $0 + $1.residues }
                     var new = T.init(residues: res)
                     
-                    new.rangeInParent = subSequences[index].rangeInParent.lowerBound ..< subSequences[newIndex].rangeInParent.upperBound
+                    new.rangeInParent = subSequences[index].rangeInParent.lowerBound ... subSequences[newIndex].rangeInParent.upperBound
                     
                     if index == 0 {
                         new.termini?.first.modification = termini?.first.modification

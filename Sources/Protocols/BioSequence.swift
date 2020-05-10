@@ -8,9 +8,6 @@
 
 import Foundation
 
-public typealias SequenceRange = Range<Int>
-public let zeroSequenceRange: SequenceRange = 0..<0
-
 public protocol RangedSequence: BioSequence {
     var rangeInParent: SequenceRange { get set }
 }
@@ -127,29 +124,29 @@ extension BioSequence {
     }
 
     public func subSequence<T: BioSequence>(with range: NSRange) -> T? {
-        return subSequence(with: range.location..<range.location + range.length)
+        return subSequence(with: range.location...range.location + range.length)
     }
     
     public func subSequence<T: BioSequence>(from: Int, to: Int) -> T? {
         guard from < numberOfResidues(), to >= from else { return nil }
         
-        return subSequence(with: from..<to)
+        return subSequence(with: from...to)
     }
 
     public func residueSequence(with range: SequenceRange) -> [Residue]? {
-        guard range.lowerBound < range.upperBound else { return nil }
+        guard range.lowerBound <= range.upperBound else { return nil }
         
         return Array(residues[range])
     }
 
     public func residueSequence(with range: NSRange) -> [Residue]? {
-        return residueSequence(with: range.location..<range.location + range.length)
+        return residueSequence(with: range.location...range.location + range.length)
     }
     
     public func residueSequence(from: Int, to: Int) -> [Residue]? {
         guard from < numberOfResidues(), to >= from else { return nil }
 
-        return residueSequence(with: from..<to)
+        return residueSequence(with: from...to)
     }
     
     public mutating func setTermini(first: Residue, last: Residue) {

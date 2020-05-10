@@ -25,6 +25,7 @@
 		5D09C374241D1BF0006F0D5C /* UnimodParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D09C372241D1BF0006F0D5C /* UnimodParser.swift */; };
 		5D09C375241D1BF0006F0D5C /* UnimodParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D09C372241D1BF0006F0D5C /* UnimodParser.swift */; };
 		5D09C377241D1C1D006F0D5C /* unimod.xml in Resources */ = {isa = PBXBuildFile; fileRef = 5D09C376241D1C1D006F0D5C /* unimod.xml */; };
+		5D23BBAD246874BA003A3F15 /* SequenceRange.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D23BBAC246874BA003A3F15 /* SequenceRange.swift */; };
 		5D39778C23E0F3A100A6631C /* aminoacids.json in Resources */ = {isa = PBXBuildFile; fileRef = 5D3976F723E0F18300A6631C /* aminoacids.json */; };
 		5D39778D23E0F3AB00A6631C /* hydropathy.json in Resources */ = {isa = PBXBuildFile; fileRef = 5D3976F823E0F18300A6631C /* hydropathy.json */; };
 		5D39778F23E0F3B000A6631C /* elements.json in Resources */ = {isa = PBXBuildFile; fileRef = 5D3976FB23E0F18300A6631C /* elements.json */; };
@@ -139,6 +140,7 @@
 		5D09C371241D1BEF006F0D5C /* BioSwiftPackageTests-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "BioSwiftPackageTests-Bridging-Header.h"; sourceTree = "<group>"; };
 		5D09C372241D1BF0006F0D5C /* UnimodParser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UnimodParser.swift; sourceTree = "<group>"; };
 		5D09C376241D1C1D006F0D5C /* unimod.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = unimod.xml; sourceTree = "<group>"; };
+		5D23BBAC246874BA003A3F15 /* SequenceRange.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SequenceRange.swift; sourceTree = "<group>"; };
 		5D3976F723E0F18300A6631C /* aminoacids.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = aminoacids.json; sourceTree = "<group>"; };
 		5D3976F823E0F18300A6631C /* hydropathy.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = hydropathy.json; sourceTree = "<group>"; };
 		5D3976FB23E0F18300A6631C /* elements.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = elements.json; sourceTree = "<group>"; };
@@ -280,6 +282,7 @@
 				5D9605C323E0F70E00F6A93E /* Fragment.swift */,
 				5D9605C423E0F70E00F6A93E /* Peptide.swift */,
 				5D9605C623E0F70E00F6A93E /* Protein.swift */,
+				5D23BBAC246874BA003A3F15 /* SequenceRange.swift */,
 			);
 			name = Sequence;
 			path = Sources/Sequence;
@@ -486,6 +489,7 @@
 				5D9605AC23E0F6FC00F6A93E /* Modification.swift in Sources */,
 				5D9605E723E0F70E00F6A93E /* Residue.swift in Sources */,
 				5D9605CF23E0F70E00F6A93E /* Fasta.swift in Sources */,
+				5D23BBAD246874BA003A3F15 /* SequenceRange.swift in Sources */,
 				5D9605D223E0F70E00F6A93E /* Utilities.swift in Sources */,
 				5D9605FC23E0F70E00F6A93E /* Peptide.swift in Sources */,
 				5D9605DB23E0F70E00F6A93E /* Array.swift in Sources */,
