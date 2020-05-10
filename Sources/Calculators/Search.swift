@@ -122,7 +122,7 @@ extension BioSequence where Self: Chargeable {
         // Cterm: 979.0476
         
         while start < count {
-            for index in start...count {
+            for index in start..<count {
                 guard var sub: T = subSequence(from: start, to: index) else { break }
                 sub.adducts = adducts
                 sub.rangeInParent = start...index

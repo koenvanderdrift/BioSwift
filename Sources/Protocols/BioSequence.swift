@@ -124,7 +124,7 @@ extension BioSequence {
     }
 
     public func subSequence<T: BioSequence>(with range: NSRange) -> T? {
-        return subSequence(with: range.location...range.location + range.length)
+        return subSequence(with: range.sequenceRange())
     }
     
     public func subSequence<T: BioSequence>(from: Int, to: Int) -> T? {
@@ -134,13 +134,13 @@ extension BioSequence {
     }
 
     public func residueSequence(with range: SequenceRange) -> [Residue]? {
-        guard range.lowerBound <= range.upperBound else { return nil }
+        guard range != zeroSequenceRange else { return nil }
         
         return Array(residues[range])
     }
 
     public func residueSequence(with range: NSRange) -> [Residue]? {
-        return residueSequence(with: range.location...range.location + range.length)
+        return residueSequence(with: range.sequenceRange())
     }
     
     public func residueSequence(from: Int, to: Int) -> [Residue]? {
