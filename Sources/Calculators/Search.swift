@@ -97,9 +97,9 @@ extension BioSequence {
     public func searchSequence<T: RangedSequence>(searchString: String) -> [T] {
         var result = [T]()
         
-        for nsrange in sequenceString.nsRanges(of: searchString) {
-            if var sub: T = subSequence(with: nsrange) {
-                sub.rangeInParent = nsrange.sequenceRange()
+        for range in sequenceString.sequenceRanges(of: searchString) {
+            if var sub: T = subSequence(with: range) {
+                sub.rangeInParent = range
                 result.append(sub)
             }
         }

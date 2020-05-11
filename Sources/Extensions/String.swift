@@ -41,7 +41,7 @@ extension String {
 
         do {
             let regex = try NSRegularExpression(pattern: regex, options: [])
-            let results = regex.matches(in: self, range: NSRange(location: 0, length: string.length))
+            let results = regex.matches(in: self, range: NSMakeRange(0, string.length))
 
             return results
 
@@ -69,6 +69,16 @@ extension String {
         return nsRanges
     }
 
+    public func sequenceRanges(of substring: String, options: CompareOptions = [], locale: Locale? = nil) -> [SequenceRange] {
+        var sequenceRanges: [SequenceRange] = []
+        
+        for range in nsRanges(of: substring, options: options, locale: locale) {
+            sequenceRanges.append(range.sequenceRange())
+        }
+        
+        return sequenceRanges
+    }
+
     func containsCharactersFrom(substring: String) -> Bool {
         let set = CharacterSet(charactersIn: substring)
 
@@ -77,59 +87,22 @@ extension String {
 
     func substring(from: Int, to: Int) -> Substring? {
         guard from <= to else { return nil }
-        let nsrange = NSRange(location: from, length: to - from)
+        let nsrange = NSMakeRange(from, to - from)
 
         return substring(with: nsrange)
     }
 
     public func substring(with sequenceRange: SequenceRange) -> Substring? {
-        guard let nsrange = range(from: sequenceRange),
-        let r = range(from: nsrange)
-            else { return nil }
-
-        return self[r]
+        return self[sequenceRange]
     }
 
     public func substring(with nsrange: NSRange) -> Substring? {
-        guard let range = range(from: nsrange) else { return nil }
-
-        return self[range]
+        return self[nsrange.sequenceRange()]
     }
 
-    public func range(from sequenceRange: SequenceRange) -> NSRange? {
-        return NSMakeRange(sequenceRange.lowerBound, sequenceRange.upperBound - sequenceRange.lowerBound + 1)
+    public func nsrange(from sequenceRange: SequenceRange) -> NSRange? {
+        return NSRange.init(from: sequenceRange)
     }
-
-    public func range(from nsrange: NSRange) -> Range<Index>? {
-        return Range(nsrange, in: self)
-    }
-
-//    func indices(of string: String, options: CompareOptions = .literal) -> [Index] {
-//        var result = [Index]()
-//        var start = self.startIndex
-//
-//        while let range = range(of: string, options: options, range: start ..< endIndex) {
-//            result.append(range.lowerBound)
-//
-//            start = range.upperBound
-//        }
-//
-//        return result
-//    }
-
-//    func locations(of string: String) -> [Int] {
-//        var result = [Int]()
-//        var start = self.startIndex
-//
-//        while start < self.endIndex, let range = self.range(of: string, range: start..<self.endIndex), !range.isEmpty {
-//            let location = distance(from: self.startIndex, to: range.lowerBound)
-//            result.append(location)
-//
-//            start = range.upperBound
-//        }
-//
-//        return result
-//    }
 }
 
 extension StringProtocol {
@@ -246,4 +219,31 @@ extension StringProtocol {
 //        let _indices = indices(of: searchString)
 //        let count = searchString.count
 //        return _indices.map({ index(startIndex, offsetBy: $0)..<index(startIndex, offsetBy: $0+count) })
+//    }
+
+//    func indices(of string: String, options: CompareOptions = .literal) -> [Index] {
+//        var result = [Index]()
+//        var start = self.startIndex
+//
+//        while let range = range(of: string, options: options, range: start ..< endIndex) {
+//            result.append(range.lowerBound)
+//
+//            start = range.upperBound
+//        }
+//
+//        return result
+//    }
+
+//    func locations(of string: String) -> [Int] {
+//        var result = [Int]()
+//        var start = self.startIndex
+//
+//        while start < self.endIndex, let range = self.range(of: string, range: start..<self.endIndex), !range.isEmpty {
+//            let location = distance(from: self.startIndex, to: range.lowerBound)
+//            result.append(location)
+//
+//            start = range.upperBound
+//        }
+//
+//        return result
 //    }
