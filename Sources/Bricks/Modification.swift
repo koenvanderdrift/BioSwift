@@ -3,8 +3,8 @@ import Foundation
 public typealias ModificationSet = Set<LocalizedModification>
 
 public indirect enum Reaction {
-    case add(FunctionalGroup)
-    case remove(FunctionalGroup)
+    case add(Group)
+    case remove(Group)
     case undefined
 }
 
@@ -45,13 +45,13 @@ public struct Modification {
 
         let negativeElements = elements.filter { $0.value < 0 }
         if negativeElements.count > 0 {
-            let group = FunctionalGroup(name: name, formula: negativeElements)
+            let group = Group(name: name, formula: negativeElements)
             reactions.append(Reaction.remove(group))
         }
 
         let postiveElements = elements.filter { $0.value > 0 }
         if postiveElements.count > 0 {
-            let group = FunctionalGroup(name: name, formula: postiveElements)
+            let group = Group(name: name, formula: postiveElements)
             reactions.append(Reaction.add(group))
         }
 

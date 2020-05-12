@@ -57,7 +57,7 @@ public struct Molecule: Structure, Codable {
 }
 
 extension Molecule: Hashable {
-    public static func == (lhs: FunctionalGroup, rhs: FunctionalGroup) -> Bool {
+    public static func == (lhs: Group, rhs: Group) -> Bool {
         return lhs.name == rhs.name
     }
 
