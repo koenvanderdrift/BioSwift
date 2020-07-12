@@ -1,6 +1,6 @@
 import Foundation
 
-public typealias ModificationSet = Set<LocalizedModification>
+public typealias ModificationSet = Set<Modification>
 
 public indirect enum Reaction {
     case add(Group)
@@ -33,14 +33,16 @@ public struct Modification {
     public let name: String
     public let reactions: [Reaction]
     public let sites: [String] // sites it can attach to
+    public let location: Int
 
-    public init(name: String, reactions: [Reaction], sites: [String] = []) {
+    public init(name: String, reactions: [Reaction], sites: [String] = [], location: Int = -1) {
         self.name = name
         self.reactions = reactions
         self.sites = sites
+        self.location = location
     }
 
-    public init(name: String, elements: [String: Int], sites: [String] = []) {
+    public init(name: String, elements: [String: Int], sites: [String] = [], location: Int = -1) {
         var reactions = [Reaction]()
 
         let negativeElements = elements.filter { $0.value < 0 }
@@ -55,7 +57,14 @@ public struct Modification {
             reactions.append(Reaction.add(group))
         }
 
-        self.init(name: name, reactions: reactions, sites: sites)
+        self.init(name: name, reactions: reactions, sites: sites, location: location)
+    }
+    
+    public init(modification: Modification, location: Int = -1) {
+        self.name = modification.name
+        self.sites = modification.sites
+        self.reactions = modification.reactions
+        self.location = location
     }
 }
 
@@ -80,25 +89,11 @@ extension Modification: Mass {
     }
 }
 
-public struct LocalizedModification: Comparable, Hashable {
-    public let modification: Modification?
-    public let location: Int
-
-    public init(modification: Modification?, location: Int) {
-        self.modification = modification
-        self.location = location
-    }
-
-    public static func < (lhs: LocalizedModification, rhs: LocalizedModification) -> Bool {
-        return lhs.location < rhs.location
-    }
-}
-
 public struct Link: Hashable {
     // https://codereview.stackexchange.com/questions/237295/comparing-two-structs-in-swift#
-    public var mods: Set<LocalizedModification>
+    public var mods: Set<Modification>
 
-    public init(_ mods: Set<LocalizedModification>) {
+    public init(_ mods: Set<Modification>) {
         self.mods = mods
     }
 }
