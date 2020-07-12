@@ -178,20 +178,18 @@ extension BioSequence {
     public func currentModifications() -> ModificationSet {
         var result: ModificationSet = []
         
-        for (index, residue) in residues.enumerated() {
+        for residue in residues {
             if let mod = residue.modification {
-                result.insert(LocalizedModification(modification: mod, location: index))
+                result.insert(mod)
             }
         }
         
         return result
     }
     
-    public mutating func addModification(_ mod: LocalizedModification) {
+    public mutating func addModification(_ mod: Modification) {
         residues.modifyElement(atIndex: mod.location) { residue in
-            if let modification = mod.modification {
-                residue.setModification(modification)
-            }
+            residue.setModification(mod)
         }
     }
     
@@ -201,7 +199,7 @@ extension BioSequence {
         }
     }
     
-    public func modification(at location: Int) -> LocalizedModification? {
+    public func modification(at location: Int) -> Modification? {
         return modifications.first(where: { $0.location == location })
     }
 }

@@ -31,11 +31,11 @@ extension Peptide {
         let fragment = Fragment(residues: residues, type: .precursor, adducts: self.adducts)
         
         if canLoseAmmonia() {
-            //            fragment.modify(with: [LocalizedModification(modification: lossOfWater, location: -1)])
+            //            fragment.modify(with: [Modification(modification: lossOfWater, location: -1)])
         }
         
         if canLoseWater() {
-            //            fragment.modify(with: [LocalizedModification(modification: lossOfAmmonia, location: -1)])
+            //            fragment.modify(with: [Modification(modification: lossOfAmmonia, location: -1)])
         }
         
         return [fragment]
