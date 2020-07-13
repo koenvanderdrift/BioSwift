@@ -1,6 +1,7 @@
 import Foundation
 
 public typealias ModificationSet = Set<Modification>
+public typealias LinkSet = Set<Link>
 
 public indirect enum Reaction {
     case add(Group)
@@ -123,5 +124,6 @@ extension Link {
         }
 
         return false
+//        return mods.contains { ( $0.location == location ) }
     }
 }
