@@ -70,12 +70,12 @@ public struct Modification {
 
 extension Modification: Hashable {
     public static func == (lhs: Modification, rhs: Modification) -> Bool {
-        return lhs.name == rhs.name
+        return lhs.name == rhs.name && lhs.location == rhs.location
     }
 
     public func hash(into hasher: inout Hasher) {
         hasher.combine(name)
-        hasher.combine(sites)
+        hasher.combine(location)
     }
 }
 
