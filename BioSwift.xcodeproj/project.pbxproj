@@ -113,7 +113,6 @@
 		5DDAB6E82427CF5900BC0480 /* Molecule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DDAB6E62427CF5900BC0480 /* Molecule.swift */; };
 		5DDAB6E92427CF5900BC0480 /* Molecule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DDAB6E62427CF5900BC0480 /* Molecule.swift */; };
 		OBJ_22 /* BioSwift.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_9 /* BioSwift.swift */; };
-		OBJ_29 /* Package.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_6 /* Package.swift */; };
 		OBJ_40 /* BioSwiftTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_12 /* BioSwiftTests.swift */; };
 		OBJ_41 /* XCTestManifests.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_13 /* XCTestManifests.swift */; };
 		OBJ_43 /* BioSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = "BioSwift::BioSwift::Product" /* BioSwift.framework */; };
@@ -137,7 +136,6 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		5D09C371241D1BEF006F0D5C /* BioSwiftPackageTests-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "BioSwiftPackageTests-Bridging-Header.h"; sourceTree = "<group>"; };
 		5D09C372241D1BF0006F0D5C /* UnimodParser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UnimodParser.swift; sourceTree = "<group>"; };
 		5D09C376241D1C1D006F0D5C /* unimod.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = unimod.xml; sourceTree = "<group>"; };
 		5D23BBAC246874BA003A3F15 /* SequenceRange.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SequenceRange.swift; sourceTree = "<group>"; };
@@ -178,7 +176,6 @@
 		"BioSwift::BioSwiftTests::Product" /* BioSwiftTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; path = BioSwiftTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		OBJ_12 /* BioSwiftTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BioSwiftTests.swift; sourceTree = "<group>"; };
 		OBJ_13 /* XCTestManifests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XCTestManifests.swift; sourceTree = "<group>"; };
-		OBJ_6 /* Package.swift */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; path = Package.swift; sourceTree = "<group>"; };
 		OBJ_9 /* BioSwift.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BioSwift.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -303,7 +300,6 @@
 		OBJ_11 /* BioSwiftTests */ = {
 			isa = PBXGroup;
 			children = (
-				5D09C371241D1BEF006F0D5C /* BioSwiftPackageTests-Bridging-Header.h */,
 				OBJ_12 /* BioSwiftTests.swift */,
 				OBJ_13 /* XCTestManifests.swift */,
 			);
@@ -323,7 +319,6 @@
 		OBJ_5 = {
 			isa = PBXGroup;
 			children = (
-				OBJ_6 /* Package.swift */,
 				5D3976F623E0F18300A6631C /* Resources */,
 				OBJ_7 /* Sources */,
 				OBJ_10 /* Tests */,
@@ -530,7 +525,6 @@
 				5D9605E523E0F70E00F6A93E /* Double.swift in Sources */,
 				5D9605FA23E0F70E00F6A93E /* Fragment.swift in Sources */,
 				5D96060923E0F70E00F6A93E /* Digest.swift in Sources */,
-				OBJ_29 /* Package.swift in Sources */,
 				5D9605F123E0F70E00F6A93E /* Chargeable.swift in Sources */,
 				5D96060023E0F70E00F6A93E /* BioSequence.swift in Sources */,
 				5D96060323E0F70E00F6A93E /* Protein.swift in Sources */,
@@ -652,6 +646,7 @@
 				DEVELOPMENT_TEAM = Z9FHH9AM7K;
 				LD = /usr/bin/true;
 				OTHER_SWIFT_FLAGS = "-swift-version 4.2 -I $(TOOLCHAIN_DIR)/usr/lib/swift/pm/4_2 -target x86_64-apple-macosx10.10 -sdk /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.14.sdk";
+				PRODUCT_BUNDLE_IDENTIFIER = com.koenvanderdrift.BioSwift;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 4.2;
 			};
@@ -665,6 +660,7 @@
 				DEVELOPMENT_TEAM = Z9FHH9AM7K;
 				LD = /usr/bin/true;
 				OTHER_SWIFT_FLAGS = "-swift-version 4.2 -I $(TOOLCHAIN_DIR)/usr/lib/swift/pm/4_2 -target x86_64-apple-macosx10.10 -sdk /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.14.sdk";
+				PRODUCT_BUNDLE_IDENTIFIER = com.koenvanderdrift.BioSwift;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 4.2;
 			};
