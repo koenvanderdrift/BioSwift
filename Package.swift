@@ -21,14 +21,10 @@ let package = Package(
         .target(
             name: "BioSwift",
             dependencies: [],
-            exclude: [
-            ],
-            resources: [
-                .copy("Resources/elements.json")
-            ]
-            )
+            resources: []),
         .testTarget(
             name: "BioSwiftTests",
             dependencies: ["BioSwift"]),
     ]
 )
+
