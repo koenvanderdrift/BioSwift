@@ -24,7 +24,8 @@ let package = Package(
             exclude: [
             ],
             resources: [
-            ],
+                .copy("Resources/elements.json")
+            ]
             )
         .testTarget(
             name: "BioSwiftTests",
