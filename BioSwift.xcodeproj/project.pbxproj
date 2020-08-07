@@ -1,892 +1,958 @@
 // !$*UTF8*$!
 {
-	archiveVersion = 1;
-	classes = {
-	};
-	objectVersion = 46;
-	objects = {
-
-/* Begin PBXAggregateTarget section */
-		"BioSwift::BioSwiftPackageTests::ProductTarget" /* BioSwiftPackageTests */ = {
-			isa = PBXAggregateTarget;
-			buildConfigurationList = OBJ_31 /* Build configuration list for PBXAggregateTarget "BioSwiftPackageTests" */;
-			buildPhases = (
-			);
-			dependencies = (
-				OBJ_34 /* PBXTargetDependency */,
-			);
-			name = BioSwiftPackageTests;
-			productName = BioSwiftPackageTests;
-		};
-/* End PBXAggregateTarget section */
-
-/* Begin PBXBuildFile section */
-		5D09C377241D1C1D006F0D5C /* unimod.xml in Resources */ = {isa = PBXBuildFile; fileRef = 5D09C376241D1C1D006F0D5C /* unimod.xml */; };
-		5D39778C23E0F3A100A6631C /* aminoacids.json in Resources */ = {isa = PBXBuildFile; fileRef = 5D3976F723E0F18300A6631C /* aminoacids.json */; };
-		5D39778D23E0F3AB00A6631C /* hydropathy.json in Resources */ = {isa = PBXBuildFile; fileRef = 5D3976F823E0F18300A6631C /* hydropathy.json */; };
-		5D39778F23E0F3B000A6631C /* elements.json in Resources */ = {isa = PBXBuildFile; fileRef = 5D3976FB23E0F18300A6631C /* elements.json */; };
-		5D39779023E0F3B300A6631C /* enzymes.json in Resources */ = {isa = PBXBuildFile; fileRef = 5D3976FD23E0F18300A6631C /* enzymes.json */; };
-		5D682EEC23E8F23800D03F10 /* functionalgroups.json in Resources */ = {isa = PBXBuildFile; fileRef = 5D682EEB23E8F23800D03F10 /* functionalgroups.json */; };
-		5DA3F3F024DDB743000F2307 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 5DA3F3EF24DDB743000F2307 /* README.md */; };
-		5DA3F3F224DDB751000F2307 /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = 5DA3F3F124DDB751000F2307 /* LICENSE */; };
-		5DA3F41924DDB790000F2307 /* Residue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F3F524DDB790000F2307 /* Residue.swift */; };
-		5DA3F41A24DDB790000F2307 /* Residue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F3F524DDB790000F2307 /* Residue.swift */; };
-		5DA3F41B24DDB790000F2307 /* Residue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F3F524DDB790000F2307 /* Residue.swift */; };
-		5DA3F41C24DDB790000F2307 /* ChemicalElement.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F3F624DDB790000F2307 /* ChemicalElement.swift */; };
-		5DA3F41D24DDB790000F2307 /* ChemicalElement.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F3F624DDB790000F2307 /* ChemicalElement.swift */; };
-		5DA3F41E24DDB790000F2307 /* ChemicalElement.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F3F624DDB790000F2307 /* ChemicalElement.swift */; };
-		5DA3F41F24DDB790000F2307 /* AminoAcid.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F3F724DDB790000F2307 /* AminoAcid.swift */; };
-		5DA3F42024DDB790000F2307 /* AminoAcid.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F3F724DDB790000F2307 /* AminoAcid.swift */; };
-		5DA3F42124DDB790000F2307 /* AminoAcid.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F3F724DDB790000F2307 /* AminoAcid.swift */; };
-		5DA3F42224DDB790000F2307 /* Formula.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F3F824DDB790000F2307 /* Formula.swift */; };
-		5DA3F42324DDB790000F2307 /* Formula.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F3F824DDB790000F2307 /* Formula.swift */; };
-		5DA3F42424DDB790000F2307 /* Formula.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F3F824DDB790000F2307 /* Formula.swift */; };
-		5DA3F42524DDB790000F2307 /* Structure.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F3F924DDB790000F2307 /* Structure.swift */; };
-		5DA3F42624DDB790000F2307 /* Structure.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F3F924DDB790000F2307 /* Structure.swift */; };
-		5DA3F42724DDB790000F2307 /* Structure.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F3F924DDB790000F2307 /* Structure.swift */; };
-		5DA3F42824DDB790000F2307 /* Molecule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F3FA24DDB790000F2307 /* Molecule.swift */; };
-		5DA3F42924DDB790000F2307 /* Molecule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F3FA24DDB790000F2307 /* Molecule.swift */; };
-		5DA3F42A24DDB790000F2307 /* Molecule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F3FA24DDB790000F2307 /* Molecule.swift */; };
-		5DA3F42B24DDB790000F2307 /* Group.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F3FB24DDB790000F2307 /* Group.swift */; };
-		5DA3F42C24DDB790000F2307 /* Group.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F3FB24DDB790000F2307 /* Group.swift */; };
-		5DA3F42D24DDB790000F2307 /* Group.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F3FB24DDB790000F2307 /* Group.swift */; };
-		5DA3F42E24DDB790000F2307 /* Modification.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F3FC24DDB790000F2307 /* Modification.swift */; };
-		5DA3F42F24DDB790000F2307 /* Modification.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F3FC24DDB790000F2307 /* Modification.swift */; };
-		5DA3F43024DDB790000F2307 /* Modification.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F3FC24DDB790000F2307 /* Modification.swift */; };
-		5DA3F43124DDB790000F2307 /* Enzyme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F3FD24DDB790000F2307 /* Enzyme.swift */; };
-		5DA3F43224DDB790000F2307 /* Enzyme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F3FD24DDB790000F2307 /* Enzyme.swift */; };
-		5DA3F43324DDB790000F2307 /* Enzyme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F3FD24DDB790000F2307 /* Enzyme.swift */; };
-		5DA3F43424DDB790000F2307 /* Symbol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F3FE24DDB790000F2307 /* Symbol.swift */; };
-		5DA3F43524DDB790000F2307 /* Symbol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F3FE24DDB790000F2307 /* Symbol.swift */; };
-		5DA3F43624DDB790000F2307 /* Symbol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F3FE24DDB790000F2307 /* Symbol.swift */; };
-		5DA3F43724DDB790000F2307 /* Array.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F40024DDB790000F2307 /* Array.swift */; };
-		5DA3F43824DDB790000F2307 /* Array.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F40024DDB790000F2307 /* Array.swift */; };
-		5DA3F43924DDB790000F2307 /* Array.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F40024DDB790000F2307 /* Array.swift */; };
-		5DA3F43A24DDB790000F2307 /* String.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F40124DDB790000F2307 /* String.swift */; };
-		5DA3F43B24DDB790000F2307 /* String.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F40124DDB790000F2307 /* String.swift */; };
-		5DA3F43C24DDB790000F2307 /* String.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F40124DDB790000F2307 /* String.swift */; };
-		5DA3F43D24DDB790000F2307 /* Double.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F40224DDB790000F2307 /* Double.swift */; };
-		5DA3F43E24DDB790000F2307 /* Double.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F40224DDB790000F2307 /* Double.swift */; };
-		5DA3F43F24DDB790000F2307 /* Double.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F40224DDB790000F2307 /* Double.swift */; };
-		5DA3F44024DDB790000F2307 /* BioSwift.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F40424DDB790000F2307 /* BioSwift.swift */; };
-		5DA3F44124DDB790000F2307 /* BioSwift.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F40424DDB790000F2307 /* BioSwift.swift */; };
-		5DA3F44224DDB790000F2307 /* BioSwift.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F40424DDB790000F2307 /* BioSwift.swift */; };
-		5DA3F44324DDB790000F2307 /* Utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F40624DDB790000F2307 /* Utilities.swift */; };
-		5DA3F44424DDB790000F2307 /* Utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F40624DDB790000F2307 /* Utilities.swift */; };
-		5DA3F44524DDB790000F2307 /* Utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F40624DDB790000F2307 /* Utilities.swift */; };
-		5DA3F44624DDB790000F2307 /* Bundle+Decoding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F40724DDB790000F2307 /* Bundle+Decoding.swift */; };
-		5DA3F44724DDB790000F2307 /* Bundle+Decoding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F40724DDB790000F2307 /* Bundle+Decoding.swift */; };
-		5DA3F44824DDB790000F2307 /* Bundle+Decoding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F40724DDB790000F2307 /* Bundle+Decoding.swift */; };
-		5DA3F44924DDB790000F2307 /* Webservice.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F40824DDB790000F2307 /* Webservice.swift */; };
-		5DA3F44A24DDB790000F2307 /* Webservice.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F40824DDB790000F2307 /* Webservice.swift */; };
-		5DA3F44B24DDB790000F2307 /* Webservice.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F40824DDB790000F2307 /* Webservice.swift */; };
-		5DA3F44C24DDB790000F2307 /* UnimodParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F40924DDB790000F2307 /* UnimodParser.swift */; };
-		5DA3F44D24DDB790000F2307 /* UnimodParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F40924DDB790000F2307 /* UnimodParser.swift */; };
-		5DA3F44E24DDB790000F2307 /* UnimodParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F40924DDB790000F2307 /* UnimodParser.swift */; };
-		5DA3F44F24DDB790000F2307 /* Hydropathy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F40B24DDB790000F2307 /* Hydropathy.swift */; };
-		5DA3F45024DDB790000F2307 /* Hydropathy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F40B24DDB790000F2307 /* Hydropathy.swift */; };
-		5DA3F45124DDB790000F2307 /* Hydropathy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F40B24DDB790000F2307 /* Hydropathy.swift */; };
-		5DA3F45224DDB790000F2307 /* Digest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F40C24DDB790000F2307 /* Digest.swift */; };
-		5DA3F45324DDB790000F2307 /* Digest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F40C24DDB790000F2307 /* Digest.swift */; };
-		5DA3F45424DDB790000F2307 /* Digest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F40C24DDB790000F2307 /* Digest.swift */; };
-		5DA3F45524DDB790000F2307 /* Mass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F40D24DDB790000F2307 /* Mass.swift */; };
-		5DA3F45624DDB790000F2307 /* Mass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F40D24DDB790000F2307 /* Mass.swift */; };
-		5DA3F45724DDB790000F2307 /* Mass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F40D24DDB790000F2307 /* Mass.swift */; };
-		5DA3F45824DDB790000F2307 /* Search.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F40E24DDB790000F2307 /* Search.swift */; };
-		5DA3F45924DDB790000F2307 /* Search.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F40E24DDB790000F2307 /* Search.swift */; };
-		5DA3F45A24DDB790000F2307 /* Search.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F40E24DDB790000F2307 /* Search.swift */; };
-		5DA3F45B24DDB790000F2307 /* Fragment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F41024DDB790000F2307 /* Fragment.swift */; };
-		5DA3F45C24DDB790000F2307 /* Fragment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F41024DDB790000F2307 /* Fragment.swift */; };
-		5DA3F45D24DDB790000F2307 /* Fragment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F41024DDB790000F2307 /* Fragment.swift */; };
-		5DA3F45E24DDB790000F2307 /* Peptide.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F41124DDB790000F2307 /* Peptide.swift */; };
-		5DA3F45F24DDB790000F2307 /* Peptide.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F41124DDB790000F2307 /* Peptide.swift */; };
-		5DA3F46024DDB790000F2307 /* Peptide.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F41124DDB790000F2307 /* Peptide.swift */; };
-		5DA3F46124DDB790000F2307 /* BioSequence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F41224DDB790000F2307 /* BioSequence.swift */; };
-		5DA3F46224DDB790000F2307 /* BioSequence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F41224DDB790000F2307 /* BioSequence.swift */; };
-		5DA3F46324DDB790000F2307 /* BioSequence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F41224DDB790000F2307 /* BioSequence.swift */; };
-		5DA3F46424DDB790000F2307 /* Protein.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F41324DDB790000F2307 /* Protein.swift */; };
-		5DA3F46524DDB790000F2307 /* Protein.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F41324DDB790000F2307 /* Protein.swift */; };
-		5DA3F46624DDB790000F2307 /* Protein.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F41324DDB790000F2307 /* Protein.swift */; };
-		5DA3F46724DDB790000F2307 /* Chargeable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F41424DDB790000F2307 /* Chargeable.swift */; };
-		5DA3F46824DDB790000F2307 /* Chargeable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F41424DDB790000F2307 /* Chargeable.swift */; };
-		5DA3F46924DDB790000F2307 /* Chargeable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F41424DDB790000F2307 /* Chargeable.swift */; };
-		5DA3F46A24DDB790000F2307 /* SequenceRange.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F41524DDB790000F2307 /* SequenceRange.swift */; };
-		5DA3F46B24DDB790000F2307 /* SequenceRange.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F41524DDB790000F2307 /* SequenceRange.swift */; };
-		5DA3F46C24DDB790000F2307 /* SequenceRange.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F41524DDB790000F2307 /* SequenceRange.swift */; };
-		5DA3F46D24DDB790000F2307 /* JSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F41724DDB790000F2307 /* JSON.swift */; };
-		5DA3F46E24DDB790000F2307 /* JSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F41724DDB790000F2307 /* JSON.swift */; };
-		5DA3F46F24DDB790000F2307 /* JSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F41724DDB790000F2307 /* JSON.swift */; };
-		5DA3F47024DDB790000F2307 /* Fasta.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F41824DDB790000F2307 /* Fasta.swift */; };
-		5DA3F47124DDB790000F2307 /* Fasta.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F41824DDB790000F2307 /* Fasta.swift */; };
-		5DA3F47224DDB790000F2307 /* Fasta.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F41824DDB790000F2307 /* Fasta.swift */; };
-		OBJ_40 /* BioSwiftTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_12 /* BioSwiftTests.swift */; };
-		OBJ_41 /* XCTestManifests.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_13 /* XCTestManifests.swift */; };
-		OBJ_43 /* BioSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = "BioSwift::BioSwift::Product" /* BioSwift.framework */; };
-/* End PBXBuildFile section */
-
-/* Begin PBXContainerItemProxy section */
-		5D3976F423E0F15200A6631C /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = OBJ_1 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = "BioSwift::BioSwift";
-			remoteInfo = BioSwift;
-		};
-		5D3976F523E0F15300A6631C /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = OBJ_1 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = "BioSwift::BioSwiftTests";
-			remoteInfo = BioSwiftTests;
-		};
-/* End PBXContainerItemProxy section */
-
-/* Begin PBXFileReference section */
-		5D09C376241D1C1D006F0D5C /* unimod.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = unimod.xml; sourceTree = "<group>"; };
-		5D3976F723E0F18300A6631C /* aminoacids.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = aminoacids.json; sourceTree = "<group>"; };
-		5D3976F823E0F18300A6631C /* hydropathy.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = hydropathy.json; sourceTree = "<group>"; };
-		5D3976FB23E0F18300A6631C /* elements.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = elements.json; sourceTree = "<group>"; };
-		5D3976FD23E0F18300A6631C /* enzymes.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = enzymes.json; sourceTree = "<group>"; };
-		5D682EEB23E8F23800D03F10 /* functionalgroups.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = functionalgroups.json; sourceTree = "<group>"; };
-		5DA3F3EF24DDB743000F2307 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
-		5DA3F3F124DDB751000F2307 /* LICENSE */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
-		5DA3F3F524DDB790000F2307 /* Residue.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Residue.swift; sourceTree = "<group>"; };
-		5DA3F3F624DDB790000F2307 /* ChemicalElement.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChemicalElement.swift; sourceTree = "<group>"; };
-		5DA3F3F724DDB790000F2307 /* AminoAcid.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AminoAcid.swift; sourceTree = "<group>"; };
-		5DA3F3F824DDB790000F2307 /* Formula.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Formula.swift; sourceTree = "<group>"; };
-		5DA3F3F924DDB790000F2307 /* Structure.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Structure.swift; sourceTree = "<group>"; };
-		5DA3F3FA24DDB790000F2307 /* Molecule.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Molecule.swift; sourceTree = "<group>"; };
-		5DA3F3FB24DDB790000F2307 /* Group.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Group.swift; sourceTree = "<group>"; };
-		5DA3F3FC24DDB790000F2307 /* Modification.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Modification.swift; sourceTree = "<group>"; };
-		5DA3F3FD24DDB790000F2307 /* Enzyme.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Enzyme.swift; sourceTree = "<group>"; };
-		5DA3F3FE24DDB790000F2307 /* Symbol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Symbol.swift; sourceTree = "<group>"; };
-		5DA3F40024DDB790000F2307 /* Array.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Array.swift; sourceTree = "<group>"; };
-		5DA3F40124DDB790000F2307 /* String.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = String.swift; sourceTree = "<group>"; };
-		5DA3F40224DDB790000F2307 /* Double.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Double.swift; sourceTree = "<group>"; };
-		5DA3F40424DDB790000F2307 /* BioSwift.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BioSwift.swift; sourceTree = "<group>"; };
-		5DA3F40624DDB790000F2307 /* Utilities.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Utilities.swift; sourceTree = "<group>"; };
-		5DA3F40724DDB790000F2307 /* Bundle+Decoding.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Bundle+Decoding.swift"; sourceTree = "<group>"; };
-		5DA3F40824DDB790000F2307 /* Webservice.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Webservice.swift; sourceTree = "<group>"; };
-		5DA3F40924DDB790000F2307 /* UnimodParser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UnimodParser.swift; sourceTree = "<group>"; };
-		5DA3F40B24DDB790000F2307 /* Hydropathy.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Hydropathy.swift; sourceTree = "<group>"; };
-		5DA3F40C24DDB790000F2307 /* Digest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Digest.swift; sourceTree = "<group>"; };
-		5DA3F40D24DDB790000F2307 /* Mass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Mass.swift; sourceTree = "<group>"; };
-		5DA3F40E24DDB790000F2307 /* Search.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Search.swift; sourceTree = "<group>"; };
-		5DA3F41024DDB790000F2307 /* Fragment.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Fragment.swift; sourceTree = "<group>"; };
-		5DA3F41124DDB790000F2307 /* Peptide.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Peptide.swift; sourceTree = "<group>"; };
-		5DA3F41224DDB790000F2307 /* BioSequence.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BioSequence.swift; sourceTree = "<group>"; };
-		5DA3F41324DDB790000F2307 /* Protein.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Protein.swift; sourceTree = "<group>"; };
-		5DA3F41424DDB790000F2307 /* Chargeable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Chargeable.swift; sourceTree = "<group>"; };
-		5DA3F41524DDB790000F2307 /* SequenceRange.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SequenceRange.swift; sourceTree = "<group>"; };
-		5DA3F41724DDB790000F2307 /* JSON.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JSON.swift; sourceTree = "<group>"; };
-		5DA3F41824DDB790000F2307 /* Fasta.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Fasta.swift; sourceTree = "<group>"; };
-		5DE85C4A23E713DA00645496 /* elements.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = elements.txt; sourceTree = "<group>"; };
-		"BioSwift::BioSwift::Product" /* BioSwift.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = BioSwift.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		"BioSwift::BioSwiftTests::Product" /* BioSwiftTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; path = BioSwiftTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		OBJ_12 /* BioSwiftTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BioSwiftTests.swift; sourceTree = "<group>"; };
-		OBJ_13 /* XCTestManifests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XCTestManifests.swift; sourceTree = "<group>"; };
-/* End PBXFileReference section */
-
-/* Begin PBXFrameworksBuildPhase section */
-		OBJ_23 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 0;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		OBJ_42 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 0;
-			files = (
-				OBJ_43 /* BioSwift.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXFrameworksBuildPhase section */
-
-/* Begin PBXGroup section */
-		5D3976F623E0F18300A6631C /* Resources */ = {
-			isa = PBXGroup;
-			children = (
-				5DE85C4A23E713DA00645496 /* elements.txt */,
-				5D3976F723E0F18300A6631C /* aminoacids.json */,
-				5D3976FB23E0F18300A6631C /* elements.json */,
-				5D3976FD23E0F18300A6631C /* enzymes.json */,
-				5D682EEB23E8F23800D03F10 /* functionalgroups.json */,
-				5D3976F823E0F18300A6631C /* hydropathy.json */,
-				5D09C376241D1C1D006F0D5C /* unimod.xml */,
-			);
-			path = Resources;
-			sourceTree = "<group>";
-		};
-		5DA3F3EE24DDB6E8000F2307 /* BioSwiftPackage */ = {
-			isa = PBXGroup;
-			children = (
-				5D3976F623E0F18300A6631C /* Resources */,
-				5DA3F3F324DDB790000F2307 /* Sources */,
-			);
-			path = BioSwiftPackage;
-			sourceTree = "<group>";
-		};
-		5DA3F3F324DDB790000F2307 /* Sources */ = {
-			isa = PBXGroup;
-			children = (
-				5DA3F3F424DDB790000F2307 /* Bricks */,
-				5DA3F3FF24DDB790000F2307 /* Extensions */,
-				5DA3F40324DDB790000F2307 /* BioSwift */,
-				5DA3F40524DDB790000F2307 /* Support */,
-				5DA3F40A24DDB790000F2307 /* Calculators */,
-				5DA3F40F24DDB790000F2307 /* Sequence */,
-				5DA3F41624DDB790000F2307 /* Data */,
-			);
-			path = Sources;
-			sourceTree = "<group>";
-		};
-		5DA3F3F424DDB790000F2307 /* Bricks */ = {
-			isa = PBXGroup;
-			children = (
-				5DA3F3F524DDB790000F2307 /* Residue.swift */,
-				5DA3F3F624DDB790000F2307 /* ChemicalElement.swift */,
-				5DA3F3F724DDB790000F2307 /* AminoAcid.swift */,
-				5DA3F3F824DDB790000F2307 /* Formula.swift */,
-				5DA3F3F924DDB790000F2307 /* Structure.swift */,
-				5DA3F3FA24DDB790000F2307 /* Molecule.swift */,
-				5DA3F3FB24DDB790000F2307 /* Group.swift */,
-				5DA3F3FC24DDB790000F2307 /* Modification.swift */,
-				5DA3F3FD24DDB790000F2307 /* Enzyme.swift */,
-				5DA3F3FE24DDB790000F2307 /* Symbol.swift */,
-			);
-			path = Bricks;
-			sourceTree = "<group>";
-		};
-		5DA3F3FF24DDB790000F2307 /* Extensions */ = {
-			isa = PBXGroup;
-			children = (
-				5DA3F40024DDB790000F2307 /* Array.swift */,
-				5DA3F40124DDB790000F2307 /* String.swift */,
-				5DA3F40224DDB790000F2307 /* Double.swift */,
-			);
-			path = Extensions;
-			sourceTree = "<group>";
-		};
-		5DA3F40324DDB790000F2307 /* BioSwift */ = {
-			isa = PBXGroup;
-			children = (
-				5DA3F40424DDB790000F2307 /* BioSwift.swift */,
-			);
-			path = BioSwift;
-			sourceTree = "<group>";
-		};
-		5DA3F40524DDB790000F2307 /* Support */ = {
-			isa = PBXGroup;
-			children = (
-				5DA3F40624DDB790000F2307 /* Utilities.swift */,
-				5DA3F40724DDB790000F2307 /* Bundle+Decoding.swift */,
-				5DA3F40824DDB790000F2307 /* Webservice.swift */,
-				5DA3F40924DDB790000F2307 /* UnimodParser.swift */,
-			);
-			path = Support;
-			sourceTree = "<group>";
-		};
-		5DA3F40A24DDB790000F2307 /* Calculators */ = {
-			isa = PBXGroup;
-			children = (
-				5DA3F40B24DDB790000F2307 /* Hydropathy.swift */,
-				5DA3F40C24DDB790000F2307 /* Digest.swift */,
-				5DA3F40D24DDB790000F2307 /* Mass.swift */,
-				5DA3F40E24DDB790000F2307 /* Search.swift */,
-			);
-			path = Calculators;
-			sourceTree = "<group>";
-		};
-		5DA3F40F24DDB790000F2307 /* Sequence */ = {
-			isa = PBXGroup;
-			children = (
-				5DA3F41024DDB790000F2307 /* Fragment.swift */,
-				5DA3F41124DDB790000F2307 /* Peptide.swift */,
-				5DA3F41224DDB790000F2307 /* BioSequence.swift */,
-				5DA3F41324DDB790000F2307 /* Protein.swift */,
-				5DA3F41424DDB790000F2307 /* Chargeable.swift */,
-				5DA3F41524DDB790000F2307 /* SequenceRange.swift */,
-			);
-			path = Sequence;
-			sourceTree = "<group>";
-		};
-		5DA3F41624DDB790000F2307 /* Data */ = {
-			isa = PBXGroup;
-			children = (
-				5DA3F41724DDB790000F2307 /* JSON.swift */,
-				5DA3F41824DDB790000F2307 /* Fasta.swift */,
-			);
-			path = Data;
-			sourceTree = "<group>";
-		};
-		OBJ_11 /* BioSwiftTests */ = {
-			isa = PBXGroup;
-			children = (
-				OBJ_12 /* BioSwiftTests.swift */,
-				OBJ_13 /* XCTestManifests.swift */,
-			);
-			path = BioSwiftTests;
-			sourceTree = SOURCE_ROOT;
-		};
-		OBJ_14 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				"BioSwift::BioSwiftTests::Product" /* BioSwiftTests.xctest */,
-				"BioSwift::BioSwift::Product" /* BioSwift.framework */,
-			);
-			name = Products;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		OBJ_5 = {
-			isa = PBXGroup;
-			children = (
-				5DA3F3EF24DDB743000F2307 /* README.md */,
-				5DA3F3F124DDB751000F2307 /* LICENSE */,
-				5DA3F3EE24DDB6E8000F2307 /* BioSwiftPackage */,
-				OBJ_11 /* BioSwiftTests */,
-				OBJ_14 /* Products */,
-			);
-			sourceTree = "<group>";
-		};
-/* End PBXGroup section */
-
-/* Begin PBXNativeTarget section */
-		"BioSwift::BioSwift" /* BioSwift */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = OBJ_18 /* Build configuration list for PBXNativeTarget "BioSwift" */;
-			buildPhases = (
-				OBJ_21 /* Sources */,
-				OBJ_23 /* Frameworks */,
-				5D39778B23E0F39500A6631C /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = BioSwift;
-			productName = BioSwift;
-			productReference = "BioSwift::BioSwift::Product" /* BioSwift.framework */;
-			productType = "com.apple.product-type.framework";
-		};
-		"BioSwift::BioSwiftTests" /* BioSwiftTests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = OBJ_36 /* Build configuration list for PBXNativeTarget "BioSwiftTests" */;
-			buildPhases = (
-				OBJ_39 /* Sources */,
-				OBJ_42 /* Frameworks */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				OBJ_44 /* PBXTargetDependency */,
-			);
-			name = BioSwiftTests;
-			productName = BioSwiftTests;
-			productReference = "BioSwift::BioSwiftTests::Product" /* BioSwiftTests.xctest */;
-			productType = "com.apple.product-type.bundle.unit-test";
-		};
-		"BioSwift::SwiftPMPackageDescription" /* BioSwiftPackageDescription */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = OBJ_25 /* Build configuration list for PBXNativeTarget "BioSwiftPackageDescription" */;
-			buildPhases = (
-				OBJ_28 /* Sources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = BioSwiftPackageDescription;
-			productName = BioSwiftPackageDescription;
-			productType = "com.apple.product-type.framework";
-		};
-/* End PBXNativeTarget section */
-
-/* Begin PBXProject section */
-		OBJ_1 /* Project object */ = {
-			isa = PBXProject;
-			attributes = {
-				LastUpgradeCheck = 1160;
-				TargetAttributes = {
-					"BioSwift::BioSwift" = {
-						DevelopmentTeam = Z9FHH9AM7K;
-						LastSwiftMigration = 1160;
-					};
-					"BioSwift::BioSwiftPackageTests::ProductTarget" = {
-						LastSwiftMigration = 1010;
-					};
-					"BioSwift::SwiftPMPackageDescription" = {
-						DevelopmentTeam = Z9FHH9AM7K;
-						ProvisioningStyle = Automatic;
-					};
-				};
-			};
-			buildConfigurationList = OBJ_2 /* Build configuration list for PBXProject "BioSwift" */;
-			compatibilityVersion = "Xcode 3.2";
-			developmentRegion = en;
-			hasScannedForEncodings = 0;
-			knownRegions = (
-				en,
-				Base,
-			);
-			mainGroup = OBJ_5;
-			productRefGroup = OBJ_14 /* Products */;
-			projectDirPath = "";
-			projectRoot = "";
-			targets = (
-				"BioSwift::BioSwift" /* BioSwift */,
-				"BioSwift::SwiftPMPackageDescription" /* BioSwiftPackageDescription */,
-				"BioSwift::BioSwiftPackageTests::ProductTarget" /* BioSwiftPackageTests */,
-				"BioSwift::BioSwiftTests" /* BioSwiftTests */,
-			);
-		};
-/* End PBXProject section */
-
-/* Begin PBXResourcesBuildPhase section */
-		5D39778B23E0F39500A6631C /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				5D682EEC23E8F23800D03F10 /* functionalgroups.json in Resources */,
-				5D39778C23E0F3A100A6631C /* aminoacids.json in Resources */,
-				5DA3F3F224DDB751000F2307 /* LICENSE in Resources */,
-				5D39778F23E0F3B000A6631C /* elements.json in Resources */,
-				5DA3F3F024DDB743000F2307 /* README.md in Resources */,
-				5D09C377241D1C1D006F0D5C /* unimod.xml in Resources */,
-				5D39779023E0F3B300A6631C /* enzymes.json in Resources */,
-				5D39778D23E0F3AB00A6631C /* hydropathy.json in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXResourcesBuildPhase section */
-
-/* Begin PBXSourcesBuildPhase section */
-		OBJ_21 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 0;
-			files = (
-				5DA3F42B24DDB790000F2307 /* Group.swift in Sources */,
-				5DA3F43424DDB790000F2307 /* Symbol.swift in Sources */,
-				5DA3F44624DDB790000F2307 /* Bundle+Decoding.swift in Sources */,
-				5DA3F41C24DDB790000F2307 /* ChemicalElement.swift in Sources */,
-				5DA3F44C24DDB790000F2307 /* UnimodParser.swift in Sources */,
-				5DA3F44324DDB790000F2307 /* Utilities.swift in Sources */,
-				5DA3F45B24DDB790000F2307 /* Fragment.swift in Sources */,
-				5DA3F44F24DDB790000F2307 /* Hydropathy.swift in Sources */,
-				5DA3F46A24DDB790000F2307 /* SequenceRange.swift in Sources */,
-				5DA3F42824DDB790000F2307 /* Molecule.swift in Sources */,
-				5DA3F44024DDB790000F2307 /* BioSwift.swift in Sources */,
-				5DA3F43D24DDB790000F2307 /* Double.swift in Sources */,
-				5DA3F45E24DDB790000F2307 /* Peptide.swift in Sources */,
-				5DA3F42E24DDB790000F2307 /* Modification.swift in Sources */,
-				5DA3F45824DDB790000F2307 /* Search.swift in Sources */,
-				5DA3F47024DDB790000F2307 /* Fasta.swift in Sources */,
-				5DA3F46124DDB790000F2307 /* BioSequence.swift in Sources */,
-				5DA3F45224DDB790000F2307 /* Digest.swift in Sources */,
-				5DA3F41F24DDB790000F2307 /* AminoAcid.swift in Sources */,
-				5DA3F46424DDB790000F2307 /* Protein.swift in Sources */,
-				5DA3F43A24DDB790000F2307 /* String.swift in Sources */,
-				5DA3F43724DDB790000F2307 /* Array.swift in Sources */,
-				5DA3F46724DDB790000F2307 /* Chargeable.swift in Sources */,
-				5DA3F43124DDB790000F2307 /* Enzyme.swift in Sources */,
-				5DA3F42524DDB790000F2307 /* Structure.swift in Sources */,
-				5DA3F42224DDB790000F2307 /* Formula.swift in Sources */,
-				5DA3F41924DDB790000F2307 /* Residue.swift in Sources */,
-				5DA3F46D24DDB790000F2307 /* JSON.swift in Sources */,
-				5DA3F44924DDB790000F2307 /* Webservice.swift in Sources */,
-				5DA3F45524DDB790000F2307 /* Mass.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		OBJ_28 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 0;
-			files = (
-				5DA3F42C24DDB790000F2307 /* Group.swift in Sources */,
-				5DA3F43524DDB790000F2307 /* Symbol.swift in Sources */,
-				5DA3F44724DDB790000F2307 /* Bundle+Decoding.swift in Sources */,
-				5DA3F41D24DDB790000F2307 /* ChemicalElement.swift in Sources */,
-				5DA3F44D24DDB790000F2307 /* UnimodParser.swift in Sources */,
-				5DA3F44424DDB790000F2307 /* Utilities.swift in Sources */,
-				5DA3F45C24DDB790000F2307 /* Fragment.swift in Sources */,
-				5DA3F45024DDB790000F2307 /* Hydropathy.swift in Sources */,
-				5DA3F46B24DDB790000F2307 /* SequenceRange.swift in Sources */,
-				5DA3F42924DDB790000F2307 /* Molecule.swift in Sources */,
-				5DA3F44124DDB790000F2307 /* BioSwift.swift in Sources */,
-				5DA3F43E24DDB790000F2307 /* Double.swift in Sources */,
-				5DA3F45F24DDB790000F2307 /* Peptide.swift in Sources */,
-				5DA3F42F24DDB790000F2307 /* Modification.swift in Sources */,
-				5DA3F45924DDB790000F2307 /* Search.swift in Sources */,
-				5DA3F47124DDB790000F2307 /* Fasta.swift in Sources */,
-				5DA3F46224DDB790000F2307 /* BioSequence.swift in Sources */,
-				5DA3F45324DDB790000F2307 /* Digest.swift in Sources */,
-				5DA3F42024DDB790000F2307 /* AminoAcid.swift in Sources */,
-				5DA3F46524DDB790000F2307 /* Protein.swift in Sources */,
-				5DA3F43B24DDB790000F2307 /* String.swift in Sources */,
-				5DA3F43824DDB790000F2307 /* Array.swift in Sources */,
-				5DA3F46824DDB790000F2307 /* Chargeable.swift in Sources */,
-				5DA3F43224DDB790000F2307 /* Enzyme.swift in Sources */,
-				5DA3F42624DDB790000F2307 /* Structure.swift in Sources */,
-				5DA3F42324DDB790000F2307 /* Formula.swift in Sources */,
-				5DA3F41A24DDB790000F2307 /* Residue.swift in Sources */,
-				5DA3F46E24DDB790000F2307 /* JSON.swift in Sources */,
-				5DA3F44A24DDB790000F2307 /* Webservice.swift in Sources */,
-				5DA3F45624DDB790000F2307 /* Mass.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		OBJ_39 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 0;
-			files = (
-				5DA3F45124DDB790000F2307 /* Hydropathy.swift in Sources */,
-				5DA3F44224DDB790000F2307 /* BioSwift.swift in Sources */,
-				5DA3F43324DDB790000F2307 /* Enzyme.swift in Sources */,
-				5DA3F42D24DDB790000F2307 /* Group.swift in Sources */,
-				5DA3F41E24DDB790000F2307 /* ChemicalElement.swift in Sources */,
-				5DA3F46324DDB790000F2307 /* BioSequence.swift in Sources */,
-				5DA3F41B24DDB790000F2307 /* Residue.swift in Sources */,
-				5DA3F43C24DDB790000F2307 /* String.swift in Sources */,
-				5DA3F46F24DDB790000F2307 /* JSON.swift in Sources */,
-				5DA3F44B24DDB790000F2307 /* Webservice.swift in Sources */,
-				5DA3F46924DDB790000F2307 /* Chargeable.swift in Sources */,
-				5DA3F46624DDB790000F2307 /* Protein.swift in Sources */,
-				5DA3F42424DDB790000F2307 /* Formula.swift in Sources */,
-				5DA3F43624DDB790000F2307 /* Symbol.swift in Sources */,
-				5DA3F42124DDB790000F2307 /* AminoAcid.swift in Sources */,
-				5DA3F45424DDB790000F2307 /* Digest.swift in Sources */,
-				5DA3F43024DDB790000F2307 /* Modification.swift in Sources */,
-				5DA3F45D24DDB790000F2307 /* Fragment.swift in Sources */,
-				5DA3F45724DDB790000F2307 /* Mass.swift in Sources */,
-				5DA3F46C24DDB790000F2307 /* SequenceRange.swift in Sources */,
-				5DA3F44524DDB790000F2307 /* Utilities.swift in Sources */,
-				5DA3F47224DDB790000F2307 /* Fasta.swift in Sources */,
-				OBJ_40 /* BioSwiftTests.swift in Sources */,
-				5DA3F43924DDB790000F2307 /* Array.swift in Sources */,
-				5DA3F42724DDB790000F2307 /* Structure.swift in Sources */,
-				5DA3F44824DDB790000F2307 /* Bundle+Decoding.swift in Sources */,
-				OBJ_41 /* XCTestManifests.swift in Sources */,
-				5DA3F46024DDB790000F2307 /* Peptide.swift in Sources */,
-				5DA3F43F24DDB790000F2307 /* Double.swift in Sources */,
-				5DA3F45A24DDB790000F2307 /* Search.swift in Sources */,
-				5DA3F44E24DDB790000F2307 /* UnimodParser.swift in Sources */,
-				5DA3F42A24DDB790000F2307 /* Molecule.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXSourcesBuildPhase section */
-
-/* Begin PBXTargetDependency section */
-		OBJ_34 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = "BioSwift::BioSwiftTests" /* BioSwiftTests */;
-			targetProxy = 5D3976F523E0F15300A6631C /* PBXContainerItemProxy */;
-		};
-		OBJ_44 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = "BioSwift::BioSwift" /* BioSwift */;
-			targetProxy = 5D3976F423E0F15200A6631C /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
-
-/* Begin XCBuildConfiguration section */
-		OBJ_19 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
-				DEVELOPMENT_TEAM = Z9FHH9AM7K;
-				ENABLE_TESTABILITY = YES;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PLATFORM_DIR)/Developer/Library/Frameworks",
-				);
-				HEADER_SEARCH_PATHS = "$(inherited)";
-				INFOPLIST_FILE = BioSwift.xcodeproj/BioSwift_Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) $(TOOLCHAIN_DIR)/usr/lib/swift/macosx";
-				MARKETING_VERSION = 1.0.0;
-				OTHER_CFLAGS = "$(inherited)";
-				OTHER_LDFLAGS = "$(inherited)";
-				OTHER_SWIFT_FLAGS = "$(inherited)";
-				PRODUCT_BUNDLE_IDENTIFIER = com.koenvanderdrift.BioSwift;
-				PRODUCT_MODULE_NAME = "$(TARGET_NAME:c99extidentifier)";
-				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
-				SKIP_INSTALL = YES;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited)";
-				SWIFT_VERSION = 5.0;
-				TARGET_NAME = BioSwift;
-			};
-			name = Debug;
-		};
-		OBJ_20 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
-				DEVELOPMENT_TEAM = Z9FHH9AM7K;
-				ENABLE_TESTABILITY = YES;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PLATFORM_DIR)/Developer/Library/Frameworks",
-				);
-				HEADER_SEARCH_PATHS = "$(inherited)";
-				INFOPLIST_FILE = BioSwift.xcodeproj/BioSwift_Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) $(TOOLCHAIN_DIR)/usr/lib/swift/macosx";
-				MARKETING_VERSION = 1.0.0;
-				OTHER_CFLAGS = "$(inherited)";
-				OTHER_LDFLAGS = "$(inherited)";
-				OTHER_SWIFT_FLAGS = "$(inherited)";
-				PRODUCT_BUNDLE_IDENTIFIER = com.koenvanderdrift.BioSwift;
-				PRODUCT_MODULE_NAME = "$(TARGET_NAME:c99extidentifier)";
-				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
-				SKIP_INSTALL = YES;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited)";
-				SWIFT_VERSION = 5.0;
-				TARGET_NAME = BioSwift;
-			};
-			name = Release;
-		};
-		OBJ_26 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = Z9FHH9AM7K;
-				LD = /usr/bin/true;
-				OTHER_SWIFT_FLAGS = "-swift-version 4.2 -I $(TOOLCHAIN_DIR)/usr/lib/swift/pm/4_2 -target x86_64-apple-macosx10.10 -sdk /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.14.sdk";
-				PRODUCT_BUNDLE_IDENTIFIER = com.koenvanderdrift.BioSwift;
-				PROVISIONING_PROFILE_SPECIFIER = "";
-				SWIFT_VERSION = 4.2;
-			};
-			name = Debug;
-		};
-		OBJ_27 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = Z9FHH9AM7K;
-				LD = /usr/bin/true;
-				OTHER_SWIFT_FLAGS = "-swift-version 4.2 -I $(TOOLCHAIN_DIR)/usr/lib/swift/pm/4_2 -target x86_64-apple-macosx10.10 -sdk /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.14.sdk";
-				PRODUCT_BUNDLE_IDENTIFIER = com.koenvanderdrift.BioSwift;
-				PROVISIONING_PROFILE_SPECIFIER = "";
-				SWIFT_VERSION = 4.2;
-			};
-			name = Release;
-		};
-		OBJ_3 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
-				CLANG_WARN_BOOL_CONVERSION = YES;
-				CLANG_WARN_COMMA = YES;
-				CLANG_WARN_CONSTANT_CONVERSION = YES;
-				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
-				CLANG_WARN_EMPTY_BODY = YES;
-				CLANG_WARN_ENUM_CONVERSION = YES;
-				CLANG_WARN_INFINITE_RECURSION = YES;
-				CLANG_WARN_INT_CONVERSION = YES;
-				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
-				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
-				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
-				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
-				CLANG_WARN_STRICT_PROTOTYPES = YES;
-				CLANG_WARN_SUSPICIOUS_MOVE = YES;
-				CLANG_WARN_UNREACHABLE_CODE = YES;
-				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				COMBINE_HIDPI_IMAGES = YES;
-				COPY_PHASE_STRIP = NO;
-				DEBUG_INFORMATION_FORMAT = dwarf;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				ENABLE_NS_ASSERTIONS = YES;
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				ENABLE_TESTABILITY = YES;
-				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES;
-				GCC_WARN_UNDECLARED_SELECTOR = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES;
-				GCC_WARN_UNUSED_FUNCTION = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.13;
-				ONLY_ACTIVE_ARCH = YES;
-				OTHER_SWIFT_FLAGS = "-DXcode";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx;
-				SUPPORTED_PLATFORMS = "macosx iphoneos iphonesimulator appletvos appletvsimulator watchos watchsimulator";
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "SWIFT_PACKAGE DEBUG";
-				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_VERSION = 4.2;
-				USE_HEADERMAP = NO;
-			};
-			name = Debug;
-		};
-		OBJ_32 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CLANG_ENABLE_MODULES = YES;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				SWIFT_OBJC_BRIDGING_HEADER = "Sources/Support/BioSwiftPackageTests-Bridging-Header.h";
-				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_VERSION = 4.2;
-			};
-			name = Debug;
-		};
-		OBJ_33 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CLANG_ENABLE_MODULES = YES;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				SWIFT_OBJC_BRIDGING_HEADER = "Sources/Support/BioSwiftPackageTests-Bridging-Header.h";
-				SWIFT_VERSION = 4.2;
-			};
-			name = Release;
-		};
-		OBJ_37 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				CLANG_ENABLE_MODULES = YES;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PLATFORM_DIR)/Developer/Library/Frameworks",
-				);
-				HEADER_SEARCH_PATHS = "$(inherited)";
-				INFOPLIST_FILE = BioSwift.xcodeproj/BioSwiftTests_Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @loader_path/../Frameworks @loader_path/Frameworks";
-				OTHER_CFLAGS = "$(inherited)";
-				OTHER_LDFLAGS = "$(inherited)";
-				OTHER_SWIFT_FLAGS = "$(inherited)";
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited)";
-				SWIFT_VERSION = 4.2;
-				TARGET_NAME = BioSwiftTests;
-			};
-			name = Debug;
-		};
-		OBJ_38 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				CLANG_ENABLE_MODULES = YES;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PLATFORM_DIR)/Developer/Library/Frameworks",
-				);
-				HEADER_SEARCH_PATHS = "$(inherited)";
-				INFOPLIST_FILE = BioSwift.xcodeproj/BioSwiftTests_Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @loader_path/../Frameworks @loader_path/Frameworks";
-				OTHER_CFLAGS = "$(inherited)";
-				OTHER_LDFLAGS = "$(inherited)";
-				OTHER_SWIFT_FLAGS = "$(inherited)";
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited)";
-				SWIFT_VERSION = 4.2;
-				TARGET_NAME = BioSwiftTests;
-			};
-			name = Release;
-		};
-		OBJ_4 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
-				CLANG_WARN_BOOL_CONVERSION = YES;
-				CLANG_WARN_COMMA = YES;
-				CLANG_WARN_CONSTANT_CONVERSION = YES;
-				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
-				CLANG_WARN_EMPTY_BODY = YES;
-				CLANG_WARN_ENUM_CONVERSION = YES;
-				CLANG_WARN_INFINITE_RECURSION = YES;
-				CLANG_WARN_INT_CONVERSION = YES;
-				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
-				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
-				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
-				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
-				CLANG_WARN_STRICT_PROTOTYPES = YES;
-				CLANG_WARN_SUSPICIOUS_MOVE = YES;
-				CLANG_WARN_UNREACHABLE_CODE = YES;
-				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				COMBINE_HIDPI_IMAGES = YES;
-				COPY_PHASE_STRIP = YES;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_OPTIMIZATION_LEVEL = s;
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES;
-				GCC_WARN_UNDECLARED_SELECTOR = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES;
-				GCC_WARN_UNUSED_FUNCTION = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.13;
-				OTHER_SWIFT_FLAGS = "-DXcode";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx;
-				SUPPORTED_PLATFORMS = "macosx iphoneos iphonesimulator appletvos appletvsimulator watchos watchsimulator";
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = SWIFT_PACKAGE;
-				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
-				SWIFT_VERSION = 4.2;
-				USE_HEADERMAP = NO;
-			};
-			name = Release;
-		};
-/* End XCBuildConfiguration section */
-
-/* Begin XCConfigurationList section */
-		OBJ_18 /* Build configuration list for PBXNativeTarget "BioSwift" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				OBJ_19 /* Debug */,
-				OBJ_20 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		OBJ_2 /* Build configuration list for PBXProject "BioSwift" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				OBJ_3 /* Debug */,
-				OBJ_4 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		OBJ_25 /* Build configuration list for PBXNativeTarget "BioSwiftPackageDescription" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				OBJ_26 /* Debug */,
-				OBJ_27 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		OBJ_31 /* Build configuration list for PBXAggregateTarget "BioSwiftPackageTests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				OBJ_32 /* Debug */,
-				OBJ_33 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		OBJ_36 /* Build configuration list for PBXNativeTarget "BioSwiftTests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				OBJ_37 /* Debug */,
-				OBJ_38 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-/* End XCConfigurationList section */
-	};
-	rootObject = OBJ_1 /* Project object */;
+   archiveVersion = "1";
+   objectVersion = "46";
+   objects = {
+      "BioSwift::BioSwift" = {
+         isa = "PBXNativeTarget";
+         buildConfigurationList = "OBJ_56";
+         buildPhases = (
+            "OBJ_59",
+            "OBJ_90"
+         );
+         dependencies = (
+         );
+         name = "BioSwift";
+         productName = "BioSwift";
+         productReference = "BioSwift::BioSwift::Product";
+         productType = "com.apple.product-type.framework";
+      };
+      "BioSwift::BioSwift::Product" = {
+         isa = "PBXFileReference";
+         path = "BioSwift.framework";
+         sourceTree = "BUILT_PRODUCTS_DIR";
+      };
+      "BioSwift::BioSwiftPackageTests::ProductTarget" = {
+         isa = "PBXAggregateTarget";
+         buildConfigurationList = "OBJ_98";
+         buildPhases = (
+         );
+         dependencies = (
+            "OBJ_101"
+         );
+         name = "BioSwiftPackageTests";
+         productName = "BioSwiftPackageTests";
+      };
+      "BioSwift::BioSwiftTests" = {
+         isa = "PBXNativeTarget";
+         buildConfigurationList = "OBJ_103";
+         buildPhases = (
+            "OBJ_106",
+            "OBJ_109"
+         );
+         dependencies = (
+            "OBJ_111"
+         );
+         name = "BioSwiftTests";
+         productName = "BioSwiftTests";
+         productReference = "BioSwift::BioSwiftTests::Product";
+         productType = "com.apple.product-type.bundle.unit-test";
+      };
+      "BioSwift::BioSwiftTests::Product" = {
+         isa = "PBXFileReference";
+         path = "BioSwiftTests.xctest";
+         sourceTree = "BUILT_PRODUCTS_DIR";
+      };
+      "BioSwift::SwiftPMPackageDescription" = {
+         isa = "PBXNativeTarget";
+         buildConfigurationList = "OBJ_92";
+         buildPhases = (
+            "OBJ_95"
+         );
+         dependencies = (
+         );
+         name = "BioSwiftPackageDescription";
+         productName = "BioSwiftPackageDescription";
+         productType = "com.apple.product-type.framework";
+      };
+      "OBJ_1" = {
+         isa = "PBXProject";
+         attributes = {
+            LastSwiftMigration = "9999";
+            LastUpgradeCheck = "9999";
+         };
+         buildConfigurationList = "OBJ_2";
+         compatibilityVersion = "Xcode 3.2";
+         developmentRegion = "en";
+         hasScannedForEncodings = "0";
+         knownRegions = (
+            "en"
+         );
+         mainGroup = "OBJ_5";
+         productRefGroup = "OBJ_49";
+         projectDirPath = ".";
+         targets = (
+            "BioSwift::BioSwift",
+            "BioSwift::SwiftPMPackageDescription",
+            "BioSwift::BioSwiftPackageTests::ProductTarget",
+            "BioSwift::BioSwiftTests"
+         );
+      };
+      "OBJ_10" = {
+         isa = "PBXGroup";
+         children = (
+            "OBJ_11",
+            "OBJ_12",
+            "OBJ_13",
+            "OBJ_14",
+            "OBJ_15",
+            "OBJ_16",
+            "OBJ_17",
+            "OBJ_18",
+            "OBJ_19",
+            "OBJ_20"
+         );
+         name = "Bricks";
+         path = "Bricks";
+         sourceTree = "<group>";
+      };
+      "OBJ_100" = {
+         isa = "XCBuildConfiguration";
+         buildSettings = {
+         };
+         name = "Release";
+      };
+      "OBJ_101" = {
+         isa = "PBXTargetDependency";
+         target = "BioSwift::BioSwiftTests";
+      };
+      "OBJ_103" = {
+         isa = "XCConfigurationList";
+         buildConfigurations = (
+            "OBJ_104",
+            "OBJ_105"
+         );
+         defaultConfigurationIsVisible = "0";
+         defaultConfigurationName = "Release";
+      };
+      "OBJ_104" = {
+         isa = "XCBuildConfiguration";
+         buildSettings = {
+            CLANG_ENABLE_MODULES = "YES";
+            EMBEDDED_CONTENT_CONTAINS_SWIFT = "YES";
+            FRAMEWORK_SEARCH_PATHS = (
+               "$(inherited)",
+               "$(PLATFORM_DIR)/Developer/Library/Frameworks"
+            );
+            HEADER_SEARCH_PATHS = (
+               "$(inherited)"
+            );
+            INFOPLIST_FILE = "BioSwift.xcodeproj/BioSwiftTests_Info.plist";
+            IPHONEOS_DEPLOYMENT_TARGET = "8.0";
+            LD_RUNPATH_SEARCH_PATHS = (
+               "$(inherited)",
+               "@loader_path/../Frameworks",
+               "@loader_path/Frameworks"
+            );
+            MACOSX_DEPLOYMENT_TARGET = "10.10";
+            OTHER_CFLAGS = (
+               "$(inherited)"
+            );
+            OTHER_LDFLAGS = (
+               "$(inherited)"
+            );
+            OTHER_SWIFT_FLAGS = (
+               "$(inherited)"
+            );
+            SWIFT_ACTIVE_COMPILATION_CONDITIONS = (
+               "$(inherited)"
+            );
+            SWIFT_VERSION = "5.0";
+            TARGET_NAME = "BioSwiftTests";
+            TVOS_DEPLOYMENT_TARGET = "9.0";
+            WATCHOS_DEPLOYMENT_TARGET = "2.0";
+         };
+         name = "Debug";
+      };
+      "OBJ_105" = {
+         isa = "XCBuildConfiguration";
+         buildSettings = {
+            CLANG_ENABLE_MODULES = "YES";
+            EMBEDDED_CONTENT_CONTAINS_SWIFT = "YES";
+            FRAMEWORK_SEARCH_PATHS = (
+               "$(inherited)",
+               "$(PLATFORM_DIR)/Developer/Library/Frameworks"
+            );
+            HEADER_SEARCH_PATHS = (
+               "$(inherited)"
+            );
+            INFOPLIST_FILE = "BioSwift.xcodeproj/BioSwiftTests_Info.plist";
+            IPHONEOS_DEPLOYMENT_TARGET = "8.0";
+            LD_RUNPATH_SEARCH_PATHS = (
+               "$(inherited)",
+               "@loader_path/../Frameworks",
+               "@loader_path/Frameworks"
+            );
+            MACOSX_DEPLOYMENT_TARGET = "10.10";
+            OTHER_CFLAGS = (
+               "$(inherited)"
+            );
+            OTHER_LDFLAGS = (
+               "$(inherited)"
+            );
+            OTHER_SWIFT_FLAGS = (
+               "$(inherited)"
+            );
+            SWIFT_ACTIVE_COMPILATION_CONDITIONS = (
+               "$(inherited)"
+            );
+            SWIFT_VERSION = "5.0";
+            TARGET_NAME = "BioSwiftTests";
+            TVOS_DEPLOYMENT_TARGET = "9.0";
+            WATCHOS_DEPLOYMENT_TARGET = "2.0";
+         };
+         name = "Release";
+      };
+      "OBJ_106" = {
+         isa = "PBXSourcesBuildPhase";
+         files = (
+            "OBJ_107",
+            "OBJ_108"
+         );
+      };
+      "OBJ_107" = {
+         isa = "PBXBuildFile";
+         fileRef = "OBJ_47";
+      };
+      "OBJ_108" = {
+         isa = "PBXBuildFile";
+         fileRef = "OBJ_48";
+      };
+      "OBJ_109" = {
+         isa = "PBXFrameworksBuildPhase";
+         files = (
+            "OBJ_110"
+         );
+      };
+      "OBJ_11" = {
+         isa = "PBXFileReference";
+         path = "AminoAcid.swift";
+         sourceTree = "<group>";
+      };
+      "OBJ_110" = {
+         isa = "PBXBuildFile";
+         fileRef = "BioSwift::BioSwift::Product";
+      };
+      "OBJ_111" = {
+         isa = "PBXTargetDependency";
+         target = "BioSwift::BioSwift";
+      };
+      "OBJ_12" = {
+         isa = "PBXFileReference";
+         path = "ChemicalElement.swift";
+         sourceTree = "<group>";
+      };
+      "OBJ_13" = {
+         isa = "PBXFileReference";
+         path = "Enzyme.swift";
+         sourceTree = "<group>";
+      };
+      "OBJ_14" = {
+         isa = "PBXFileReference";
+         path = "Formula.swift";
+         sourceTree = "<group>";
+      };
+      "OBJ_15" = {
+         isa = "PBXFileReference";
+         path = "Group.swift";
+         sourceTree = "<group>";
+      };
+      "OBJ_16" = {
+         isa = "PBXFileReference";
+         path = "Modification.swift";
+         sourceTree = "<group>";
+      };
+      "OBJ_17" = {
+         isa = "PBXFileReference";
+         path = "Molecule.swift";
+         sourceTree = "<group>";
+      };
+      "OBJ_18" = {
+         isa = "PBXFileReference";
+         path = "Residue.swift";
+         sourceTree = "<group>";
+      };
+      "OBJ_19" = {
+         isa = "PBXFileReference";
+         path = "Structure.swift";
+         sourceTree = "<group>";
+      };
+      "OBJ_2" = {
+         isa = "XCConfigurationList";
+         buildConfigurations = (
+            "OBJ_3",
+            "OBJ_4"
+         );
+         defaultConfigurationIsVisible = "0";
+         defaultConfigurationName = "Release";
+      };
+      "OBJ_20" = {
+         isa = "PBXFileReference";
+         path = "Symbol.swift";
+         sourceTree = "<group>";
+      };
+      "OBJ_21" = {
+         isa = "PBXGroup";
+         children = (
+            "OBJ_22",
+            "OBJ_23",
+            "OBJ_24",
+            "OBJ_25"
+         );
+         name = "Calculators";
+         path = "Calculators";
+         sourceTree = "<group>";
+      };
+      "OBJ_22" = {
+         isa = "PBXFileReference";
+         path = "Digest.swift";
+         sourceTree = "<group>";
+      };
+      "OBJ_23" = {
+         isa = "PBXFileReference";
+         path = "Hydropathy.swift";
+         sourceTree = "<group>";
+      };
+      "OBJ_24" = {
+         isa = "PBXFileReference";
+         path = "Mass.swift";
+         sourceTree = "<group>";
+      };
+      "OBJ_25" = {
+         isa = "PBXFileReference";
+         path = "Search.swift";
+         sourceTree = "<group>";
+      };
+      "OBJ_26" = {
+         isa = "PBXGroup";
+         children = (
+            "OBJ_27",
+            "OBJ_28"
+         );
+         name = "Data";
+         path = "Data";
+         sourceTree = "<group>";
+      };
+      "OBJ_27" = {
+         isa = "PBXFileReference";
+         path = "Fasta.swift";
+         sourceTree = "<group>";
+      };
+      "OBJ_28" = {
+         isa = "PBXFileReference";
+         path = "JSON.swift";
+         sourceTree = "<group>";
+      };
+      "OBJ_29" = {
+         isa = "PBXGroup";
+         children = (
+            "OBJ_30",
+            "OBJ_31",
+            "OBJ_32"
+         );
+         name = "Extensions";
+         path = "Extensions";
+         sourceTree = "<group>";
+      };
+      "OBJ_3" = {
+         isa = "XCBuildConfiguration";
+         buildSettings = {
+            CLANG_ENABLE_OBJC_ARC = "YES";
+            COMBINE_HIDPI_IMAGES = "YES";
+            COPY_PHASE_STRIP = "NO";
+            DEBUG_INFORMATION_FORMAT = "dwarf";
+            DYLIB_INSTALL_NAME_BASE = "@rpath";
+            ENABLE_NS_ASSERTIONS = "YES";
+            GCC_OPTIMIZATION_LEVEL = "0";
+            GCC_PREPROCESSOR_DEFINITIONS = (
+               "$(inherited)",
+               "SWIFT_PACKAGE=1",
+               "DEBUG=1"
+            );
+            MACOSX_DEPLOYMENT_TARGET = "10.10";
+            ONLY_ACTIVE_ARCH = "YES";
+            OTHER_SWIFT_FLAGS = (
+               "$(inherited)",
+               "-DXcode"
+            );
+            PRODUCT_NAME = "$(TARGET_NAME)";
+            SDKROOT = "macosx";
+            SUPPORTED_PLATFORMS = (
+               "macosx",
+               "iphoneos",
+               "iphonesimulator",
+               "appletvos",
+               "appletvsimulator",
+               "watchos",
+               "watchsimulator"
+            );
+            SWIFT_ACTIVE_COMPILATION_CONDITIONS = (
+               "$(inherited)",
+               "SWIFT_PACKAGE",
+               "DEBUG"
+            );
+            SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+            USE_HEADERMAP = "NO";
+         };
+         name = "Debug";
+      };
+      "OBJ_30" = {
+         isa = "PBXFileReference";
+         path = "Array.swift";
+         sourceTree = "<group>";
+      };
+      "OBJ_31" = {
+         isa = "PBXFileReference";
+         path = "Double.swift";
+         sourceTree = "<group>";
+      };
+      "OBJ_32" = {
+         isa = "PBXFileReference";
+         path = "String.swift";
+         sourceTree = "<group>";
+      };
+      "OBJ_33" = {
+         isa = "PBXGroup";
+         children = (
+            "OBJ_34",
+            "OBJ_35",
+            "OBJ_36",
+            "OBJ_37",
+            "OBJ_38",
+            "OBJ_39"
+         );
+         name = "Sequence";
+         path = "Sequence";
+         sourceTree = "<group>";
+      };
+      "OBJ_34" = {
+         isa = "PBXFileReference";
+         path = "BioSequence.swift";
+         sourceTree = "<group>";
+      };
+      "OBJ_35" = {
+         isa = "PBXFileReference";
+         path = "Chargeable.swift";
+         sourceTree = "<group>";
+      };
+      "OBJ_36" = {
+         isa = "PBXFileReference";
+         path = "Fragment.swift";
+         sourceTree = "<group>";
+      };
+      "OBJ_37" = {
+         isa = "PBXFileReference";
+         path = "Peptide.swift";
+         sourceTree = "<group>";
+      };
+      "OBJ_38" = {
+         isa = "PBXFileReference";
+         path = "Protein.swift";
+         sourceTree = "<group>";
+      };
+      "OBJ_39" = {
+         isa = "PBXFileReference";
+         path = "SequenceRange.swift";
+         sourceTree = "<group>";
+      };
+      "OBJ_4" = {
+         isa = "XCBuildConfiguration";
+         buildSettings = {
+            CLANG_ENABLE_OBJC_ARC = "YES";
+            COMBINE_HIDPI_IMAGES = "YES";
+            COPY_PHASE_STRIP = "YES";
+            DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+            DYLIB_INSTALL_NAME_BASE = "@rpath";
+            GCC_OPTIMIZATION_LEVEL = "s";
+            GCC_PREPROCESSOR_DEFINITIONS = (
+               "$(inherited)",
+               "SWIFT_PACKAGE=1"
+            );
+            MACOSX_DEPLOYMENT_TARGET = "10.10";
+            OTHER_SWIFT_FLAGS = (
+               "$(inherited)",
+               "-DXcode"
+            );
+            PRODUCT_NAME = "$(TARGET_NAME)";
+            SDKROOT = "macosx";
+            SUPPORTED_PLATFORMS = (
+               "macosx",
+               "iphoneos",
+               "iphonesimulator",
+               "appletvos",
+               "appletvsimulator",
+               "watchos",
+               "watchsimulator"
+            );
+            SWIFT_ACTIVE_COMPILATION_CONDITIONS = (
+               "$(inherited)",
+               "SWIFT_PACKAGE"
+            );
+            SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
+            USE_HEADERMAP = "NO";
+         };
+         name = "Release";
+      };
+      "OBJ_40" = {
+         isa = "PBXGroup";
+         children = (
+            "OBJ_41",
+            "OBJ_42",
+            "OBJ_43",
+            "OBJ_44"
+         );
+         name = "Support";
+         path = "Support";
+         sourceTree = "<group>";
+      };
+      "OBJ_41" = {
+         isa = "PBXFileReference";
+         path = "Bundle+Decoding.swift";
+         sourceTree = "<group>";
+      };
+      "OBJ_42" = {
+         isa = "PBXFileReference";
+         path = "UnimodParser.swift";
+         sourceTree = "<group>";
+      };
+      "OBJ_43" = {
+         isa = "PBXFileReference";
+         path = "Utilities.swift";
+         sourceTree = "<group>";
+      };
+      "OBJ_44" = {
+         isa = "PBXFileReference";
+         path = "Webservice.swift";
+         sourceTree = "<group>";
+      };
+      "OBJ_45" = {
+         isa = "PBXGroup";
+         children = (
+            "OBJ_46"
+         );
+         name = "Tests";
+         path = "";
+         sourceTree = "SOURCE_ROOT";
+      };
+      "OBJ_46" = {
+         isa = "PBXGroup";
+         children = (
+            "OBJ_47",
+            "OBJ_48"
+         );
+         name = "BioSwiftTests";
+         path = "Tests/BioSwiftTests";
+         sourceTree = "SOURCE_ROOT";
+      };
+      "OBJ_47" = {
+         isa = "PBXFileReference";
+         path = "BioSwiftTests.swift";
+         sourceTree = "<group>";
+      };
+      "OBJ_48" = {
+         isa = "PBXFileReference";
+         path = "XCTestManifests.swift";
+         sourceTree = "<group>";
+      };
+      "OBJ_49" = {
+         isa = "PBXGroup";
+         children = (
+            "BioSwift::BioSwiftTests::Product",
+            "BioSwift::BioSwift::Product"
+         );
+         name = "Products";
+         path = "";
+         sourceTree = "BUILT_PRODUCTS_DIR";
+      };
+      "OBJ_5" = {
+         isa = "PBXGroup";
+         children = (
+            "OBJ_6",
+            "OBJ_7",
+            "OBJ_45",
+            "OBJ_49",
+            "OBJ_52",
+            "OBJ_53",
+            "OBJ_54"
+         );
+         path = "";
+         sourceTree = "<group>";
+      };
+      "OBJ_52" = {
+         isa = "PBXFileReference";
+         path = "API Design.md";
+         sourceTree = "<group>";
+      };
+      "OBJ_53" = {
+         isa = "PBXFileReference";
+         path = "LICENSE";
+         sourceTree = "<group>";
+      };
+      "OBJ_54" = {
+         isa = "PBXFileReference";
+         path = "README.md";
+         sourceTree = "<group>";
+      };
+      "OBJ_56" = {
+         isa = "XCConfigurationList";
+         buildConfigurations = (
+            "OBJ_57",
+            "OBJ_58"
+         );
+         defaultConfigurationIsVisible = "0";
+         defaultConfigurationName = "Release";
+      };
+      "OBJ_57" = {
+         isa = "XCBuildConfiguration";
+         buildSettings = {
+            ENABLE_TESTABILITY = "YES";
+            FRAMEWORK_SEARCH_PATHS = (
+               "$(inherited)",
+               "$(PLATFORM_DIR)/Developer/Library/Frameworks"
+            );
+            HEADER_SEARCH_PATHS = (
+               "$(inherited)"
+            );
+            INFOPLIST_FILE = "BioSwift.xcodeproj/BioSwift_Info.plist";
+            IPHONEOS_DEPLOYMENT_TARGET = "8.0";
+            LD_RUNPATH_SEARCH_PATHS = (
+               "$(inherited)",
+               "$(TOOLCHAIN_DIR)/usr/lib/swift/macosx"
+            );
+            MACOSX_DEPLOYMENT_TARGET = "10.10";
+            OTHER_CFLAGS = (
+               "$(inherited)"
+            );
+            OTHER_LDFLAGS = (
+               "$(inherited)"
+            );
+            OTHER_SWIFT_FLAGS = (
+               "$(inherited)"
+            );
+            PRODUCT_BUNDLE_IDENTIFIER = "BioSwift";
+            PRODUCT_MODULE_NAME = "$(TARGET_NAME:c99extidentifier)";
+            PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+            SKIP_INSTALL = "YES";
+            SWIFT_ACTIVE_COMPILATION_CONDITIONS = (
+               "$(inherited)"
+            );
+            SWIFT_VERSION = "5.0";
+            TARGET_NAME = "BioSwift";
+            TVOS_DEPLOYMENT_TARGET = "9.0";
+            WATCHOS_DEPLOYMENT_TARGET = "2.0";
+         };
+         name = "Debug";
+      };
+      "OBJ_58" = {
+         isa = "XCBuildConfiguration";
+         buildSettings = {
+            ENABLE_TESTABILITY = "YES";
+            FRAMEWORK_SEARCH_PATHS = (
+               "$(inherited)",
+               "$(PLATFORM_DIR)/Developer/Library/Frameworks"
+            );
+            HEADER_SEARCH_PATHS = (
+               "$(inherited)"
+            );
+            INFOPLIST_FILE = "BioSwift.xcodeproj/BioSwift_Info.plist";
+            IPHONEOS_DEPLOYMENT_TARGET = "8.0";
+            LD_RUNPATH_SEARCH_PATHS = (
+               "$(inherited)",
+               "$(TOOLCHAIN_DIR)/usr/lib/swift/macosx"
+            );
+            MACOSX_DEPLOYMENT_TARGET = "10.10";
+            OTHER_CFLAGS = (
+               "$(inherited)"
+            );
+            OTHER_LDFLAGS = (
+               "$(inherited)"
+            );
+            OTHER_SWIFT_FLAGS = (
+               "$(inherited)"
+            );
+            PRODUCT_BUNDLE_IDENTIFIER = "BioSwift";
+            PRODUCT_MODULE_NAME = "$(TARGET_NAME:c99extidentifier)";
+            PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+            SKIP_INSTALL = "YES";
+            SWIFT_ACTIVE_COMPILATION_CONDITIONS = (
+               "$(inherited)"
+            );
+            SWIFT_VERSION = "5.0";
+            TARGET_NAME = "BioSwift";
+            TVOS_DEPLOYMENT_TARGET = "9.0";
+            WATCHOS_DEPLOYMENT_TARGET = "2.0";
+         };
+         name = "Release";
+      };
+      "OBJ_59" = {
+         isa = "PBXSourcesBuildPhase";
+         files = (
+            "OBJ_60",
+            "OBJ_61",
+            "OBJ_62",
+            "OBJ_63",
+            "OBJ_64",
+            "OBJ_65",
+            "OBJ_66",
+            "OBJ_67",
+            "OBJ_68",
+            "OBJ_69",
+            "OBJ_70",
+            "OBJ_71",
+            "OBJ_72",
+            "OBJ_73",
+            "OBJ_74",
+            "OBJ_75",
+            "OBJ_76",
+            "OBJ_77",
+            "OBJ_78",
+            "OBJ_79",
+            "OBJ_80",
+            "OBJ_81",
+            "OBJ_82",
+            "OBJ_83",
+            "OBJ_84",
+            "OBJ_85",
+            "OBJ_86",
+            "OBJ_87",
+            "OBJ_88",
+            "OBJ_89"
+         );
+      };
+      "OBJ_6" = {
+         isa = "PBXFileReference";
+         explicitFileType = "sourcecode.swift";
+         path = "Package.swift";
+         sourceTree = "<group>";
+      };
+      "OBJ_60" = {
+         isa = "PBXBuildFile";
+         fileRef = "OBJ_9";
+      };
+      "OBJ_61" = {
+         isa = "PBXBuildFile";
+         fileRef = "OBJ_11";
+      };
+      "OBJ_62" = {
+         isa = "PBXBuildFile";
+         fileRef = "OBJ_12";
+      };
+      "OBJ_63" = {
+         isa = "PBXBuildFile";
+         fileRef = "OBJ_13";
+      };
+      "OBJ_64" = {
+         isa = "PBXBuildFile";
+         fileRef = "OBJ_14";
+      };
+      "OBJ_65" = {
+         isa = "PBXBuildFile";
+         fileRef = "OBJ_15";
+      };
+      "OBJ_66" = {
+         isa = "PBXBuildFile";
+         fileRef = "OBJ_16";
+      };
+      "OBJ_67" = {
+         isa = "PBXBuildFile";
+         fileRef = "OBJ_17";
+      };
+      "OBJ_68" = {
+         isa = "PBXBuildFile";
+         fileRef = "OBJ_18";
+      };
+      "OBJ_69" = {
+         isa = "PBXBuildFile";
+         fileRef = "OBJ_19";
+      };
+      "OBJ_7" = {
+         isa = "PBXGroup";
+         children = (
+            "OBJ_8"
+         );
+         name = "Sources";
+         path = "";
+         sourceTree = "SOURCE_ROOT";
+      };
+      "OBJ_70" = {
+         isa = "PBXBuildFile";
+         fileRef = "OBJ_20";
+      };
+      "OBJ_71" = {
+         isa = "PBXBuildFile";
+         fileRef = "OBJ_22";
+      };
+      "OBJ_72" = {
+         isa = "PBXBuildFile";
+         fileRef = "OBJ_23";
+      };
+      "OBJ_73" = {
+         isa = "PBXBuildFile";
+         fileRef = "OBJ_24";
+      };
+      "OBJ_74" = {
+         isa = "PBXBuildFile";
+         fileRef = "OBJ_25";
+      };
+      "OBJ_75" = {
+         isa = "PBXBuildFile";
+         fileRef = "OBJ_27";
+      };
+      "OBJ_76" = {
+         isa = "PBXBuildFile";
+         fileRef = "OBJ_28";
+      };
+      "OBJ_77" = {
+         isa = "PBXBuildFile";
+         fileRef = "OBJ_30";
+      };
+      "OBJ_78" = {
+         isa = "PBXBuildFile";
+         fileRef = "OBJ_31";
+      };
+      "OBJ_79" = {
+         isa = "PBXBuildFile";
+         fileRef = "OBJ_32";
+      };
+      "OBJ_8" = {
+         isa = "PBXGroup";
+         children = (
+            "OBJ_9",
+            "OBJ_10",
+            "OBJ_21",
+            "OBJ_26",
+            "OBJ_29",
+            "OBJ_33",
+            "OBJ_40"
+         );
+         name = "BioSwift";
+         path = "Sources/BioSwift";
+         sourceTree = "SOURCE_ROOT";
+      };
+      "OBJ_80" = {
+         isa = "PBXBuildFile";
+         fileRef = "OBJ_34";
+      };
+      "OBJ_81" = {
+         isa = "PBXBuildFile";
+         fileRef = "OBJ_35";
+      };
+      "OBJ_82" = {
+         isa = "PBXBuildFile";
+         fileRef = "OBJ_36";
+      };
+      "OBJ_83" = {
+         isa = "PBXBuildFile";
+         fileRef = "OBJ_37";
+      };
+      "OBJ_84" = {
+         isa = "PBXBuildFile";
+         fileRef = "OBJ_38";
+      };
+      "OBJ_85" = {
+         isa = "PBXBuildFile";
+         fileRef = "OBJ_39";
+      };
+      "OBJ_86" = {
+         isa = "PBXBuildFile";
+         fileRef = "OBJ_41";
+      };
+      "OBJ_87" = {
+         isa = "PBXBuildFile";
+         fileRef = "OBJ_42";
+      };
+      "OBJ_88" = {
+         isa = "PBXBuildFile";
+         fileRef = "OBJ_43";
+      };
+      "OBJ_89" = {
+         isa = "PBXBuildFile";
+         fileRef = "OBJ_44";
+      };
+      "OBJ_9" = {
+         isa = "PBXFileReference";
+         path = "BioSwift.swift";
+         sourceTree = "<group>";
+      };
+      "OBJ_90" = {
+         isa = "PBXFrameworksBuildPhase";
+         files = (
+         );
+      };
+      "OBJ_92" = {
+         isa = "XCConfigurationList";
+         buildConfigurations = (
+            "OBJ_93",
+            "OBJ_94"
+         );
+         defaultConfigurationIsVisible = "0";
+         defaultConfigurationName = "Release";
+      };
+      "OBJ_93" = {
+         isa = "XCBuildConfiguration";
+         buildSettings = {
+            LD = "/usr/bin/true";
+            OTHER_SWIFT_FLAGS = (
+               "-swift-version",
+               "5",
+               "-I",
+               "$(TOOLCHAIN_DIR)/usr/lib/swift/pm/4_2",
+               "-target",
+               "x86_64-apple-macosx10.10",
+               "-sdk",
+               "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.15.sdk",
+               "-package-description-version",
+               "5.2.0"
+            );
+            SWIFT_VERSION = "5.0";
+         };
+         name = "Debug";
+      };
+      "OBJ_94" = {
+         isa = "XCBuildConfiguration";
+         buildSettings = {
+            LD = "/usr/bin/true";
+            OTHER_SWIFT_FLAGS = (
+               "-swift-version",
+               "5",
+               "-I",
+               "$(TOOLCHAIN_DIR)/usr/lib/swift/pm/4_2",
+               "-target",
+               "x86_64-apple-macosx10.10",
+               "-sdk",
+               "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.15.sdk",
+               "-package-description-version",
+               "5.2.0"
+            );
+            SWIFT_VERSION = "5.0";
+         };
+         name = "Release";
+      };
+      "OBJ_95" = {
+         isa = "PBXSourcesBuildPhase";
+         files = (
+            "OBJ_96"
+         );
+      };
+      "OBJ_96" = {
+         isa = "PBXBuildFile";
+         fileRef = "OBJ_6";
+      };
+      "OBJ_98" = {
+         isa = "XCConfigurationList";
+         buildConfigurations = (
+            "OBJ_99",
+            "OBJ_100"
+         );
+         defaultConfigurationIsVisible = "0";
+         defaultConfigurationName = "Release";
+      };
+      "OBJ_99" = {
+         isa = "XCBuildConfiguration";
+         buildSettings = {
+         };
+         name = "Debug";
+      };
+   };
+   rootObject = "OBJ_1";
 }
