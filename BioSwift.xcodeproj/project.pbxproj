@@ -21,6 +21,13 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		5D0B69A224DE05CE00A18A26 /* aminoacids.json in Resources */ = {isa = PBXBuildFile; fileRef = 5DA2278B24DDDE6100916DA4 /* aminoacids.json */; };
+		5D0B69A324DE05CE00A18A26 /* hydropathy.json in Resources */ = {isa = PBXBuildFile; fileRef = 5DA2278C24DDDE6100916DA4 /* hydropathy.json */; };
+		5D0B69A424DE05CE00A18A26 /* functionalgroups.json in Resources */ = {isa = PBXBuildFile; fileRef = 5DA2278D24DDDE6100916DA4 /* functionalgroups.json */; };
+		5D0B69A524DE05CE00A18A26 /* elements.json in Resources */ = {isa = PBXBuildFile; fileRef = 5DA2278E24DDDE6100916DA4 /* elements.json */; };
+		5D0B69A624DE05CE00A18A26 /* elements.txt in Resources */ = {isa = PBXBuildFile; fileRef = 5DA2278F24DDDE6100916DA4 /* elements.txt */; };
+		5D0B69A724DE05CE00A18A26 /* unimod.xml in Resources */ = {isa = PBXBuildFile; fileRef = 5DA2279024DDDE6100916DA4 /* unimod.xml */; };
+		5D0B69A824DE05CE00A18A26 /* enzymes.json in Resources */ = {isa = PBXBuildFile; fileRef = 5DA2279124DDDE6100916DA4 /* enzymes.json */; };
 		OBJ_107 /* BioSwiftTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_47 /* BioSwiftTests.swift */; };
 		OBJ_108 /* XCTestManifests.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_48 /* XCTestManifests.swift */; };
 		OBJ_110 /* BioSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = "BioSwift::BioSwift::Product" /* BioSwift.framework */; };
@@ -82,7 +89,7 @@
 		5DA2278F24DDDE6100916DA4 /* elements.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = elements.txt; sourceTree = "<group>"; };
 		5DA2279024DDDE6100916DA4 /* unimod.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = unimod.xml; sourceTree = "<group>"; };
 		5DA2279124DDDE6100916DA4 /* enzymes.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = enzymes.json; sourceTree = "<group>"; };
-		"BioSwift::BioSwift::Product" /* BioSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = BioSwift.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		"BioSwift::BioSwift::Product" /* BioSwift.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = BioSwift.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		"BioSwift::BioSwiftTests::Product" /* BioSwiftTests.xctest */ = {isa = PBXFileReference; lastKnownFileType = file; path = BioSwiftTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		OBJ_11 /* AminoAcid.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AminoAcid.swift; sourceTree = "<group>"; };
 		OBJ_12 /* ChemicalElement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChemicalElement.swift; sourceTree = "<group>"; };
@@ -253,7 +260,7 @@
 			name = Products;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		OBJ_5 /*  */ = {
+		OBJ_5 = {
 			isa = PBXGroup;
 			children = (
 				OBJ_6 /* Package.swift */,
@@ -264,7 +271,6 @@
 				OBJ_53 /* LICENSE */,
 				OBJ_54 /* README.md */,
 			);
-			name = "";
 			sourceTree = "<group>";
 		};
 		OBJ_7 /* Sources */ = {
@@ -300,6 +306,7 @@
 			buildPhases = (
 				OBJ_59 /* Sources */,
 				OBJ_90 /* Frameworks */,
+				5D0B69A124DE05B200A18A26 /* Resources */,
 			);
 			buildRules = (
 			);
@@ -357,7 +364,7 @@
 			knownRegions = (
 				en,
 			);
-			mainGroup = OBJ_5 /*  */;
+			mainGroup = OBJ_5;
 			productRefGroup = OBJ_49 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -369,6 +376,23 @@
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		5D0B69A124DE05B200A18A26 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5D0B69A224DE05CE00A18A26 /* aminoacids.json in Resources */,
+				5D0B69A324DE05CE00A18A26 /* hydropathy.json in Resources */,
+				5D0B69A424DE05CE00A18A26 /* functionalgroups.json in Resources */,
+				5D0B69A524DE05CE00A18A26 /* elements.json in Resources */,
+				5D0B69A624DE05CE00A18A26 /* elements.txt in Resources */,
+				5D0B69A724DE05CE00A18A26 /* unimod.xml in Resources */,
+				5D0B69A824DE05CE00A18A26 /* enzymes.json in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		OBJ_106 /* Sources */ = {
