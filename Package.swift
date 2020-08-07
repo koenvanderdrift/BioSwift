@@ -20,9 +20,14 @@ let package = Package(
         // Targets can depend on other targets in this package, and on products in packages which this package depends on.
         .target(
             name: "BioSwift",
-            dependencies: []),
-        .testTarget(
-            name: "BioSwiftTests",
-            dependencies: ["BioSwift"]),
+            dependencies: [],
+            resources: [
+                .process("Resources/elements.json"),
+                .process("Resources/aminoacids.json"),
+            ]
+            )
+            .testTarget(
+                name: "BioSwiftTests",
+                dependencies: ["BioSwift"]),
     ]
 )
