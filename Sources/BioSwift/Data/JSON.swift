@@ -8,12 +8,16 @@
 
 import Foundation
 
-public func loadJSONFromBundle<A: Decodable>(fileName: String) -> [A] {
-    guard let bundle = Bundle(identifier: bioSwiftBundleIdentifier) else {
-        fatalError("Unable to load bundle")
-    }
+extension Bundle {
+    static let module = Bundle(path: "\(Bundle.main.bundlePath)/Resources")
+}
 
-    guard let url = bundle.url(forResource: fileName, withExtension: "json") else {
+public func loadJSONFromBundle<A: Decodable>(fileName: String) -> [A] {
+//    guard let bundle = Bundle(identifier: bioSwiftBundleIdentifier) else {
+//        fatalError("Unable to load bundle")
+//    }
+
+    guard let url = Bundle.module?.url(forResource: fileName, withExtension: "json") else {
         fatalError("Unable to find \(fileName).json")
     }
 
