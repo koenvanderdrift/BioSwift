@@ -21,13 +21,14 @@ let package = Package(
         .target(
             name: "BioSwift",
             dependencies: [],
+            exclude: [
+            ],
             resources: [
-                .process("Resources/elements.json"),
-                .process("Resources/aminoacids.json"),
-            ]
+                .copy("Resources/elements.json")
+            ],
             )
-            .testTarget(
-                name: "BioSwiftTests",
-                dependencies: ["BioSwift"]),
+        .testTarget(
+            name: "BioSwiftTests",
+            dependencies: ["BioSwift"]),
     ]
 )
