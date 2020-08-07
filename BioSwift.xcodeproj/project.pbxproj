@@ -21,98 +21,104 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
-		5D09C373241D1BF0006F0D5C /* UnimodParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D09C372241D1BF0006F0D5C /* UnimodParser.swift */; };
-		5D09C374241D1BF0006F0D5C /* UnimodParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D09C372241D1BF0006F0D5C /* UnimodParser.swift */; };
-		5D09C375241D1BF0006F0D5C /* UnimodParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D09C372241D1BF0006F0D5C /* UnimodParser.swift */; };
 		5D09C377241D1C1D006F0D5C /* unimod.xml in Resources */ = {isa = PBXBuildFile; fileRef = 5D09C376241D1C1D006F0D5C /* unimod.xml */; };
-		5D23BBAD246874BA003A3F15 /* SequenceRange.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D23BBAC246874BA003A3F15 /* SequenceRange.swift */; };
 		5D39778C23E0F3A100A6631C /* aminoacids.json in Resources */ = {isa = PBXBuildFile; fileRef = 5D3976F723E0F18300A6631C /* aminoacids.json */; };
 		5D39778D23E0F3AB00A6631C /* hydropathy.json in Resources */ = {isa = PBXBuildFile; fileRef = 5D3976F823E0F18300A6631C /* hydropathy.json */; };
 		5D39778F23E0F3B000A6631C /* elements.json in Resources */ = {isa = PBXBuildFile; fileRef = 5D3976FB23E0F18300A6631C /* elements.json */; };
 		5D39779023E0F3B300A6631C /* enzymes.json in Resources */ = {isa = PBXBuildFile; fileRef = 5D3976FD23E0F18300A6631C /* enzymes.json */; };
 		5D682EEC23E8F23800D03F10 /* functionalgroups.json in Resources */ = {isa = PBXBuildFile; fileRef = 5D682EEB23E8F23800D03F10 /* functionalgroups.json */; };
-		5D9605A023E0F6FC00F6A93E /* ChemicalElement.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D96059B23E0F6FC00F6A93E /* ChemicalElement.swift */; };
-		5D9605A123E0F6FC00F6A93E /* ChemicalElement.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D96059B23E0F6FC00F6A93E /* ChemicalElement.swift */; };
-		5D9605A223E0F6FC00F6A93E /* ChemicalElement.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D96059B23E0F6FC00F6A93E /* ChemicalElement.swift */; };
-		5D9605A323E0F6FC00F6A93E /* AminoAcid.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D96059C23E0F6FC00F6A93E /* AminoAcid.swift */; };
-		5D9605A423E0F6FC00F6A93E /* AminoAcid.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D96059C23E0F6FC00F6A93E /* AminoAcid.swift */; };
-		5D9605A523E0F6FC00F6A93E /* AminoAcid.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D96059C23E0F6FC00F6A93E /* AminoAcid.swift */; };
-		5D9605A623E0F6FC00F6A93E /* Formula.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D96059D23E0F6FC00F6A93E /* Formula.swift */; };
-		5D9605A723E0F6FC00F6A93E /* Formula.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D96059D23E0F6FC00F6A93E /* Formula.swift */; };
-		5D9605A823E0F6FC00F6A93E /* Formula.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D96059D23E0F6FC00F6A93E /* Formula.swift */; };
-		5D9605A923E0F6FC00F6A93E /* Group.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D96059E23E0F6FC00F6A93E /* Group.swift */; };
-		5D9605AA23E0F6FC00F6A93E /* Group.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D96059E23E0F6FC00F6A93E /* Group.swift */; };
-		5D9605AB23E0F6FC00F6A93E /* Group.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D96059E23E0F6FC00F6A93E /* Group.swift */; };
-		5D9605AC23E0F6FC00F6A93E /* Modification.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D96059F23E0F6FC00F6A93E /* Modification.swift */; };
-		5D9605AD23E0F6FC00F6A93E /* Modification.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D96059F23E0F6FC00F6A93E /* Modification.swift */; };
-		5D9605AE23E0F6FC00F6A93E /* Modification.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D96059F23E0F6FC00F6A93E /* Modification.swift */; };
-		5D9605CC23E0F70E00F6A93E /* JSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605B023E0F70E00F6A93E /* JSON.swift */; };
-		5D9605CD23E0F70E00F6A93E /* JSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605B023E0F70E00F6A93E /* JSON.swift */; };
-		5D9605CE23E0F70E00F6A93E /* JSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605B023E0F70E00F6A93E /* JSON.swift */; };
-		5D9605CF23E0F70E00F6A93E /* Fasta.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605B123E0F70E00F6A93E /* Fasta.swift */; };
-		5D9605D023E0F70E00F6A93E /* Fasta.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605B123E0F70E00F6A93E /* Fasta.swift */; };
-		5D9605D123E0F70E00F6A93E /* Fasta.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605B123E0F70E00F6A93E /* Fasta.swift */; };
-		5D9605D223E0F70E00F6A93E /* Utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605B323E0F70E00F6A93E /* Utilities.swift */; };
-		5D9605D323E0F70E00F6A93E /* Utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605B323E0F70E00F6A93E /* Utilities.swift */; };
-		5D9605D423E0F70E00F6A93E /* Utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605B323E0F70E00F6A93E /* Utilities.swift */; };
-		5D9605D523E0F70E00F6A93E /* Bundle+Decoding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605B423E0F70E00F6A93E /* Bundle+Decoding.swift */; };
-		5D9605D623E0F70E00F6A93E /* Bundle+Decoding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605B423E0F70E00F6A93E /* Bundle+Decoding.swift */; };
-		5D9605D723E0F70E00F6A93E /* Bundle+Decoding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605B423E0F70E00F6A93E /* Bundle+Decoding.swift */; };
-		5D9605D823E0F70E00F6A93E /* Webservice.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605B523E0F70E00F6A93E /* Webservice.swift */; };
-		5D9605D923E0F70E00F6A93E /* Webservice.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605B523E0F70E00F6A93E /* Webservice.swift */; };
-		5D9605DA23E0F70E00F6A93E /* Webservice.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605B523E0F70E00F6A93E /* Webservice.swift */; };
-		5D9605DB23E0F70E00F6A93E /* Array.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605B723E0F70E00F6A93E /* Array.swift */; };
-		5D9605DC23E0F70E00F6A93E /* Array.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605B723E0F70E00F6A93E /* Array.swift */; };
-		5D9605DD23E0F70E00F6A93E /* Array.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605B723E0F70E00F6A93E /* Array.swift */; };
-		5D9605E123E0F70E00F6A93E /* String.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605B923E0F70E00F6A93E /* String.swift */; };
-		5D9605E223E0F70E00F6A93E /* String.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605B923E0F70E00F6A93E /* String.swift */; };
-		5D9605E323E0F70E00F6A93E /* String.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605B923E0F70E00F6A93E /* String.swift */; };
-		5D9605E423E0F70E00F6A93E /* Double.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605BA23E0F70E00F6A93E /* Double.swift */; };
-		5D9605E523E0F70E00F6A93E /* Double.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605BA23E0F70E00F6A93E /* Double.swift */; };
-		5D9605E623E0F70E00F6A93E /* Double.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605BA23E0F70E00F6A93E /* Double.swift */; };
-		5D9605E723E0F70E00F6A93E /* Residue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605BC23E0F70E00F6A93E /* Residue.swift */; };
-		5D9605E823E0F70E00F6A93E /* Residue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605BC23E0F70E00F6A93E /* Residue.swift */; };
-		5D9605E923E0F70E00F6A93E /* Residue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605BC23E0F70E00F6A93E /* Residue.swift */; };
-		5D9605ED23E0F70E00F6A93E /* Structure.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605BE23E0F70E00F6A93E /* Structure.swift */; };
-		5D9605EE23E0F70E00F6A93E /* Structure.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605BE23E0F70E00F6A93E /* Structure.swift */; };
-		5D9605EF23E0F70E00F6A93E /* Structure.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605BE23E0F70E00F6A93E /* Structure.swift */; };
-		5D9605F023E0F70E00F6A93E /* Chargeable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605BF23E0F70E00F6A93E /* Chargeable.swift */; };
-		5D9605F123E0F70E00F6A93E /* Chargeable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605BF23E0F70E00F6A93E /* Chargeable.swift */; };
-		5D9605F223E0F70E00F6A93E /* Chargeable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605BF23E0F70E00F6A93E /* Chargeable.swift */; };
-		5D9605F323E0F70E00F6A93E /* Mass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605C023E0F70E00F6A93E /* Mass.swift */; };
-		5D9605F423E0F70E00F6A93E /* Mass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605C023E0F70E00F6A93E /* Mass.swift */; };
-		5D9605F523E0F70E00F6A93E /* Mass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605C023E0F70E00F6A93E /* Mass.swift */; };
-		5D9605F623E0F70E00F6A93E /* Symbol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605C123E0F70E00F6A93E /* Symbol.swift */; };
-		5D9605F723E0F70E00F6A93E /* Symbol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605C123E0F70E00F6A93E /* Symbol.swift */; };
-		5D9605F823E0F70E00F6A93E /* Symbol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605C123E0F70E00F6A93E /* Symbol.swift */; };
-		5D9605F923E0F70E00F6A93E /* Fragment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605C323E0F70E00F6A93E /* Fragment.swift */; };
-		5D9605FA23E0F70E00F6A93E /* Fragment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605C323E0F70E00F6A93E /* Fragment.swift */; };
-		5D9605FB23E0F70E00F6A93E /* Fragment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605C323E0F70E00F6A93E /* Fragment.swift */; };
-		5D9605FC23E0F70E00F6A93E /* Peptide.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605C423E0F70E00F6A93E /* Peptide.swift */; };
-		5D9605FD23E0F70E00F6A93E /* Peptide.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605C423E0F70E00F6A93E /* Peptide.swift */; };
-		5D9605FE23E0F70E00F6A93E /* Peptide.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605C423E0F70E00F6A93E /* Peptide.swift */; };
-		5D9605FF23E0F70E00F6A93E /* BioSequence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605C523E0F70E00F6A93E /* BioSequence.swift */; };
-		5D96060023E0F70E00F6A93E /* BioSequence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605C523E0F70E00F6A93E /* BioSequence.swift */; };
-		5D96060123E0F70E00F6A93E /* BioSequence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605C523E0F70E00F6A93E /* BioSequence.swift */; };
-		5D96060223E0F70E00F6A93E /* Protein.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605C623E0F70E00F6A93E /* Protein.swift */; };
-		5D96060323E0F70E00F6A93E /* Protein.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605C623E0F70E00F6A93E /* Protein.swift */; };
-		5D96060423E0F70E00F6A93E /* Protein.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605C623E0F70E00F6A93E /* Protein.swift */; };
-		5D96060523E0F70E00F6A93E /* Hydropathy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605C823E0F70E00F6A93E /* Hydropathy.swift */; };
-		5D96060623E0F70E00F6A93E /* Hydropathy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605C823E0F70E00F6A93E /* Hydropathy.swift */; };
-		5D96060723E0F70E00F6A93E /* Hydropathy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605C823E0F70E00F6A93E /* Hydropathy.swift */; };
-		5D96060823E0F70E00F6A93E /* Digest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605C923E0F70E00F6A93E /* Digest.swift */; };
-		5D96060923E0F70E00F6A93E /* Digest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605C923E0F70E00F6A93E /* Digest.swift */; };
-		5D96060A23E0F70E00F6A93E /* Digest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605C923E0F70E00F6A93E /* Digest.swift */; };
-		5D96060B23E0F70E00F6A93E /* Enzyme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605CA23E0F70E00F6A93E /* Enzyme.swift */; };
-		5D96060C23E0F70E00F6A93E /* Enzyme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605CA23E0F70E00F6A93E /* Enzyme.swift */; };
-		5D96060D23E0F70E00F6A93E /* Enzyme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605CA23E0F70E00F6A93E /* Enzyme.swift */; };
-		5D96060E23E0F70E00F6A93E /* Search.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605CB23E0F70E00F6A93E /* Search.swift */; };
-		5D96060F23E0F70E00F6A93E /* Search.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605CB23E0F70E00F6A93E /* Search.swift */; };
-		5D96061023E0F70E00F6A93E /* Search.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9605CB23E0F70E00F6A93E /* Search.swift */; };
-		5DDAB6E72427CF5900BC0480 /* Molecule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DDAB6E62427CF5900BC0480 /* Molecule.swift */; };
-		5DDAB6E82427CF5900BC0480 /* Molecule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DDAB6E62427CF5900BC0480 /* Molecule.swift */; };
-		5DDAB6E92427CF5900BC0480 /* Molecule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DDAB6E62427CF5900BC0480 /* Molecule.swift */; };
-		OBJ_22 /* BioSwift.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_9 /* BioSwift.swift */; };
+		5DA3F3F024DDB743000F2307 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 5DA3F3EF24DDB743000F2307 /* README.md */; };
+		5DA3F3F224DDB751000F2307 /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = 5DA3F3F124DDB751000F2307 /* LICENSE */; };
+		5DA3F41924DDB790000F2307 /* Residue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F3F524DDB790000F2307 /* Residue.swift */; };
+		5DA3F41A24DDB790000F2307 /* Residue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F3F524DDB790000F2307 /* Residue.swift */; };
+		5DA3F41B24DDB790000F2307 /* Residue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F3F524DDB790000F2307 /* Residue.swift */; };
+		5DA3F41C24DDB790000F2307 /* ChemicalElement.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F3F624DDB790000F2307 /* ChemicalElement.swift */; };
+		5DA3F41D24DDB790000F2307 /* ChemicalElement.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F3F624DDB790000F2307 /* ChemicalElement.swift */; };
+		5DA3F41E24DDB790000F2307 /* ChemicalElement.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F3F624DDB790000F2307 /* ChemicalElement.swift */; };
+		5DA3F41F24DDB790000F2307 /* AminoAcid.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F3F724DDB790000F2307 /* AminoAcid.swift */; };
+		5DA3F42024DDB790000F2307 /* AminoAcid.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F3F724DDB790000F2307 /* AminoAcid.swift */; };
+		5DA3F42124DDB790000F2307 /* AminoAcid.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F3F724DDB790000F2307 /* AminoAcid.swift */; };
+		5DA3F42224DDB790000F2307 /* Formula.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F3F824DDB790000F2307 /* Formula.swift */; };
+		5DA3F42324DDB790000F2307 /* Formula.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F3F824DDB790000F2307 /* Formula.swift */; };
+		5DA3F42424DDB790000F2307 /* Formula.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F3F824DDB790000F2307 /* Formula.swift */; };
+		5DA3F42524DDB790000F2307 /* Structure.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F3F924DDB790000F2307 /* Structure.swift */; };
+		5DA3F42624DDB790000F2307 /* Structure.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F3F924DDB790000F2307 /* Structure.swift */; };
+		5DA3F42724DDB790000F2307 /* Structure.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F3F924DDB790000F2307 /* Structure.swift */; };
+		5DA3F42824DDB790000F2307 /* Molecule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F3FA24DDB790000F2307 /* Molecule.swift */; };
+		5DA3F42924DDB790000F2307 /* Molecule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F3FA24DDB790000F2307 /* Molecule.swift */; };
+		5DA3F42A24DDB790000F2307 /* Molecule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F3FA24DDB790000F2307 /* Molecule.swift */; };
+		5DA3F42B24DDB790000F2307 /* Group.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F3FB24DDB790000F2307 /* Group.swift */; };
+		5DA3F42C24DDB790000F2307 /* Group.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F3FB24DDB790000F2307 /* Group.swift */; };
+		5DA3F42D24DDB790000F2307 /* Group.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F3FB24DDB790000F2307 /* Group.swift */; };
+		5DA3F42E24DDB790000F2307 /* Modification.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F3FC24DDB790000F2307 /* Modification.swift */; };
+		5DA3F42F24DDB790000F2307 /* Modification.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F3FC24DDB790000F2307 /* Modification.swift */; };
+		5DA3F43024DDB790000F2307 /* Modification.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F3FC24DDB790000F2307 /* Modification.swift */; };
+		5DA3F43124DDB790000F2307 /* Enzyme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F3FD24DDB790000F2307 /* Enzyme.swift */; };
+		5DA3F43224DDB790000F2307 /* Enzyme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F3FD24DDB790000F2307 /* Enzyme.swift */; };
+		5DA3F43324DDB790000F2307 /* Enzyme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F3FD24DDB790000F2307 /* Enzyme.swift */; };
+		5DA3F43424DDB790000F2307 /* Symbol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F3FE24DDB790000F2307 /* Symbol.swift */; };
+		5DA3F43524DDB790000F2307 /* Symbol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F3FE24DDB790000F2307 /* Symbol.swift */; };
+		5DA3F43624DDB790000F2307 /* Symbol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F3FE24DDB790000F2307 /* Symbol.swift */; };
+		5DA3F43724DDB790000F2307 /* Array.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F40024DDB790000F2307 /* Array.swift */; };
+		5DA3F43824DDB790000F2307 /* Array.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F40024DDB790000F2307 /* Array.swift */; };
+		5DA3F43924DDB790000F2307 /* Array.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F40024DDB790000F2307 /* Array.swift */; };
+		5DA3F43A24DDB790000F2307 /* String.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F40124DDB790000F2307 /* String.swift */; };
+		5DA3F43B24DDB790000F2307 /* String.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F40124DDB790000F2307 /* String.swift */; };
+		5DA3F43C24DDB790000F2307 /* String.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F40124DDB790000F2307 /* String.swift */; };
+		5DA3F43D24DDB790000F2307 /* Double.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F40224DDB790000F2307 /* Double.swift */; };
+		5DA3F43E24DDB790000F2307 /* Double.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F40224DDB790000F2307 /* Double.swift */; };
+		5DA3F43F24DDB790000F2307 /* Double.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F40224DDB790000F2307 /* Double.swift */; };
+		5DA3F44024DDB790000F2307 /* BioSwift.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F40424DDB790000F2307 /* BioSwift.swift */; };
+		5DA3F44124DDB790000F2307 /* BioSwift.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F40424DDB790000F2307 /* BioSwift.swift */; };
+		5DA3F44224DDB790000F2307 /* BioSwift.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F40424DDB790000F2307 /* BioSwift.swift */; };
+		5DA3F44324DDB790000F2307 /* Utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F40624DDB790000F2307 /* Utilities.swift */; };
+		5DA3F44424DDB790000F2307 /* Utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F40624DDB790000F2307 /* Utilities.swift */; };
+		5DA3F44524DDB790000F2307 /* Utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F40624DDB790000F2307 /* Utilities.swift */; };
+		5DA3F44624DDB790000F2307 /* Bundle+Decoding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F40724DDB790000F2307 /* Bundle+Decoding.swift */; };
+		5DA3F44724DDB790000F2307 /* Bundle+Decoding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F40724DDB790000F2307 /* Bundle+Decoding.swift */; };
+		5DA3F44824DDB790000F2307 /* Bundle+Decoding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F40724DDB790000F2307 /* Bundle+Decoding.swift */; };
+		5DA3F44924DDB790000F2307 /* Webservice.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F40824DDB790000F2307 /* Webservice.swift */; };
+		5DA3F44A24DDB790000F2307 /* Webservice.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F40824DDB790000F2307 /* Webservice.swift */; };
+		5DA3F44B24DDB790000F2307 /* Webservice.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F40824DDB790000F2307 /* Webservice.swift */; };
+		5DA3F44C24DDB790000F2307 /* UnimodParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F40924DDB790000F2307 /* UnimodParser.swift */; };
+		5DA3F44D24DDB790000F2307 /* UnimodParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F40924DDB790000F2307 /* UnimodParser.swift */; };
+		5DA3F44E24DDB790000F2307 /* UnimodParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F40924DDB790000F2307 /* UnimodParser.swift */; };
+		5DA3F44F24DDB790000F2307 /* Hydropathy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F40B24DDB790000F2307 /* Hydropathy.swift */; };
+		5DA3F45024DDB790000F2307 /* Hydropathy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F40B24DDB790000F2307 /* Hydropathy.swift */; };
+		5DA3F45124DDB790000F2307 /* Hydropathy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F40B24DDB790000F2307 /* Hydropathy.swift */; };
+		5DA3F45224DDB790000F2307 /* Digest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F40C24DDB790000F2307 /* Digest.swift */; };
+		5DA3F45324DDB790000F2307 /* Digest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F40C24DDB790000F2307 /* Digest.swift */; };
+		5DA3F45424DDB790000F2307 /* Digest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F40C24DDB790000F2307 /* Digest.swift */; };
+		5DA3F45524DDB790000F2307 /* Mass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F40D24DDB790000F2307 /* Mass.swift */; };
+		5DA3F45624DDB790000F2307 /* Mass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F40D24DDB790000F2307 /* Mass.swift */; };
+		5DA3F45724DDB790000F2307 /* Mass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F40D24DDB790000F2307 /* Mass.swift */; };
+		5DA3F45824DDB790000F2307 /* Search.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F40E24DDB790000F2307 /* Search.swift */; };
+		5DA3F45924DDB790000F2307 /* Search.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F40E24DDB790000F2307 /* Search.swift */; };
+		5DA3F45A24DDB790000F2307 /* Search.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F40E24DDB790000F2307 /* Search.swift */; };
+		5DA3F45B24DDB790000F2307 /* Fragment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F41024DDB790000F2307 /* Fragment.swift */; };
+		5DA3F45C24DDB790000F2307 /* Fragment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F41024DDB790000F2307 /* Fragment.swift */; };
+		5DA3F45D24DDB790000F2307 /* Fragment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F41024DDB790000F2307 /* Fragment.swift */; };
+		5DA3F45E24DDB790000F2307 /* Peptide.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F41124DDB790000F2307 /* Peptide.swift */; };
+		5DA3F45F24DDB790000F2307 /* Peptide.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F41124DDB790000F2307 /* Peptide.swift */; };
+		5DA3F46024DDB790000F2307 /* Peptide.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F41124DDB790000F2307 /* Peptide.swift */; };
+		5DA3F46124DDB790000F2307 /* BioSequence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F41224DDB790000F2307 /* BioSequence.swift */; };
+		5DA3F46224DDB790000F2307 /* BioSequence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F41224DDB790000F2307 /* BioSequence.swift */; };
+		5DA3F46324DDB790000F2307 /* BioSequence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F41224DDB790000F2307 /* BioSequence.swift */; };
+		5DA3F46424DDB790000F2307 /* Protein.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F41324DDB790000F2307 /* Protein.swift */; };
+		5DA3F46524DDB790000F2307 /* Protein.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F41324DDB790000F2307 /* Protein.swift */; };
+		5DA3F46624DDB790000F2307 /* Protein.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F41324DDB790000F2307 /* Protein.swift */; };
+		5DA3F46724DDB790000F2307 /* Chargeable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F41424DDB790000F2307 /* Chargeable.swift */; };
+		5DA3F46824DDB790000F2307 /* Chargeable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F41424DDB790000F2307 /* Chargeable.swift */; };
+		5DA3F46924DDB790000F2307 /* Chargeable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F41424DDB790000F2307 /* Chargeable.swift */; };
+		5DA3F46A24DDB790000F2307 /* SequenceRange.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F41524DDB790000F2307 /* SequenceRange.swift */; };
+		5DA3F46B24DDB790000F2307 /* SequenceRange.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F41524DDB790000F2307 /* SequenceRange.swift */; };
+		5DA3F46C24DDB790000F2307 /* SequenceRange.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F41524DDB790000F2307 /* SequenceRange.swift */; };
+		5DA3F46D24DDB790000F2307 /* JSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F41724DDB790000F2307 /* JSON.swift */; };
+		5DA3F46E24DDB790000F2307 /* JSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F41724DDB790000F2307 /* JSON.swift */; };
+		5DA3F46F24DDB790000F2307 /* JSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F41724DDB790000F2307 /* JSON.swift */; };
+		5DA3F47024DDB790000F2307 /* Fasta.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F41824DDB790000F2307 /* Fasta.swift */; };
+		5DA3F47124DDB790000F2307 /* Fasta.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F41824DDB790000F2307 /* Fasta.swift */; };
+		5DA3F47224DDB790000F2307 /* Fasta.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3F41824DDB790000F2307 /* Fasta.swift */; };
 		OBJ_40 /* BioSwiftTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_12 /* BioSwiftTests.swift */; };
 		OBJ_41 /* XCTestManifests.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_13 /* XCTestManifests.swift */; };
 		OBJ_43 /* BioSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = "BioSwift::BioSwift::Product" /* BioSwift.framework */; };
@@ -136,47 +142,49 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		5D09C372241D1BF0006F0D5C /* UnimodParser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UnimodParser.swift; sourceTree = "<group>"; };
 		5D09C376241D1C1D006F0D5C /* unimod.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = unimod.xml; sourceTree = "<group>"; };
-		5D23BBAC246874BA003A3F15 /* SequenceRange.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SequenceRange.swift; sourceTree = "<group>"; };
 		5D3976F723E0F18300A6631C /* aminoacids.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = aminoacids.json; sourceTree = "<group>"; };
 		5D3976F823E0F18300A6631C /* hydropathy.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = hydropathy.json; sourceTree = "<group>"; };
 		5D3976FB23E0F18300A6631C /* elements.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = elements.json; sourceTree = "<group>"; };
 		5D3976FD23E0F18300A6631C /* enzymes.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = enzymes.json; sourceTree = "<group>"; };
 		5D682EEB23E8F23800D03F10 /* functionalgroups.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = functionalgroups.json; sourceTree = "<group>"; };
-		5D96059B23E0F6FC00F6A93E /* ChemicalElement.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChemicalElement.swift; sourceTree = "<group>"; };
-		5D96059C23E0F6FC00F6A93E /* AminoAcid.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AminoAcid.swift; sourceTree = "<group>"; };
-		5D96059D23E0F6FC00F6A93E /* Formula.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Formula.swift; sourceTree = "<group>"; };
-		5D96059E23E0F6FC00F6A93E /* Group.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Group.swift; sourceTree = "<group>"; };
-		5D96059F23E0F6FC00F6A93E /* Modification.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Modification.swift; sourceTree = "<group>"; };
-		5D9605B023E0F70E00F6A93E /* JSON.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JSON.swift; sourceTree = "<group>"; };
-		5D9605B123E0F70E00F6A93E /* Fasta.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Fasta.swift; sourceTree = "<group>"; };
-		5D9605B323E0F70E00F6A93E /* Utilities.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Utilities.swift; sourceTree = "<group>"; };
-		5D9605B423E0F70E00F6A93E /* Bundle+Decoding.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Bundle+Decoding.swift"; sourceTree = "<group>"; };
-		5D9605B523E0F70E00F6A93E /* Webservice.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Webservice.swift; sourceTree = "<group>"; };
-		5D9605B723E0F70E00F6A93E /* Array.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Array.swift; sourceTree = "<group>"; };
-		5D9605B923E0F70E00F6A93E /* String.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = String.swift; sourceTree = "<group>"; };
-		5D9605BA23E0F70E00F6A93E /* Double.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Double.swift; sourceTree = "<group>"; };
-		5D9605BC23E0F70E00F6A93E /* Residue.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Residue.swift; sourceTree = "<group>"; };
-		5D9605BE23E0F70E00F6A93E /* Structure.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Structure.swift; sourceTree = "<group>"; };
-		5D9605BF23E0F70E00F6A93E /* Chargeable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Chargeable.swift; sourceTree = "<group>"; };
-		5D9605C023E0F70E00F6A93E /* Mass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Mass.swift; sourceTree = "<group>"; };
-		5D9605C123E0F70E00F6A93E /* Symbol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Symbol.swift; sourceTree = "<group>"; };
-		5D9605C323E0F70E00F6A93E /* Fragment.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Fragment.swift; sourceTree = "<group>"; };
-		5D9605C423E0F70E00F6A93E /* Peptide.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Peptide.swift; sourceTree = "<group>"; };
-		5D9605C523E0F70E00F6A93E /* BioSequence.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BioSequence.swift; sourceTree = "<group>"; };
-		5D9605C623E0F70E00F6A93E /* Protein.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Protein.swift; sourceTree = "<group>"; };
-		5D9605C823E0F70E00F6A93E /* Hydropathy.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Hydropathy.swift; sourceTree = "<group>"; };
-		5D9605C923E0F70E00F6A93E /* Digest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Digest.swift; sourceTree = "<group>"; };
-		5D9605CA23E0F70E00F6A93E /* Enzyme.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Enzyme.swift; sourceTree = "<group>"; };
-		5D9605CB23E0F70E00F6A93E /* Search.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Search.swift; sourceTree = "<group>"; wrapsLines = 0; };
-		5DDAB6E62427CF5900BC0480 /* Molecule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Molecule.swift; sourceTree = "<group>"; };
+		5DA3F3EF24DDB743000F2307 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		5DA3F3F124DDB751000F2307 /* LICENSE */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
+		5DA3F3F524DDB790000F2307 /* Residue.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Residue.swift; sourceTree = "<group>"; };
+		5DA3F3F624DDB790000F2307 /* ChemicalElement.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChemicalElement.swift; sourceTree = "<group>"; };
+		5DA3F3F724DDB790000F2307 /* AminoAcid.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AminoAcid.swift; sourceTree = "<group>"; };
+		5DA3F3F824DDB790000F2307 /* Formula.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Formula.swift; sourceTree = "<group>"; };
+		5DA3F3F924DDB790000F2307 /* Structure.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Structure.swift; sourceTree = "<group>"; };
+		5DA3F3FA24DDB790000F2307 /* Molecule.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Molecule.swift; sourceTree = "<group>"; };
+		5DA3F3FB24DDB790000F2307 /* Group.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Group.swift; sourceTree = "<group>"; };
+		5DA3F3FC24DDB790000F2307 /* Modification.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Modification.swift; sourceTree = "<group>"; };
+		5DA3F3FD24DDB790000F2307 /* Enzyme.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Enzyme.swift; sourceTree = "<group>"; };
+		5DA3F3FE24DDB790000F2307 /* Symbol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Symbol.swift; sourceTree = "<group>"; };
+		5DA3F40024DDB790000F2307 /* Array.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Array.swift; sourceTree = "<group>"; };
+		5DA3F40124DDB790000F2307 /* String.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = String.swift; sourceTree = "<group>"; };
+		5DA3F40224DDB790000F2307 /* Double.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Double.swift; sourceTree = "<group>"; };
+		5DA3F40424DDB790000F2307 /* BioSwift.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BioSwift.swift; sourceTree = "<group>"; };
+		5DA3F40624DDB790000F2307 /* Utilities.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Utilities.swift; sourceTree = "<group>"; };
+		5DA3F40724DDB790000F2307 /* Bundle+Decoding.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Bundle+Decoding.swift"; sourceTree = "<group>"; };
+		5DA3F40824DDB790000F2307 /* Webservice.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Webservice.swift; sourceTree = "<group>"; };
+		5DA3F40924DDB790000F2307 /* UnimodParser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UnimodParser.swift; sourceTree = "<group>"; };
+		5DA3F40B24DDB790000F2307 /* Hydropathy.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Hydropathy.swift; sourceTree = "<group>"; };
+		5DA3F40C24DDB790000F2307 /* Digest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Digest.swift; sourceTree = "<group>"; };
+		5DA3F40D24DDB790000F2307 /* Mass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Mass.swift; sourceTree = "<group>"; };
+		5DA3F40E24DDB790000F2307 /* Search.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Search.swift; sourceTree = "<group>"; };
+		5DA3F41024DDB790000F2307 /* Fragment.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Fragment.swift; sourceTree = "<group>"; };
+		5DA3F41124DDB790000F2307 /* Peptide.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Peptide.swift; sourceTree = "<group>"; };
+		5DA3F41224DDB790000F2307 /* BioSequence.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BioSequence.swift; sourceTree = "<group>"; };
+		5DA3F41324DDB790000F2307 /* Protein.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Protein.swift; sourceTree = "<group>"; };
+		5DA3F41424DDB790000F2307 /* Chargeable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Chargeable.swift; sourceTree = "<group>"; };
+		5DA3F41524DDB790000F2307 /* SequenceRange.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SequenceRange.swift; sourceTree = "<group>"; };
+		5DA3F41724DDB790000F2307 /* JSON.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JSON.swift; sourceTree = "<group>"; };
+		5DA3F41824DDB790000F2307 /* Fasta.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Fasta.swift; sourceTree = "<group>"; };
 		5DE85C4A23E713DA00645496 /* elements.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = elements.txt; sourceTree = "<group>"; };
 		"BioSwift::BioSwift::Product" /* BioSwift.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = BioSwift.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		"BioSwift::BioSwiftTests::Product" /* BioSwiftTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; path = BioSwiftTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		OBJ_12 /* BioSwiftTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BioSwiftTests.swift; sourceTree = "<group>"; };
 		OBJ_13 /* XCTestManifests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XCTestManifests.swift; sourceTree = "<group>"; };
-		OBJ_9 /* BioSwift.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BioSwift.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -212,90 +220,107 @@
 			path = Resources;
 			sourceTree = "<group>";
 		};
-		5D96059A23E0F6FC00F6A93E /* Bricks */ = {
+		5DA3F3EE24DDB6E8000F2307 /* BioSwiftPackage */ = {
 			isa = PBXGroup;
 			children = (
-				5D96059C23E0F6FC00F6A93E /* AminoAcid.swift */,
-				5D96059B23E0F6FC00F6A93E /* ChemicalElement.swift */,
-				5D9605CA23E0F70E00F6A93E /* Enzyme.swift */,
-				5D96059D23E0F6FC00F6A93E /* Formula.swift */,
-				5D96059E23E0F6FC00F6A93E /* Group.swift */,
-				5D96059F23E0F6FC00F6A93E /* Modification.swift */,
-				5DDAB6E62427CF5900BC0480 /* Molecule.swift */,
-				5D9605BC23E0F70E00F6A93E /* Residue.swift */,
-				5D9605BE23E0F70E00F6A93E /* Structure.swift */,
-				5D9605C123E0F70E00F6A93E /* Symbol.swift */,
+				5D3976F623E0F18300A6631C /* Resources */,
+				5DA3F3F324DDB790000F2307 /* Sources */,
 			);
-			name = Bricks;
-			path = Sources/Bricks;
+			path = BioSwiftPackage;
 			sourceTree = "<group>";
 		};
-		5D9605AF23E0F70E00F6A93E /* Data */ = {
+		5DA3F3F324DDB790000F2307 /* Sources */ = {
 			isa = PBXGroup;
 			children = (
-				5D9605B023E0F70E00F6A93E /* JSON.swift */,
-				5D9605B123E0F70E00F6A93E /* Fasta.swift */,
+				5DA3F3F424DDB790000F2307 /* Bricks */,
+				5DA3F3FF24DDB790000F2307 /* Extensions */,
+				5DA3F40324DDB790000F2307 /* BioSwift */,
+				5DA3F40524DDB790000F2307 /* Support */,
+				5DA3F40A24DDB790000F2307 /* Calculators */,
+				5DA3F40F24DDB790000F2307 /* Sequence */,
+				5DA3F41624DDB790000F2307 /* Data */,
 			);
-			name = Data;
-			path = Sources/Data;
+			path = Sources;
 			sourceTree = "<group>";
 		};
-		5D9605B223E0F70E00F6A93E /* Support */ = {
+		5DA3F3F424DDB790000F2307 /* Bricks */ = {
 			isa = PBXGroup;
 			children = (
-				5D9605B423E0F70E00F6A93E /* Bundle+Decoding.swift */,
-				5D09C372241D1BF0006F0D5C /* UnimodParser.swift */,
-				5D9605B323E0F70E00F6A93E /* Utilities.swift */,
-				5D9605B523E0F70E00F6A93E /* Webservice.swift */,
+				5DA3F3F524DDB790000F2307 /* Residue.swift */,
+				5DA3F3F624DDB790000F2307 /* ChemicalElement.swift */,
+				5DA3F3F724DDB790000F2307 /* AminoAcid.swift */,
+				5DA3F3F824DDB790000F2307 /* Formula.swift */,
+				5DA3F3F924DDB790000F2307 /* Structure.swift */,
+				5DA3F3FA24DDB790000F2307 /* Molecule.swift */,
+				5DA3F3FB24DDB790000F2307 /* Group.swift */,
+				5DA3F3FC24DDB790000F2307 /* Modification.swift */,
+				5DA3F3FD24DDB790000F2307 /* Enzyme.swift */,
+				5DA3F3FE24DDB790000F2307 /* Symbol.swift */,
 			);
-			name = Support;
-			path = Sources/Support;
+			path = Bricks;
 			sourceTree = "<group>";
 		};
-		5D9605B623E0F70E00F6A93E /* Extensions */ = {
+		5DA3F3FF24DDB790000F2307 /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
-				5D9605B723E0F70E00F6A93E /* Array.swift */,
-				5D9605BA23E0F70E00F6A93E /* Double.swift */,
-				5D9605B923E0F70E00F6A93E /* String.swift */,
+				5DA3F40024DDB790000F2307 /* Array.swift */,
+				5DA3F40124DDB790000F2307 /* String.swift */,
+				5DA3F40224DDB790000F2307 /* Double.swift */,
 			);
-			name = Extensions;
-			path = Sources/Extensions;
+			path = Extensions;
 			sourceTree = "<group>";
 		};
-		5D9605C223E0F70E00F6A93E /* Sequence */ = {
+		5DA3F40324DDB790000F2307 /* BioSwift */ = {
 			isa = PBXGroup;
 			children = (
-				5D9605C523E0F70E00F6A93E /* BioSequence.swift */,
-				5D9605BF23E0F70E00F6A93E /* Chargeable.swift */,
-				5D9605C323E0F70E00F6A93E /* Fragment.swift */,
-				5D9605C423E0F70E00F6A93E /* Peptide.swift */,
-				5D9605C623E0F70E00F6A93E /* Protein.swift */,
-				5D23BBAC246874BA003A3F15 /* SequenceRange.swift */,
+				5DA3F40424DDB790000F2307 /* BioSwift.swift */,
 			);
-			name = Sequence;
-			path = Sources/Sequence;
+			path = BioSwift;
 			sourceTree = "<group>";
 		};
-		5D9605C723E0F70E00F6A93E /* Calculators */ = {
+		5DA3F40524DDB790000F2307 /* Support */ = {
 			isa = PBXGroup;
 			children = (
-				5D9605C923E0F70E00F6A93E /* Digest.swift */,
-				5D9605C823E0F70E00F6A93E /* Hydropathy.swift */,
-				5D9605C023E0F70E00F6A93E /* Mass.swift */,
-				5D9605CB23E0F70E00F6A93E /* Search.swift */,
+				5DA3F40624DDB790000F2307 /* Utilities.swift */,
+				5DA3F40724DDB790000F2307 /* Bundle+Decoding.swift */,
+				5DA3F40824DDB790000F2307 /* Webservice.swift */,
+				5DA3F40924DDB790000F2307 /* UnimodParser.swift */,
 			);
-			name = Calculators;
-			path = Sources/Calculators;
+			path = Support;
 			sourceTree = "<group>";
 		};
-		OBJ_10 /* Tests */ = {
+		5DA3F40A24DDB790000F2307 /* Calculators */ = {
 			isa = PBXGroup;
 			children = (
-				OBJ_11 /* BioSwiftTests */,
+				5DA3F40B24DDB790000F2307 /* Hydropathy.swift */,
+				5DA3F40C24DDB790000F2307 /* Digest.swift */,
+				5DA3F40D24DDB790000F2307 /* Mass.swift */,
+				5DA3F40E24DDB790000F2307 /* Search.swift */,
 			);
-			name = Tests;
-			sourceTree = SOURCE_ROOT;
+			path = Calculators;
+			sourceTree = "<group>";
+		};
+		5DA3F40F24DDB790000F2307 /* Sequence */ = {
+			isa = PBXGroup;
+			children = (
+				5DA3F41024DDB790000F2307 /* Fragment.swift */,
+				5DA3F41124DDB790000F2307 /* Peptide.swift */,
+				5DA3F41224DDB790000F2307 /* BioSequence.swift */,
+				5DA3F41324DDB790000F2307 /* Protein.swift */,
+				5DA3F41424DDB790000F2307 /* Chargeable.swift */,
+				5DA3F41524DDB790000F2307 /* SequenceRange.swift */,
+			);
+			path = Sequence;
+			sourceTree = "<group>";
+		};
+		5DA3F41624DDB790000F2307 /* Data */ = {
+			isa = PBXGroup;
+			children = (
+				5DA3F41724DDB790000F2307 /* JSON.swift */,
+				5DA3F41824DDB790000F2307 /* Fasta.swift */,
+			);
+			path = Data;
+			sourceTree = "<group>";
 		};
 		OBJ_11 /* BioSwiftTests */ = {
 			isa = PBXGroup;
@@ -303,8 +328,7 @@
 				OBJ_12 /* BioSwiftTests.swift */,
 				OBJ_13 /* XCTestManifests.swift */,
 			);
-			name = BioSwiftTests;
-			path = Tests/BioSwiftTests;
+			path = BioSwiftTests;
 			sourceTree = SOURCE_ROOT;
 		};
 		OBJ_14 /* Products */ = {
@@ -319,35 +343,13 @@
 		OBJ_5 = {
 			isa = PBXGroup;
 			children = (
-				5D3976F623E0F18300A6631C /* Resources */,
-				OBJ_7 /* Sources */,
-				OBJ_10 /* Tests */,
+				5DA3F3EF24DDB743000F2307 /* README.md */,
+				5DA3F3F124DDB751000F2307 /* LICENSE */,
+				5DA3F3EE24DDB6E8000F2307 /* BioSwiftPackage */,
+				OBJ_11 /* BioSwiftTests */,
 				OBJ_14 /* Products */,
 			);
 			sourceTree = "<group>";
-		};
-		OBJ_7 /* Sources */ = {
-			isa = PBXGroup;
-			children = (
-				OBJ_8 /* BioSwift */,
-				5D96059A23E0F6FC00F6A93E /* Bricks */,
-				5D9605C723E0F70E00F6A93E /* Calculators */,
-				5D9605AF23E0F70E00F6A93E /* Data */,
-				5D9605B623E0F70E00F6A93E /* Extensions */,
-				5D9605C223E0F70E00F6A93E /* Sequence */,
-				5D9605B223E0F70E00F6A93E /* Support */,
-			);
-			name = Sources;
-			sourceTree = SOURCE_ROOT;
-		};
-		OBJ_8 /* BioSwift */ = {
-			isa = PBXGroup;
-			children = (
-				OBJ_9 /* BioSwift.swift */,
-			);
-			name = BioSwift;
-			path = Sources/BioSwift;
-			sourceTree = SOURCE_ROOT;
 		};
 /* End PBXGroup section */
 
@@ -449,7 +451,9 @@
 			files = (
 				5D682EEC23E8F23800D03F10 /* functionalgroups.json in Resources */,
 				5D39778C23E0F3A100A6631C /* aminoacids.json in Resources */,
+				5DA3F3F224DDB751000F2307 /* LICENSE in Resources */,
 				5D39778F23E0F3B000A6631C /* elements.json in Resources */,
+				5DA3F3F024DDB743000F2307 /* README.md in Resources */,
 				5D09C377241D1C1D006F0D5C /* unimod.xml in Resources */,
 				5D39779023E0F3B300A6631C /* enzymes.json in Resources */,
 				5D39778D23E0F3AB00A6631C /* hydropathy.json in Resources */,
@@ -463,36 +467,36 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 0;
 			files = (
-				5D9605A923E0F6FC00F6A93E /* Group.swift in Sources */,
-				5D9605CC23E0F70E00F6A93E /* JSON.swift in Sources */,
-				5D96060E23E0F70E00F6A93E /* Search.swift in Sources */,
-				5D9605D523E0F70E00F6A93E /* Bundle+Decoding.swift in Sources */,
-				5D9605A023E0F6FC00F6A93E /* ChemicalElement.swift in Sources */,
-				5D9605E123E0F70E00F6A93E /* String.swift in Sources */,
-				5D9605D823E0F70E00F6A93E /* Webservice.swift in Sources */,
-				5DDAB6E72427CF5900BC0480 /* Molecule.swift in Sources */,
-				5D9605A323E0F6FC00F6A93E /* AminoAcid.swift in Sources */,
-				5D9605ED23E0F70E00F6A93E /* Structure.swift in Sources */,
-				5D96060523E0F70E00F6A93E /* Hydropathy.swift in Sources */,
-				5D09C373241D1BF0006F0D5C /* UnimodParser.swift in Sources */,
-				5D9605F323E0F70E00F6A93E /* Mass.swift in Sources */,
-				5D96060B23E0F70E00F6A93E /* Enzyme.swift in Sources */,
-				5D9605F623E0F70E00F6A93E /* Symbol.swift in Sources */,
-				5D9605AC23E0F6FC00F6A93E /* Modification.swift in Sources */,
-				5D9605E723E0F70E00F6A93E /* Residue.swift in Sources */,
-				5D9605CF23E0F70E00F6A93E /* Fasta.swift in Sources */,
-				5D23BBAD246874BA003A3F15 /* SequenceRange.swift in Sources */,
-				5D9605D223E0F70E00F6A93E /* Utilities.swift in Sources */,
-				5D9605FC23E0F70E00F6A93E /* Peptide.swift in Sources */,
-				5D9605DB23E0F70E00F6A93E /* Array.swift in Sources */,
-				5D9605A623E0F6FC00F6A93E /* Formula.swift in Sources */,
-				5D9605E423E0F70E00F6A93E /* Double.swift in Sources */,
-				5D9605F923E0F70E00F6A93E /* Fragment.swift in Sources */,
-				5D96060823E0F70E00F6A93E /* Digest.swift in Sources */,
-				OBJ_22 /* BioSwift.swift in Sources */,
-				5D9605F023E0F70E00F6A93E /* Chargeable.swift in Sources */,
-				5D9605FF23E0F70E00F6A93E /* BioSequence.swift in Sources */,
-				5D96060223E0F70E00F6A93E /* Protein.swift in Sources */,
+				5DA3F42B24DDB790000F2307 /* Group.swift in Sources */,
+				5DA3F43424DDB790000F2307 /* Symbol.swift in Sources */,
+				5DA3F44624DDB790000F2307 /* Bundle+Decoding.swift in Sources */,
+				5DA3F41C24DDB790000F2307 /* ChemicalElement.swift in Sources */,
+				5DA3F44C24DDB790000F2307 /* UnimodParser.swift in Sources */,
+				5DA3F44324DDB790000F2307 /* Utilities.swift in Sources */,
+				5DA3F45B24DDB790000F2307 /* Fragment.swift in Sources */,
+				5DA3F44F24DDB790000F2307 /* Hydropathy.swift in Sources */,
+				5DA3F46A24DDB790000F2307 /* SequenceRange.swift in Sources */,
+				5DA3F42824DDB790000F2307 /* Molecule.swift in Sources */,
+				5DA3F44024DDB790000F2307 /* BioSwift.swift in Sources */,
+				5DA3F43D24DDB790000F2307 /* Double.swift in Sources */,
+				5DA3F45E24DDB790000F2307 /* Peptide.swift in Sources */,
+				5DA3F42E24DDB790000F2307 /* Modification.swift in Sources */,
+				5DA3F45824DDB790000F2307 /* Search.swift in Sources */,
+				5DA3F47024DDB790000F2307 /* Fasta.swift in Sources */,
+				5DA3F46124DDB790000F2307 /* BioSequence.swift in Sources */,
+				5DA3F45224DDB790000F2307 /* Digest.swift in Sources */,
+				5DA3F41F24DDB790000F2307 /* AminoAcid.swift in Sources */,
+				5DA3F46424DDB790000F2307 /* Protein.swift in Sources */,
+				5DA3F43A24DDB790000F2307 /* String.swift in Sources */,
+				5DA3F43724DDB790000F2307 /* Array.swift in Sources */,
+				5DA3F46724DDB790000F2307 /* Chargeable.swift in Sources */,
+				5DA3F43124DDB790000F2307 /* Enzyme.swift in Sources */,
+				5DA3F42524DDB790000F2307 /* Structure.swift in Sources */,
+				5DA3F42224DDB790000F2307 /* Formula.swift in Sources */,
+				5DA3F41924DDB790000F2307 /* Residue.swift in Sources */,
+				5DA3F46D24DDB790000F2307 /* JSON.swift in Sources */,
+				5DA3F44924DDB790000F2307 /* Webservice.swift in Sources */,
+				5DA3F45524DDB790000F2307 /* Mass.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -500,34 +504,36 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 0;
 			files = (
-				5D9605AA23E0F6FC00F6A93E /* Group.swift in Sources */,
-				5D9605CD23E0F70E00F6A93E /* JSON.swift in Sources */,
-				5D96060F23E0F70E00F6A93E /* Search.swift in Sources */,
-				5D9605D623E0F70E00F6A93E /* Bundle+Decoding.swift in Sources */,
-				5D9605A123E0F6FC00F6A93E /* ChemicalElement.swift in Sources */,
-				5D9605E223E0F70E00F6A93E /* String.swift in Sources */,
-				5D9605D923E0F70E00F6A93E /* Webservice.swift in Sources */,
-				5DDAB6E82427CF5900BC0480 /* Molecule.swift in Sources */,
-				5D9605A423E0F6FC00F6A93E /* AminoAcid.swift in Sources */,
-				5D9605EE23E0F70E00F6A93E /* Structure.swift in Sources */,
-				5D96060623E0F70E00F6A93E /* Hydropathy.swift in Sources */,
-				5D09C374241D1BF0006F0D5C /* UnimodParser.swift in Sources */,
-				5D9605F423E0F70E00F6A93E /* Mass.swift in Sources */,
-				5D96060C23E0F70E00F6A93E /* Enzyme.swift in Sources */,
-				5D9605F723E0F70E00F6A93E /* Symbol.swift in Sources */,
-				5D9605AD23E0F6FC00F6A93E /* Modification.swift in Sources */,
-				5D9605E823E0F70E00F6A93E /* Residue.swift in Sources */,
-				5D9605D023E0F70E00F6A93E /* Fasta.swift in Sources */,
-				5D9605D323E0F70E00F6A93E /* Utilities.swift in Sources */,
-				5D9605FD23E0F70E00F6A93E /* Peptide.swift in Sources */,
-				5D9605DC23E0F70E00F6A93E /* Array.swift in Sources */,
-				5D9605A723E0F6FC00F6A93E /* Formula.swift in Sources */,
-				5D9605E523E0F70E00F6A93E /* Double.swift in Sources */,
-				5D9605FA23E0F70E00F6A93E /* Fragment.swift in Sources */,
-				5D96060923E0F70E00F6A93E /* Digest.swift in Sources */,
-				5D9605F123E0F70E00F6A93E /* Chargeable.swift in Sources */,
-				5D96060023E0F70E00F6A93E /* BioSequence.swift in Sources */,
-				5D96060323E0F70E00F6A93E /* Protein.swift in Sources */,
+				5DA3F42C24DDB790000F2307 /* Group.swift in Sources */,
+				5DA3F43524DDB790000F2307 /* Symbol.swift in Sources */,
+				5DA3F44724DDB790000F2307 /* Bundle+Decoding.swift in Sources */,
+				5DA3F41D24DDB790000F2307 /* ChemicalElement.swift in Sources */,
+				5DA3F44D24DDB790000F2307 /* UnimodParser.swift in Sources */,
+				5DA3F44424DDB790000F2307 /* Utilities.swift in Sources */,
+				5DA3F45C24DDB790000F2307 /* Fragment.swift in Sources */,
+				5DA3F45024DDB790000F2307 /* Hydropathy.swift in Sources */,
+				5DA3F46B24DDB790000F2307 /* SequenceRange.swift in Sources */,
+				5DA3F42924DDB790000F2307 /* Molecule.swift in Sources */,
+				5DA3F44124DDB790000F2307 /* BioSwift.swift in Sources */,
+				5DA3F43E24DDB790000F2307 /* Double.swift in Sources */,
+				5DA3F45F24DDB790000F2307 /* Peptide.swift in Sources */,
+				5DA3F42F24DDB790000F2307 /* Modification.swift in Sources */,
+				5DA3F45924DDB790000F2307 /* Search.swift in Sources */,
+				5DA3F47124DDB790000F2307 /* Fasta.swift in Sources */,
+				5DA3F46224DDB790000F2307 /* BioSequence.swift in Sources */,
+				5DA3F45324DDB790000F2307 /* Digest.swift in Sources */,
+				5DA3F42024DDB790000F2307 /* AminoAcid.swift in Sources */,
+				5DA3F46524DDB790000F2307 /* Protein.swift in Sources */,
+				5DA3F43B24DDB790000F2307 /* String.swift in Sources */,
+				5DA3F43824DDB790000F2307 /* Array.swift in Sources */,
+				5DA3F46824DDB790000F2307 /* Chargeable.swift in Sources */,
+				5DA3F43224DDB790000F2307 /* Enzyme.swift in Sources */,
+				5DA3F42624DDB790000F2307 /* Structure.swift in Sources */,
+				5DA3F42324DDB790000F2307 /* Formula.swift in Sources */,
+				5DA3F41A24DDB790000F2307 /* Residue.swift in Sources */,
+				5DA3F46E24DDB790000F2307 /* JSON.swift in Sources */,
+				5DA3F44A24DDB790000F2307 /* Webservice.swift in Sources */,
+				5DA3F45624DDB790000F2307 /* Mass.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -535,36 +541,38 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 0;
 			files = (
-				5D9605EF23E0F70E00F6A93E /* Structure.swift in Sources */,
-				5D9605AB23E0F6FC00F6A93E /* Group.swift in Sources */,
+				5DA3F45124DDB790000F2307 /* Hydropathy.swift in Sources */,
+				5DA3F44224DDB790000F2307 /* BioSwift.swift in Sources */,
+				5DA3F43324DDB790000F2307 /* Enzyme.swift in Sources */,
+				5DA3F42D24DDB790000F2307 /* Group.swift in Sources */,
+				5DA3F41E24DDB790000F2307 /* ChemicalElement.swift in Sources */,
+				5DA3F46324DDB790000F2307 /* BioSequence.swift in Sources */,
+				5DA3F41B24DDB790000F2307 /* Residue.swift in Sources */,
+				5DA3F43C24DDB790000F2307 /* String.swift in Sources */,
+				5DA3F46F24DDB790000F2307 /* JSON.swift in Sources */,
+				5DA3F44B24DDB790000F2307 /* Webservice.swift in Sources */,
+				5DA3F46924DDB790000F2307 /* Chargeable.swift in Sources */,
+				5DA3F46624DDB790000F2307 /* Protein.swift in Sources */,
+				5DA3F42424DDB790000F2307 /* Formula.swift in Sources */,
+				5DA3F43624DDB790000F2307 /* Symbol.swift in Sources */,
+				5DA3F42124DDB790000F2307 /* AminoAcid.swift in Sources */,
+				5DA3F45424DDB790000F2307 /* Digest.swift in Sources */,
+				5DA3F43024DDB790000F2307 /* Modification.swift in Sources */,
+				5DA3F45D24DDB790000F2307 /* Fragment.swift in Sources */,
+				5DA3F45724DDB790000F2307 /* Mass.swift in Sources */,
+				5DA3F46C24DDB790000F2307 /* SequenceRange.swift in Sources */,
+				5DA3F44524DDB790000F2307 /* Utilities.swift in Sources */,
+				5DA3F47224DDB790000F2307 /* Fasta.swift in Sources */,
 				OBJ_40 /* BioSwiftTests.swift in Sources */,
-				5D96061023E0F70E00F6A93E /* Search.swift in Sources */,
-				5D9605E623E0F70E00F6A93E /* Double.swift in Sources */,
-				5D9605DA23E0F70E00F6A93E /* Webservice.swift in Sources */,
-				5DDAB6E92427CF5900BC0480 /* Molecule.swift in Sources */,
-				5D9605F223E0F70E00F6A93E /* Chargeable.swift in Sources */,
-				5D9605FB23E0F70E00F6A93E /* Fragment.swift in Sources */,
-				5D9605D723E0F70E00F6A93E /* Bundle+Decoding.swift in Sources */,
-				5D96060723E0F70E00F6A93E /* Hydropathy.swift in Sources */,
+				5DA3F43924DDB790000F2307 /* Array.swift in Sources */,
+				5DA3F42724DDB790000F2307 /* Structure.swift in Sources */,
+				5DA3F44824DDB790000F2307 /* Bundle+Decoding.swift in Sources */,
 				OBJ_41 /* XCTestManifests.swift in Sources */,
-				5D9605A223E0F6FC00F6A93E /* ChemicalElement.swift in Sources */,
-				5D96060A23E0F70E00F6A93E /* Digest.swift in Sources */,
-				5D9605FE23E0F70E00F6A93E /* Peptide.swift in Sources */,
-				5D9605A823E0F6FC00F6A93E /* Formula.swift in Sources */,
-				5D9605AE23E0F6FC00F6A93E /* Modification.swift in Sources */,
-				5D96060123E0F70E00F6A93E /* BioSequence.swift in Sources */,
-				5D9605D123E0F70E00F6A93E /* Fasta.swift in Sources */,
-				5D9605DD23E0F70E00F6A93E /* Array.swift in Sources */,
-				5D96060423E0F70E00F6A93E /* Protein.swift in Sources */,
-				5D9605A523E0F6FC00F6A93E /* AminoAcid.swift in Sources */,
-				5D9605D423E0F70E00F6A93E /* Utilities.swift in Sources */,
-				5D9605E323E0F70E00F6A93E /* String.swift in Sources */,
-				5D9605F823E0F70E00F6A93E /* Symbol.swift in Sources */,
-				5D96060D23E0F70E00F6A93E /* Enzyme.swift in Sources */,
-				5D9605E923E0F70E00F6A93E /* Residue.swift in Sources */,
-				5D9605CE23E0F70E00F6A93E /* JSON.swift in Sources */,
-				5D09C375241D1BF0006F0D5C /* UnimodParser.swift in Sources */,
-				5D9605F523E0F70E00F6A93E /* Mass.swift in Sources */,
+				5DA3F46024DDB790000F2307 /* Peptide.swift in Sources */,
+				5DA3F43F24DDB790000F2307 /* Double.swift in Sources */,
+				5DA3F45A24DDB790000F2307 /* Search.swift in Sources */,
+				5DA3F44E24DDB790000F2307 /* UnimodParser.swift in Sources */,
+				5DA3F42A24DDB790000F2307 /* Molecule.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
