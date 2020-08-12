@@ -2,11 +2,16 @@ import Foundation
 
 public typealias Fasta = String
 
-public struct FastaRecord {
+public struct FastaRecord: Hashable {
     public let id: String
     public let name: String
     public let organism: String
     public var sequence: String
+    
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
+        hasher.combine(name)
+    }
 }
 
 extension Fasta {
@@ -34,6 +39,7 @@ extension Fasta {
 //    }
 
     func parseInfo(input: String) -> FastaRecord {
+        // https://www.uniprot.org/help/fasta-headers
         // You can save repeated application of the `input` parameter by doing it
         // just once at the end (see the `return` of this func).
         let parse: (String) -> FastaRecord
@@ -44,7 +50,7 @@ extension Fasta {
         // The switch calls `~=` for every case, giving it hasPrefix(...) and "input"
         // as args. The first case that makes `~=` yield `true` is executed.
         switch input {
-        case hasPrefix("sp"), hasPrefix("swiss"):
+        case hasPrefix("sp"), hasPrefix("swiss"), hasPrefix("tr"):
             parse = parseSwissProt
         case hasPrefix("IPI"):
             parse = parseIPI
