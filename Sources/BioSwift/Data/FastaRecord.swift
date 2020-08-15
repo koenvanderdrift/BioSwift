@@ -23,7 +23,7 @@ public struct FastaRecord: Hashable {
 }
 
 extension Fasta {
-    public func serialize() -> FastaRecord? {
+    public func decode() -> FastaRecord? {
         // split the record in lines
         let lines = components(separatedBy: "\n")
 
