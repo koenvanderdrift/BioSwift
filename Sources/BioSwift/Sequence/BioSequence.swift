@@ -74,7 +74,7 @@ extension BioSequence {
             residues.insert(contentsOf: newResidues, at: editedRange.location)
             
         default:
-            fatalError()
+            fatalError("TODO")
         }
     }
     
