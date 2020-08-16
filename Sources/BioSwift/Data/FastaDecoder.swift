@@ -19,7 +19,7 @@ public final class FastaDecoder: Decoder {
     public init(_ input: String) {
         self.input = input
     }
-
+    
     public func container<Key>(keyedBy type: Key.Type) throws -> KeyedDecodingContainer<Key> where Key : CodingKey {
         return KeyedDecodingContainer(KDC(input))
     }
@@ -36,9 +36,15 @@ public final class FastaDecoder: Decoder {
         var codingPath: [CodingKey] = []
         var allKeys: [Key] = []
         
-        let input: String
+        let lines: [String]
+        let firstLine: String
+        
+        var record: FastaRecord?
+        
         init(_ input: String) {
-            self.input = input
+            self.lines = input.components(separatedBy: "\n")
+            self.firstLine = lines.first ?? ""
+            self.record = parseFirstLine(input: firstLine)
         }
         
         func contains(_ key: Key) -> Bool {
@@ -54,26 +60,17 @@ public final class FastaDecoder: Decoder {
         }
         
         func decode(_ type: String.Type, forKey key: Key) throws -> String {
-            let lines = input.components(separatedBy: "\n")
-            
-            if key.stringValue == "sequence" {
+            switch key.stringValue {
+            case "accession":
+                return self.record?.accession ?? ""
+            case "name":
+                return self.record?.name ?? ""
+            case "organism":
+                return self.record?.organism ?? ""
+            case "sequence":
                 return lines.dropFirst().joined()
-            }
-            else {
-                guard let firstLine = lines.first else {
-                    throw DecodingError.keyNotFound(key, DecodingError.Context(codingPath: codingPath, debugDescription: "TODO"))
-                }
-                
-                switch key.stringValue {
-                case "accession":
-                    return self.parseFirstLine(input: firstLine).accession
-                case "name":
-                    return self.parseFirstLine(input: firstLine).name
-                case "organism":
-                    return self.parseFirstLine(input: firstLine).organism
-                default:
-                    return ""
-                }
+            default:
+                return ""
             }
         }
         
@@ -239,6 +236,5 @@ public final class FastaDecoder: Decoder {
             return FastaRecord(accession: "", name: name, organism: "", sequence: "")
         }
     }
-    
 }
 
