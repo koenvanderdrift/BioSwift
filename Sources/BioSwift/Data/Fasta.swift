@@ -1,34 +1,54 @@
 import Foundation
+import Combine
 
 // https://talk.objc.io/episodes/S01E115-building-a-custom-xml-decoder
+// https://stackoverflow.com/questions/59300356/decodable-that-inits-from-an-array
 
-public typealias Fasta = String
+public typealias FastaString = String
+
+public struct FastaDecoder: TopLevelDecoder, Decodable {
+    
+    public init() {}
+
+    public func decode<T>(_ type: T.Type, from input: FastaString) throws -> T where T : Decodable {
+        let decoder = _FastaDecoder(input)
+        
+        return try! FastaRecord(from: decoder) as! T
+    }    
+}
 
 public struct FastaRecord: Codable, Hashable {
     public let accession: String
     public let name: String
     public let organism: String
     public let sequence: String
+
+    public init(accession: String, name: String, organism: String, sequence: String) {
+        self.accession = accession
+        self.name = name
+        self.organism = organism
+        self.sequence = sequence
+    }
 }
 
-public final class FastaDecoder: Decoder {
-    public var codingPath: [CodingKey] = []
-    public var userInfo: [CodingUserInfoKey:Any] = [:]
-    public let input: String
+private final class _FastaDecoder: Decoder {
+    let codingPath: [CodingKey] = []
+    let userInfo: [CodingUserInfoKey:Any] = [:]
+    let input: String
     
-    public init(_ input: String) {
+    init(_ input: String) {
         self.input = input
     }
     
-    public func container<Key>(keyedBy type: Key.Type) throws -> KeyedDecodingContainer<Key> where Key : CodingKey {
+    func container<Key>(keyedBy type: Key.Type) throws -> KeyedDecodingContainer<Key> where Key : CodingKey {
         return KeyedDecodingContainer(KDC(input))
     }
     
-    public func unkeyedContainer() throws -> UnkeyedDecodingContainer {
+    func unkeyedContainer() throws -> UnkeyedDecodingContainer {
         fatalError("TODO")
     }
     
-    public func singleValueContainer() throws -> SingleValueDecodingContainer {
+    func singleValueContainer() throws -> SingleValueDecodingContainer {
         fatalError("TODO")
     }
     
@@ -113,7 +133,7 @@ public final class FastaDecoder: Decoder {
         
         mutating func decode<T>(_ type: T.Type) throws -> T where T : Decodable {
             let line = lines[currentIndex]
-            let decoder = FastaDecoder(line)
+            let decoder = _FastaDecoder(line)
             currentIndex += 1
             return try T(from: decoder)
         }
