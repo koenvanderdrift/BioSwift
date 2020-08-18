@@ -28,7 +28,7 @@
 		5D0B69A624DE05CE00A18A26 /* elements.txt in Resources */ = {isa = PBXBuildFile; fileRef = 5DA2278F24DDDE6100916DA4 /* elements.txt */; };
 		5D0B69A724DE05CE00A18A26 /* unimod.xml in Resources */ = {isa = PBXBuildFile; fileRef = 5DA2279024DDDE6100916DA4 /* unimod.xml */; };
 		5D0B69A824DE05CE00A18A26 /* enzymes.json in Resources */ = {isa = PBXBuildFile; fileRef = 5DA2279124DDDE6100916DA4 /* enzymes.json */; };
-		5D683D7224E9B67800A002B8 /* Fasta.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D683D7124E9B67800A002B8 /* Fasta.swift */; };
+		5D9CF85924EC96C9009587B8 /* Fasta.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9CF85824EC96C9009587B8 /* Fasta.swift */; };
 		OBJ_107 /* BioSwiftTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_47 /* BioSwiftTests.swift */; };
 		OBJ_108 /* XCTestManifests.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_48 /* XCTestManifests.swift */; };
 		OBJ_110 /* BioSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = "BioSwift::BioSwift::Product" /* BioSwift.framework */; };
@@ -81,7 +81,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		5D683D7124E9B67800A002B8 /* Fasta.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Fasta.swift; sourceTree = "<group>"; };
+		5D9CF85824EC96C9009587B8 /* Fasta.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Fasta.swift; sourceTree = "<group>"; };
 		5DA2278B24DDDE6100916DA4 /* aminoacids.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = aminoacids.json; sourceTree = "<group>"; };
 		5DA2278C24DDDE6100916DA4 /* hydropathy.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = hydropathy.json; sourceTree = "<group>"; };
 		5DA2278D24DDDE6100916DA4 /* functionalgroups.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = functionalgroups.json; sourceTree = "<group>"; };
@@ -191,7 +191,7 @@
 		OBJ_26 /* Data */ = {
 			isa = PBXGroup;
 			children = (
-				5D683D7124E9B67800A002B8 /* Fasta.swift */,
+				5D9CF85824EC96C9009587B8 /* Fasta.swift */,
 				OBJ_28 /* JSON.swift */,
 				OBJ_42 /* Unimod.swift */,
 			);
@@ -426,12 +426,12 @@
 				OBJ_78 /* Double.swift in Sources */,
 				OBJ_79 /* String.swift in Sources */,
 				OBJ_80 /* BioSequence.swift in Sources */,
-				5D683D7224E9B67800A002B8 /* Fasta.swift in Sources */,
 				OBJ_81 /* Chargeable.swift in Sources */,
 				OBJ_82 /* Fragment.swift in Sources */,
 				OBJ_83 /* Peptide.swift in Sources */,
 				OBJ_84 /* Protein.swift in Sources */,
 				OBJ_85 /* SequenceRange.swift in Sources */,
+				5D9CF85924EC96C9009587B8 /* Fasta.swift in Sources */,
 				OBJ_86 /* Bundle+Decoding.swift in Sources */,
 				OBJ_87 /* Unimod.swift in Sources */,
 				OBJ_88 /* Utilities.swift in Sources */,

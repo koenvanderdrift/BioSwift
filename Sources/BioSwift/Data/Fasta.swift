@@ -1,3 +1,10 @@
+//
+//  Fasta.swift
+//  BioSwift
+//
+//  Created by Koen van der Drift on 8/18/20.
+//
+
 import Foundation
 
 public struct FastaRecord: Codable, Hashable {
@@ -16,9 +23,9 @@ public struct FastaRecord: Codable, Hashable {
 
 public struct FastaDecoder: Decodable {
 
-//    
+//
 // TODO: MORE ERROR CHECKING
-//    
+//
 
     public init() {}
 
@@ -82,15 +89,15 @@ private final class _FastaDecoder: Decoder {
         }
         
         func contains(_ key: Key) -> Bool {
-            fatalError("TODO")
+            return true
         }
         
         func decodeNil(forKey key: Key) throws -> Bool {
-            fatalError("TODO")
+            return true
         }
         
         func decode(_ type: Bool.Type, forKey key: Key) throws -> Bool {
-            fatalError("TODO")
+            return true
         }
         
         func decode(_ type: String.Type, forKey key: Key) throws -> String {
@@ -109,51 +116,51 @@ private final class _FastaDecoder: Decoder {
         }
         
         func decode(_ type: Double.Type, forKey key: Key) throws -> Double {
-            fatalError("TODO")
+            return 0
         }
         
         func decode(_ type: Float.Type, forKey key: Key) throws -> Float {
-            fatalError("TODO")
+            return 0
         }
         
         func decode(_ type: Int.Type, forKey key: Key) throws -> Int {
-            fatalError("TODO")
+            return 0
         }
         
         func decode(_ type: Int8.Type, forKey key: Key) throws -> Int8 {
-            fatalError("TODO")
+            return 0
         }
         
         func decode(_ type: Int16.Type, forKey key: Key) throws -> Int16 {
-            fatalError("TODO")
+            return 0
         }
         
         func decode(_ type: Int32.Type, forKey key: Key) throws -> Int32 {
-            fatalError("TODO")
+            return 0
         }
         
         func decode(_ type: Int64.Type, forKey key: Key) throws -> Int64 {
-            fatalError("TODO")
+            return 0
         }
         
         func decode(_ type: UInt.Type, forKey key: Key) throws -> UInt {
-            fatalError("TODO")
+            return 0
         }
         
         func decode(_ type: UInt8.Type, forKey key: Key) throws -> UInt8 {
-            fatalError("TODO")
+            return 0
         }
         
         func decode(_ type: UInt16.Type, forKey key: Key) throws -> UInt16 {
-            fatalError("TODO")
+            return 0
         }
         
         func decode(_ type: UInt32.Type, forKey key: Key) throws -> UInt32 {
-            fatalError("TODO")
+            return 0
         }
         
         func decode(_ type: UInt64.Type, forKey key: Key) throws -> UInt64 {
-            fatalError("TODO")
+            return 0
         }
         
         func decode<T>(_ type: T.Type, forKey key: Key) throws -> T where T : Decodable {
@@ -271,4 +278,3 @@ private final class _FastaDecoder: Decoder {
         }
     }
 }
-
