@@ -1,34 +1,4 @@
 import Foundation
-import Combine
-
-// https://talk.objc.io/episodes/S01E115-building-a-custom-xml-decoder
-// https://stackoverflow.com/questions/59300356/decodable-that-inits-from-an-array
-
-public struct FastaDecoder: TopLevelDecoder, Decodable {
-    public typealias Input = Data
-    public init() {}
-    
-    
-    // TODO: MORE ERROR CHECKING
-    
-    
-    public func decode<T>(_ type: T.Type, from input: Input) throws -> T where T : Decodable {
-        var result: [FastaRecord] = []
-        
-        if let fastaArray = String(data: input, encoding: .utf8)?
-            .components(separatedBy: ">")
-            .dropFirst() {
-            
-            result = fastaArray.map( { fastaLine in
-                let decoder = _FastaDecoder(fastaLine)
-                
-                return try! FastaRecord(from: decoder)
-            })
-        }
-        
-        return result as! T
-    }
-}
 
 public struct FastaRecord: Codable, Hashable {
     public let accession: String
@@ -44,7 +14,38 @@ public struct FastaRecord: Codable, Hashable {
     }
 }
 
+public struct FastaDecoder: Decodable {
+
+//    
+// TODO: MORE ERROR CHECKING
+//    
+
+    public init() {}
+
+    public func decode<T : Decodable>(_ type: T.Type, from data: Data) throws -> T {
+        var result: [FastaRecord] = []
+        
+        if let fastaArray = String(data: data, encoding: .utf8)?
+            .components(separatedBy: ">")
+            .dropFirst() {
+            
+            result = fastaArray.map( { fastaLine in
+                let decoder = _FastaDecoder(fastaLine)
+                
+                return try! FastaRecord(from: decoder)
+            })
+        }
+        
+        return result as! T
+    }
+}
+
 private final class _FastaDecoder: Decoder {
+
+//
+// via: https://talk.objc.io/episodes/S01E115-building-a-custom-xml-decoder
+//
+
     let codingPath: [CodingKey] = []
     let userInfo: [CodingUserInfoKey:Any] = [:]
     let input: String
