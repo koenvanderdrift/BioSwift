@@ -4,17 +4,32 @@ import Combine
 // https://talk.objc.io/episodes/S01E115-building-a-custom-xml-decoder
 // https://stackoverflow.com/questions/59300356/decodable-that-inits-from-an-array
 
-public typealias FastaString = String
+private typealias FastaString = String
 
 public struct FastaDecoder: TopLevelDecoder, Decodable {
-    
+    public typealias Input = Data
     public init() {}
-
-    public func decode<T>(_ type: T.Type, from input: FastaString) throws -> T where T : Decodable {
-        let decoder = _FastaDecoder(input)
+    
+    
+    //TODO: MORE ERROR CHECKING
+    
+    
+    public func decode<T>(_ type: T.Type, from input: Input) throws -> T where T : Decodable {
+        var result: [FastaRecord] = []
         
-        return try! FastaRecord(from: decoder) as! T
-    }    
+        if let fastaString = FastaString(data: input, encoding: .utf8)?
+            .components(separatedBy: ">")
+            .dropFirst() {
+            
+            result = fastaString.map( { fastaLine in
+                let decoder = _FastaDecoder(fastaLine)
+                
+                return try! FastaRecord(from: decoder)
+            })
+        }
+        
+        return result as! T
+    }
 }
 
 public struct FastaRecord: Codable, Hashable {
@@ -22,7 +37,7 @@ public struct FastaRecord: Codable, Hashable {
     public let name: String
     public let organism: String
     public let sequence: String
-
+    
     public init(accession: String, name: String, organism: String, sequence: String) {
         self.accession = accession
         self.name = name
@@ -50,105 +65,6 @@ private final class _FastaDecoder: Decoder {
     
     func singleValueContainer() throws -> SingleValueDecodingContainer {
         fatalError("TODO")
-    }
-    
-    struct UDC: UnkeyedDecodingContainer {
-        let lines: [String]
-        
-        var codingPath: [CodingKey] = []
-        
-        var count: Int? {
-            return lines.count
-        }
-        
-        var isAtEnd: Bool {
-            return currentIndex >= lines.count
-        }
-        
-        var currentIndex: Int = 0
-
-        init(_ lines: [String]) {
-            self.lines = lines
-        }
-        
-        mutating func decodeNil() throws -> Bool {
-            fatalError("TODO")
-        }
-        
-        mutating func decode(_ type: Bool.Type) throws -> Bool {
-            fatalError("TODO")
-        }
-        
-        mutating func decode(_ type: String.Type) throws -> String {
-            fatalError("TODO")
-        }
-        
-        mutating func decode(_ type: Double.Type) throws -> Double {
-            fatalError("TODO")
-        }
-        
-        mutating func decode(_ type: Float.Type) throws -> Float {
-            fatalError("TODO")
-        }
-        
-        mutating func decode(_ type: Int.Type) throws -> Int {
-            fatalError("TODO")
-        }
-        
-        mutating func decode(_ type: Int8.Type) throws -> Int8 {
-            fatalError("TODO")
-        }
-        
-        mutating func decode(_ type: Int16.Type) throws -> Int16 {
-            fatalError("TODO")
-        }
-        
-        mutating func decode(_ type: Int32.Type) throws -> Int32 {
-            fatalError("TODO")
-        }
-        
-        mutating func decode(_ type: Int64.Type) throws -> Int64 {
-            fatalError("TODO")
-        }
-        
-        mutating func decode(_ type: UInt.Type) throws -> UInt {
-            fatalError("TODO")
-        }
-        
-        mutating func decode(_ type: UInt8.Type) throws -> UInt8 {
-            fatalError("TODO")
-        }
-        
-        mutating func decode(_ type: UInt16.Type) throws -> UInt16 {
-            fatalError("TODO")
-        }
-        
-        mutating func decode(_ type: UInt32.Type) throws -> UInt32 {
-            fatalError("TODO")
-        }
-        
-        mutating func decode(_ type: UInt64.Type) throws -> UInt64 {
-            fatalError("TODO")
-        }
-        
-        mutating func decode<T>(_ type: T.Type) throws -> T where T : Decodable {
-            let line = lines[currentIndex]
-            let decoder = _FastaDecoder(line)
-            currentIndex += 1
-            return try T(from: decoder)
-        }
-        
-        mutating func nestedContainer<NestedKey>(keyedBy type: NestedKey.Type) throws -> KeyedDecodingContainer<NestedKey> where NestedKey : CodingKey {
-            fatalError("TODO")
-        }
-        
-        mutating func nestedUnkeyedContainer() throws -> UnkeyedDecodingContainer {
-            fatalError("TODO")
-        }
-        
-        mutating func superDecoder() throws -> Decoder {
-            fatalError("TODO")
-        }
     }
     
     struct KDC<Key: CodingKey>: KeyedDecodingContainerProtocol {
