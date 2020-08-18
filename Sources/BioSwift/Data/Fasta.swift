@@ -4,24 +4,22 @@ import Combine
 // https://talk.objc.io/episodes/S01E115-building-a-custom-xml-decoder
 // https://stackoverflow.com/questions/59300356/decodable-that-inits-from-an-array
 
-private typealias FastaString = String
-
 public struct FastaDecoder: TopLevelDecoder, Decodable {
     public typealias Input = Data
     public init() {}
     
     
-    //TODO: MORE ERROR CHECKING
+    // TODO: MORE ERROR CHECKING
     
     
     public func decode<T>(_ type: T.Type, from input: Input) throws -> T where T : Decodable {
         var result: [FastaRecord] = []
         
-        if let fastaString = FastaString(data: input, encoding: .utf8)?
+        if let fastaArray = String(data: input, encoding: .utf8)?
             .components(separatedBy: ">")
             .dropFirst() {
             
-            result = fastaString.map( { fastaLine in
+            result = fastaArray.map( { fastaLine in
                 let decoder = _FastaDecoder(fastaLine)
                 
                 return try! FastaRecord(from: decoder)
