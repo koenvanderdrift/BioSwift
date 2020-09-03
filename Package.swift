@@ -13,7 +13,7 @@ let package = Package(
     targets: [
         .target(
             name: "BioSwift",
-            path: "Source"
+            path: "Sources/BioSwift"
         .testTarget(
             name: "BioSwiftTests",
             dependencies: ["BioSwift"]
