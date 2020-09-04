@@ -8,7 +8,7 @@
 
 import Foundation
 
-public let bioSwiftBundleIdentifier = "com.koenvanderdrift.BioSwift"
+public let bioSwiftBundleIdentifier = "BioSwift"
 
 // via https://www.hackingwithswift.com/example-code/system/how-to-decode-json-from-your-app-bundle-the-easy-way
 

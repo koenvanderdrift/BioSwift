@@ -1,5 +1,5 @@
 //
-//  UnimodParser.swift
+//  Unimod.swift
 //  BioSwift
 //
 //  Created by Koen van der Drift on 3/14/20.
@@ -32,6 +32,34 @@ private let cation = "Cation"
 private let atypeion = "a-type-ion"
 
 private let skipTitleStrings = [cation, unknown, xlink, atypeion, "2H", "13C", "15N"]
+public let unimodDidLoadNotification = Notification.Name("UnimodDidLoadNotification")
+
+public func loadUnimod() {
+    guard let bundle = Bundle(identifier: bioSwiftBundleIdentifier) else {
+        fatalError("Unable to load bundle")
+    }
+
+    guard let url = bundle.url(forResource: "unimod", withExtension: "xml") else {
+        fatalError("Unable to find unimod.xml")
+    }
+
+    DispatchQueue.global(qos: .userInitiated).async {
+        debugPrint("Start parsing unimod.xml")
+
+        let unimodParser = UnimodParser(with: url)
+        let success = unimodParser.parseXML()
+
+        if success {
+            DispatchQueue.main.async {
+                debugPrint("Finished parsing unimod.xml")
+
+                NotificationCenter.default.post(name: unimodDidLoadNotification, object: nil)
+            }
+        } else {
+            debugPrint("Failed parsing unimod.xml")
+        }
+    }
+}
 
 public class UnimodParser: NSObject {
     let url: URL

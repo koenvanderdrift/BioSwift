@@ -21,6 +21,14 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		5D0B69A224DE05CE00A18A26 /* aminoacids.json in Resources */ = {isa = PBXBuildFile; fileRef = 5DA2278B24DDDE6100916DA4 /* aminoacids.json */; };
+		5D0B69A324DE05CE00A18A26 /* hydropathy.json in Resources */ = {isa = PBXBuildFile; fileRef = 5DA2278C24DDDE6100916DA4 /* hydropathy.json */; };
+		5D0B69A424DE05CE00A18A26 /* functionalgroups.json in Resources */ = {isa = PBXBuildFile; fileRef = 5DA2278D24DDDE6100916DA4 /* functionalgroups.json */; };
+		5D0B69A524DE05CE00A18A26 /* elements.json in Resources */ = {isa = PBXBuildFile; fileRef = 5DA2278E24DDDE6100916DA4 /* elements.json */; };
+		5D0B69A624DE05CE00A18A26 /* elements.txt in Resources */ = {isa = PBXBuildFile; fileRef = 5DA2278F24DDDE6100916DA4 /* elements.txt */; };
+		5D0B69A724DE05CE00A18A26 /* unimod.xml in Resources */ = {isa = PBXBuildFile; fileRef = 5DA2279024DDDE6100916DA4 /* unimod.xml */; };
+		5D0B69A824DE05CE00A18A26 /* enzymes.json in Resources */ = {isa = PBXBuildFile; fileRef = 5DA2279124DDDE6100916DA4 /* enzymes.json */; };
+		5D9CF85924EC96C9009587B8 /* Fasta.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9CF85824EC96C9009587B8 /* Fasta.swift */; };
 		OBJ_107 /* BioSwiftTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_47 /* BioSwiftTests.swift */; };
 		OBJ_108 /* XCTestManifests.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_48 /* XCTestManifests.swift */; };
 		OBJ_110 /* BioSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = "BioSwift::BioSwift::Product" /* BioSwift.framework */; };
@@ -39,7 +47,6 @@
 		OBJ_72 /* Hydropathy.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_23 /* Hydropathy.swift */; };
 		OBJ_73 /* Mass.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_24 /* Mass.swift */; };
 		OBJ_74 /* Search.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_25 /* Search.swift */; };
-		OBJ_75 /* Fasta.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_27 /* Fasta.swift */; };
 		OBJ_76 /* JSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_28 /* JSON.swift */; };
 		OBJ_77 /* Array.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_30 /* Array.swift */; };
 		OBJ_78 /* Double.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_31 /* Double.swift */; };
@@ -51,9 +58,8 @@
 		OBJ_84 /* Protein.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_38 /* Protein.swift */; };
 		OBJ_85 /* SequenceRange.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_39 /* SequenceRange.swift */; };
 		OBJ_86 /* Bundle+Decoding.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_41 /* Bundle+Decoding.swift */; };
-		OBJ_87 /* UnimodParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_42 /* UnimodParser.swift */; };
+		OBJ_87 /* Unimod.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_42 /* Unimod.swift */; };
 		OBJ_88 /* Utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_43 /* Utilities.swift */; };
-		OBJ_89 /* Webservice.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_44 /* Webservice.swift */; };
 		OBJ_96 /* Package.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_6 /* Package.swift */; };
 /* End PBXBuildFile section */
 
@@ -75,6 +81,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		5D9CF85824EC96C9009587B8 /* Fasta.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Fasta.swift; sourceTree = "<group>"; };
 		5DA2278B24DDDE6100916DA4 /* aminoacids.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = aminoacids.json; sourceTree = "<group>"; };
 		5DA2278C24DDDE6100916DA4 /* hydropathy.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = hydropathy.json; sourceTree = "<group>"; };
 		5DA2278D24DDDE6100916DA4 /* functionalgroups.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = functionalgroups.json; sourceTree = "<group>"; };
@@ -82,8 +89,8 @@
 		5DA2278F24DDDE6100916DA4 /* elements.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = elements.txt; sourceTree = "<group>"; };
 		5DA2279024DDDE6100916DA4 /* unimod.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = unimod.xml; sourceTree = "<group>"; };
 		5DA2279124DDDE6100916DA4 /* enzymes.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = enzymes.json; sourceTree = "<group>"; };
-		"BioSwift::BioSwift::Product" /* BioSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = BioSwift.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		"BioSwift::BioSwiftTests::Product" /* BioSwiftTests.xctest */ = {isa = PBXFileReference; lastKnownFileType = file; path = BioSwiftTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		"BioSwift::BioSwift::Product" /* BioSwift.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = BioSwift.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		"BioSwift::BioSwiftTests::Product" /* BioSwiftTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; path = BioSwiftTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		OBJ_11 /* AminoAcid.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AminoAcid.swift; sourceTree = "<group>"; };
 		OBJ_12 /* ChemicalElement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChemicalElement.swift; sourceTree = "<group>"; };
 		OBJ_13 /* Enzyme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Enzyme.swift; sourceTree = "<group>"; };
@@ -98,7 +105,6 @@
 		OBJ_23 /* Hydropathy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Hydropathy.swift; sourceTree = "<group>"; };
 		OBJ_24 /* Mass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Mass.swift; sourceTree = "<group>"; };
 		OBJ_25 /* Search.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Search.swift; sourceTree = "<group>"; };
-		OBJ_27 /* Fasta.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Fasta.swift; sourceTree = "<group>"; };
 		OBJ_28 /* JSON.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSON.swift; sourceTree = "<group>"; };
 		OBJ_30 /* Array.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Array.swift; sourceTree = "<group>"; };
 		OBJ_31 /* Double.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Double.swift; sourceTree = "<group>"; };
@@ -110,9 +116,8 @@
 		OBJ_38 /* Protein.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Protein.swift; sourceTree = "<group>"; };
 		OBJ_39 /* SequenceRange.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SequenceRange.swift; sourceTree = "<group>"; };
 		OBJ_41 /* Bundle+Decoding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Bundle+Decoding.swift"; sourceTree = "<group>"; };
-		OBJ_42 /* UnimodParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnimodParser.swift; sourceTree = "<group>"; };
+		OBJ_42 /* Unimod.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Unimod.swift; sourceTree = "<group>"; };
 		OBJ_43 /* Utilities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utilities.swift; sourceTree = "<group>"; };
-		OBJ_44 /* Webservice.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Webservice.swift; sourceTree = "<group>"; };
 		OBJ_47 /* BioSwiftTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BioSwiftTests.swift; sourceTree = "<group>"; };
 		OBJ_48 /* XCTestManifests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XCTestManifests.swift; sourceTree = "<group>"; };
 		OBJ_52 /* API Design.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = "API Design.md"; sourceTree = "<group>"; };
@@ -186,8 +191,9 @@
 		OBJ_26 /* Data */ = {
 			isa = PBXGroup;
 			children = (
-				OBJ_27 /* Fasta.swift */,
+				5D9CF85824EC96C9009587B8 /* Fasta.swift */,
 				OBJ_28 /* JSON.swift */,
+				OBJ_42 /* Unimod.swift */,
 			);
 			path = Data;
 			sourceTree = "<group>";
@@ -219,9 +225,7 @@
 			isa = PBXGroup;
 			children = (
 				OBJ_41 /* Bundle+Decoding.swift */,
-				OBJ_42 /* UnimodParser.swift */,
 				OBJ_43 /* Utilities.swift */,
-				OBJ_44 /* Webservice.swift */,
 			);
 			path = Support;
 			sourceTree = "<group>";
@@ -253,7 +257,7 @@
 			name = Products;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		OBJ_5 /*  */ = {
+		OBJ_5 = {
 			isa = PBXGroup;
 			children = (
 				OBJ_6 /* Package.swift */,
@@ -264,7 +268,6 @@
 				OBJ_53 /* LICENSE */,
 				OBJ_54 /* README.md */,
 			);
-			name = "";
 			sourceTree = "<group>";
 		};
 		OBJ_7 /* Sources */ = {
@@ -300,6 +303,7 @@
 			buildPhases = (
 				OBJ_59 /* Sources */,
 				OBJ_90 /* Frameworks */,
+				5D0B69A124DE05B200A18A26 /* Resources */,
 			);
 			buildRules = (
 			);
@@ -348,7 +352,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftMigration = 9999;
-				LastUpgradeCheck = 9999;
+				LastUpgradeCheck = 1160;
 			};
 			buildConfigurationList = OBJ_2 /* Build configuration list for PBXProject "BioSwift" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -356,8 +360,9 @@
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
+				Base,
 			);
-			mainGroup = OBJ_5 /*  */;
+			mainGroup = OBJ_5;
 			productRefGroup = OBJ_49 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -369,6 +374,23 @@
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		5D0B69A124DE05B200A18A26 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5D0B69A224DE05CE00A18A26 /* aminoacids.json in Resources */,
+				5D0B69A324DE05CE00A18A26 /* hydropathy.json in Resources */,
+				5D0B69A424DE05CE00A18A26 /* functionalgroups.json in Resources */,
+				5D0B69A524DE05CE00A18A26 /* elements.json in Resources */,
+				5D0B69A624DE05CE00A18A26 /* elements.txt in Resources */,
+				5D0B69A724DE05CE00A18A26 /* unimod.xml in Resources */,
+				5D0B69A824DE05CE00A18A26 /* enzymes.json in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		OBJ_106 /* Sources */ = {
@@ -399,7 +421,6 @@
 				OBJ_72 /* Hydropathy.swift in Sources */,
 				OBJ_73 /* Mass.swift in Sources */,
 				OBJ_74 /* Search.swift in Sources */,
-				OBJ_75 /* Fasta.swift in Sources */,
 				OBJ_76 /* JSON.swift in Sources */,
 				OBJ_77 /* Array.swift in Sources */,
 				OBJ_78 /* Double.swift in Sources */,
@@ -410,10 +431,10 @@
 				OBJ_83 /* Peptide.swift in Sources */,
 				OBJ_84 /* Protein.swift in Sources */,
 				OBJ_85 /* SequenceRange.swift in Sources */,
+				5D9CF85924EC96C9009587B8 /* Fasta.swift in Sources */,
 				OBJ_86 /* Bundle+Decoding.swift in Sources */,
-				OBJ_87 /* UnimodParser.swift in Sources */,
+				OBJ_87 /* Unimod.swift in Sources */,
 				OBJ_88 /* Utilities.swift in Sources */,
-				OBJ_89 /* Webservice.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -450,8 +471,8 @@
 		OBJ_104 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CLANG_ENABLE_MODULES = YES;
-				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PLATFORM_DIR)/Developer/Library/Frameworks",
@@ -475,8 +496,8 @@
 		OBJ_105 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CLANG_ENABLE_MODULES = YES;
-				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PLATFORM_DIR)/Developer/Library/Frameworks",
@@ -501,17 +522,43 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				ENABLE_NS_ASSERTIONS = YES;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
 					"SWIFT_PACKAGE=1",
 					"DEBUG=1",
 				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_SWIFT_FLAGS = "$(inherited) -DXcode";
@@ -528,15 +575,40 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_OPTIMIZATION_LEVEL = s;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
 					"SWIFT_PACKAGE=1",
 				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				OTHER_SWIFT_FLAGS = "$(inherited) -DXcode";
 				PRODUCT_NAME = "$(TARGET_NAME)";
