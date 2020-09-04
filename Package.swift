@@ -12,14 +12,14 @@ let package = Package(
      targets: [
         .target(
             name: "BioSwift",
-            resources: [
-               .process("Resources/unimod.xml"),
-               .process("Resources/aminoacids.json"),
-               .process("Resources/elements.json"),
-               .process("Resources/enzymes.json"),
-               .process("Resources/functionalgroups.json"),
-               .process("Resources/hydropathy.json"),
-            ]
+//            resources: [
+//               .process("Resources/unimod.xml"),
+//               .process("Resources/aminoacids.json"),
+//               .process("Resources/elements.json"),
+//               .process("Resources/enzymes.json"),
+//               .process("Resources/functionalgroups.json"),
+//               .process("Resources/hydropathy.json"),
+//            ]
         .testTarget(
             name: "BioSwiftTests",
             dependencies: ["BioSwift"]),
