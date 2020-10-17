@@ -15,12 +15,12 @@ let package = Package(
             name: "BioSwift",
             dependencies: [],
             resources: [
-               .process("Resources/unimod.xml"),
-               .process("Resources/aminoacids.json"),
-               .process("Resources/elements.json"),
-               .process("Resources/enzymes.json"),
-               .process("Resources/functionalgroups.json"),
-               .process("Resources/hydropathy.json"),
+               .copy("Resources/unimod.xml"),
+               .copy("Resources/aminoacids.json"),
+               .copy("Resources/elements.json"),
+               .copy("Resources/enzymes.json"),
+               .copy("Resources/functionalgroups.json"),
+               .copy("Resources/hydropathy.json"),
             ]
         )
         .testTarget(
