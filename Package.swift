@@ -10,25 +10,21 @@ let package = Package(
         .library(
             name: "BioSwift",
             targets: ["BioSwift"]
-        ),
+        )
     ],
     targets: [
         // Targets are the basic building blocks of a package. A target can define a module or a test suite.
         // Targets can depend on other targets in this package, and on products in packages this package depends on.
         .target(
             name: "BioSwift",
+            dependencies: [],
             resources: [
-               .process("Resources/unimod.xml"),
-               .process("Resources/aminoacids.json"),
-               .process("Resources/elements.json"),
-               .process("Resources/enzymes.json"),
-               .process("Resources/functionalgroups.json"),
-               .process("Resources/hydropathy.json")
-            ]
+                  .process("Resources")
+                ]
         ),
         .testTarget(
             name: "BioSwiftTests",
             dependencies: ["BioSwift"]
-        ),
+        )
     ]
 )
