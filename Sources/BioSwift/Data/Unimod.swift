@@ -34,14 +34,7 @@ private let atypeion = "a-type-ion"
 private let skipTitleStrings = [cation, unknown, xlink, atypeion, "2H", "13C", "15N"]
 public let unimodDidLoadNotification = Notification.Name("UnimodDidLoadNotification")
 
-extension Bundle {
-    static public let module = Bundle(path: "\(Bundle.main.bundlePath)/Sources/BioSwift/Resources")
-}
-
-
-public enum SharedResource {
-    static public let unimodURL = Bundle.module?.url(forResource: "unimod", withExtension: "xml")
-}
+public let unimodURL = Bundle.module?.url(forResource: "unimod", withExtension: "xml")
 
 public func loadUnimod() {
 //    guard let bundle = Bundle(identifier: bioSwiftBundleIdentifier) else {
@@ -52,7 +45,7 @@ public func loadUnimod() {
 //        fatalError("Unable to find unimod.xml")
 //    }
 
-    guard let url = SharedResource.unimodURL else {
+    guard let url = unimodURL else {
         fatalError("Unable to find unimod.xml")
     }
     

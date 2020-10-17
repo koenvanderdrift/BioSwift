@@ -281,12 +281,12 @@
 		OBJ_8 /* BioSwift */ = {
 			isa = PBXGroup;
 			children = (
-				5D2C80B0253B621C007374D0 /* Resources */,
 				OBJ_9 /* BioSwift.swift */,
 				OBJ_10 /* Bricks */,
 				OBJ_21 /* Calculators */,
 				OBJ_26 /* Data */,
 				OBJ_29 /* Extensions */,
+				5D2C80B0253B621C007374D0 /* Resources */,
 				OBJ_33 /* Sequence */,
 				OBJ_40 /* Support */,
 			);
