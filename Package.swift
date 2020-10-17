@@ -8,23 +8,23 @@ let package = Package(
     products: [
         .library(
             name: "BioSwift",
-            targets: ["BioSwift"]),
+            targets: ["BioSwift"])
     ],
      targets: [
         .target(
             name: "BioSwift",
-            dependencies: [],
             resources: [
-               .copy("Resources/unimod.xml"),
-               .copy("Resources/aminoacids.json"),
-               .copy("Resources/elements.json"),
-               .copy("Resources/enzymes.json"),
-               .copy("Resources/functionalgroups.json"),
-               .copy("Resources/hydropathy.json"),
+               .process("Resources/unimod.xml"),
+               .process("Resources/aminoacids.json"),
+               .process("Resources/elements.json"),
+               .process("Resources/enzymes.json"),
+               .process("Resources/functionalgroups.json"),
+               .process("Resources/hydropathy.json")
             ]
         )
         .testTarget(
             name: "BioSwiftTests",
-            dependencies: ["BioSwift"]),
+            dependencies: ["BioSwift"]
+        )
     ]
 )
