@@ -1,4 +1,4 @@
-// swift-tools-version:5.2
+// swift-tools-version:5.3
 // The swift-tools-version declares the minimum version of Swift required to build this package.
 
 import PackageDescription
@@ -13,15 +13,15 @@ let package = Package(
      targets: [
         .target(
             name: "BioSwift",
+            resources: [
+               .process("Resources/unimod.xml"),
+               .process("Resources/aminoacids.json"),
+               .process("Resources/elements.json"),
+               .process("Resources/enzymes.json"),
+               .process("Resources/functionalgroups.json"),
+               .process("Resources/hydropathy.json"),
+            ],
             dependencies: []),
-//            resources: [
-//               .process("Resources/unimod.xml"),
-//               .process("Resources/aminoacids.json"),
-//               .process("Resources/elements.json"),
-//               .process("Resources/enzymes.json"),
-//               .process("Resources/functionalgroups.json"),
-//               .process("Resources/hydropathy.json"),
-//            ]
         .testTarget(
             name: "BioSwiftTests",
             dependencies: ["BioSwift"]),
