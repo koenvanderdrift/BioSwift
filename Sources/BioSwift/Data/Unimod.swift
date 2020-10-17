@@ -35,7 +35,7 @@ private let skipTitleStrings = [cation, unknown, xlink, atypeion, "2H", "13C", "
 public let unimodDidLoadNotification = Notification.Name("UnimodDidLoadNotification")
 
 extension Bundle {
-    static let module = Bundle(path: "\(Bundle.main.bundlePath)/Sources/BioSwift/Resources")
+    static public let module = Bundle(path: "\(Bundle.main.bundlePath)/Sources/BioSwift/Resources")
 }
 
 
