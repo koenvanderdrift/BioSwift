@@ -13,6 +13,7 @@ let package = Package(
      targets: [
         .target(
             name: "BioSwift",
+            dependencies: []),
             resources: [
                .process("Resources/unimod.xml"),
                .process("Resources/aminoacids.json"),
@@ -21,7 +22,6 @@ let package = Package(
                .process("Resources/functionalgroups.json"),
                .process("Resources/hydropathy.json"),
             ],
-            dependencies: []),
         .testTarget(
             name: "BioSwiftTests",
             dependencies: ["BioSwift"]),
