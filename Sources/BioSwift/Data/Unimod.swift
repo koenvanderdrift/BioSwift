@@ -34,21 +34,15 @@ private let atypeion = "a-type-ion"
 private let skipTitleStrings = [cation, unknown, xlink, atypeion, "2H", "13C", "15N"]
 public let unimodDidLoadNotification = Notification.Name("UnimodDidLoadNotification")
 
-public let unimodURL = Bundle.module?.url(forResource: "unimod", withExtension: "xml")
-
 public func loadUnimod() {
-//    guard let bundle = Bundle(identifier: bioSwiftBundleIdentifier) else {
-//        fatalError("Unable to load bundle")
-//    }
-//
-//    guard let url = bundle.url(forResource: "unimod", withExtension: "xml") else {
-//        fatalError("Unable to find unimod.xml")
-//    }
+    guard let bundle = Bundle(identifier: bioSwiftBundleIdentifier) else {
+        fatalError("Unable to load bundle")
+    }
 
-    guard let url = unimodURL else {
+    guard let url = bundle.url(forResource: "unimod", withExtension: "xml") else {
         fatalError("Unable to find unimod.xml")
     }
-    
+
     DispatchQueue.global(qos: .userInitiated).async {
         debugPrint("Start parsing unimod.xml")
 
