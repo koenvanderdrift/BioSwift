@@ -44,7 +44,7 @@ public func loadUnimod() {
     DispatchQueue.global(qos: .userInitiated).async {
         debugPrint("Start parsing unimod.xml")
 
-        let unimodParser = UnimodParser(with: unimodURL)
+        let unimodParser = UnimodParser(with: url)
         let success = unimodParser.parseXML()
 
         if success {
