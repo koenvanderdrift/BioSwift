@@ -36,35 +36,35 @@ public let unimodDidLoadNotification = Notification.Name("UnimodDidLoadNotificat
 
 public let unimodURL = Bundle.module.url(forResource: "unimod", withExtension: "xml")
 
-public func loadUnimod() {
-//    guard let bundle = Bundle(identifier: bioSwiftBundleIdentifier) else {
-//        fatalError("Unable to load bundle")
-//    }
+//public func loadUnimod() {
+////    guard let bundle = Bundle(identifier: bioSwiftBundleIdentifier) else {
+////        fatalError("Unable to load bundle")
+////    }
+////
+////    guard let url = bundle.url(forResource: "unimod", withExtension: "xml") else {
+////        fatalError("Unable to find unimod.xml")
+////    }
+////    guard let url = Bundle.module.url(forResource: "unimod", withExtension: "xml") else {
+////        fatalError("Unable to find unimod.xml")
+////    }
+//    
+//    DispatchQueue.global(qos: .userInitiated).async {
+//        debugPrint("Start parsing unimod.xml")
 //
-//    guard let url = bundle.url(forResource: "unimod", withExtension: "xml") else {
-//        fatalError("Unable to find unimod.xml")
+//        let unimodParser = UnimodParser(with: unimodURL)
+//        let success = unimodParser.parseXML()
+//
+//        if success {
+//            DispatchQueue.main.async {
+//                debugPrint("Finished parsing unimod.xml")
+//
+//                NotificationCenter.default.post(name: unimodDidLoadNotification, object: nil)
+//            }
+//        } else {
+//            debugPrint("Failed parsing unimod.xml")
+//        }
 //    }
-//    guard let url = Bundle.module.url(forResource: "unimod", withExtension: "xml") else {
-//        fatalError("Unable to find unimod.xml")
-//    }
-    
-    DispatchQueue.global(qos: .userInitiated).async {
-        debugPrint("Start parsing unimod.xml")
-
-        let unimodParser = UnimodParser(with: unimodURL)
-        let success = unimodParser.parseXML()
-
-        if success {
-            DispatchQueue.main.async {
-                debugPrint("Finished parsing unimod.xml")
-
-                NotificationCenter.default.post(name: unimodDidLoadNotification, object: nil)
-            }
-        } else {
-            debugPrint("Failed parsing unimod.xml")
-        }
-    }
-}
+//}
 
 public class UnimodParser: NSObject {
     let url: URL
