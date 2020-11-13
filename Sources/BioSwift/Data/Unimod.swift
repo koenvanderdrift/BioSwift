@@ -51,6 +51,8 @@ public func loadUnimod() {
 
         if success {
             DispatchQueue.main.async {
+                loadAdditionalAminoAcids()
+                
                 debugPrint("Finished parsing unimod.xml")
 
                 NotificationCenter.default.post(name: unimodDidLoadNotification, object: nil)
@@ -59,6 +61,17 @@ public func loadUnimod() {
             debugPrint("Failed parsing unimod.xml")
         }
     }
+}
+
+public func loadAdditionalAminoAcids() {
+    let unknown = AminoAcid.init(name: "Unknown", oneLetterCode: "X", threeLetterCode: "Xaa", formula: Formula.init(""), represents: ["unknown"], representedBy: ["unknown"])
+    uniAminoAcids.append(unknown)
+    
+    let gap = AminoAcid.init(name: "Gap", oneLetterCode: "-", threeLetterCode: "Gap", formula: Formula.init(""), represents: ["gap"], representedBy: ["gap"])
+    uniAminoAcids.append(gap)
+    
+    let undefined = AminoAcid.init(name: "Undefined", oneLetterCode: "?", threeLetterCode: "???", formula: Formula.init(""), represents: ["undefined"], representedBy: ["undefined"])
+    uniAminoAcids.append(undefined)
 }
 
 public class UnimodParser: NSObject {
