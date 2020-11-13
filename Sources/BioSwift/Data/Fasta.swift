@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import Combine
 
 public struct FastaRecord: Codable, Hashable {
     public let accession: String
@@ -21,7 +22,7 @@ public struct FastaRecord: Codable, Hashable {
     }
 }
 
-public struct FastaDecoder: Decodable {
+public struct FastaDecoder: TopLevelDecoder {
 
 //
 // TODO: MORE ERROR CHECKING
