@@ -34,15 +34,13 @@ private let atypeion = "a-type-ion"
 private let skipTitleStrings = [cation, unknown, xlink, atypeion, "2H", "13C", "15N"]
 public let unimodDidLoadNotification = Notification.Name("UnimodDidLoadNotification")
 
-public func loadUnimod() {
-    guard let bundle = Bundle(identifier: bioSwiftBundleIdentifier) else {
-        fatalError("Unable to load bundle")
-    }
+public let unimodURL = Bundle.module.url(forResource: "unimod", withExtension: "xml")
 
-    guard let url = bundle.url(forResource: "unimod", withExtension: "xml") else {
+public func loadUnimod() {
+    guard let url = Bundle.module.url(forResource: "unimod", withExtension: "xml") else {
         fatalError("Unable to find unimod.xml")
     }
-
+    
     DispatchQueue.global(qos: .userInitiated).async {
         debugPrint("Start parsing unimod.xml")
 
@@ -51,8 +49,6 @@ public func loadUnimod() {
 
         if success {
             DispatchQueue.main.async {
-                loadAdditionalAminoAcids()
-                
                 debugPrint("Finished parsing unimod.xml")
 
                 NotificationCenter.default.post(name: unimodDidLoadNotification, object: nil)
@@ -61,17 +57,6 @@ public func loadUnimod() {
             debugPrint("Failed parsing unimod.xml")
         }
     }
-}
-
-public func loadAdditionalAminoAcids() {
-    let unknown = AminoAcid.init(name: "Unknown", oneLetterCode: "X", threeLetterCode: "Xaa", formula: Formula.init(""), represents: ["unknown"], representedBy: ["unknown"])
-    uniAminoAcids.append(unknown)
-    
-    let gap = AminoAcid.init(name: "Gap", oneLetterCode: "-", threeLetterCode: "Gap", formula: Formula.init(""), represents: ["gap"], representedBy: ["gap"])
-    uniAminoAcids.append(gap)
-    
-    let undefined = AminoAcid.init(name: "Undefined", oneLetterCode: "?", threeLetterCode: "???", formula: Formula.init(""), represents: ["undefined"], representedBy: ["undefined"])
-    uniAminoAcids.append(undefined)
 }
 
 public class UnimodParser: NSObject {
