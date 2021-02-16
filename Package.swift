@@ -17,7 +17,7 @@ let package = Package(
             name: "BioSwift",
             dependencies: [],
             resources: [
-              .copy("Resources")
+              .process("Resources")
             ]
         )
     ]
