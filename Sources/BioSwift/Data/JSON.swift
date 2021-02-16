@@ -9,12 +9,16 @@
 import Foundation
 
 public func loadJSONFromBundle<A: Decodable>(fileName: String) -> [A] {
-    guard let bundle = Bundle(identifier: bioSwiftBundleIdentifier) else {
-        fatalError("Unable to load bundle")
-    }
+//    guard let bundle = Bundle(identifier: bioSwiftBundleIdentifier) else {
+//        fatalError("Unable to load bundle")
+//    }
+//
+//    guard let url = bundle.url(forResource: fileName, withExtension: "json") else {
+//        fatalError("Unable to find \(fileName).json")
+//    }
 
-    guard let url = bundle.url(forResource: fileName, withExtension: "json") else {
-        fatalError("Unable to find \(fileName).json")
+    guard let url = Bundle.module.url(forResource: fileName, withExtension: "json") else {
+        fatalError("Unable to find unimod.xml")
     }
 
     guard let data = try? Data(contentsOf: url) else {
