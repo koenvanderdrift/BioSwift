@@ -39,7 +39,7 @@ public func loadUnimod() {
         fatalError("Unable to load bundle")
     }
 
-    guard let url = bundle.url(forResource: "Resources/unimod", withExtension: "xml") else {
+    guard let url = bundle.url(forResource: "unimod", withExtension: "xml") else {
         fatalError("Unable to find unimod.xml")
     }
 
