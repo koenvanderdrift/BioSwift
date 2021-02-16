@@ -10,6 +10,15 @@ import Foundation
 
 public let bioSwiftBundleIdentifier = "BioSwift"
 
+public enum SharedResources {
+    static public let aminoacidsURL = Bundle.module.url(forResource: "aminoacids", withExtension: "json")
+    static public let elementsURL = Bundle.module.url(forResource: "elements", withExtension: "json")
+    static public let enzymesURL = Bundle.module.url(forResource: "enzymes", withExtension: "json")
+    static public let functionalgroupsURL = Bundle.module.url(forResource: "functionalgroups", withExtension: "json")
+    static public let hydropathyURL = Bundle.module.url(forResource: "hydropathy", withExtension: "json")
+    static public let unimodURL = Bundle.module.url(forResource: "unimod", withExtension: "xml")
+}
+
 // via https://www.hackingwithswift.com/example-code/system/how-to-decode-json-from-your-app-bundle-the-easy-way
 
 extension Bundle {
