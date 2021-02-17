@@ -38,6 +38,18 @@ public struct Formula {
 
         return set
     }
+    
+    public func isotopes() -> NSCountedSet {
+        let set = NSCountedSet()
+
+        for element in elements {
+            for isotope in element.isotopes {
+                set.add(isotope)
+            }
+        }
+        
+        return set
+    }
 }
 
 extension Formula {
