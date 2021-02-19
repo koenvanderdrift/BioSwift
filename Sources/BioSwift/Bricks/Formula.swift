@@ -33,7 +33,7 @@ public struct Formula {
         let set = NSCountedSet()
 
         for element in elements {
-            set.add(element.symbol)
+            set.add(element)
         }
 
         return set
