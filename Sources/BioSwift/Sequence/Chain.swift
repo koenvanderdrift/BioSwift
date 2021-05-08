@@ -1,5 +1,5 @@
 //
-//  BioSequence.swift
+//  Chain.swift
 //  BioSwift
 //
 //  Created by Koen van der Drift on 5/22/17.
@@ -8,11 +8,11 @@
 
 import Foundation
 
-public protocol RangedSequence: BioSequence {
+public protocol RangedSequence: Chain {
     var rangeInParent: SequenceRange { get set }
 }
 
-public protocol BioSequence: Structure, Equatable {
+public protocol Chain: Structure, Equatable {
     var symbolLibrary: [Symbol]  { get }
     var residues: [Residue] { get set }
     
@@ -23,7 +23,7 @@ public protocol BioSequence: Structure, Equatable {
     init(sequence: String)
 }
 
-extension BioSequence {
+extension Chain {
     public var name: String {
         return ""
     }
@@ -106,8 +106,8 @@ extension BioSequence {
         return residues.count
     }
     
-    public func subSequence<T: BioSequence>(with range: SequenceRange) -> T? {
-        guard let residues = residueSequence(with: range) else { return nil }
+    public func subChain<T: Chain>(with range: SequenceRange) -> T? {
+        guard let residues = residueChain(with: range) else { return nil }
         
         var sub = T.init(residues: residues)
         sub.termini = self.termini
@@ -123,30 +123,30 @@ extension BioSequence {
         return sub
     }
 
-    public func subSequence<T: BioSequence>(with range: NSRange) -> T? {
-        return subSequence(with: range.sequenceRange())
+    public func subChain<T: Chain>(with range: NSRange) -> T? {
+        return subChain(with: range.sequenceRange())
     }
     
-    public func subSequence<T: BioSequence>(from: Int, to: Int) -> T? {
+    public func subChain<T: Chain>(from: Int, to: Int) -> T? {
         guard from < numberOfResidues(), to >= from else { return nil }
         
-        return subSequence(with: from...to)
+        return subChain(with: from...to)
     }
 
-    public func residueSequence(with range: SequenceRange) -> [Residue]? {
+    public func residueChain(with range: SequenceRange) -> [Residue]? {
         guard range != zeroSequenceRange else { return nil }
         
         return Array(residues[range])
     }
 
-    public func residueSequence(with range: NSRange) -> [Residue]? {
-        return residueSequence(with: range.sequenceRange())
+    public func residueChain(with range: NSRange) -> [Residue]? {
+        return residueChain(with: range.sequenceRange())
     }
     
-    public func residueSequence(from: Int, to: Int) -> [Residue]? {
+    public func residueChain(from: Int, to: Int) -> [Residue]? {
         guard from < numberOfResidues(), to >= from else { return nil }
 
-        return residueSequence(with: from...to)
+        return residueChain(with: from...to)
     }
     
     public mutating func setTermini(first: Residue, last: Residue) {

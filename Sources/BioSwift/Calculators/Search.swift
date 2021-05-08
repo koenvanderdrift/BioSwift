@@ -93,12 +93,12 @@ public struct MassSearchParameters {
     }
 }
 
-extension BioSequence {
+extension Chain {
     public func searchSequence<T: RangedSequence>(searchString: String) -> [T] {
         var result = [T]()
         
         for range in sequenceString.sequenceRanges(of: searchString) {
-            if var sub: T = subSequence(with: range) {
+            if var sub: T = subChain(with: range) {
                 sub.rangeInParent = range
                 result.append(sub)
             }
@@ -108,7 +108,7 @@ extension BioSequence {
     }
 }
 
-extension BioSequence where Self: Chargeable {
+extension Chain where Self: Chargeable {
     public func searchMass<T: RangedSequence & Chargeable>(params: MassSearchParameters) -> [T] {
         var result = [T]()
 
@@ -123,7 +123,7 @@ extension BioSequence where Self: Chargeable {
         
         while start < count {
             for index in start..<count {
-                guard var sub: T = subSequence(from: start, to: index) else { break }
+                guard var sub: T = subChain(from: start, to: index) else { break }
                 sub.adducts = adducts
                 sub.rangeInParent = start...index
                 

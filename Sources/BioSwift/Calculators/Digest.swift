@@ -8,7 +8,7 @@
 
 import Foundation
 
-extension BioSequence {
+extension Chain {
     public func digest<T: RangedSequence>(using regex: String, with missedCleavages: Int) -> [T] {
         let sites = cleavageSites(for: regex)
         
@@ -20,7 +20,7 @@ extension BioSequence {
         for site in sites {
             end = residues.index(residues.startIndex, offsetBy: site)
             
-            if var new: T = subSequence(from: start, to: end) {
+            if var new: T = subChain(from: start, to: end) {
                 new.rangeInParent = start...end - 1
                 subSequences.append(new)
             
@@ -28,7 +28,7 @@ extension BioSequence {
             }
         }
         
-        if var final: T = subSequence(from: start, to: residues.endIndex - 1) {
+        if var final: T = subChain(from: start, to: residues.endIndex - 1) {
             final.rangeInParent = start...residues.endIndex - 1
             subSequences.append(final)
         }

@@ -47,7 +47,7 @@ extension Chargeable {
     }
 }
 
-extension Collection where Element: BioSequence & Chargeable {
+extension Collection where Element: Chain & Chargeable {
     public func charge(minCharge: Int, maxCharge: Int) -> [Element] {
         return flatMap { sequence in
             (minCharge...maxCharge).map { charge in

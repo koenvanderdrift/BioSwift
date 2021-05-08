@@ -3,7 +3,7 @@ import Foundation
 public let nTerm = AminoAcid(name: nTermString, oneLetterCode: "", formula: Formula("H"))
 public let cTerm = AminoAcid(name: cTermString, oneLetterCode: "", formula: Formula("OH"))
 
-public struct Protein: BioSequence {
+public struct Protein: Chain {
     public var symbolLibrary: [Symbol] = uniAminoAcids
     public var residues: [Residue] = []
     public var termini: (first: Residue, last: Residue)? = (nTerm, cTerm)
