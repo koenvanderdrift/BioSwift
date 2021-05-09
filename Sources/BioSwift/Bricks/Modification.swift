@@ -4,8 +4,8 @@ public typealias ModificationSet = Set<Modification>
 public typealias LinkSet = Set<Link>
 
 public indirect enum Reaction {
-    case add(Group)
-    case remove(Group)
+    case add(FunctionalGroup)
+    case remove(FunctionalGroup)
     case undefined
 }
 
@@ -48,13 +48,13 @@ public struct Modification {
 
         let negativeElements = elements.filter { $0.value < 0 }
         if negativeElements.count > 0 {
-            let group = Group(name: name, formula: negativeElements)
+            let group = FunctionalGroup(name: name, formula: negativeElements)
             reactions.append(Reaction.remove(group))
         }
 
         let postiveElements = elements.filter { $0.value > 0 }
         if postiveElements.count > 0 {
-            let group = Group(name: name, formula: postiveElements)
+            let group = FunctionalGroup(name: name, formula: postiveElements)
             reactions.append(Reaction.add(group))
         }
 

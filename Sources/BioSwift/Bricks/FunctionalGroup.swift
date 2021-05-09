@@ -1,5 +1,5 @@
 //
-//  Molecule.swift
+//  FunctionalGroup.swift
 //  BioSwift
 //
 //  Created by Koen van der Drift on 3/22/20.
@@ -7,7 +7,16 @@
 
 import Foundation
 
-public struct Molecule: Structure, Codable {
+public let hydroxyl = FunctionalGroup(name: "hydroxyl", formula: "OH")
+public let ammonia = FunctionalGroup(name: "ammonia", formula: "NH3")
+public let water = FunctionalGroup(name: "water", formula: "H2O")
+public let hydrogen = FunctionalGroup(name: "hydrogen", formula: "H")
+
+public let proton = FunctionalGroup(name: "proton", formula: "H")
+public let sodium = FunctionalGroup(name: "sodium", formula: "Na")
+public let ammonium = FunctionalGroup(name: "ammonium", formula: "NH4")
+
+public struct FunctionalGroup: Structure, Codable {
     public let name: String
     public let formula: Formula
 
@@ -56,8 +65,8 @@ public struct Molecule: Structure, Codable {
     }
 }
 
-extension Molecule: Hashable {
-    public static func == (lhs: Group, rhs: Group) -> Bool {
+extension FunctionalGroup: Hashable {
+    public static func == (lhs: FunctionalGroup, rhs: FunctionalGroup) -> Bool {
         return lhs.name == rhs.name
     }
 
@@ -67,7 +76,7 @@ extension Molecule: Hashable {
     }
 }
 
-extension Molecule: Mass {
+extension FunctionalGroup: Mass {
     public func calculateMasses() -> MassContainer {
         return mass(of: formula.elements)
     }
