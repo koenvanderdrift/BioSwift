@@ -13,7 +13,9 @@ public protocol RangedSequence: Chain {
 }
 
 public protocol Chain: Structure, Equatable {
+    var name: String { get set }
     var symbolLibrary: [Symbol]  { get }
+    
     var residues: [Residue] { get set }
     
     var termini: (first: Residue, last: Residue)?  { get set }
@@ -24,10 +26,6 @@ public protocol Chain: Structure, Equatable {
 }
 
 extension Chain {
-    public var name: String {
-        return ""
-    }
-    
     public static func == (lhs: Self, rhs: Self) -> Bool {
         return lhs.sequenceString == rhs.sequenceString && lhs.name == rhs.name
     }

@@ -4,10 +4,12 @@ public let nTerm = AminoAcid(name: nTermString, oneLetterCode: "", formula: Form
 public let cTerm = AminoAcid(name: cTermString, oneLetterCode: "", formula: Formula("OH"))
 
 public struct Protein: Chain {
+    public var name: String = ""
     public var symbolLibrary: [Symbol] = uniAminoAcids
-    public var residues: [Residue] = []
-    public var termini: (first: Residue, last: Residue)? = (nTerm, cTerm)
 
+    public var residues: [Residue] = []
+
+    public var termini: (first: Residue, last: Residue)? = (nTerm, cTerm)    
     public var modifications: ModificationSet = [] {
         didSet {
             oldValue.forEach {

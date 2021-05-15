@@ -7,8 +7,7 @@
 
 import Foundation
 
-public struct BioMolecule {
+public struct BioMolecule<T: Chain> {
     var name: String
-    var chains: [Chain]
+    var chains: [T]
 }
-

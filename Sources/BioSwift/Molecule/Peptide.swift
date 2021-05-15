@@ -4,10 +4,12 @@ private let lossOfWater = Modification(name: "Loss of Water", reactions: [.remov
 private let lossOfAmmonia = Modification(name: "Loss of Ammonia", reactions: [.remove(ammonia)], sites: ["R", "Q", "N", "K"])
 
 public struct Peptide: RangedSequence {
+    public var name: String = ""
     public var symbolLibrary: [Symbol] = uniAminoAcids
-    public var residues: [Residue] = []
-    public var termini: (first: Residue, last: Residue)? = (nTerm, cTerm)
     
+    public var residues: [Residue] = []
+    
+    public var termini: (first: Residue, last: Residue)? = (nTerm, cTerm)
     public var modifications: ModificationSet = ModificationSet()
     public var adducts: [Adduct] = []
     

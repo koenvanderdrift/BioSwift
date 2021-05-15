@@ -17,10 +17,12 @@ public enum FragmentType {
 }
 
 public struct Fragment: RangedSequence {
+    public var name: String = ""
     public var symbolLibrary: [Symbol] = uniAminoAcids
-    public var residues: [Residue] = []
-    public var termini: (first: Residue, last: Residue)? = (nTerm, cTerm)
 
+    public var residues: [Residue] = []
+    
+    public var termini: (first: Residue, last: Residue)? = (nTerm, cTerm)
     public var modifications: ModificationSet = ModificationSet()
     public var adducts: [Adduct] = []
 
