@@ -8,6 +8,6 @@
 import Foundation
 
 public struct BioMolecule<T: Chain> {
-    var name: String
-    var chains: [T]
+    public var name: String
+    public var chains: [T]
 }
