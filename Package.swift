@@ -19,6 +19,9 @@ let package = Package(
             resources: [
               .process("Resources")
             ]
-        )
+        ),
+        .testTarget(
+            name: "BioSwiftTests",
+            dependencies: ["BioSwift"]),
     ]
 )
