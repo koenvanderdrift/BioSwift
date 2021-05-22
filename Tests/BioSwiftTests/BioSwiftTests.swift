@@ -2,21 +2,32 @@
 import XCTest
 
 final class BioSwiftTests: XCTestCase {
-    override class func setUp() {
-        loadUnimod()
-        
-        Thread.sleep(forTimeInterval: 20)
+    override func setUp() {
+        super.setUp()
+
+        let exp = expectation(description: "\(#function)\(#line)")
+
+        // Issue an async request
+        loadUnimod { success in
+            guard success else { return }
+            
+            exp.fulfill()
+        }
+
+        // Wait for the async request to complete
+        waitForExpectations(timeout: 1, handler: nil)
     }
 
+    
     func testProteinLength() {
         let protein = Protein(sequence: "DWSSD")
         XCTAssertEqual(protein.sequenceString.count, 5)
     }
 
-    func testProteinLengthWithIllegalCharacters() {
-        let protein = Protein(sequence: "D___WS83SD")
-        XCTAssertEqual(protein.sequenceString.count, 5)
-    }
+//    func testProteinLengthWithIllegalCharacters() {
+//        let protein = Protein(sequence: "D___WS83SD")
+//        XCTAssertEqual(protein.sequenceString.count, 5)
+//    }
 
     /*
      MH+1(av)    MH+1(mono)
@@ -43,73 +54,72 @@ final class BioSwiftTests: XCTestCase {
     func testPeptideMonoisotopicMass() {
         var peptide = Peptide(sequence: "DWSSD")
         peptide.setAdducts(type: protonAdduct, count: 1)
-
-        XCTAssertEqual(peptide.pseudomolecularIon().monoisotopicMass.roundTo(places: 4).roundedDecimalAsString(), "609.2151")
+        XCTAssertEqual(peptide.pseudomolecularIon().monoisotopicMass.roundedDecimalAsString(to: 4), "609.2151")
     }
-//
-//    func testPeptideAverageMass() {
-//        var peptide = Peptide(sequence: "DWSSD")
-//        peptide.addCharge(protonAdduct)
-//
-//        XCTAssertEqual(peptide.pseudomolecularIon().averageMass.roundedString(4), "609.5636")
-//    } // 609.563
-//
-//    func testPeptideSerinePhosphorylationMonoisotopicMass() {
-//        var peptide = Peptide(sequence: "DWSSD")
-//        let site = 4
-//
+
+    func testPeptideAverageMass() {
+        var peptide = Peptide(sequence: "DWSSD")
+        peptide.setAdducts(type: protonAdduct, count: 1)
+
+        XCTAssertEqual(peptide.pseudomolecularIon().averageMass.roundedDecimalAsString(to: 4), "609.5636")
+    } // 609.563
+
+    func testPeptideSerinePhosphorylationMonoisotopicMass() {
+        var peptide = Peptide(sequence: "DWSSD")
+        let site = 4
+
 //        peptide.addModification(with: "Phosphorylation", at: site - 1) // zero-based
-//        peptide.addCharge(protonAdduct)
-//
-//        XCTAssertEqual(peptide.pseudomolecularIon().monoisotopicMass.roundedString(4), "689.1814")
-//
-//        peptide.addCharge(protonAdduct)
-//
-//        XCTAssertEqual(peptide.pseudomolecularIon().monoisotopicMass.roundedString(4), "345.0944")
-//    }
-//    
-//    func testBioMolecule() {
-//        let protein = Protein(sequence: "MPSSVSWGILLLAGLCCLVPVSLAEDPQGDAAQKTDTSHHDQDHPTFNKITPNLAEFAFSLYRQLAHQSNSTNIFFSPVSIATAFAMLSLGTKADTHDEILEGLNFNLTEIPEAQIHEGFQELLRTLNQPDSQLQLTTGNGLFLSEGLKLVDKFLEDVKKLYHSEAFTVNFGDTEEAKKQINDYVEKGTQGKIVDLVKELDRDTVFALVNYIFFKGKWERPFEVKDTEEEDFHVDQVTTVKVPMMKRLGMFNIQHCKKLSSWVLLMKYLGNATAIFFLPDEGKLQHLENELTHDIITKFLENEDRRSASLHLPKLSITGTYDLKSVLGQLGITKVFSNGADLSGVTEEAPLKLSKAVHKAVLTIDEKGTEAAGAMFLEAIPMSIPPEVKFNKPFVFLMIEQNTKSPLFMGKVVNPTQK")
-//
-//        var bm = BioMolecule<Protein>()
-//        bm.chains.append(protein)
-//    }
+        peptide.setAdducts(type: protonAdduct, count: 1)
+
+        XCTAssertEqual(peptide.pseudomolecularIon().monoisotopicMass.roundedDecimalAsString(to: 4), "689.1814")
+
+        peptide.setAdducts(type: protonAdduct, count: 1)
+
+        XCTAssertEqual(peptide.pseudomolecularIon().monoisotopicMass.roundedDecimalAsString(to: 4), "345.0944")
+    }
+    
+    func testBioMolecule() {
+        let protein = Protein(sequence: "MPSSVSWGILLLAGLCCLVPVSLAEDPQGDAAQKTDTSHHDQDHPTFNKITPNLAEFAFSLYRQLAHQSNSTNIFFSPVSIATAFAMLSLGTKADTHDEILEGLNFNLTEIPEAQIHEGFQELLRTLNQPDSQLQLTTGNGLFLSEGLKLVDKFLEDVKKLYHSEAFTVNFGDTEEAKKQINDYVEKGTQGKIVDLVKELDRDTVFALVNYIFFKGKWERPFEVKDTEEEDFHVDQVTTVKVPMMKRLGMFNIQHCKKLSSWVLLMKYLGNATAIFFLPDEGKLQHLENELTHDIITKFLENEDRRSASLHLPKLSITGTYDLKSVLGQLGITKVFSNGADLSGVTEEAPLKLSKAVHKAVLTIDEKGTEAAGAMFLEAIPMSIPPEVKFNKPFVFLMIEQNTKSPLFMGKVVNPTQK")
+       
+        var bm = BioMolecule<Protein>()
+        bm.chains.append(protein)
+    }
 
 
-//    func testProteinMonoisotopicMass() {
-//        var protein = Protein(sequence: "MPSSVSWGILLLAGLCCLVPVSLAEDPQGDAAQKTDTSHHDQDHPTFNKITPNLAEFAFSLYRQLAHQSNSTNIFFSPVSIATAFAMLSLGTKADTHDEILEGLNFNLTEIPEAQIHEGFQELLRTLNQPDSQLQLTTGNGLFLSEGLKLVDKFLEDVKKLYHSEAFTVNFGDTEEAKKQINDYVEKGTQGKIVDLVKELDRDTVFALVNYIFFKGKWERPFEVKDTEEEDFHVDQVTTVKVPMMKRLGMFNIQHCKKLSSWVLLMKYLGNATAIFFLPDEGKLQHLENELTHDIITKFLENEDRRSASLHLPKLSITGTYDLKSVLGQLGITKVFSNGADLSGVTEEAPLKLSKAVHKAVLTIDEKGTEAAGAMFLEAIPMSIPPEVKFNKPFVFLMIEQNTKSPLFMGKVVNPTQK")
-//
-//        protein.addCharge(protonAdduct)
-//
-//        XCTAssertEqual(protein.pseudomolecularIon().monoisotopicMass.roundedString(4), "46708.0267")
-//    }
-//
-//    func testProteinAverageMass() {
-//        var protein = Protein(sequence: "MPSSVSWGILLLAGLCCLVPVSLAEDPQGDAAQKTDTSHHDQDHPTFNKITPNLAEFAFSLYRQLAHQSNSTNIFFSPVSIATAFAMLSLGTKADTHDEILEGLNFNLTEIPEAQIHEGFQELLRTLNQPDSQLQLTTGNGLFLSEGLKLVDKFLEDVKKLYHSEAFTVNFGDTEEAKKQINDYVEKGTQGKIVDLVKELDRDTVFALVNYIFFKGKWERPFEVKDTEEEDFHVDQVTTVKVPMMKRLGMFNIQHCKKLSSWVLLMKYLGNATAIFFLPDEGKLQHLENELTHDIITKFLENEDRRSASLHLPKLSITGTYDLKSVLGQLGITKVFSNGADLSGVTEEAPLKLSKAVHKAVLTIDEKGTEAAGAMFLEAIPMSIPPEVKFNKPFVFLMIEQNTKSPLFMGKVVNPTQK")
-////    debugPrint(protein.formula.stringValue)
-//        protein.addCharge(protonAdduct)
-//
-//        XCTAssertEqual(protein.pseudomolecularIon().averageMass.roundedString(4), "46737.9568")
-//    } // 46737.0703"
-//
-//    func testFormulaAverageMass() { // C4H5NO3 + C11H10N2O + C3H5NO2 + C3H5NO2 + C4H5NO3 + H2O
+    func testProteinMonoisotopicMass() {
+        var protein = Protein(sequence: "MPSSVSWGILLLAGLCCLVPVSLAEDPQGDAAQKTDTSHHDQDHPTFNKITPNLAEFAFSLYRQLAHQSNSTNIFFSPVSIATAFAMLSLGTKADTHDEILEGLNFNLTEIPEAQIHEGFQELLRTLNQPDSQLQLTTGNGLFLSEGLKLVDKFLEDVKKLYHSEAFTVNFGDTEEAKKQINDYVEKGTQGKIVDLVKELDRDTVFALVNYIFFKGKWERPFEVKDTEEEDFHVDQVTTVKVPMMKRLGMFNIQHCKKLSSWVLLMKYLGNATAIFFLPDEGKLQHLENELTHDIITKFLENEDRRSASLHLPKLSITGTYDLKSVLGQLGITKVFSNGADLSGVTEEAPLKLSKAVHKAVLTIDEKGTEAAGAMFLEAIPMSIPPEVKFNKPFVFLMIEQNTKSPLFMGKVVNPTQK")
+
+        protein.setAdducts(type: protonAdduct, count: 1)
+
+        XCTAssertEqual(protein.pseudomolecularIon().monoisotopicMass.roundedDecimalAsString(to: 4), "46708.0267")
+    }
+
+    func testProteinAverageMass() {
+        var protein = Protein(sequence: "MPSSVSWGILLLAGLCCLVPVSLAEDPQGDAAQKTDTSHHDQDHPTFNKITPNLAEFAFSLYRQLAHQSNSTNIFFSPVSIATAFAMLSLGTKADTHDEILEGLNFNLTEIPEAQIHEGFQELLRTLNQPDSQLQLTTGNGLFLSEGLKLVDKFLEDVKKLYHSEAFTVNFGDTEEAKKQINDYVEKGTQGKIVDLVKELDRDTVFALVNYIFFKGKWERPFEVKDTEEEDFHVDQVTTVKVPMMKRLGMFNIQHCKKLSSWVLLMKYLGNATAIFFLPDEGKLQHLENELTHDIITKFLENEDRRSASLHLPKLSITGTYDLKSVLGQLGITKVFSNGADLSGVTEEAPLKLSKAVHKAVLTIDEKGTEAAGAMFLEAIPMSIPPEVKFNKPFVFLMIEQNTKSPLFMGKVVNPTQK")
+
+        protein.setAdducts(type: protonAdduct, count: 1)
+
+        XCTAssertEqual(protein.pseudomolecularIon().averageMass.roundedDecimalAsString(to: 4), "46737.9568")
+    } // 46737.0703"
+
+    func testFormulaAverageMass() { // C4H5NO3 + C11H10N2O + C3H5NO2 + C3H5NO2 + C4H5NO3 + H2O
 //        let formula = Formula("C2112H3313N539O629S13H")
 //        let masses = mass(of: formula.elements)
 //        debugPrint(masses)
-//
-//        let group = FunctionalGroup(name: "", formula: Formula("C25H32N6O12"))
-//        XCTAssertEqual(group.averageMass.roundedString(4), "608.5557")
-//    } // 608.5556
-//
-//    func testWaterAverageMass() { // H2O
-//        XCTAssertEqual(water.averageMass.roundedString(4), "18.0153")
-//    }
-//
-//    func testAmmoniaAverageMass() { // NH3
-//        XCTAssertEqual(ammonia.averageMass.roundedString(4), "17.0305")
-//    }
-//
-//    func testMethylAverageMass() { // CH3
-//        XCTAssertEqual(methyl.averageMass.roundedString(4), "15.0346")
-//    }
+        let group = FunctionalGroup(name: "", formula: "C25H32N6O12")
+        
+        XCTAssertEqual(group.averageMass.roundedDecimalAsString(to: 4), "608.5557")
+    } // 608.5556
+
+    func testWaterAverageMass() { // H2O
+        XCTAssertEqual(water.averageMass.roundedDecimalAsString(to: 4), "18.0153")
+    }
+
+    func testAmmoniaAverageMass() { // NH3
+        XCTAssertEqual(ammonia.averageMass.roundedDecimalAsString(to: 4), "17.0305")
+    }
+
+    func testMethylAverageMass() { // CH3
+//        XCTAssertEqual(methyl.averageMass.roundedDecimalAsString(to: 4), "15.0346")
+    }
 }

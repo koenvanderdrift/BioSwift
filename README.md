@@ -1,16 +1,21 @@
 # BioSwift
 
+## An open source framework for bioinformatics written in Swift
+
 ### This repository is:
 - pure educational
 - subject to major changes
+- supported for macOS and iOS
 
 ### This repository is not:
 - complete
 - tested
 - intended to be used in production
 
-### The BioSwift framework provides:
-- support for macOS and iOS
+### The BioSwift framework currently provides:
+- creation of Protein objects from an input string
+- residue modifications from the unimod database
+- find subsequences
 - molecular weight calculations
 - digestion of proteins
 - fragmentation of peptides

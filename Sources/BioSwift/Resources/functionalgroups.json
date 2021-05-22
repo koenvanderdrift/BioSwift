@@ -1,0 +1,42 @@
+[
+    {
+        "name":"Empty",
+        "formula":"",
+    },
+    {
+        "name": "Hydroxyl",
+        "formula":"OH",
+    },
+    {
+        "name" : "Ammonia",
+        "formula":"NH3",
+    },
+    {
+        "name" : "Water",
+        "formula":"H2O",
+    },
+    {
+        "name" : "Methyl",
+        "formula":"CH3",
+    },
+    {
+        "name" : "Acetyl",
+        "formula":"CH2CO",
+    },
+    {
+        "name" : "Hydrogen",
+        "formula":"H",
+    },
+    {
+        "name" : "Proton",
+        "formula":"H",
+    },
+    {
+        "name" : "Oxygen",
+        "formula":"O",
+    },
+    {
+        "name" : "Sodium",
+        "formula":"Na",
+    },
+]
