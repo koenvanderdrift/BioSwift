@@ -5,7 +5,7 @@ final class BioSwiftTests: XCTestCase {
     override func setUp() {
         super.setUp()
 
-        let exp = expectation(description: "\(#function)\(#line)")
+        let exp = expectation(description: "BioSwiftTests setUp")
 
         // Issue an async request
         loadUnimod { success in
@@ -66,16 +66,19 @@ final class BioSwiftTests: XCTestCase {
 
     func testPeptideSerinePhosphorylationMonoisotopicMass() {
         var peptide = Peptide(sequence: "DWSSD")
-        let site = 4
 
-//        peptide.addModification(with: "Phosphorylation", at: site - 1) // zero-based
-        peptide.setAdducts(type: protonAdduct, count: 1)
+        if let phos = uniModifications.filter({ $0.name.contains("Phospho") == true }).first {
+//            phos.location = 3
+//            let site = 4
+            peptide.addModification(Modification(modification: phos, location: 3))// zero-based
+            peptide.setAdducts(type: protonAdduct, count: 1)
 
-        XCTAssertEqual(peptide.pseudomolecularIon().monoisotopicMass.roundedDecimalAsString(to: 4), "689.1814")
+            XCTAssertEqual(peptide.pseudomolecularIon().monoisotopicMass.roundedDecimalAsString(to: 4), "689.1814")
 
-        peptide.setAdducts(type: protonAdduct, count: 1)
+            peptide.setAdducts(type: protonAdduct, count: 2)
 
-        XCTAssertEqual(peptide.pseudomolecularIon().monoisotopicMass.roundedDecimalAsString(to: 4), "345.0944")
+            XCTAssertEqual(peptide.pseudomolecularIon().monoisotopicMass.roundedDecimalAsString(to: 4), "345.0944")
+        }
     }
     
     func testBioMolecule() {
@@ -84,7 +87,6 @@ final class BioSwiftTests: XCTestCase {
         var bm = BioMolecule<Protein>()
         bm.chains.append(protein)
     }
-
 
     func testProteinMonoisotopicMass() {
         var protein = Protein(sequence: "MPSSVSWGILLLAGLCCLVPVSLAEDPQGDAAQKTDTSHHDQDHPTFNKITPNLAEFAFSLYRQLAHQSNSTNIFFSPVSIATAFAMLSLGTKADTHDEILEGLNFNLTEIPEAQIHEGFQELLRTLNQPDSQLQLTTGNGLFLSEGLKLVDKFLEDVKKLYHSEAFTVNFGDTEEAKKQINDYVEKGTQGKIVDLVKELDRDTVFALVNYIFFKGKWERPFEVKDTEEEDFHVDQVTTVKVPMMKRLGMFNIQHCKKLSSWVLLMKYLGNATAIFFLPDEGKLQHLENELTHDIITKFLENEDRRSASLHLPKLSITGTYDLKSVLGQLGITKVFSNGADLSGVTEEAPLKLSKAVHKAVLTIDEKGTEAAGAMFLEAIPMSIPPEVKFNKPFVFLMIEQNTKSPLFMGKVVNPTQK")
