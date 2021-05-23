@@ -58,6 +58,12 @@ public struct ChemicalElement: Codable, Symbol {
     }
 }
 
+extension ChemicalElement: Equatable {
+    public static func == (lhs: Self, rhs: Self) -> Bool {
+        return lhs.symbol == rhs.symbol && lhs.name == rhs.name
+    }
+}
+
 extension ChemicalElement: Mass {
     public var masses: MassContainer {
         return _masses

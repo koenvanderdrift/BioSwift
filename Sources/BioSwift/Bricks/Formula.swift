@@ -213,6 +213,12 @@ extension Formula {
     }
 }
 
+extension Formula: Equatable {
+    public static func == (lhs: Self, rhs: Self) -> Bool {
+        return lhs.elements == rhs.elements
+    }
+}
+
 extension Formula {
     public static func + (lhs: Formula, rhs: Formula) -> Formula {
         return Formula(lhs.string + rhs.string)
