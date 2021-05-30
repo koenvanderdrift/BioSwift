@@ -215,7 +215,7 @@ extension Formula {
 
 extension Formula: Equatable {
     public static func == (lhs: Self, rhs: Self) -> Bool {
-        return lhs.elements == rhs.elements
+        return lhs.countedElements() == rhs.countedElements()
     }
 }
 

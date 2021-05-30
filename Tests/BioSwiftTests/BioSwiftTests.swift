@@ -2,43 +2,39 @@
 import XCTest
 
 final class BioSwiftTests: XCTestCase {
+    
+    var protein = Protein()
+    var peptide = Peptide()
+
     override func setUp() {
         super.setUp()
 
+        // https://stackoverflow.com/questions/29504712/how-can-i-get-xctest-to-wait-for-async-calls-in-setup-before-tests-are-run
+        
         let exp = expectation(description: "BioSwiftTests setUp")
 
-        // Issue an async request
         loadUnimod { success in
             guard success else { return }
+            
+            self.protein = Protein(sequence: "MPSSVSWGILLLAGLCCLVPVSLAEDPQGDAAQKTDTSHHDQDHPTFNKITPNLAEFAFSLYRQLAHQSNSTNIFFSPVSIATAFAMLSLGTKADTHDEILEGLNFNLTEIPEAQIHEGFQELLRTLNQPDSQLQLTTGNGLFLSEGLKLVDKFLEDVKKLYHSEAFTVNFGDTEEAKKQINDYVEKGTQGKIVDLVKELDRDTVFALVNYIFFKGKWERPFEVKDTEEEDFHVDQVTTVKVPMMKRLGMFNIQHCKKLSSWVLLMKYLGNATAIFFLPDEGKLQHLENELTHDIITKFLENEDRRSASLHLPKLSITGTYDLKSVLGQLGITKVFSNGADLSGVTEEAPLKLSKAVHKAVLTIDEKGTEAAGAMFLEAIPMSIPPEVKFNKPFVFLMIEQNTKSPLFMGKVVNPTQK")
+            
+            self.peptide = Peptide(sequence: "DWSSD")
             
             exp.fulfill()
         }
 
-        // Wait for the async request to complete
         waitForExpectations(timeout: 1, handler: nil)
     }
 
-    
-    func testProteinLength() {
-        let protein = Protein(sequence: "DWSSD")
-        XCTAssertEqual(protein.sequenceString.count, 5)
+    func testSequenceLength() {
+        XCTAssertEqual(peptide.sequenceString.count, 5)
     }
 
-//    func testProteinLengthWithIllegalCharacters() {
+//    func testSequenceLengthWithIllegalCharacters() {
 //        let protein = Protein(sequence: "D___WS83SD")
 //        XCTAssertEqual(protein.sequenceString.count, 5)
 //    }
 
-    /*
-     MH+1(av)    MH+1(mono)
-     protpros            609.5731    609.2151
-     molmass             609.5636    609.2156
-     sysbiol             609.56940   609.21514
-     bioswift (-el)      609.563     609.2151
-     bioswift            609.5635    609.2156
-     bioswift (+el)      609.5641    609.2162
-
-     */
 //    func testFormuls() {
 //        let formula = Formula("AgCuRu4(H)2[CO]12{PPh3}2")
 //
@@ -51,25 +47,31 @@ final class BioSwiftTests: XCTestCase {
 //        XCTAssertEqual(peptide.formula.countFor(element: "C"), 25)
 //    }
 //
+    
+/*
+                        MH+1 (av)   MH+1 (mono)
+     protpros            609.5731    609.2151
+     molmass             609.5636    609.2156
+     sysbiol             609.56940   609.21514
+     bioswift (-el)      609.563     609.2151
+     bioswift            609.5635    609.2156
+     bioswift (+el)      609.5641    609.2162
+*/
+
     func testPeptideMonoisotopicMass() {
-        var peptide = Peptide(sequence: "DWSSD")
         peptide.setAdducts(type: protonAdduct, count: 1)
+        
         XCTAssertEqual(peptide.pseudomolecularIon().monoisotopicMass.roundedDecimalAsString(to: 4), "609.2151")
     }
 
     func testPeptideAverageMass() {
-        var peptide = Peptide(sequence: "DWSSD")
         peptide.setAdducts(type: protonAdduct, count: 1)
-
+        
         XCTAssertEqual(peptide.pseudomolecularIon().averageMass.roundedDecimalAsString(to: 4), "609.5636")
     } // 609.563
 
     func testPeptideSerinePhosphorylationMonoisotopicMass() {
-        var peptide = Peptide(sequence: "DWSSD")
-
         if let phos = uniModifications.filter({ $0.name.contains("Phospho") == true }).first {
-//            phos.location = 3
-//            let site = 4
             peptide.addModification(Modification(modification: phos, location: 3))// zero-based
             peptide.setAdducts(type: protonAdduct, count: 1)
 
@@ -82,23 +84,17 @@ final class BioSwiftTests: XCTestCase {
     }
     
     func testBioMolecule() {
-        let protein = Protein(sequence: "MPSSVSWGILLLAGLCCLVPVSLAEDPQGDAAQKTDTSHHDQDHPTFNKITPNLAEFAFSLYRQLAHQSNSTNIFFSPVSIATAFAMLSLGTKADTHDEILEGLNFNLTEIPEAQIHEGFQELLRTLNQPDSQLQLTTGNGLFLSEGLKLVDKFLEDVKKLYHSEAFTVNFGDTEEAKKQINDYVEKGTQGKIVDLVKELDRDTVFALVNYIFFKGKWERPFEVKDTEEEDFHVDQVTTVKVPMMKRLGMFNIQHCKKLSSWVLLMKYLGNATAIFFLPDEGKLQHLENELTHDIITKFLENEDRRSASLHLPKLSITGTYDLKSVLGQLGITKVFSNGADLSGVTEEAPLKLSKAVHKAVLTIDEKGTEAAGAMFLEAIPMSIPPEVKFNKPFVFLMIEQNTKSPLFMGKVVNPTQK")
-       
         var bm = BioMolecule<Protein>()
         bm.chains.append(protein)
     }
 
     func testProteinMonoisotopicMass() {
-        var protein = Protein(sequence: "MPSSVSWGILLLAGLCCLVPVSLAEDPQGDAAQKTDTSHHDQDHPTFNKITPNLAEFAFSLYRQLAHQSNSTNIFFSPVSIATAFAMLSLGTKADTHDEILEGLNFNLTEIPEAQIHEGFQELLRTLNQPDSQLQLTTGNGLFLSEGLKLVDKFLEDVKKLYHSEAFTVNFGDTEEAKKQINDYVEKGTQGKIVDLVKELDRDTVFALVNYIFFKGKWERPFEVKDTEEEDFHVDQVTTVKVPMMKRLGMFNIQHCKKLSSWVLLMKYLGNATAIFFLPDEGKLQHLENELTHDIITKFLENEDRRSASLHLPKLSITGTYDLKSVLGQLGITKVFSNGADLSGVTEEAPLKLSKAVHKAVLTIDEKGTEAAGAMFLEAIPMSIPPEVKFNKPFVFLMIEQNTKSPLFMGKVVNPTQK")
-
         protein.setAdducts(type: protonAdduct, count: 1)
 
         XCTAssertEqual(protein.pseudomolecularIon().monoisotopicMass.roundedDecimalAsString(to: 4), "46708.0267")
     }
 
     func testProteinAverageMass() {
-        var protein = Protein(sequence: "MPSSVSWGILLLAGLCCLVPVSLAEDPQGDAAQKTDTSHHDQDHPTFNKITPNLAEFAFSLYRQLAHQSNSTNIFFSPVSIATAFAMLSLGTKADTHDEILEGLNFNLTEIPEAQIHEGFQELLRTLNQPDSQLQLTTGNGLFLSEGLKLVDKFLEDVKKLYHSEAFTVNFGDTEEAKKQINDYVEKGTQGKIVDLVKELDRDTVFALVNYIFFKGKWERPFEVKDTEEEDFHVDQVTTVKVPMMKRLGMFNIQHCKKLSSWVLLMKYLGNATAIFFLPDEGKLQHLENELTHDIITKFLENEDRRSASLHLPKLSITGTYDLKSVLGQLGITKVFSNGADLSGVTEEAPLKLSKAVHKAVLTIDEKGTEAAGAMFLEAIPMSIPPEVKFNKPFVFLMIEQNTKSPLFMGKVVNPTQK")
-
         protein.setAdducts(type: protonAdduct, count: 1)
 
         XCTAssertEqual(protein.pseudomolecularIon().averageMass.roundedDecimalAsString(to: 4), "46737.9568")
@@ -106,16 +102,14 @@ final class BioSwiftTests: XCTestCase {
     
     
     func testProteinFormula() {
-        var protein = Protein(sequence: "MPSSVSWGILLLAGLCCLVPVSLAEDPQGDAAQKTDTSHHDQDHPTFNKITPNLAEFAFSLYRQLAHQSNSTNIFFSPVSIATAFAMLSLGTKADTHDEILEGLNFNLTEIPEAQIHEGFQELLRTLNQPDSQLQLTTGNGLFLSEGLKLVDKFLEDVKKLYHSEAFTVNFGDTEEAKKQINDYVEKGTQGKIVDLVKELDRDTVFALVNYIFFKGKWERPFEVKDTEEEDFHVDQVTTVKVPMMKRLGMFNIQHCKKLSSWVLLMKYLGNATAIFFLPDEGKLQHLENELTHDIITKFLENEDRRSASLHLPKLSITGTYDLKSVLGQLGITKVFSNGADLSGVTEEAPLKLSKAVHKAVLTIDEKGTEAAGAMFLEAIPMSIPPEVKFNKPFVFLMIEQNTKSPLFMGKVVNPTQK")
-
         protein.setAdducts(type: protonAdduct, count: 1)
         
- //       XCTAssertEqual(protein.formula, Formula.init("C2112H3314N539O629S13"))
+        XCTAssertEqual(protein.formula.countedElements().count(for: "C"), 211)
+
+//        XCTAssertEqual(protein.formula, Formula.init("C2112H3314N539O629S13"))
     } // C2112H3313N539O629S13
 
     func testProteinAtomCount() {
-        var protein = Protein(sequence: "MPSSVSWGILLLAGLCCLVPVSLAEDPQGDAAQKTDTSHHDQDHPTFNKITPNLAEFAFSLYRQLAHQSNSTNIFFSPVSIATAFAMLSLGTKADTHDEILEGLNFNLTEIPEAQIHEGFQELLRTLNQPDSQLQLTTGNGLFLSEGLKLVDKFLEDVKKLYHSEAFTVNFGDTEEAKKQINDYVEKGTQGKIVDLVKELDRDTVFALVNYIFFKGKWERPFEVKDTEEEDFHVDQVTTVKVPMMKRLGMFNIQHCKKLSSWVLLMKYLGNATAIFFLPDEGKLQHLENELTHDIITKFLENEDRRSASLHLPKLSITGTYDLKSVLGQLGITKVFSNGADLSGVTEEAPLKLSKAVHKAVLTIDEKGTEAAGAMFLEAIPMSIPPEVKFNKPFVFLMIEQNTKSPLFMGKVVNPTQK")
-
         protein.setAdducts(type: protonAdduct, count: 1)
 
         XCTAssertEqual(protein.formula.elements.count, 6606)
