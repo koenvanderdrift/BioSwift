@@ -8,20 +8,21 @@
 
 import Foundation
 
-public protocol RangedSequence: Chain {
-    var rangeInParent: SequenceRange { get set }
+public protocol RangedChain: Chain {
+    var rangeInParent: ChainRange { get set }
 }
 
 public protocol Chain: Structure, Equatable {
+    associatedtype ResidueType: Residue
+    var residues: [ResidueType] { get set }
+
     var name: String { get set }
     var symbolLibrary: [Symbol]  { get }
-    
-    var residues: [Residue] { get set }
     
     var termini: (first: Residue, last: Residue)?  { get set }
     var modifications: ModificationSet { get set }
 
-    init(residues: [Residue])
+    init(residues: [ResidueType])
     init(sequence: String)
 }
 
@@ -76,9 +77,9 @@ extension Chain {
         }
     }
     
-    public func createResidues(from string: String) -> [Residue] {
-        let result = string.map { char -> Residue in
-            symbolLibrary.first(where: { $0.identifier == String(char) }) as! Residue
+    public func createResidues(from string: String) -> [ResidueType] {
+        let result = string.map { char -> ResidueType in
+            symbolLibrary.first(where: { $0.identifier == String(char) }) as! Self.ResidueType 
         }
         
         return result
@@ -104,10 +105,10 @@ extension Chain {
         return residues.count
     }
     
-    public func subChain<T: Chain>(with range: SequenceRange) -> T? {
+    public func subChain(with range: ChainRange) -> Self? {
         guard let residues = residueChain(with: range) else { return nil }
         
-        var sub = T.init(residues: residues)
+        var sub = Self.init(residues: residues)
         sub.termini = self.termini
         
         if range.lowerBound == 0 {
@@ -121,27 +122,27 @@ extension Chain {
         return sub
     }
 
-    public func subChain<T: Chain>(with range: NSRange) -> T? {
-        return subChain(with: range.sequenceRange())
+    public func subChain(with range: NSRange) -> Self? {
+        return subChain(with: range.chainRange())
     }
     
-    public func subChain<T: Chain>(from: Int, to: Int) -> T? {
+    public func subChain(from: Int, to: Int) -> Self? {
         guard from < numberOfResidues(), to >= from else { return nil }
         
         return subChain(with: from...to)
     }
 
-    public func residueChain(with range: SequenceRange) -> [Residue]? {
-        guard range != zeroSequenceRange else { return nil }
+    public func residueChain(with range: ChainRange) -> [ResidueType]? {
+        guard range != zeroChainRange else { return nil }
         
         return Array(residues[range])
     }
 
-    public func residueChain(with range: NSRange) -> [Residue]? {
-        return residueChain(with: range.sequenceRange())
+    public func residueChain(with range: NSRange) -> [ResidueType]? {
+        return residueChain(with: range.chainRange())
     }
     
-    public func residueChain(from: Int, to: Int) -> [Residue]? {
+    public func residueChain(from: Int, to: Int) -> [ResidueType]? {
         guard from < numberOfResidues(), to >= from else { return nil }
 
         return residueChain(with: from...to)

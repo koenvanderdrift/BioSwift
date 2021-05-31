@@ -16,17 +16,17 @@ public enum FragmentType {
     case undefined
 }
 
-public struct Fragment: RangedSequence {
+public struct Fragment: RangedChain {
+    public var residues: [AminoAcid] = []
+    
     public var name: String = ""
     public var symbolLibrary: [Symbol] = uniAminoAcids
-
-    public var residues: [Residue] = []
     
     public var termini: (first: Residue, last: Residue)? = (nTerm, cTerm)
     public var modifications: ModificationSet = ModificationSet()
     public var adducts: [Adduct] = []
 
-    public var rangeInParent: SequenceRange = zeroSequenceRange
+    public var rangeInParent: ChainRange = zeroChainRange
 
     public var fragmentType: FragmentType = .undefined
 }
@@ -36,11 +36,11 @@ extension Fragment {
         self.residues = createResidues(from: sequence)
     }
     
-    public init(residues: [Residue]) {
+    public init(residues: [AminoAcid]) {
         self.residues = residues
     }
 
-    public init(residues: [Residue], type: FragmentType, adducts: [Adduct]) {
+    public init(residues: [ResidueType], type: FragmentType, adducts: [Adduct]) {
         self.residues = residues
         self.fragmentType = type
         self.adducts = adducts

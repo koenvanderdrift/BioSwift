@@ -9,7 +9,7 @@
 import Foundation
 
 extension Chain {
-    public func digest<T: RangedSequence>(using regex: String, with missedCleavages: Int) -> [T] {
+    public func digest<T: RangedChain>(using regex: String, with missedCleavages: Int) -> [T] {
         let sites = cleavageSites(for: regex)
         
         var subSequences = [T]()
@@ -20,7 +20,7 @@ extension Chain {
         for site in sites {
             end = residues.index(residues.startIndex, offsetBy: site)
             
-            if var new: T = subChain(from: start, to: end) {
+            if var new: T = subChain(from: start, to: end) as? T {
                 new.rangeInParent = start...end - 1
                 subSequences.append(new)
             
@@ -28,7 +28,7 @@ extension Chain {
             }
         }
         
-        if var final: T = subChain(from: start, to: residues.endIndex - 1) {
+        if var final: T = subChain(from: start, to: residues.endIndex - 1) as? T {
             final.rangeInParent = start...residues.endIndex - 1
             subSequences.append(final)
         }
