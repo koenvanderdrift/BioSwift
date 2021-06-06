@@ -8,6 +8,23 @@
 
 import Foundation
 
+public typealias ChainRange = ClosedRange<Int>
+
+public let zeroChainRange: ChainRange = -1...0
+public let zeroNSRange = NSMakeRange(NSNotFound, 0)
+
+extension NSRange {
+    public init(from range: ChainRange) {
+        self = NSMakeRange(range.lowerBound, range.upperBound - range.lowerBound + 1)
+    }
+    
+    public func chainRange() -> ChainRange {
+        guard self.location != NSNotFound && self.length > 0 else { return zeroChainRange }
+
+        return self.lowerBound...self.upperBound - 1
+    }
+}
+
 public protocol RangedChain: Chain {
     var rangeInParent: ChainRange { get set }
 }
@@ -22,8 +39,8 @@ public protocol Chain: Structure, Equatable {
     var termini: (first: Residue, last: Residue)?  { get set }
     var modifications: ModificationSet { get set }
 
-    init(residues: [ResidueType])
-    init(sequence: String)
+    init(residues: [ResidueType], type: ChainType)
+    init(sequence: String, type: ChainType)
 }
 
 extension Chain {
