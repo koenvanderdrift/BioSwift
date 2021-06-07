@@ -38,9 +38,10 @@ public protocol Chain: Structure, Equatable {
     
     var termini: (first: Residue, last: Residue)?  { get set }
     var modifications: ModificationSet { get set }
+    var adducts: [Adduct] { get set }
 
-    init(residues: [ResidueType], type: ChainType)
-    init(sequence: String, type: ChainType)
+    init(residues: [ResidueType])
+    init(sequence: String)
 }
 
 extension Chain {
