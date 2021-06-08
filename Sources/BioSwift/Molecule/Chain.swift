@@ -33,7 +33,6 @@ public protocol Chain: Structure, Equatable {
     associatedtype ResidueType: Residue
     var residues: [ResidueType] { get set }
 
-    var name: String { get set }
     var symbolLibrary: [Symbol]  { get }
     
     var termini: (first: Residue, last: Residue)?  { get set }

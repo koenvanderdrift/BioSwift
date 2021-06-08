@@ -1,6 +1,6 @@
 import Foundation
 
-public protocol Structure {
+public protocol Structure: Mass {
     var name: String { get }
     var formula: Formula { get }
 }
