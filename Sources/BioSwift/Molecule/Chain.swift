@@ -29,14 +29,13 @@ public protocol RangedChain: Chain {
     var rangeInParent: ChainRange { get set }
 }
 
-public protocol Chain: Structure, Equatable {
+public protocol Chain: Structure {
     associatedtype ResidueType: Residue
     var residues: [ResidueType] { get set }
 
     var symbolLibrary: [Symbol]  { get }
     
     var termini: (first: Residue, last: Residue)?  { get set }
-    var modifications: ModificationSet { get set }
     var adducts: [Adduct] { get set }
 
     init(residues: [ResidueType])
@@ -216,6 +215,6 @@ extension Chain {
     }
     
     public func modification(at location: Int) -> Modification? {
-        return modifications.first(where: { $0.location == location })
+        return residue(at: location)?.modification
     }
 }
