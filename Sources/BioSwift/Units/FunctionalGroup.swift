@@ -32,32 +32,22 @@ public struct FunctionalGroup: Structure, Codable {
 
         name = try container.decode(String.self, forKey: .name)
         formula = Formula(try container.decode(String.self, forKey: .formula))
-
-        _masses = calculateMasses()
     }
 
     public init(name: String, formula: String) {
         self.name = name
         self.formula = Formula(formula)
-
-        _masses = calculateMasses()
     }
 
     public init(name: String, formula: [String: Int]) {
         self.name = name
         self.formula = Formula(formula)
-
-        _masses = calculateMasses()
     }
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(name, forKey: .name)
         try container.encode(formula.string, forKey: .formula)
-    }
-
-    public var masses: MassContainer {
-        return _masses
     }
 
     var description: String {
@@ -73,11 +63,5 @@ extension FunctionalGroup: Hashable {
     public func hash(into hasher: inout Hasher) {
         hasher.combine(name)
         hasher.combine(formula.string)
-    }
-}
-
-extension FunctionalGroup: Mass {
-    public func calculateMasses() -> MassContainer {
-        return mass(of: formula.elements)
     }
 }

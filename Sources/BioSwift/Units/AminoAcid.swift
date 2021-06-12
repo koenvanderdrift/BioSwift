@@ -129,9 +129,3 @@ extension AminoAcid: Hashable {
         hasher.combine(threeLetterCode)
     }
 }
-
-extension AminoAcid: Mass {
-    public var masses: MassContainer {
-        return calculateMasses()
-    }
-}

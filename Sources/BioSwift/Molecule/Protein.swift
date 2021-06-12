@@ -68,10 +68,6 @@ extension Protein {
 }
 
 extension Protein: Mass {
-    public var masses: MassContainer {
-        return calculateMasses()
-    }
-    
     public func calculateMasses() -> MassContainer {
         return mass(of: residues) + terminalMasses()
     }
