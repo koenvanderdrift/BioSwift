@@ -27,20 +27,26 @@ public struct ChemicalElement: Codable, Symbol {
         self.name = name
         self.symbol = symbol
         self.isotopes = isotopes
+
+        _masses = calculateMasses()
     }
 
     public init(name: String, symbol: String, masses: MassContainer) {
         self.name = name
         self.symbol = symbol
         isotopes = []
+
+        _masses = masses
     }
-    
+
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
 
         name = try container.decode(String.self, forKey: .name)
         symbol = try container.decode(String.self, forKey: .symbol)
         isotopes = try container.decode([Isotope].self, forKey: .isotopes)
+
+        _masses = calculateMasses()
     }
 
     public var identifier: String {

@@ -48,6 +48,10 @@ extension Fragment {
 }
 
 extension Fragment: Mass {
+    public var masses: MassContainer {
+        return calculateMasses()
+    }
+    
     public func calculateMasses() -> MassContainer {
         return mass(of: residues) + terminalMasses()
     }
