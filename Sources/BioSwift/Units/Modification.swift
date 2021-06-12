@@ -30,6 +30,27 @@ extension Reaction: Mass {
     }
 }
 
+public protocol Modifiable {
+    var modification: Modification? { get set }
+
+    func allowedModifications() -> [Modification]
+}
+
+extension Modifiable {
+    mutating func setModification(_ modification: Modification?) {
+        self.modification = modification
+    }
+
+    mutating func removeModification() {
+        modification = nil
+    }
+    
+    func modificationMasses() -> MassContainer {
+        return modification?.masses ?? zeroMass
+    }
+
+}
+
 public struct Modification {
     public let name: String
     public let reactions: [Reaction]

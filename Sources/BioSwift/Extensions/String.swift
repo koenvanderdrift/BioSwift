@@ -69,11 +69,11 @@ extension String {
         return nsRanges
     }
 
-    public func sequenceRanges(of substring: String, options: CompareOptions = [], locale: Locale? = nil) -> [SequenceRange] {
-        var sequenceRanges: [SequenceRange] = []
+    public func sequenceRanges(of substring: String, options: CompareOptions = [], locale: Locale? = nil) -> [ChainRange] {
+        var sequenceRanges: [ChainRange] = []
         
         for range in nsRanges(of: substring, options: options, locale: locale) {
-            sequenceRanges.append(range.sequenceRange())
+            sequenceRanges.append(range.chainRange())
         }
         
         return sequenceRanges
@@ -92,15 +92,15 @@ extension String {
         return substring(with: nsrange)
     }
 
-    public func substring(with sequenceRange: SequenceRange) -> Substring? {
+    public func substring(with sequenceRange: ChainRange) -> Substring? {
         return self[sequenceRange]
     }
 
     public func substring(with nsrange: NSRange) -> Substring? {
-        return self[nsrange.sequenceRange()]
+        return self[nsrange.chainRange()]
     }
 
-    public func nsrange(from sequenceRange: SequenceRange) -> NSRange? {
+    public func nsrange(from sequenceRange: ChainRange) -> NSRange? {
         return NSRange.init(from: sequenceRange)
     }
 }
