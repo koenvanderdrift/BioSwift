@@ -33,8 +33,8 @@ public struct AminoAcid: Residue, Codable {
     public let representedBy: [String]
 
     public var properties: [AminoAcidProperties] = []
-    public var modification: Modification? = nil
-    
+    public var modification: Modification?
+
     private enum CodingKeys: String, CodingKey {
         case name
         case oneLetterCode

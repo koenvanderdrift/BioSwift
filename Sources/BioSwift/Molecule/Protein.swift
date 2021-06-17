@@ -9,19 +9,7 @@ public struct Protein: Chain {
     public var name: String = ""
     public var symbolLibrary: [Symbol] = uniAminoAcids
 
-    public var termini: (first: Residue, last: Residue)? = (nTerm, cTerm)    
-    public var modifications: ModificationSet = [] {
-        didSet {
-            oldValue.forEach {
-                removeModification(at: $0.location)
-            }
-            
-            modifications.forEach {
-                addModification($0)
-            }
-        }
-    }
-
+    public var termini: (first: Residue, last: Residue)? = (nTerm, cTerm)
     public var adducts: [Adduct] = []
 }
 

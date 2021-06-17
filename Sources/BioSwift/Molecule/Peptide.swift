@@ -10,7 +10,6 @@ public struct Peptide: RangedChain {
     public var symbolLibrary: [Symbol] = uniAminoAcids
     
     public var termini: (first: Residue, last: Residue)? = (nTerm, cTerm)
-    public var modifications: ModificationSet = ModificationSet()
     public var adducts: [Adduct] = []
     
     public var rangeInParent: ChainRange = zeroChainRange
