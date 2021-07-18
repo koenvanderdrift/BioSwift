@@ -1,9 +1,12 @@
 import Foundation
 
-private let lossOfWater = Modification(name: "Loss of Water", reactions: [.remove(water)], sites: ["S", "T", "E", "D"])
-private let lossOfAmmonia = Modification(name: "Loss of Ammonia", reactions: [.remove(ammonia)], sites: ["R", "Q", "N", "K"])
+public let nTerm = AminoAcid(name: nTermString, oneLetterCode: "", formula: Formula("H"))
+public let cTerm = AminoAcid(name: cTermString, oneLetterCode: "", formula: Formula("OH"))
 
-public struct Peptide: RangedChain {
+public let lossOfWater = Modification(name: "Loss of Water", reactions: [.remove(water)], sites: ["S", "T", "E", "D"])
+public let lossOfAmmonia = Modification(name: "Loss of Ammonia", reactions: [.remove(ammonia)], sites: ["R", "Q", "N", "K"])
+
+public struct PolyPeptide: RangedChain {
     public var residues: [AminoAcid] = []
     
     public var name: String = ""
@@ -15,7 +18,7 @@ public struct Peptide: RangedChain {
     public var rangeInParent: ChainRange = zeroChainRange
 }
 
-extension Peptide {
+extension PolyPeptide {
     public init(sequence: String) {
         self.residues = createResidues(from: sequence)
     }
@@ -24,6 +27,40 @@ extension Peptide {
         self.residues = residues
     }
 
+    public mutating func setNTerminalModification(_ mod: Modification) {
+        if var first = termini?.first, let last = termini?.last {
+            first.setModification(mod)
+            
+            setTermini(first: first, last: last)
+        }
+    }
+    
+    public mutating func setCTerminalModification(_ mod: Modification) {
+        if let first = termini?.first, var last = termini?.last {
+            last.setModification(mod)
+            
+            setTermini(first: first, last: last)
+        }
+    }
+    
+    public func nTerminalModification() -> Modification? {
+        if let mod = termini?.first.modification {
+            return mod
+        }
+        
+        return nil
+    }
+    
+    public func cTerminalModification() -> Modification? {
+        if let mod = termini?.last.modification {
+            return mod
+        }
+        
+        return nil
+    }
+}
+
+extension PolyPeptide {
     public func fragment() -> [Fragment] {
         return precursorIons() + immoniumIons() + nTerminalIons() + cTerminalIons()
     }
@@ -116,7 +153,7 @@ extension Peptide {
     
 }
 
-extension Peptide: Mass {
+extension PolyPeptide: Mass {
     public var masses: MassContainer {
         return calculateMasses()
     }
@@ -126,4 +163,4 @@ extension Peptide: Mass {
     }
 }
 
-extension Peptide: Chargeable {}
+extension PolyPeptide: Chargeable {}
