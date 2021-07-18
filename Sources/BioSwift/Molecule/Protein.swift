@@ -7,6 +7,8 @@
 
 import Foundation
 
-final class Protein: BioMolecule<PolyPeptide> {
+typealias Protein = BioMolecule<PolyPeptide>
+
+extension Protein {
     
 }

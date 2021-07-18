@@ -7,7 +7,7 @@
 
 import Foundation
 
-public class BioMolecule<T: Chain> {
+public struct BioMolecule<T: Chain> {
     public var name: String = ""
     public var chains: [T] = []
 

@@ -84,7 +84,7 @@ final class BioSwiftTests: XCTestCase {
     }
     
     func testBioMolecule() {
-        let bm = BioMolecule<PolyPeptide>()
+        var bm = BioMolecule<PolyPeptide>()
         bm.chains.append(protein)
     }
 
