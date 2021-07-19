@@ -7,7 +7,7 @@
 
 import Foundation
 
-typealias Protein = BioMolecule<PolyPeptide>
+public typealias Protein = BioMolecule<PolyPeptide>
 
 extension Protein {
     
