@@ -84,8 +84,7 @@ final class BioSwiftTests: XCTestCase {
     }
     
     func testBioMolecule() {
-        var bm = BioMolecule<PolyPeptide>()
-        bm.chains.append(protein)
+        var bm = BioMolecule.init(with: protein)
     }
 
     func testProteinMonoisotopicMass() {
