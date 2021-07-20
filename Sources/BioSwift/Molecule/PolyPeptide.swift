@@ -6,7 +6,7 @@ public let cTerm = AminoAcid(name: cTermString, oneLetterCode: "", formula: Form
 public let lossOfWater = Modification(name: "Loss of Water", reactions: [.remove(water)], sites: ["S", "T", "E", "D"])
 public let lossOfAmmonia = Modification(name: "Loss of Ammonia", reactions: [.remove(ammonia)], sites: ["R", "Q", "N", "K"])
 
-public struct PolyPeptide: RangedChain {
+public struct PolyPeptide: Chain {
     public var residues: [AminoAcid] = []
     
     public var name: String = ""
@@ -14,8 +14,6 @@ public struct PolyPeptide: RangedChain {
     
     public var termini: (first: Residue, last: Residue)? = (nTerm, cTerm)
     public var adducts: [Adduct] = []
-    
-    public var rangeInParent: ChainRange = zeroChainRange
 }
 
 extension PolyPeptide {
@@ -26,37 +24,39 @@ extension PolyPeptide {
     public init(residues: [AminoAcid]) {
         self.residues = residues
     }
+    
+    public var nTerminalModification: Modification? {
+        get {
+            if let mod = termini?.first.modification {
+                return mod
+            }
+            
+            return nil
+        }
+        set {
+            if var first = termini?.first, let last = termini?.last {
+                first.setModification(newValue)
+                
+                setTermini(first: first, last: last)
+            }
+        }
+    }
 
-    public mutating func setNTerminalModification(_ mod: Modification) {
-        if var first = termini?.first, let last = termini?.last {
-            first.setModification(mod)
+    public var cTerminalModification: Modification? {
+        get {
+            if let mod = termini?.last.modification {
+                return mod
+            }
             
-            setTermini(first: first, last: last)
+            return nil
         }
-    }
-    
-    public mutating func setCTerminalModification(_ mod: Modification) {
-        if let first = termini?.first, var last = termini?.last {
-            last.setModification(mod)
-            
-            setTermini(first: first, last: last)
+        set {
+            if let first = termini?.first, var last = termini?.last {
+                last.setModification(newValue)
+                
+                setTermini(first: first, last: last)
+            }
         }
-    }
-    
-    public func nTerminalModification() -> Modification? {
-        if let mod = termini?.first.modification {
-            return mod
-        }
-        
-        return nil
-    }
-    
-    public func cTerminalModification() -> Modification? {
-        if let mod = termini?.last.modification {
-            return mod
-        }
-        
-        return nil
     }
 }
 
