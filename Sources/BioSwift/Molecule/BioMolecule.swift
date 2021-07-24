@@ -12,19 +12,20 @@ public struct BioMolecule<T: Chain> {
     public var chains: [T] = []
 }
 
-
 extension BioMolecule {
-    public init(with residues: [T.ResidueType]) {
-        let chain = T(residues: residues)
-        self.chains.append(chain)
+    public init(residues: [T.ResidueType]) {
+        self.init(chain: T(residues: residues))
     }
     
-    public init(with sequence: String) {
-        let chain = T(sequence: sequence)
-        self.chains.append(chain)
+    public init(sequence: String) {
+        self.init(chain: T(sequence: sequence))
     }
     
-    public init(with chain: T) {
-        self.chains.append(chain)
+    public init(chain: T) {
+        self.init(chains: [chain])
+    }
+
+    public init(chains: [T]) {
+        self.chains = chains
     }
 }
