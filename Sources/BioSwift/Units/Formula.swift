@@ -2,6 +2,8 @@ import Foundation
 
 public typealias Elements = [ChemicalElement]
 
+public let zeroFormula = Formula("")
+
 public struct Formula {
     private(set) var elements: [ChemicalElement] = []
 

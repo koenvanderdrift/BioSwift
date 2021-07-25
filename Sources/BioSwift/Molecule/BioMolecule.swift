@@ -29,3 +29,22 @@ extension BioMolecule {
         self.chains = chains
     }
 }
+
+// Convenience accessors
+extension BioMolecule {
+    public var formula: Formula {
+        return chains.reduce(zeroFormula) { $0 + $1.formula }
+    }
+    
+    public var residues: [Residue] {
+        return chains.reduce([]) { $0 + $1.residues }
+    }
+    
+    public var charge: Int {
+        if let chains = chains as? [Chargeable] {
+            return chains.reduce(0) { $0 + $1.charge }
+        }
+        
+        return 0
+    }
+}
