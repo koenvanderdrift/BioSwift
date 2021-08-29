@@ -7,37 +7,37 @@
 
 import Foundation
 
-public struct Peptide: RangedChain {
-    public var residues: [AminoAcid] = []
-    
-    public var name: String = ""
-    public var symbolLibrary: [Symbol] = uniAminoAcids
-    
-    public var termini: (first: Residue, last: Residue)? = (nTerm, cTerm)
-    public var modifications: ModificationSet = ModificationSet()
-    public var adducts: [Adduct] = []
-    
-    public var rangeInParent: ChainRange = zeroChainRange
-}
+//public struct Peptide: RangedChain {
+//    public var residues: [AminoAcid] = []
+//
+//    public var name: String = ""
+//    public var symbolLibrary: [Symbol] = uniAminoAcids
+//
+//    public var termini: (first: Residue, last: Residue)? = (nTerm, cTerm)
+//    public var modifications: ModificationSet = ModificationSet()
+//    public var adducts: [Adduct] = []
+//
+//    public var rangeInParent: ChainRange = zeroChainRange
+//}
+typealias Peptide = PolyPeptide
+//extension Peptide {
+//    public init(sequence: String) {
+//        self.residues = createResidues(from: sequence)
+//    }
+//    
+//    public init(residues: [AminoAcid]) {
+//        self.residues = residues
+//    }
+//}
+//
+//extension Peptide: Mass {
+//    public var masses: MassContainer {
+//        return calculateMasses()
+//    }
+//    
+//    public func calculateMasses() -> MassContainer {
+//        return mass(of: residues) + terminalMasses()
+//    }
+//}
 
-extension Peptide {
-    public init(sequence: String) {
-        self.residues = createResidues(from: sequence)
-    }
-    
-    public init(residues: [AminoAcid]) {
-        self.residues = residues
-    }
-}
-
-extension Peptide: Mass {
-    public var masses: MassContainer {
-        return calculateMasses()
-    }
-    
-    public func calculateMasses() -> MassContainer {
-        return mass(of: residues) + terminalMasses()
-    }
-}
-
-extension Peptide: Chargeable {}
+//extension Peptide: Chargeable {}

@@ -14,6 +14,8 @@ public struct PolyPeptide: RangedChain {
     
     public var termini: (first: Residue, last: Residue)? = (nTerm, cTerm)
     public var adducts: [Adduct] = []
+    public var modifications: ModificationSet = ModificationSet()
+    
     public var rangeInParent: ChainRange = zeroChainRange
 }
 
