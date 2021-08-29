@@ -7,6 +7,8 @@
 
 import Foundation
 
+public typealias Peptide = PolyPeptide
+
 //public struct Peptide: RangedChain {
 //    public var residues: [AminoAcid] = []
 //
@@ -19,7 +21,6 @@ import Foundation
 //
 //    public var rangeInParent: ChainRange = zeroChainRange
 //}
-typealias Peptide = PolyPeptide
 //extension Peptide {
 //    public init(sequence: String) {
 //        self.residues = createResidues(from: sequence)
