@@ -11,8 +11,6 @@ import Foundation
 public var uniModifications = [Modification]()
 public var uniAminoAcids = [AminoAcid]()
 
-public let unimodDidLoadNotification = Notification.Name("UnimodDidLoadNotification")
-
 public class UnimodController {
     public init() {}
 
@@ -26,8 +24,6 @@ public class UnimodController {
             if success {
                 DispatchQueue.main.async {
                     debugPrint("Finished parsing unimod.xml")
-
-                    NotificationCenter.default.post(name: unimodDidLoadNotification, object: nil)
                 }
             } else {
                 debugPrint("Failed parsing unimod.xml")
