@@ -14,6 +14,8 @@ public var uniAminoAcids = [AminoAcid]()
 public let unimodDidLoadNotification = Notification.Name("UnimodDidLoadNotification")
 
 public class UnimodController {
+    public init() {}
+
     public func loadUnimod(withCompletion completion: ((Bool) -> Void)? = nil) {
         DispatchQueue.global(qos: .userInitiated).async {
             debugPrint("Start parsing unimod.xml")
