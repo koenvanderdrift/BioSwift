@@ -41,10 +41,74 @@ extension BioMolecule {
     }
     
     public var charge: Int {
-        if let chains = chains as? [Chargeable] {
-            return chains.reduce(0) { $0 + $1.charge }
+        return chains.reduce(0) { $0 + $1.charge }
+    }
+    
+    public func mass(chainIndex index: Int = -1) -> MassContainer {
+        var chain: T
+        
+        if index == -1 { // calculate for all chains when index = -1
+            chain = concatenateChains()
+        }
+        else {
+            chain = chains[index]
         }
         
-        return 0
+        chain.setAdducts(type: protonAdduct, count: charge)
+        
+        return chain.pseudomolecularIon()
+    }
+    
+    public func selectionMass(chainIndex index: Int = 0, _ range: ChainRange) -> MassContainer {
+        guard var sub = chains[index].subChain(with: range) else { return zeroMass }
+
+        sub.setAdducts(type: protonAdduct, count: charge)
+
+        return sub.pseudomolecularIon()
+    }
+    
+    public func isoelectricPoint(chainIndex index: Int = -1) -> Double {
+        var chain: T
+        
+        if index == -1 { // calculate for all chains when index = -1
+            chain = concatenateChains()
+        }
+        else {
+            chain = chains[index]
+        }
+
+        return Hydropathy(residues: chain.residues).isoElectricPoint()
+    }
+
+    public func selectionIsoelectricPoint(chainIndex index: Int = 0, _ range: ChainRange) -> Double {
+        guard let sub = chains[index].subChain(with: range) else { return 0.0 }
+
+        return Hydropathy(residues: sub.residues).isoElectricPoint()
+    }
+    
+    public func sequenceString(chainIndex index: Int = 0) -> String {
+        return chains[index].sequenceString
+    }
+    
+    func selectionString(chainIndex index: Int = 0, range: ChainRange) -> String {
+        guard let sub = chains[index].subChain(with: range) else { return "" }
+
+        return sub.sequenceString
+    }
+    
+    public func sequenceLength(chainIndex index: Int = 0) -> Int {
+        return chains[index].numberOfResidues()
+    }
+    
+    public func selectionLength(chainIndex index: Int = 0, range: ChainRange) -> Int {
+        guard let sub = chains[index].subChain(with: range) else { return 0 }
+        
+        return sub.numberOfResidues()
+    }
+    
+    public func concatenateChains() -> T {
+        let residues = self.chains.reduce([]) { $0 + $1.residues }
+
+        return T.init(residues: residues)
     }
 }

@@ -1,8 +1,9 @@
 import Foundation
 
-public protocol Structure: Mass {
+public protocol Structure: Chargeable {
     var name: String { get }
     var formula: Formula { get }
+    var adducts: [Adduct] { get set }
 }
 
 extension Structure {

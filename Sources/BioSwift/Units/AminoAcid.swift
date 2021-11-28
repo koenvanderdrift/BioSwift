@@ -35,6 +35,8 @@ public struct AminoAcid: Residue, Codable {
     public var properties: [AminoAcidProperties] = []
     public var modification: Modification?
 
+    public var adducts: [Adduct]
+
     private enum CodingKeys: String, CodingKey {
         case name
         case oneLetterCode
@@ -51,18 +53,20 @@ public struct AminoAcid: Residue, Codable {
         self.formula = formula
         self.represents = represents
         self.representedBy = representedBy
-
+        self.adducts = []
+        
         setProperties()
     }
 
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        represents = try container.decode([String].self, forKey: .represents)
-        representedBy = try container.decode([String].self, forKey: .representedBy)
-        oneLetterCode = try container.decode(String.self, forKey: .oneLetterCode)
-        threeLetterCode = try container.decode(String.self, forKey: .threeLetterCode)
-        formula = Formula(try container.decode(String.self, forKey: .formula))
-        name = try container.decode(String.self, forKey: .name)
+        self.represents = try container.decode([String].self, forKey: .represents)
+        self.representedBy = try container.decode([String].self, forKey: .representedBy)
+        self.oneLetterCode = try container.decode(String.self, forKey: .oneLetterCode)
+        self.threeLetterCode = try container.decode(String.self, forKey: .threeLetterCode)
+        self.formula = Formula(try container.decode(String.self, forKey: .formula))
+        self.name = try container.decode(String.self, forKey: .name)
+        self.adducts = []
 
         setProperties()
     }

@@ -108,7 +108,7 @@ extension Chain {
     }
 }
 
-extension Chain where Self: Chargeable {
+extension Chain {
     public func searchMass<T: RangedChain & Chargeable>(params: MassSearchParameters) -> [T] {
         var result = [T]()
 
