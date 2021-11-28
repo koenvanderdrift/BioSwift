@@ -90,7 +90,7 @@ extension BioMolecule {
         return chains[index].sequenceString
     }
     
-    func selectionString(chainIndex index: Int = 0, range: ChainRange) -> String {
+    public func selectionString(chainIndex index: Int = 0, range: ChainRange) -> String {
         guard let sub = chains[index].subChain(with: range) else { return "" }
 
         return sub.sequenceString
