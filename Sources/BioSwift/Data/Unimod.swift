@@ -36,7 +36,7 @@ public let unimodDidLoadNotification = Notification.Name("UnimodDidLoadNotificat
 
 public let unimodURL = Bundle.module.url(forResource: "unimod", withExtension: "xml")
 
-public func loadUnimod(withCompletion completion: @escaping (Bool) -> Void) {
+public func loadUnimod(withCompletion completion: ((Bool) -> Void)? = nil) {
     guard let url = Bundle.module.url(forResource: "unimod", withExtension: "xml") else {
         fatalError("Unable to find unimod.xml")
     }
@@ -57,7 +57,7 @@ public func loadUnimod(withCompletion completion: @escaping (Bool) -> Void) {
             debugPrint("Failed parsing unimod.xml")
         }
         
-        completion(success)
+        completion?(success)
     }
 }
 
