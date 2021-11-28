@@ -3,6 +3,9 @@ import Foundation
 public typealias ModificationSet = Set<Modification>
 public typealias LinkSet = Set<Link>
 
+let unmodifiedString = "Unmodified"
+let zeroModification = Modification(name: unmodifiedString, elements: [:])
+
 public indirect enum Reaction {
     case add(FunctionalGroup)
     case remove(FunctionalGroup)
