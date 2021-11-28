@@ -11,58 +11,53 @@ import Foundation
 public var uniModifications = [Modification]()
 public var uniAminoAcids = [AminoAcid]()
 
-private let modification = "umod:mod"
-private let specificity = "umod:specificity"
-private let neutralLoss = "umod:NeutralLoss"
-private let element = "umod:element"
-
-private let titleAttributeKey = "title"
-private let siteAttributeKey = "site"
-private let classificationAttributeKey = "classification"
-private let symbolAttributeKey = "symbol"
-private let numberAttributeKey = "number"
-
-private let aminoAcid = "umod:aa"
-private let fullNameAttributeKey = "full_name"
-private let threeLetterAttributeKey = "three_letter"
-
-private let unknown = "Unknown"
-private let xlink = "Xlink"
-private let cation = "Cation"
-private let atypeion = "a-type-ion"
-
-private let skipTitleStrings = [cation, unknown, xlink, atypeion, "2H", "13C", "15N"]
 public let unimodDidLoadNotification = Notification.Name("UnimodDidLoadNotification")
 
-public let unimodURL = Bundle.module.url(forResource: "unimod", withExtension: "xml")
+public class UnimodController {
+    public func loadUnimod(withCompletion completion: ((Bool) -> Void)? = nil) {
+        DispatchQueue.global(qos: .userInitiated).async {
+            debugPrint("Start parsing unimod.xml")
 
-public func loadUnimod(withCompletion completion: ((Bool) -> Void)? = nil) {
-    guard let url = Bundle.module.url(forResource: "unimod", withExtension: "xml") else {
-        fatalError("Unable to find unimod.xml")
-    }
-    
-    DispatchQueue.global(qos: .userInitiated).async {
-        debugPrint("Start parsing unimod.xml")
+            let unimodParser = UnimodParser()
+            let success = unimodParser.parseXML()
 
-        let unimodParser = UnimodParser(with: url)
-        let success = unimodParser.parseXML()
+            if success {
+                DispatchQueue.main.async {
+                    debugPrint("Finished parsing unimod.xml")
 
-        if success {
-            DispatchQueue.main.async {
-                debugPrint("Finished parsing unimod.xml")
-
-                NotificationCenter.default.post(name: unimodDidLoadNotification, object: nil)
+                    NotificationCenter.default.post(name: unimodDidLoadNotification, object: nil)
+                }
+            } else {
+                debugPrint("Failed parsing unimod.xml")
             }
-        } else {
-            debugPrint("Failed parsing unimod.xml")
+            
+            completion?(success)
         }
-        
-        completion?(success)
     }
 }
 
 public class UnimodParser: NSObject {
-    let url: URL
+    private let modification = "umod:mod"
+    private let specificity = "umod:specificity"
+    private let neutralLoss = "umod:NeutralLoss"
+    private let element = "umod:element"
+
+    private let titleAttributeKey = "title"
+    private let siteAttributeKey = "site"
+    private let classificationAttributeKey = "classification"
+    private let symbolAttributeKey = "symbol"
+    private let numberAttributeKey = "number"
+
+    private let aminoAcid = "umod:aa"
+    private let fullNameAttributeKey = "full_name"
+    private let threeLetterAttributeKey = "three_letter"
+
+    private let unknown = "Unknown"
+    private let xlink = "Xlink"
+    private let cation = "Cation"
+    private let atypeion = "a-type-ion"
+
+    private var skipTitleStrings: [String] = []
 
     var elementSymbol = ""
     var elementFullName = ""
@@ -84,16 +79,16 @@ public class UnimodParser: NSObject {
 
     let rightArrow = "\u{2192}"
     
-    public init(with url: URL) {
-        self.url = url
-
-        super.init()
-    }
-
     public func parseXML() -> Bool {
         var result = false
 
+        guard let url = Bundle.module.url(forResource: "unimod", withExtension: "xml") else {
+            fatalError("Unable to find unimod.xml")
+        }
+        
         if let parser = XMLParser(contentsOf: url) {
+            skipTitleStrings = [cation, unknown, xlink, atypeion, "2H", "13C", "15N"]
+
             parser.delegate = self
 
             result = parser.parse()
