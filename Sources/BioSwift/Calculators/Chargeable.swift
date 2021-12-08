@@ -36,11 +36,11 @@ extension Chargeable {
         
         if adducts.count > 0 {
             let chargedMass = (
-                result + adducts.map { $0.group.masses }
+                result + adducts.map { $0.group.masses - ( $0.charge * electron.masses ) }
                     .reduce(zeroMass) { $0 + $1 }
                 ) / adducts.count
             
-            return chargedMass - electron.masses // remove one electron mass, for first H+ adduct
+            return chargedMass
         }
         
         return result
