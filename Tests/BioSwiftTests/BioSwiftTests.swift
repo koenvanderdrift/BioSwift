@@ -71,7 +71,7 @@ final class BioSwiftTests: XCTestCase {
 
     func testPeptideSerinePhosphorylationMonoisotopicMass() {
         if let phos = uniModifications.filter({ $0.name.contains("Phospho") == true }).first {
-            peptide.addModification(Modification(modification: phos, location: 3))// zero-based
+            peptide.addModification(Modification(phos), at: 3) // zero-based
             peptide.setAdducts(type: protonAdduct, count: 1)
 
             XCTAssertEqual(peptide.pseudomolecularIon().monoisotopicMass.roundedDecimalAsString(to: 4), "689.1814")
@@ -135,6 +135,6 @@ final class BioSwiftTests: XCTestCase {
     }
 
     func testMethylAverageMass() { // CH3
-//        XCTAssertEqual(methyl.averageMass.roundedDecimalAsString(to: 4), "15.0346")
+       XCTAssertEqual(methyl.averageMass.roundedDecimalAsString(to: 4), "15.0346")
     }
 }
