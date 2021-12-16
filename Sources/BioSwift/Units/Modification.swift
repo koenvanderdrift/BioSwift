@@ -66,16 +66,14 @@ public struct Modification {
     public let name: String
     public let reactions: [Reaction]
     public let sites: [String] // sites it can attach to
-    public let location: Int
 
-    public init(name: String, reactions: [Reaction], sites: [String] = [], location: Int = -1) {
+    public init(name: String, reactions: [Reaction], sites: [String] = []) {
         self.name = name
         self.reactions = reactions
         self.sites = sites
-        self.location = location
     }
 
-    public init(name: String, elements: [String: Int], sites: [String] = [], location: Int = -1) {
+    public init(name: String, elements: [String: Int], sites: [String] = []) {
         var reactions = [Reaction]()
 
         let negativeElements = elements.filter { $0.value < 0 }
@@ -90,25 +88,23 @@ public struct Modification {
             reactions.append(Reaction.add(group))
         }
 
-        self.init(name: name, reactions: reactions, sites: sites, location: location)
+        self.init(name: name, reactions: reactions, sites: sites)
     }
     
-    public init(modification: Modification, location: Int = -1) {
+    public init(_ modification: Modification) {
         self.name = modification.name
         self.sites = modification.sites
         self.reactions = modification.reactions
-        self.location = location
     }
 }
 
 extension Modification: Hashable {
     public static func == (lhs: Modification, rhs: Modification) -> Bool {
-        return lhs.name == rhs.name && lhs.location == rhs.location
+        return lhs.name == rhs.name
     }
 
     public func hash(into hasher: inout Hasher) {
         hasher.combine(name)
-        hasher.combine(location)
     }
 }
 
@@ -148,14 +144,14 @@ extension Link {
         }
     }
 
-    public func contains(_ location: Int) -> Bool {
-        for mod in mods {
-            if mod.location == location {
-                return true
-            }
-        }
-
-        return false
+//    public func contains(_ location: Int) -> Bool {
+//        for mod in mods {
+//            if mod.location == location {
+//                return true
+//            }
+//        }
+//
+//        return false
 //        return mods.contains { ( $0.location == location ) }
-    }
+//    }
 }

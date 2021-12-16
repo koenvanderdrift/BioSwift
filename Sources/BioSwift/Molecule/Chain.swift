@@ -202,14 +202,14 @@ extension Chain {
         return result
     }
     
-    public mutating func setModifcations(_ mods: ModificationSet) {
-        mods.forEach {
-            addModification($0)
-        }
-    }
+//    public mutating func setModifcations(_ mods: ModificationSet) {
+//        mods.forEach {
+//            addModification($0)
+//        }
+//    }
     
-    public mutating func addModification(_ mod: Modification) {
-        residues.modifyElement(atIndex: mod.location) { residue in
+    public mutating func addModification(_ mod: Modification, at location: Int) {
+        residues.modifyElement(atIndex: location) { residue in
             residue.setModification(mod)
         }
     }
