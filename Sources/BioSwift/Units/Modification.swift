@@ -119,11 +119,15 @@ extension Modification: Mass {
 }
 
 public struct LinkSite: Hashable {
-    public let location: Int = 0
-    public let chain: Int = 0
-    public let modification: Modification = zeroModification
+    public let location: Int
+    public let chain: Int
+    public let modification: Modification
     
-    public init() {}
+    public init(at location: Int, in chain: Int = 0, with modification: Modification) {
+        self.location = location
+        self.chain = chain
+        self.modification = modification
+    }
 }
 
 public struct Link: Hashable {
