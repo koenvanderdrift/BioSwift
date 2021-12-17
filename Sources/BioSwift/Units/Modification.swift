@@ -122,11 +122,18 @@ public struct LinkSite: Hashable {
     public let location: Int = 0
     public let chain: Int = 0
     public let modification: Modification = zeroModification
+    
+    public init() {}
 }
 
 public struct Link: Hashable {
     public let from: LinkSite?
     public let to: LinkSite?
+    
+    public init(from: LinkSite, to: LinkSite) {
+        self.from = from
+        self.to = to
+    }
 }
 
 //extension Link {
