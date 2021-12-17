@@ -1,6 +1,7 @@
 import Foundation
 
 public typealias ModificationSet = Set<Modification>
+public typealias LocalizedModificationSet = Set<LocalizedModification>
 public typealias LinkSet = Set<Link>
 
 public let unmodifiedString = "Unmodified"
