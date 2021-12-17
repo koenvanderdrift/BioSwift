@@ -118,32 +118,37 @@ extension Modification: Mass {
     }
 }
 
-public struct Link: Hashable {
-    // https://codereview.stackexchange.com/questions/237295/comparing-two-structs-in-swift#
-    public var mods: Set<Modification>
-
-    public init(_ mods: Set<Modification>) {
-        self.mods = mods
-    }
+public struct LinkSite: Hashable {
+    let location: Int = 0
+    let chain: Int = 0
+    let modification: Modification = zeroModification
 }
 
-extension Link {
-    public enum CompareResult {
-        case equal
-        case intersect
-        case disjoint
-    }
+public struct Link: Hashable {
+    let from: LinkSite?
+    let to: LinkSite?
+}
 
-    public func compareLocations(with other: Link) -> CompareResult {
-        if mods == other.mods {
-            return .equal
-        } else if mods.isDisjoint(with: other.mods) {
-            return .disjoint
-        } else {
-            return .intersect
-        }
-    }
-
+//extension Link {
+//    // https://codereview.stackexchange.com/questions/237295/comparing-two-structs-in-swift#
+//    
+//    public enum CompareResult {
+//        case equal
+//        case intersect
+//        case disjoint
+//    }
+//
+//    public func compareLocations(with other: Link) -> CompareResult {
+//        if from?.location == other.from?.location && to?.location == other.to?.location {
+//            return .equal
+//        } else if (from?.location == other.from?.location && to?.location != other.to?.location) ||
+//                    (from?.location != other.from?.location && to?.location == other.to?.location) {
+//            return .disjoint
+//        } else {
+//            return .intersect
+//        }
+//    }
+//
 //    public func contains(_ location: Int) -> Bool {
 //        for mod in mods {
 //            if mod.location == location {
@@ -154,4 +159,4 @@ extension Link {
 //        return false
 //        return mods.contains { ( $0.location == location ) }
 //    }
-}
+//}
