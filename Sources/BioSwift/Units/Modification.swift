@@ -118,12 +118,12 @@ extension Modification: Mass {
     }
 }
 
-public struct LinkSite: Hashable {
+public struct LocalizedModification: Hashable {
     public let location: Int
     public let chain: Int
     public let modification: Modification
     
-    public init(at location: Int, in chain: Int = 0, with modification: Modification) {
+    public init(_ modification: Modification, at location: Int, in chain: Int = 0) {
         self.location = location
         self.chain = chain
         self.modification = modification
@@ -131,10 +131,10 @@ public struct LinkSite: Hashable {
 }
 
 public struct Link: Hashable {
-    public let from: LinkSite?
-    public let to: LinkSite?
+    public let from: LocalizedModification?
+    public let to: LocalizedModification?
     
-    public init(from: LinkSite, to: LinkSite) {
+    public init(from: LocalizedModification, to: LocalizedModification) {
         self.from = from
         self.to = to
     }
