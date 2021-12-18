@@ -139,9 +139,13 @@ public struct Link: Hashable {
         self.from = from
         self.to = to
     }
+
+    public func contains(_ location: Int) -> Bool {
+        return (from?.location == location || to?.location == location)
+    }
 }
 
-//extension Link {
+extension Link {
 //    // https://codereview.stackexchange.com/questions/237295/comparing-two-structs-in-swift#
 //    
 //    public enum CompareResult {
@@ -161,14 +165,4 @@ public struct Link: Hashable {
 //        }
 //    }
 //
-//    public func contains(_ location: Int) -> Bool {
-//        for mod in mods {
-//            if mod.location == location {
-//                return true
-//            }
-//        }
-//
-//        return false
-//        return mods.contains { ( $0.location == location ) }
-//    }
-//}
+}
