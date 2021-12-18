@@ -132,16 +132,20 @@ public struct LocalizedModification: Hashable {
 }
 
 public struct Link: Hashable {
-    public let from: LocalizedModification?
-    public let to: LocalizedModification?
+    public var mods: [LocalizedModification]
     
-    public init(from: LocalizedModification, to: LocalizedModification) {
-        self.from = from
-        self.to = to
+    public init(mods: [LocalizedModification]) {
+        self.mods = mods
     }
 
     public func contains(_ location: Int) -> Bool {
-        return (from?.location == location || to?.location == location)
+       for mod in mods {
+            if mod.location == location {
+                return true
+            }
+        }
+        
+        return false
     }
 }
 
