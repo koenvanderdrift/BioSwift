@@ -132,9 +132,9 @@ public struct LocalizedModification: Hashable {
 }
 
 public struct Link: Hashable {
-    public var mods: [LocalizedModification]
+    public var mods: LocalizedModificationSet
     
-    public init(mods: [LocalizedModification]) {
+    public init(mods: LocalizedModificationSet) {
         self.mods = mods
     }
 
@@ -150,23 +150,21 @@ public struct Link: Hashable {
 }
 
 extension Link {
-//    // https://codereview.stackexchange.com/questions/237295/comparing-two-structs-in-swift#
-//    
-//    public enum CompareResult {
-//        case equal
-//        case intersect
-//        case disjoint
-//    }
-//
-//    public func compareLocations(with other: Link) -> CompareResult {
-//        if from?.location == other.from?.location && to?.location == other.to?.location {
-//            return .equal
-//        } else if (from?.location == other.from?.location && to?.location != other.to?.location) ||
-//                    (from?.location != other.from?.location && to?.location == other.to?.location) {
-//            return .disjoint
-//        } else {
-//            return .intersect
-//        }
-//    }
-//
+    // https://codereview.stackexchange.com/questions/237295/comparing-two-structs-in-swift#
+    
+    public enum CompareResult {
+        case equal
+        case intersect
+        case disjoint
+    }
+
+    public func compareLocations(with other: Link) -> CompareResult {
+        if mods == other.mods {
+            return .equal
+        } else if mods.isDisjoint(with: other.mods) {
+            return .disjoint
+        } else {
+            return .intersect
+        }
+    }
 }
