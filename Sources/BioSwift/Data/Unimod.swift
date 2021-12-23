@@ -9,7 +9,7 @@
 import Foundation
 
 public var uniModifications = [Modification]()
-public var uniAminoAcids = [AminoAcid]()
+public var uniAminoAcids = [String:AminoAcid]()
 
 public class UnimodController {
     public init() {}
@@ -156,7 +156,7 @@ extension UnimodParser: XMLParserDelegate {
             if aminoAcidName.isEmpty == false {
                 let aa = AminoAcid(name: aminoAcidName, oneLetterCode: aminoAcidOneLetterCode, threeLetterCode: aminoAcidThreeLetterCode, elements: aminoAcidElements)
 
-                uniAminoAcids.append(aa)
+                uniAminoAcids[aminoAcidOneLetterCode] = aa
 
                 aminoAcidName.removeAll()
                 aminoAcidOneLetterCode.removeAll()

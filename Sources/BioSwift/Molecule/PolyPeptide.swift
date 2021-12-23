@@ -10,7 +10,7 @@ public struct PolyPeptide: RangedChain {
     public var residues: [AminoAcid] = []
     
     public var name: String = ""
-    public var symbolLibrary: [Symbol] = uniAminoAcids
+    public var symbolLibrary: [String:Symbol] = uniAminoAcids
     
     public var termini: (first: Residue, last: Residue)? = (nTerm, cTerm)
     public var adducts: [Adduct] = []
