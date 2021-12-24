@@ -94,9 +94,7 @@ extension Chain {
     }
     
     public func createResidues(from string: String) -> [ResidueType] {
-        let result = string.map { char -> ResidueType in
-            symbolLibrary[String(char)] as! Self.ResidueType 
-        }
+        let result = string.compactMap { symbolLibrary[String($0)] as? ResidueType }
         
         return result
     }
