@@ -33,7 +33,7 @@ public protocol Chain: Structure {
     associatedtype ResidueType: Residue
     var residues: [ResidueType] { get set }
 
-    var symbolLibrary: [String:Symbol]  { get }
+    var symbols: [Symbol]  { get }
     
     var termini: (first: Residue, last: Residue)?  { get set }
     var adducts: [Adduct] { get set }
@@ -94,8 +94,14 @@ extension Chain {
     }
     
     public func createResidues(from string: String) -> [ResidueType] {
-        let result = string.compactMap { symbolLibrary[String($0)] as? ResidueType }
-        
+        var result = [ResidueType]()
+
+        string.forEach { char in
+            if let symbol = symbols.first(where: {$0.identifier == String(char)}) as? ResidueType {
+                result.append(symbol)
+            }
+        }
+
         return result
     }
     

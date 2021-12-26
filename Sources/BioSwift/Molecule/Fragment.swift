@@ -20,7 +20,7 @@ public struct Fragment: RangedChain {
     public var residues: [AminoAcid] = []
     
     public var name: String = ""
-    public var symbolLibrary: [String:Symbol] = uniAminoAcids
+    public var symbols: [Symbol] = uniAminoAcids
     
     public var termini: (first: Residue, last: Residue)? = (nTerm, cTerm)
     public var adducts: [Adduct] = []
