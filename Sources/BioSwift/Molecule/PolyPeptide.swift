@@ -7,10 +7,10 @@ public let lossOfWater = Modification(name: "Loss of Water", reactions: [.remove
 public let lossOfAmmonia = Modification(name: "Loss of Ammonia", reactions: [.remove(ammonia)], sites: ["R", "Q", "N", "K"])
 
 public struct PolyPeptide: RangedChain {
-    public var residues: [AminoAcid] = []
-    
     public var name: String = ""
-    public var symbols: [Symbol] = uniAminoAcids
+    public var symbolLibrary: [Symbol] = uniAminoAcids
+    
+    public var residues: [AminoAcid] = []
     
     public var termini: (first: Residue, last: Residue)? = (nTerm, cTerm)
     public var adducts: [Adduct] = []

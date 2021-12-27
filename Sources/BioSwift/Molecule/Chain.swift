@@ -31,10 +31,11 @@ public protocol RangedChain: Chain {
 
 public protocol Chain: Structure {
     associatedtype ResidueType: Residue
+
+    var symbolLibrary: [Symbol]  { get }
+    
     var residues: [ResidueType] { get set }
 
-    var symbols: [Symbol]  { get }
-    
     var termini: (first: Residue, last: Residue)?  { get set }
     var adducts: [Adduct] { get set }
 
@@ -94,15 +95,9 @@ extension Chain {
     }
     
     public func createResidues(from string: String) -> [ResidueType] {
-        var result = [ResidueType]()
-
-        string.forEach { char in
-            if let symbol = symbols.first(where: {$0.identifier == String(char)}) as? ResidueType {
-                result.append(symbol)
-            }
+        return string.compactMap { char in
+            symbolLibrary.first(where: { $0.identifier == String(char) }) as? ResidueType
         }
-
-        return result
     }
     
     public func symbol(at index: Int) -> Symbol? {
