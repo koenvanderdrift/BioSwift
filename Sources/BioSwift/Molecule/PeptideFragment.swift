@@ -16,13 +16,17 @@ public enum FragmentType {
     case undefined
 }
 
-public struct Fragment: RangedChain {
+public protocol Fragmentable {
+    var fragmentType: FragmentType { get set }
+}
+
+public struct PeptideFragment: RangedChain & Fragmentable {
     public var name: String = ""
     public var symbolLibrary: [Symbol] = uniAminoAcids
     
     public var residues: [AminoAcid] = []
     
-    public var termini: (first: Residue, last: Residue)? = (nTerm, cTerm)
+    public var termini: (first: AminoAcid, last: AminoAcid)? = (nTerm, cTerm)
     public var adducts: [Adduct] = []
 
     public var rangeInParent: ChainRange = zeroChainRange
@@ -30,7 +34,7 @@ public struct Fragment: RangedChain {
     public var fragmentType: FragmentType = .undefined
 }
 
-extension Fragment {
+extension PeptideFragment {
     public init(sequence: String) {
         self.residues = createResidues(from: sequence)
     }
@@ -39,30 +43,28 @@ extension Fragment {
         self.residues = residues
     }
 
-    public init(residues: [ResidueType], type: FragmentType, adducts: [Adduct]) {
+    public init(residues: [AminoAcid], type: FragmentType, adducts: [Adduct]) {
         self.residues = residues
         self.fragmentType = type
         self.adducts = adducts
     }
 }
 
-extension Fragment: Mass {
+extension PeptideFragment: Mass & Chargeable {
     public var masses: MassContainer {
         return calculateMasses()
     }
-    
+
     public func calculateMasses() -> MassContainer {
         return mass(of: residues) + terminalMasses()
     }
-    
+
     public func terminalMasses() -> MassContainer {
         var result = zeroMass
         if fragmentType == .nTerminal {
             result -= (hydrogen.masses + hydroxyl.masses)
         }
-        
+
         return result
     }
 }
-
-extension Fragment: Chargeable {}

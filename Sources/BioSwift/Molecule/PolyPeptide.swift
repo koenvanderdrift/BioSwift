@@ -12,7 +12,7 @@ public struct PolyPeptide: RangedChain {
     
     public var residues: [AminoAcid] = []
     
-    public var termini: (first: Residue, last: Residue)? = (nTerm, cTerm)
+    public var termini: (first: AminoAcid, last: AminoAcid)? = (nTerm, cTerm)
     public var adducts: [Adduct] = []
     public var modifications: ModificationSet = ModificationSet()
     
@@ -64,29 +64,29 @@ extension PolyPeptide {
 }
 
 extension PolyPeptide {
-    public func fragment() -> [Fragment] {
+    public func fragment() -> [PeptideFragment] {
         return precursorIons() + immoniumIons() + nTerminalIons() + cTerminalIons()
     }
     
-    func precursorIons() -> [Fragment] {
-        let fragment = Fragment(residues: residues, type: .precursor, adducts: self.adducts)
+    func precursorIons() -> [PeptideFragment] {
+        var fragment = PeptideFragment(residues: residues, type: .precursor, adducts: self.adducts)
         
         if canLoseAmmonia() {
-            //            fragment.modify(with: [Modification(modification: lossOfWater, location: -1)])
+            fragment.addModification(LocalizedModification(lossOfAmmonia, at: -1))
         }
         
         if canLoseWater() {
-            //            fragment.modify(with: [Modification(modification: lossOfAmmonia, location: -1)])
+            fragment.addModification(LocalizedModification(lossOfWater, at: -1))
         }
         
         return [fragment]
     }
     
-    func immoniumIons() -> [Fragment] {
+    func immoniumIons() -> [PeptideFragment] {
         guard let symbols = symbolSet as? Set<AminoAcid> else { return [] }
         
-        let fragments = symbols.map { symbol -> Fragment in
-            let fragment = Fragment(residues: [symbol], type: .immonium, adducts: self.adducts)
+        let fragments = symbols.map { symbol -> PeptideFragment in
+            let fragment = PeptideFragment(residues: [symbol], type: .immonium, adducts: self.adducts)
             
             return fragment
         }
@@ -94,8 +94,8 @@ extension PolyPeptide {
         return fragments
     }
     
-    func nTerminalIons() -> [Fragment] { // b fragments
-        var fragments = [Fragment]()
+    func nTerminalIons() -> [PeptideFragment] { // b fragments
+        var fragments = [PeptideFragment]()
         
         guard adducts.count > 0 else { return fragments }
         
@@ -105,7 +105,7 @@ extension PolyPeptide {
             for i in 2 ... residues.count - 1 {
                 let index = residues.index(startIndex, offsetBy: i)
                 
-                let fragment = Fragment(residues: Array(residues[..<index]), type: .nTerminal, adducts: Array(repeatElement(protonAdduct, count: z)))
+                let fragment = PeptideFragment(residues: Array(residues[..<index]), type: .nTerminal, adducts: Array(repeatElement(protonAdduct, count: z)))
                 
                 if z == 1 {
                     fragments.append(fragment)
@@ -120,8 +120,8 @@ extension PolyPeptide {
         return fragments
     }
     
-    func cTerminalIons() -> [Fragment] { // y fragments
-        var fragments = [Fragment]()
+    func cTerminalIons() -> [PeptideFragment] { // y fragments
+        var fragments = [PeptideFragment]()
         
         guard adducts.count > 0 else { return fragments }
         
@@ -131,7 +131,7 @@ extension PolyPeptide {
             for i in 1 ... residues.count - 1 {
                 let index = residues.index(endIndex, offsetBy: -i)
                 
-                let fragment = Fragment(residues: Array(residues[..<index]), type: .cTerminal, adducts: Array(repeatElement(protonAdduct, count: z)))
+                let fragment = PeptideFragment(residues: Array(residues[..<index]), type: .cTerminal, adducts: Array(repeatElement(protonAdduct, count: z)))
                 
                 fragments.append(fragment)
             }
@@ -156,7 +156,7 @@ extension PolyPeptide {
     
 }
 
-extension PolyPeptide: Mass {
+extension PolyPeptide: Mass, Chargeable {
     public var masses: MassContainer {
         return calculateMasses()
     }
@@ -165,5 +165,3 @@ extension PolyPeptide: Mass {
         return mass(of: residues) + terminalMasses()
     }
 }
-
-extension PolyPeptide: Chargeable {}

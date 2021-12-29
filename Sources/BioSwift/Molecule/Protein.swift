@@ -8,7 +8,3 @@
 import Foundation
 
 public typealias Protein = BioMolecule<PolyPeptide>
-
-extension Protein {
-    
-}

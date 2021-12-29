@@ -36,11 +36,11 @@ public protocol Chain: Structure {
     
     var residues: [ResidueType] { get set }
 
-    var termini: (first: Residue, last: Residue)?  { get set }
+    var termini: (first: ResidueType, last: ResidueType)?  { get set }
     var adducts: [Adduct] { get set }
 
-    init(residues: [ResidueType])
     init(sequence: String)
+    init(residues: [ResidueType])
 }
 
 extension Chain {
@@ -71,7 +71,7 @@ extension Chain {
     public var symbolSet: SymbolSet? {
         return SymbolSet(array: symbolSequence)
     }
-
+    
     public mutating func update(with sequence: String, in editedRange: NSRange, changeInLength: Int) {
         if sequence == sequenceString {
             return
@@ -163,7 +163,7 @@ extension Chain {
         return residueChain(with: from...to)
     }
     
-    public mutating func setTermini(first: Residue, last: Residue) {
+    public mutating func setTermini(first: ResidueType, last: ResidueType) {
         termini = (first: first, last: last)
     }
     
