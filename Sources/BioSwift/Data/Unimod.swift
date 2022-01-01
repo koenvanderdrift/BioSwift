@@ -8,8 +8,8 @@
 
 import Foundation
 
-public var uniModifications = [Modification]()
-public var uniAminoAcids = [AminoAcid]()
+public var modificationsLibrary = [Modification]()
+public var aminoAcidsLibrary = [AminoAcid]()
 
 public class UnimodController {
     public init() {}
@@ -144,7 +144,7 @@ extension UnimodParser: XMLParserDelegate {
             if modificationName.isEmpty == false {
                 let mod = Modification(name: modificationName, elements: modificationElements, sites: modificationSites)
 
-                uniModifications.append(mod)
+                modificationsLibrary.append(mod)
 
                 modificationName.removeAll()
                 modificationSites.removeAll()
@@ -156,7 +156,7 @@ extension UnimodParser: XMLParserDelegate {
             if aminoAcidName.isEmpty == false {
                 let aa = AminoAcid(name: aminoAcidName, oneLetterCode: aminoAcidOneLetterCode, threeLetterCode: aminoAcidThreeLetterCode, elements: aminoAcidElements)
 
-                uniAminoAcids.append(aa)
+                aminoAcidsLibrary.append(aa)
                 
                 aminoAcidName.removeAll()
                 aminoAcidOneLetterCode.removeAll()

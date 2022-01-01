@@ -104,13 +104,14 @@ extension Peptide {
 
 public struct PeptideFragment: RangedChain & Fragment {
     public var name: String = ""
-    public var symbolLibrary: [Symbol] = uniAminoAcids
+    public var symbolLibrary: [Symbol] = aminoAcidsLibrary
     
     public var residues: [AminoAcid] = []
     
     public var termini: (first: AminoAcid, last: AminoAcid)? = (nTerm, cTerm)
     public var adducts: [Adduct] = []
-
+    public var modifications: LocalizedModificationSet = LocalizedModificationSet()
+    
     public var rangeInParent: ChainRange = zeroChainRange
 
     public var fragmentType: FragmentType = .undefined

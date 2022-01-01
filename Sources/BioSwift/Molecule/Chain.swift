@@ -39,6 +39,8 @@ public protocol Chain: Structure {
     var termini: (first: ResidueType, last: ResidueType)?  { get set }
     var adducts: [Adduct] { get set }
 
+    var modifications: LocalizedModificationSet { get set }
+    
     init(sequence: String)
     init(residues: [ResidueType])
 }
