@@ -9,7 +9,7 @@ import Foundation
 
 public struct Oligo: RangedChain {
     public var name: String = ""
-    public var symbolLibrary: [Symbol] = []
+    public var symbolLibrary: [Symbol] = nucleotidesLibrary
     
     public var residues: [Nucleotide] = []
     

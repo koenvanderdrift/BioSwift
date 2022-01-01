@@ -16,6 +16,8 @@ public struct Nucleotide: Residue {
     public var oneLetterCode: String
     public var threeLetterCode: String
     public var modification: Modification?
+    public let represents: [String]
+    public let representedBy: [String]
 }
 
 extension Nucleotide: Mass {

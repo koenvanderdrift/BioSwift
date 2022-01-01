@@ -61,6 +61,8 @@
 			<string>B</string>
 			<string>D</string>
 		</array>
+        <key>Formula</key>
+        <string>C10H13N5O4</string>
 		<key>AverageMass</key>
 		<string>313.2097</string>
 		<key>Complement</key>
@@ -93,7 +95,7 @@
 		<array>
 			<string>adenosine</string>
 			<string>cytidine</string>
-			<string>guanidine</string>
+			<string>guanine</string>
 			<string>weak</string>
 			<string>strong</string>
 			<string>pyrimidine</string>
@@ -122,7 +124,7 @@
 		<array>
 			<string>thymidine</string>
 			<string>cytidine</string>
-			<string>guanidine</string>
+			<string>guanine</string>
 			<string>keto</string>
 			<string>pyrimidine</string>
 			<string>strong</string>
@@ -135,7 +137,7 @@
 	<dict>
 		<key>All Complements</key>
 		<array>
-			<string>guanidine</string>
+			<string>guanine</string>
 			<string>anyBase</string>
 			<string>strong</string>
 			<string>purine</string>
@@ -144,10 +146,12 @@
 			<string>V</string>
 			<string>D</string>
 		</array>
+        <key>Formula</key>
+        <string>C9H13N3O5</string>
 		<key>AverageMass</key>
 		<string>289.1847</string>
 		<key>Complement</key>
-		<string>guanidine</string>
+		<string>guanine</string>
 		<key>MonoisotopicMass</key>
 		<string>289.04637</string>
 		<key>Name</key>
@@ -205,7 +209,7 @@
 		<array>
 			<string>thymidine</string>
 			<string>adenosine</string>
-			<string>guanidine</string>
+			<string>guanine</string>
 			<string>keto</string>
 			<string>purine</string>
 			<string>weak</string>
@@ -227,6 +231,8 @@
 			<string>B</string>
 			<string>V</string>
 		</array>
+        <key>Formula</key>
+        <string>C10H13N5O5</string>
 		<key>AverageMass</key>
 		<string>329.2091</string>
 		<key>Complement</key>
@@ -234,10 +240,10 @@
 		<key>MonoisotopicMass</key>
 		<string>329.05252</string>
 		<key>Name</key>
-		<string>guanidine</string>
+		<string>guanine</string>
 		<key>Represented by</key>
 		<array>
-			<string>guanidine</string>
+			<string>guanine</string>
 			<string>anyBase</string>
 			<string>strong</string>
 			<string>purine</string>
@@ -248,7 +254,7 @@
 		</array>
 		<key>Represents</key>
 		<array>
-			<string>guanidine</string>
+			<string>guanine</string>
 		</array>
 		<key>Symbol</key>
 		<string>G</string>
@@ -257,7 +263,7 @@
 	<dict>
 		<key>All Complements</key>
 		<array>
-			<string>guanidine</string>
+			<string>guanine</string>
 			<string>adenosine</string>
 			<string>thymidine</string>
 			<string>weak</string>
@@ -331,7 +337,7 @@
 		</array>
 		<key>Represents</key>
 		<array>
-			<string>guanidine</string>
+			<string>guanine</string>
 			<string>thymidine</string>
 			<string>amino</string>
 		</array>
@@ -342,7 +348,7 @@
 	<dict>
 		<key>All Complements</key>
 		<array>
-			<string>guanidine</string>
+			<string>guanine</string>
 			<string>thymidine</string>
 			<string>anyBase</string>
 			<string>weak</string>
@@ -386,7 +392,7 @@
 			<string>adenosine</string>
 			<string>thymidine</string>
 			<string>cytidine</string>
-			<string>guanidine</string>
+			<string>guanine</string>
 			<string>anyBase</string>
 			<string>strong</string>
 			<string>weak</string>
@@ -416,7 +422,7 @@
 			<string>adenosine</string>
 			<string>thymidine</string>
 			<string>cytidine</string>
-			<string>guanidine</string>
+			<string>guanine</string>
 			<string>anyBase</string>
 			<string>strong</string>
 			<string>weak</string>
@@ -467,7 +473,7 @@
 		<key>Represents</key>
 		<array>
 			<string>adenosine</string>
-			<string>guanidine</string>
+			<string>guanine</string>
 			<string>purine</string>
 		</array>
 		<key>Symbol</key>
@@ -477,7 +483,7 @@
 	<dict>
 		<key>All Complements</key>
 		<array>
-			<string>guanidine</string>
+			<string>guanine</string>
 			<string>cytidine</string>
 			<string>strong</string>
 			<string>pyrimidine</string>
@@ -507,7 +513,7 @@
 		<key>Represents</key>
 		<array>
 			<string>cytidine</string>
-			<string>guanidine</string>
+			<string>guanine</string>
 			<string>weak</string>
 		</array>
 		<key>Symbol</key>
@@ -526,6 +532,8 @@
 			<string>V</string>
 			<string>D</string>
 		</array>
+        <key>Formula</key>
+        <string>C10H14N2O5</string>
 		<key>AverageMass</key>
 		<string>304.1964</string>
 		<key>Complement</key>
@@ -556,7 +564,7 @@
 	<dict>
 		<key>All Complements</key>
 		<array>
-			<string>guanidine</string>
+			<string>guanine</string>
 			<string>cytidine</string>
 			<string>thymidine</string>
 			<string>weak</string>
@@ -587,7 +595,7 @@
 		<array>
 			<string>cytidine</string>
 			<string>adenosine</string>
-			<string>guanidine</string>
+			<string>guanine</string>
 			<string>amino</string>
 			<string>purine</string>
 			<string>strong</string>
@@ -642,7 +650,7 @@
 		<key>All Complements</key>
 		<array>
 			<string>adenosine</string>
-			<string>guanidine</string>
+			<string>guanine</string>
 			<string>anyBase</string>
 			<string>purine</string>
 			<string>weak</string>
