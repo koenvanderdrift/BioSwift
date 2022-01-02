@@ -110,7 +110,7 @@ public struct PeptideFragment: RangedChain & Fragment {
     
     public var termini: (first: AminoAcid, last: AminoAcid)? = (nTerm, cTerm)
     public var adducts: [Adduct] = []
-    public var modifications: LocalizedModificationSet = LocalizedModificationSet()
+    public var modifications: [LocalizedModification] = []
     
     public var rangeInParent: ChainRange = zeroChainRange
 

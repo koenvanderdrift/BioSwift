@@ -39,7 +39,7 @@ public protocol Chain: Structure {
     var termini: (first: ResidueType, last: ResidueType)?  { get set }
     var adducts: [Adduct] { get set }
 
-    var modifications: LocalizedModificationSet { get set }
+    var modifications: [LocalizedModification] { get set }
     
     init(sequence: String)
     init(residues: [ResidueType])
@@ -203,7 +203,7 @@ extension Chain {
         return result
     }
     
-    public mutating func setModifcations(_ mods: LocalizedModificationSet) {
+    public mutating func setModifcations(_ mods: [LocalizedModification]) {
         mods.forEach {
             addModification($0)
         }

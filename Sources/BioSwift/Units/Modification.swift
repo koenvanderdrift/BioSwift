@@ -1,7 +1,5 @@
 import Foundation
 
-public typealias LocalizedModificationSet = Set<LocalizedModification>
-
 public let unmodifiedString = "Unmodified"
 public let zeroModification = Modification(name: unmodifiedString, elements: [:])
 
@@ -130,20 +128,14 @@ public struct LocalizedModification: Hashable {
 }
 
 public struct Link: Hashable {
-    public var mods: LocalizedModificationSet
+    public var mods: [LocalizedModification]
     
-    public init(mods: LocalizedModificationSet) {
+    public init(mods: [LocalizedModification]) {
         self.mods = mods
     }
 
     public func contains(_ location: Int) -> Bool {
-       for mod in mods {
-            if mod.location == location {
-                return true
-            }
-        }
-        
-        return false
+        return mods.contains(where: { $0.location == location })
     }
 }
 
@@ -157,9 +149,12 @@ extension Link {
     }
 
     public func compareLocations(with other: Link) -> CompareResult {
-        if mods == other.mods {
+        let modsSet = Set(mods)
+        let otherModsSet = Set(other.mods)
+        
+        if modsSet == otherModsSet {
             return .equal
-        } else if mods.isDisjoint(with: other.mods) {
+        } else if modsSet.isDisjoint(with: otherModsSet) {
             return .disjoint
         } else {
             return .intersect
