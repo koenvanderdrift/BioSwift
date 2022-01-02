@@ -191,12 +191,12 @@ extension Chain {
         return nil
     }
     
-    public func getModifications() -> ModificationSet {
-        var result: ModificationSet = []
+    public func getModifications() -> [Modification] {
+        var result: [Modification] = []
         
         residues.forEach {
             if let mod = $0.modification {
-                result.insert(mod)
+                result.append(mod)
             }
         }
 
