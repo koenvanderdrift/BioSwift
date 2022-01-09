@@ -109,7 +109,7 @@ extension Chain {
 }
 
 extension Chain {
-    public func searchMass<T: RangedChain & Chargeable>(params: MassSearchParameters) -> [T] {
+    public func searchMass<T: RangedChain & ChargedMass>(params: MassSearchParameters) -> [T] {
         var result = [T]()
 
         let massRange = params.massRange()

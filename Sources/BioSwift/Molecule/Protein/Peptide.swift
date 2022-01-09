@@ -133,7 +133,7 @@ extension PeptideFragment {
     }
 }
 
-extension PeptideFragment: Mass & Chargeable {
+extension PeptideFragment {
     public var masses: MassContainer {
         return calculateMasses()
     }

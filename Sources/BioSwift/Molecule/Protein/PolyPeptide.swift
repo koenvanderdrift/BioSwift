@@ -63,7 +63,7 @@ extension PolyPeptide {
     }
 }
 
-extension PolyPeptide: Mass, Chargeable {
+extension PolyPeptide {
     public var masses: MassContainer {
         return calculateMasses()
     }

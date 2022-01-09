@@ -20,7 +20,6 @@ public let ammonium = FunctionalGroup(name: "ammonium", formula: "NH4")
 public struct FunctionalGroup: Structure, Codable {    
     public let name: String
     public let formula: Formula
-
     public var adducts: [Adduct]
 
     private(set) var _masses: MassContainer = zeroMass

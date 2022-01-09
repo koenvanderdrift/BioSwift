@@ -1,6 +1,6 @@
 import Foundation
 
-public protocol Structure: Chargeable {
+public protocol Structure: ChargedMass {
     var name: String { get }
     var formula: Formula { get }
     var adducts: [Adduct] { get set }
