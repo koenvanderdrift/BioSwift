@@ -22,12 +22,12 @@ public struct FastaRecord: Codable, Hashable {
     }
 }
 
-public struct FastaDecoder: TopLevelDecoder {
+let zeroFastaRecord = FastaRecord(accession: "", name: "", organism: "", sequence: "")
 
+public struct FastaDecoder: TopLevelDecoder {
 //
 // TODO: MORE ERROR CHECKING
 //
-
     public init() {}
 
     public func decode<T : Decodable>(_ type: T.Type, from data: Data) throws -> T {
@@ -79,14 +79,14 @@ private final class _FastaDecoder: Decoder {
         var allKeys: [Key] = []
         
         let lines: [String]
-        let firstLine: String
-        
-        var record: FastaRecord?
+        var record: FastaRecord = zeroFastaRecord
         
         init(_ input: String) {
             self.lines = input.components(separatedBy: "\n")
-            self.firstLine = lines.first ?? ""
-            self.record = parseFirstLine(input: firstLine)
+            
+            if let header = lines.first {
+                self.record = parseHeader(input: header)
+            }
         }
         
         func contains(_ key: Key) -> Bool {
@@ -104,11 +104,11 @@ private final class _FastaDecoder: Decoder {
         func decode(_ type: String.Type, forKey key: Key) throws -> String {
             switch key.stringValue {
             case "accession":
-                return self.record?.accession ?? ""
+                return self.record.accession
             case "name":
-                return self.record?.name ?? ""
+                return self.record.name
             case "organism":
-                return self.record?.organism ?? ""
+                return self.record.organism
             case "sequence":
                 return lines.dropFirst().joined()
             default:
@@ -184,98 +184,93 @@ private final class _FastaDecoder: Decoder {
             fatalError("TODO")
         }
         
-        func parseFirstLine(input: String) -> FastaRecord {
+        func parseHeader(input: String) -> FastaRecord {
             // https://www.uniprot.org/help/fasta-headers
-            // You can save repeated application of the `input` parameter by doing it
-            // just once at the end (see the `return` of this func).
-            let parse: (String) -> FastaRecord
+
+            let parser = FastaParser()
             
-            // The predicate of choice is made, in this case, String.hasPrefix.
-            let hasPrefix = apply(instanceMethod: String.hasPrefix)
-            
-            // The switch calls `~=` for every case, giving it hasPrefix(...) and "input"
-            // as args. The first case that makes `~=` yield `true` is executed.
-            switch input {
-            case hasPrefix("sp"), hasPrefix("swiss"), hasPrefix("tr"):
-                parse = parseSwissProt
-            case hasPrefix("IPI"):
-                parse = parseIPI
-            case hasPrefix("ENS"):
-                parse = parseEnsemble
-            default:
-                parse = parseUnspecified
+            if input.hasPrefix("sp") || input.hasPrefix("swiss") || input.hasPrefix("tr") {
+                return parser.parseSwissProt(input)
             }
-            
-            return parse(input)
+            else if input.hasPrefix("IPI") {
+                return parser.parseIPI(input)
+            }
+            else if input.hasPrefix("ENS") {
+                return parser.parseEnsemble(input)
+            }
+
+            return parser.parseUnspecified(input)
         }
+    }
+}
+
+public struct FastaParser {
+    func parseSwissProt(_ input: String) -> FastaRecord {
+        /*
+         * >db|UniqueIdentifier|EntryName ProteinName OS=OrganismName OX=OrganismIdentifier [GN=GeneName ]PE=ProteinExistence SV=SequenceVersion
+         * >tr|Q8ADX7|Q8ADX7_9HIV1 Envelope glycoprotein gp160 OS=Human immunodeficiency virus 1 OX=11676 GN=env PE=3 SV=1
+         *
+         * db is ‘sp’ for UniProtKB/Swiss-Prot and ‘tr’ for UniProtKB/TrEMBL.
+         * UniqueIdentifier is the primary accession number of the UniProtKB entry.
+         * EntryName is the entry name of the UniProtKB entry.
+         * ProteinName is the recommended name of the UniProtKB entry as annotated in the RecName field. For UniProtKB/TrEMBL entries without a RecName field, the SubName field is used. In case of multiple SubNames, the first one is used. The ‘precursor’ attribute is excluded, ‘Fragment’ is included with the name if applicable.
+         * OrganismName is the scientific name of the organism of the UniProtKB entry.
+         * OrganismIdentifier is the unique identifier of the source organism, assigned by the NCBI.
+         * GeneName is the first gene name of the UniProtKB entry. If there is no gene name, OrderedLocusName or ORFname, the GN field is not listed.
+         * ProteinExistence is the numerical value describing the evidence for the existence of the protein.
+         * SequenceVersion is the version number of the sequence.
+         */
         
-        func parseSwissProt(input: String) -> FastaRecord {
-            /*
-             * >db|UniqueIdentifier|EntryName ProteinName OS=OrganismName OX=OrganismIdentifier [GN=GeneName ]PE=ProteinExistence SV=SequenceVersion
-             * >tr|Q8ADX7|Q8ADX7_9HIV1 Envelope glycoprotein gp160 OS=Human immunodeficiency virus 1 OX=11676 GN=env PE=3 SV=1
-             *
-             * db is ‘sp’ for UniProtKB/Swiss-Prot and ‘tr’ for UniProtKB/TrEMBL.
-             * UniqueIdentifier is the primary accession number of the UniProtKB entry.
-             * EntryName is the entry name of the UniProtKB entry.
-             * ProteinName is the recommended name of the UniProtKB entry as annotated in the RecName field. For UniProtKB/TrEMBL entries without a RecName field, the SubName field is used. In case of multiple SubNames, the first one is used. The ‘precursor’ attribute is excluded, ‘Fragment’ is included with the name if applicable.
-             * OrganismName is the scientific name of the organism of the UniProtKB entry.
-             * OrganismIdentifier is the unique identifier of the source organism, assigned by the NCBI.
-             * GeneName is the first gene name of the UniProtKB entry. If there is no gene name, OrderedLocusName or ORFname, the GN field is not listed.
-             * ProteinExistence is the numerical value describing the evidence for the existence of the protein.
-             * SequenceVersion is the version number of the sequence.
-             */
-            
-            var acc, name, org: NSString?
-            
-            let scanner = Scanner(string: input)
-            scanner.scanUpTo("|", into: nil)
-            scanner.scanString("|", into: nil)
-            scanner.scanUpTo("|", into: &acc)
-            scanner.scanUpTo(" ", into: nil)
-            scanner.scanUpTo(" OS=", into: &name)
-            
-            let pattern = "([A-Z]{2}=)((.(?![A-Z]{2}=))*)"
-            if let regex = try? NSRegularExpression(pattern: pattern, options: NSRegularExpression.Options(rawValue: 0)) {
-                let matches = regex.matches(in: input,
-                                            options: NSRegularExpression.MatchingOptions(rawValue: 0),
-                                            range: NSMakeRange(0, input.count))
-                for match in matches {
-                    if let s = input.substring(with: match.range), s.hasPrefix("OS")  {
-                        org = s.components(separatedBy: "=").last as NSString?
-                    }
+        var acc, name, org: NSString?
+        
+        let scanner = Scanner(string: input)
+        scanner.scanUpTo("|", into: nil)
+        scanner.scanString("|", into: nil)
+        scanner.scanUpTo("|", into: &acc)
+        scanner.scanUpTo(" ", into: nil)
+        scanner.scanUpTo(" OS=", into: &name)
+        
+        let pattern = "([A-Z]{2}=)((.(?![A-Z]{2}=))*)"
+        if let regex = try? NSRegularExpression(pattern: pattern, options: NSRegularExpression.Options(rawValue: 0)) {
+            let matches = regex.matches(in: input,
+                                        options: NSRegularExpression.MatchingOptions(rawValue: 0),
+                                        range: NSMakeRange(0, input.count))
+            for match in matches {
+                if let s = input.substring(with: match.range), s.hasPrefix("OS")  {
+                    org = s.components(separatedBy: "=").last as NSString?
                 }
             }
-            
-            guard let id = acc as String?, let n = name as String?, let o = org as String? else {
-                return FastaRecord(accession: "", name: "", organism: "", sequence: "")
-            }
-            
-            return FastaRecord(accession: id, name: n, organism: o, sequence: "")
         }
         
-        func parseIPI(input: String) -> FastaRecord {
-            // IPI00300415 IPI:IPI00300415.9|SWISS-PROT:Q8N431-1|TREMBL:D3DWQ7|ENSEMBL:ENSP00000354963;ENSP00000377037|REFSEQ:NP_778232|H-INV:HIT000094619|VEGA:OTTHUMP00000161522;OTTHUMP00000161538 Tax_Id=9606 Gene_Symbol=RASGEF1C Isoform 1 of Ras-GEF domain-containing family member 1C
-            let info = input.components(separatedBy: "|")
-            let acc = info[1]
-            let name = info.last!
-            
-            return FastaRecord(accession: acc, name: name, organism: "", sequence: "")
+        guard let id = acc as String?, let n = name as String?, let o = org as String? else {
+            return FastaRecord(accession: "", name: "", organism: "", sequence: "")
         }
         
-        func parseEnsemble(input: String) -> FastaRecord {
-            // ENSP00000391493 pep:known chromosome:GRCh37:2:160609001:160624471:1 gene:ENSG00000136536 transcript:ENST00000420397
-            let info = input.components(separatedBy: " ")
-            let name = info[0]
-            
-            return FastaRecord(accession: "", name: name, organism: "", sequence: "")
-        }
+        return FastaRecord(accession: id, name: n, organism: o, sequence: "")
+    }
+    
+    func parseIPI(_ input: String) -> FastaRecord {
+        // IPI00300415 IPI:IPI00300415.9|SWISS-PROT:Q8N431-1|TREMBL:D3DWQ7|ENSEMBL:ENSP00000354963;ENSP00000377037|REFSEQ:NP_778232|H-INV:HIT000094619|VEGA:OTTHUMP00000161522;OTTHUMP00000161538 Tax_Id=9606 Gene_Symbol=RASGEF1C Isoform 1 of Ras-GEF domain-containing family member 1C
+        let info = input.components(separatedBy: "|")
+        let acc = info[1]
+        let name = info.last!
         
-        func parseUnspecified(input: String) -> FastaRecord {
-            // DROME_HH_Q02936
-            // DECOY_IPI00339224 Decoy sequence
-            let name = input.replacingOccurrences(of: "_", with: " ")
-            
-            return FastaRecord(accession: "", name: name, organism: "", sequence: "")
-        }
+        return FastaRecord(accession: acc, name: name, organism: "", sequence: "")
+    }
+    
+    func parseEnsemble(_ input: String) -> FastaRecord {
+        // ENSP00000391493 pep:known chromosome:GRCh37:2:160609001:160624471:1 gene:ENSG00000136536 transcript:ENST00000420397
+        let info = input.components(separatedBy: " ")
+        let name = info[0]
+        
+        return FastaRecord(accession: "", name: name, organism: "", sequence: "")
+    }
+    
+    func parseUnspecified(_ input: String) -> FastaRecord {
+        // DROME_HH_Q02936
+        // DECOY_IPI00339224 Decoy sequence
+        let name = input.replacingOccurrences(of: "_", with: " ")
+        
+        return FastaRecord(accession: "", name: name, organism: "", sequence: "")
     }
 }
