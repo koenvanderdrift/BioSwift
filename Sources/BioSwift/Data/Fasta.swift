@@ -24,6 +24,24 @@ public struct FastaRecord: Codable, Hashable {
 
 let zeroFastaRecord = FastaRecord(accession: "", name: "", organism: "", sequence: "")
 
+public func parseFastaData(from fileName: String) throws -> [FastaRecord] {
+    do {
+        let fastaData = try loadData(from: fileName, withExtension: "fasta")
+        return try FastaDecoder().decode([FastaRecord].self, from: fastaData)
+    } catch {
+        throw LoadError.fileDecodingFailed(name: fileName)
+    }
+}
+
+public func parseFastaDataFromBundle(from fileName: String) throws -> [FastaRecord] {
+    do {
+        let fastaData = try loadDataFromBundle(from: fileName, withExtension: "fasta")
+        return try FastaDecoder().decode([FastaRecord].self, from: fastaData)
+    } catch {
+        throw LoadError.fileDecodingFailed(name: fileName)
+    }
+}
+
 public struct FastaDecoder: TopLevelDecoder {
 //
 // TODO: MORE ERROR CHECKING

@@ -1,3 +1,46 @@
+//
+//  Utilities.swift
+//  BioSwift
+//
+//  Created by Koen van der Drift on 3/21/19.
+//  Copyright © 2019 Koen van der Drift. All rights reserved.
+//
+
+import Foundation
+
+enum LoadError: Error {
+    case fileNotFound(name: String)
+    case fileConversionFailed(name: String)
+    case fileDecodingFailed(name: String)
+}
+
+public func loadData(from fileName: String, withExtension fileExtension: String) throws -> Data {
+    guard let url = Bundle.main.url(forResource: fileName, withExtension: fileExtension) else {
+        throw LoadError.fileNotFound(name: fileName)
+    }
+
+    guard let data = try? Data(contentsOf: url) else {
+        throw LoadError.fileConversionFailed(name: fileName)
+    }
+
+    return data
+}
+
+public func loadDataFromBundle(from fileName: String, withExtension fileExtension: String) throws -> Data {
+    guard let url = Bundle.module.url(forResource: fileName, withExtension: fileExtension) else {
+        throw LoadError.fileNotFound(name: fileName)
+    }
+
+    guard let data = try? Data(contentsOf: url) else {
+        throw LoadError.fileConversionFailed(name: fileName)
+    }
+
+    return data
+}
+
+
+
+
 // via:  http://stackoverflow.com/questions/41402770/swift-parse-string-with-different-formats/41402868#41402868
 //
 // This type alias is just here to make the next line a bit more readable.
