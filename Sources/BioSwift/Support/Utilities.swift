@@ -8,7 +8,7 @@
 
 import Foundation
 
-enum LoadError: Error {
+public enum LoadError: Error {
     case fileNotFound(name: String)
     case fileConversionFailed(name: String)
     case fileDecodingFailed(name: String)
