@@ -8,7 +8,7 @@
 
 import Foundation
 
-public var hydropathyLibrary: [Hydro] = loadJSONFromBundle(fileName: "hydropathy")
+public var hydropathyLibrary: [Hydro] = try! parseJSONDataFromBundle(from: "hydropathy")
 
 public struct Hydro: Codable {
     public let name: String
