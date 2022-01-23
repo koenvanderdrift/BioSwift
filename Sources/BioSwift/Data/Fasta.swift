@@ -49,20 +49,20 @@ public struct FastaDecoder: TopLevelDecoder {
     public init() {}
 
     public func decode<T : Decodable>(_ type: T.Type, from data: Data) throws -> T {
-        var result: [FastaRecord] = []
+        var records: [FastaRecord] = []
         
         if let fastaArray = String(data: data, encoding: .utf8)?
             .components(separatedBy: ">")
             .dropFirst() {
             
-            result = fastaArray.map( { fastaLine in
+            records = try fastaArray.map( { fastaLine in
                 let decoder = _FastaDecoder(fastaLine)
                 
-                return try! FastaRecord(from: decoder)
+                return try FastaRecord(from: decoder)
             })
         }
         
-        return result as! T
+        return records as! T
     }
 }
 
