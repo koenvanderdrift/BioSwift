@@ -14,11 +14,11 @@ public let protonAdduct = Adduct(group: proton, charge: 1)
 public let sodiumAdduct = Adduct(group: sodium, charge: 1)
 public let ammoniumAdduct = Adduct(group: ammonium, charge: 1)
 
-public protocol Chargeable: Mass {
+public protocol ChargedMass: Mass {
     var adducts: [Adduct] { get set }
 }
 
-extension Chargeable {
+extension ChargedMass {
     public var charge: Int {
         return adducts.reduce(0) { $0 + $1.charge }
     }
@@ -47,7 +47,7 @@ extension Chargeable {
     }
 }
 
-extension Collection where Element: Chain & Chargeable {
+extension Collection where Element: Chain & ChargedMass {
     public func charge(minCharge: Int, maxCharge: Int) -> [Element] {
         return flatMap { sequence in
             (minCharge...maxCharge).map { charge in

@@ -104,13 +104,14 @@ extension Peptide {
 
 public struct PeptideFragment: RangedChain & Fragment {
     public var name: String = ""
-    public var symbolLibrary: [Symbol] = uniAminoAcids
+    public var symbolLibrary: [Symbol] = aminoAcidsLibrary
     
     public var residues: [AminoAcid] = []
     
     public var termini: (first: AminoAcid, last: AminoAcid)? = (nTerm, cTerm)
     public var adducts: [Adduct] = []
-
+    public var modifications: [LocalizedModification] = []
+    
     public var rangeInParent: ChainRange = zeroChainRange
 
     public var fragmentType: FragmentType = .undefined
@@ -132,7 +133,7 @@ extension PeptideFragment {
     }
 }
 
-extension PeptideFragment: Mass & Chargeable {
+extension PeptideFragment {
     public var masses: MassContainer {
         return calculateMasses()
     }

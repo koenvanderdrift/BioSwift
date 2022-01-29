@@ -12,10 +12,14 @@ public protocol Symbol {
     var identifier: String { get }
 }
 
-public class SymbolSet: NSCountedSet {
-    public func countFor(_ identifier: String) -> Int {
-        let symbol = compactMap { $0 as? Symbol }.first(where: { $0.identifier == identifier })
+public typealias SymbolSet = NSCountedSet
 
-        return count(for: symbol as Any)
+extension SymbolSet {
+    public func countFor(_ identifier: String) -> Int {
+        guard let symbol = compactMap({ $0 as? Symbol })
+                .first(where: { $0.identifier == identifier })
+        else { return 0 }
+        
+        return count(for: symbol)
     }
 }

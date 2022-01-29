@@ -8,14 +8,14 @@ public let lossOfAmmonia = Modification(name: "Loss of Ammonia", reactions: [.re
 
 public struct PolyPeptide: RangedChain {
     public var name: String = ""
-    public var symbolLibrary: [Symbol] = uniAminoAcids
+    public var symbolLibrary: [Symbol] = aminoAcidsLibrary
     
     public var residues: [AminoAcid] = []
     
     public var termini: (first: AminoAcid, last: AminoAcid)? = (nTerm, cTerm)
     public var adducts: [Adduct] = []
-    public var modifications: ModificationSet = ModificationSet()
-    
+    public var modifications: [LocalizedModification] = []
+
     public var rangeInParent: ChainRange = zeroChainRange
 }
 
@@ -63,7 +63,7 @@ extension PolyPeptide {
     }
 }
 
-extension PolyPeptide: Mass, Chargeable {
+extension PolyPeptide {
     public var masses: MassContainer {
         return calculateMasses()
     }
