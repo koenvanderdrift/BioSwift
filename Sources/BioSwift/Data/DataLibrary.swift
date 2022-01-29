@@ -47,11 +47,9 @@ public struct DataLibrary {
         return []
     }
     
-    public init() {
+    public func loadUnimod(withCompletion completion: @escaping (Bool) -> Void) {
         unimodController.loadUnimod { success in
-            guard success else {
-                fatalError("Could not load unimod")
-            }
+            completion(success)
         }
     }
 }

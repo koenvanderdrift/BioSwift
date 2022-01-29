@@ -8,9 +8,7 @@
 
 import Foundation
 
-public class UnimodController {
-    public init() {}
-
+public struct UnimodController {
     public func loadUnimod(withCompletion completion: ((Bool) -> Void)? = nil) {
         DispatchQueue.global(qos: .userInitiated).async {
             debugPrint("Start parsing unimod.xml")
