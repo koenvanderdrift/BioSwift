@@ -9,36 +9,54 @@ import Foundation
 
 public var dataLibrary = DataLibrary()
 
-public var aminoAcidLibrary: [AminoAcid] = dataLibrary.library(with: .aminoAcid)
-public var elementLibrary: [ChemicalElement] = dataLibrary.library(with: .element)
-public var enzymeLibrary: [Enzyme] = dataLibrary.library(with: .enzyme)
-public var hydropathyLibrary: [Hydro] = dataLibrary.library(with: .hydropathy)
-public var modificationLibrary: [Modification] = dataLibrary.library(with: .modification)
-
-public enum LibraryType {
-    case aminoAcid
-    case element
-    case enzyme
-    case hydropathy
-    case modification
-}
+public var aminoAcidLibrary: [AminoAcid] = dataLibrary.aminoAcids
+public var elementLibrary: [ChemicalElement] = dataLibrary.elements
+public var enzymeLibrary: [Enzyme] = dataLibrary.enzymes
+public var hydropathyLibrary: [Hydro] = dataLibrary.hydropathy
+public var modificationLibrary: [Modification] = dataLibrary.modifications
 
 public struct DataLibrary {
-    private var unimodController = UnimodController()
+    private enum LibraryType {
+        case aminoAcids
+        case elements
+        case enzymes
+        case hydropathy
+        case modifications
+    }
+
+    public var aminoAcids: [AminoAcid] {
+        return library(.aminoAcids)
+    }
     
-    public func library<T: Decodable>(with type: LibraryType) -> [T] {
+    public var elements: [ChemicalElement] {
+        return library(.elements)
+    }
+    
+    public var enzymes: [Enzyme] {
+        return library(.enzymes)
+    }
+    
+    public var hydropathy: [Hydro] {
+        return library(.hydropathy)
+    }
+    
+    public var modifications: [Modification] {
+        return library(.modifications)
+    }
+    
+    private func library<T: Decodable>(_ type: LibraryType) -> [T] {
         do {
             switch type {
-//            case .aminoAcid: todo
-//            case .modification: todo
-            case .element:
+            case .aminoAcids:
+                return [] // populated in loadUnimod
+            case .modifications:
+                return [] // populated in loadUnimod
+            case .elements:
                 return try parseJSONDataFromBundle(from: "elements")
-            case .enzyme:
+            case .enzymes:
                 return try parseJSONDataFromBundle(from: "enzymes")
             case .hydropathy:
                 return try parseJSONDataFromBundle(from: "hydropathy")
-            default:
-                return []
             }
         } catch {
             print("Error occurred \(error)")
@@ -48,7 +66,7 @@ public struct DataLibrary {
     }
     
     public func loadUnimod(withCompletion completion: @escaping (Bool) -> Void) {
-        unimodController.loadUnimod { success in
+        UnimodController().loadUnimod { success in
             completion(success)
         }
     }
