@@ -47,7 +47,7 @@ public struct DataLibrary {
         return []
     }
     
-    init() {
+    public init() {
         unimodController.loadUnimod { success in
             guard success else {
                 fatalError("Could not load unimod")
