@@ -1,7 +1,5 @@
 import Foundation
 
-public typealias Elements = [ChemicalElement]
-
 public let zeroFormula = Formula("")
 
 public struct Formula {
@@ -55,8 +53,8 @@ public struct Formula {
 }
 
 extension Formula {
-    private func elements(from formula: String) -> Elements {
-        var result = Elements()
+    private func elements(from formula: String) -> [ChemicalElement] {
+        var result = [ChemicalElement] ()
 
         do {
             result = try parse(formula)
@@ -81,7 +79,7 @@ extension Formula {
         case invalidFormula
     }
 
-    private func parse(_ formula: String) throws -> Elements {
+    private func parse(_ formula: String) throws -> [ChemicalElement]  {
         // https://www.lfd.uci.edu/~gohlke/code/molmass.py.html
         // https://www.lfd.uci.edu/~gohlke/code/elements.py.html
 
@@ -94,7 +92,7 @@ extension Formula {
         var elementCount = 0
         var elementName = ""
 
-        var result = Elements()
+        var result = [ChemicalElement] ()
 
         if i == 0 {
             return result
@@ -160,7 +158,7 @@ extension Formula {
                     i = j
                 }
 
-                if let element = elementsLibrary.first(where: { $0.identifier == elementName }) {
+                if let element = elementLibrary.first(where: { $0.identifier == elementName }) {
                     for _ in 0 ..< (elementCount * multiplication[parenthesisLevel]) {
                         result.append(element)
                     }

@@ -8,7 +8,7 @@ public let lossOfAmmonia = Modification(name: "Loss of Ammonia", reactions: [.re
 
 public struct PolyPeptide: RangedChain {
     public var name: String = ""
-    public var symbolLibrary: [Symbol] = aminoAcidsLibrary
+    public var symbolLibrary: [Symbol] = aminoAcidLibrary
     
     public var residues: [AminoAcid] = []
     

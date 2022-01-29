@@ -104,7 +104,7 @@ extension Peptide {
 
 public struct PeptideFragment: RangedChain & Fragment {
     public var name: String = ""
-    public var symbolLibrary: [Symbol] = aminoAcidsLibrary
+    public var symbolLibrary: [Symbol] = aminoAcidLibrary
     
     public var residues: [AminoAcid] = []
     

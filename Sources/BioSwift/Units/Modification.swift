@@ -51,7 +51,7 @@ extension Modifiable {
 
 }
 
-public struct Modification {
+public struct Modification: Decodable {
 /*
      via: https://www.unimod.org/fields.html
      
@@ -64,6 +64,18 @@ public struct Modification {
     public let reactions: [Reaction]
     public let sites: [String] // sites it can attach to
 
+    enum CodingKeys: String, CodingKey {
+        case name = "name"
+        case reactions = "reactions"
+        case sites = "sites"
+    }
+    
+    public init(from decoder: Decoder) throws {
+        self.name = ""
+        self.reactions = []
+        self.sites = []
+    }
+    
     public init(name: String, reactions: [Reaction], sites: [String] = []) {
         self.name = name
         self.reactions = reactions

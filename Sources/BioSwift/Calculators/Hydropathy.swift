@@ -8,8 +8,6 @@
 
 import Foundation
 
-public var hydropathyLibrary: [Hydro] = try! parseJSONDataFromBundle(from: "hydropathy")
-
 public struct Hydro: Codable {
     public let name: String
     public let values: [String: String]

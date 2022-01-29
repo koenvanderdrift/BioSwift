@@ -70,7 +70,7 @@ final class BioSwiftTests: XCTestCase {
     } // 609.563
 
     func testPeptideSerinePhosphorylationMonoisotopicMass() {
-        if let phos = modificationsLibrary.filter({ $0.name.contains("Phospho") == true }).first {
+        if let phos = modificationLibrary.filter({ $0.name.contains("Phospho") == true }).first {
             peptide.addModification(LocalizedModification(phos, at: 3)) // zero-based
             peptide.setAdducts(type: protonAdduct, count: 1)
 

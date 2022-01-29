@@ -1,7 +1,5 @@
 import Foundation
 
-public var enzymeLibrary: [Enzyme] = try! parseJSONDataFromBundle(from: "enzymes")
-
 // enum CleaveDirection {
 //    case C
 //    case N
