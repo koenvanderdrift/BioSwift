@@ -58,7 +58,7 @@ public struct FunctionalGroup: Structure, Codable {
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(name, forKey: .name)
-        try container.encode(formula.string, forKey: .formula)
+        try container.encode(formula.formulaString, forKey: .formula)
     }
 
     public var masses: MassContainer {
@@ -77,7 +77,7 @@ extension FunctionalGroup: Hashable {
 
     public func hash(into hasher: inout Hasher) {
         hasher.combine(name)
-        hasher.combine(formula.string)
+        hasher.combine(formula.formulaString)
     }
 }
 
