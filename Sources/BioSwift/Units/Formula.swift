@@ -30,25 +30,11 @@ public struct Formula {
     }
 
     public func countedElements() -> NSCountedSet {
-        let set = NSCountedSet()
-
-        for element in elements {
-            set.add(element)
-        }
-
-        return set
+       return NSCountedSet(array: elements)
     }
     
     public func isotopes() -> NSCountedSet {
-        let set = NSCountedSet()
-
-        for element in elements {
-            for isotope in element.isotopes {
-                set.add(isotope)
-            }
-        }
-        
-        return set
+        return NSCountedSet(array: elements.map { $0.isotopes }.reduce([], +))
     }
     
     public func countFor(element: String) -> Int {
