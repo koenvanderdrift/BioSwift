@@ -3,13 +3,22 @@ import Foundation
 public let zeroFormula = Formula("")
 
 public struct Formula {
-    private(set) var elements: [ChemicalElement] = []
-
     public var formulaString: String
+
+    public var elements: [ChemicalElement] {
+        var result = [ChemicalElement] ()
+
+        do {
+            result = try parseElements()
+        } catch {
+            debugPrint(error)
+        }
+
+        return result
+    }
 
     public init(_ string: String) {
         self.formulaString = string
-        elements = elements(from: formulaString)
     }
 
     public init(_ dict: [String: Int]) {
@@ -22,7 +31,6 @@ public struct Formula {
         }
 
         formulaString = formula
-        elements = elements(from: formula)
     }
 
     var description: String {
@@ -43,18 +51,6 @@ public struct Formula {
 }
 
 extension Formula {
-    private func elements(from formula: String) -> [ChemicalElement] {
-        var result = [ChemicalElement] ()
-
-        do {
-            result = try parse(formula)
-        } catch {
-            debugPrint(error)
-        }
-
-        return result
-    }
-
     private enum ParseError: Error {
         case missingClosingBracket
         case missingOpeningBracket
@@ -65,11 +61,11 @@ extension Formula {
         case invalidFormula
     }
 
-    private func parse(_ formula: String) throws -> [ChemicalElement]  {
+    private func parseElements() throws -> [ChemicalElement]  {
         // https://github.com/cgohlke/molmass/blob/master/molmass/molmass.py
         // https://github.com/cgohlke/molmass/blob/master/molmass/elements.py
 
-        let characters = Array(formula)
+        let characters = Array(formulaString)
         var i = characters.count
 
         var parenthesisLevel = 0
@@ -116,7 +112,7 @@ extension Formula {
                     i -= 1
                 }
 
-                elementCount = Int(formula[i ..< j + 1])!
+                elementCount = Int(formulaString[i ..< j + 1])!
 
                 if elementCount == 0 {
                     throw ParseError.zeroCount
