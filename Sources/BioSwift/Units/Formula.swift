@@ -105,10 +105,10 @@ extension Formula {
                 multiplication[parenthesisLevel] = elementCount * multiplication[parenthesisLevel - 1]
 
                 elementCount = 0
-            } else if isDigit(char) {
+            } else if char.isNumber {
                 let j = i
 
-                while i > 0, isDigit(characters[i - 1]) {
+                while i > 0, characters[i - 1].isNumber {
                     i -= 1
                 }
 
@@ -117,13 +117,13 @@ extension Formula {
                 if elementCount == 0 {
                     throw ParseError.zeroCount
                 }
-            } else if isLowercase(char) {
-                if isUppercase(characters[i - 1]) == false {
+            } else if char.isLowercase {
+                if characters[i - 1].isUppercase == false {
                     throw ParseError.invalidCharacterFound(char)
                 }
 
                 elementName = String(char)
-            } else if isUppercase(char) {
+            } else if char.isUppercase {
                 elementName = String(char) + elementName
 
                 if elementCount == 0 {
@@ -132,7 +132,7 @@ extension Formula {
 
                 let j = i
 
-                while i > 0, isDigit(characters[i - 1]) {
+                while i > 0, characters[i - 1].isNumber {
                     i -= 1
                 }
 
@@ -172,18 +172,6 @@ extension Formula {
         }
 
         return result
-    }
-
-    private func isUppercase(_ char: Character) -> Bool {
-        return "ABCDEFGHIJKLMNOPQRSTUVWXYZ".contains(char)
-    }
-
-    private func isLowercase(_ char: Character) -> Bool {
-        return "abcdefghijklmnopqrstuvwxyz".contains(char)
-    }
-
-    private func isDigit(_ char: Character) -> Bool {
-        return "0123456789".contains(char)
     }
 
     private func isOpeningBracket(_ char: Character) -> Bool {
