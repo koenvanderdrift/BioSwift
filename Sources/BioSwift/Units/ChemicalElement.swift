@@ -1,7 +1,5 @@
 import Foundation
 
-public var elementsLibrary: Elements = try! parseJSONDataFromBundle(from: "elements")
-
 public let electron = ChemicalElement(name: "electron", symbol: "e", masses: MassContainer(monoisotopicMass: Dalton(0.00054858026), averageMass: Dalton(0.00054858026), nominalMass: 0))
 
 public struct Isotope: Codable {

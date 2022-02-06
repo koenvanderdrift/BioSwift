@@ -10,9 +10,10 @@ final class BioSwiftTests: XCTestCase {
         super.setUp()
 
         // https://stackoverflow.com/questions/29504712/how-can-i-get-xctest-to-wait-for-async-calls-in-setup-before-tests-are-run
-        
+        debugPrint("test setup")
         let exp = expectation(description: "BioSwiftTests setUp")
-        UnimodController().loadUnimod { success in
+
+        dataLibrary.loadUnimod { success in
             guard success else { return }
             
             self.protein = Protein(sequence: "MPSSVSWGILLLAGLCCLVPVSLAEDPQGDAAQKTDTSHHDQDHPTFNKITPNLAEFAFSLYRQLAHQSNSTNIFFSPVSIATAFAMLSLGTKADTHDEILEGLNFNLTEIPEAQIHEGFQELLRTLNQPDSQLQLTTGNGLFLSEGLKLVDKFLEDVKKLYHSEAFTVNFGDTEEAKKQINDYVEKGTQGKIVDLVKELDRDTVFALVNYIFFKGKWERPFEVKDTEEEDFHVDQVTTVKVPMMKRLGMFNIQHCKKLSSWVLLMKYLGNATAIFFLPDEGKLQHLENELTHDIITKFLENEDRRSASLHLPKLSITGTYDLKSVLGQLGITKVFSNGADLSGVTEEAPLKLSKAVHKAVLTIDEKGTEAAGAMFLEAIPMSIPPEVKFNKPFVFLMIEQNTKSPLFMGKVVNPTQK")
@@ -22,30 +23,28 @@ final class BioSwiftTests: XCTestCase {
             exp.fulfill()
         }
 
-        waitForExpectations(timeout: 1, handler: nil)
+        waitForExpectations(timeout: 2, handler: nil)
     }
 
     func testSequenceLength() {
         XCTAssertEqual(peptide.sequenceString.count, 5)
     }
 
-//    func testSequenceLengthWithIllegalCharacters() {
-//        let protein = Protein(sequence: "D___WS83SD")
-//        XCTAssertEqual(protein.sequenceString.count, 5)
-//    }
+    func testSequenceLengthWithIllegalCharacters() {
+        let protein = Protein(sequence: "D___WS83SD")
+        XCTAssertEqual(protein.sequenceLength(), 5)
+    }
 
-//    func testFormuls() {
-//        let formula = Formula("AgCuRu4(H)2[CO]12{PPh3}2")
-//
-//        XCTAssertEqual(formula.countFor(element: "C"), 12)
-//    }
-//
-//    func testPeptideFormula() {
-//        let peptide = Peptide(sequence: "DWSSD")
-//
-//        XCTAssertEqual(peptide.formula.countFor(element: "C"), 25)
-//    }
-//
+    func testFormula() {
+        let formula = Formula("AgCuRu4(H)2[CO]12{PPh3}2")
+        XCTAssertEqual(formula.countFor(element: "C"), 12)
+    }
+
+    func testPeptideFormula() {
+        let peptide = Peptide(sequence: "DWSSD")
+        XCTAssertEqual(peptide.formula.countFor(element: "C"), 25)
+    }
+
     
 /*
                         MH+1 (av)   MH+1 (mono)
@@ -70,7 +69,7 @@ final class BioSwiftTests: XCTestCase {
     } // 609.563
 
     func testPeptideSerinePhosphorylationMonoisotopicMass() {
-        if let phos = modificationsLibrary.filter({ $0.name.contains("Phospho") == true }).first {
+        if let phos = modificationLibrary.filter({ $0.name.contains("Phospho") == true }).first {
             peptide.addModification(LocalizedModification(phos, at: 3)) // zero-based
             peptide.setAdducts(type: protonAdduct, count: 1)
 

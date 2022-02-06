@@ -59,7 +59,7 @@ extension Chain {
     }
     
     public var formula: Formula {
-        var f = Formula(residues.reduce("") { $0 + $1.formula.string })
+        var f = Formula(residues.reduce("") { $0 + $1.formula.formulaString })
         
         if let termini = termini {
             f += termini.first.formula + termini.last.formula

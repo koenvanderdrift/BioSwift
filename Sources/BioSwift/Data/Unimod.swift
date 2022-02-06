@@ -8,12 +8,7 @@
 
 import Foundation
 
-public var modificationsLibrary = [Modification]()
-public var aminoAcidsLibrary = [AminoAcid]()
-
-public class UnimodController {
-    public init() {}
-
+public struct UnimodController {
     public func loadUnimod(withCompletion completion: ((Bool) -> Void)? = nil) {
         DispatchQueue.global(qos: .userInitiated).async {
             debugPrint("Start parsing unimod.xml")
@@ -144,7 +139,7 @@ extension UnimodParser: XMLParserDelegate {
             if modificationName.isEmpty == false {
                 let mod = Modification(name: modificationName, elements: modificationElements, sites: modificationSites)
 
-                modificationsLibrary.append(mod)
+                modificationLibrary.append(mod)
 
                 modificationName.removeAll()
                 modificationSites.removeAll()
@@ -156,7 +151,7 @@ extension UnimodParser: XMLParserDelegate {
             if aminoAcidName.isEmpty == false {
                 let aa = AminoAcid(name: aminoAcidName, oneLetterCode: aminoAcidOneLetterCode, threeLetterCode: aminoAcidThreeLetterCode, elements: aminoAcidElements)
 
-                aminoAcidsLibrary.append(aa)
+                aminoAcidLibrary.append(aa)
                 
                 aminoAcidName.removeAll()
                 aminoAcidOneLetterCode.removeAll()
