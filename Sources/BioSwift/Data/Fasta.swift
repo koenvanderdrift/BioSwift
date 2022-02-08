@@ -55,7 +55,7 @@ public struct FastaDecoder: TopLevelDecoder {
             .components(separatedBy: ">")
             .dropFirst() {
             
-            records = Array(fastaArray).concurrentMap3( { fastaLine in
+            records = Array(fastaArray).concurrentMap( { fastaLine in
                 var result: FastaRecord = zeroFastaRecord
                 let decoder = _FastaDecoder(fastaLine)
                 
