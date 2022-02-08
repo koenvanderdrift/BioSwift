@@ -144,3 +144,39 @@ extension RandomAccessCollection {
     }
 }
 
+// This oughta be an optimization, but doesn't seem to be!
+extension Array {
+    /// Returns `self.map(transform)`, computed in parallel.
+    ///
+    /// - Requires: `transform` is safe to call from multiple threads.
+    func concurrentMap3<B>(_ transform: (Element) -> B) -> [B] {
+        withUnsafeBufferPointer { $0.concurrentMap2(transform) }
+    }
+}
+
+// Implementation with no unsafe constructs.
+extension RandomAccessCollection {
+    /// Returns `self.map(transform)`, computed in parallel.
+    ///
+    /// - Requires: `transform` is safe to call from multiple threads.
+    func concurrentMap4<B>(_ transform: (Element) -> B) -> [B] {
+        let batchSize = 4096 // Tune this
+        let n = self.count
+        let batchCount = (n + batchSize - 1) / batchSize
+        if batchCount < 2 { return self.map(transform) }
+
+        var batches = ThreadSafe(
+            ContiguousArray<[B]?>(repeating: nil, count: batchCount))
+
+        func batchStart(_ b: Int) -> Index {
+            index(startIndex, offsetBy: b * n / batchCount)
+        }
+        
+        DispatchQueue.concurrentPerform(iterations: batchCount) { b in
+            let batch = self[batchStart(b)..<batchStart(b + 1)].map(transform)
+            batches.atomically { $0[b] = batch }
+        }
+        
+        return batches.value.flatMap { $0! }
+    }
+}
