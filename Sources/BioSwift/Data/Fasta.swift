@@ -43,11 +43,11 @@ public func parseFastaDataFromBundle(from fileName: String) throws -> [FastaReco
 }
 
 public struct FastaDecoder: TopLevelDecoder {
-//
-// TODO: MORE ERROR CHECKING
-//
+    //
+    // TODO: MORE ERROR CHECKING
+    //
     public init() {}
-
+    
     public func decode<T : Decodable>(_ type: T.Type, from data: Data) throws -> T {
         var records: [FastaRecord] = []
         
@@ -55,10 +55,17 @@ public struct FastaDecoder: TopLevelDecoder {
             .components(separatedBy: ">")
             .dropFirst() {
             
-            records = try fastaArray.map( { fastaLine in
+            records = Array(fastaArray).concurrentMap( { fastaLine in
+                var result: FastaRecord = zeroFastaRecord
                 let decoder = _FastaDecoder(fastaLine)
                 
-                return try FastaRecord(from: decoder)
+                do {
+                    result = try FastaRecord(from: decoder)
+                } catch {
+                    debugPrint(error)
+                }
+                
+                return result
             })
         }
         
@@ -67,11 +74,11 @@ public struct FastaDecoder: TopLevelDecoder {
 }
 
 private final class _FastaDecoder: Decoder {
-
-//
-// via: https://talk.objc.io/episodes/S01E115-building-a-custom-xml-decoder
-//
-
+    
+    //
+    // via: https://talk.objc.io/episodes/S01E115-building-a-custom-xml-decoder
+    //
+    
     let codingPath: [CodingKey] = []
     let userInfo: [CodingUserInfoKey:Any] = [:]
     let input: String
@@ -204,7 +211,7 @@ private final class _FastaDecoder: Decoder {
         
         func parseHeader(input: String) -> FastaRecord {
             // https://www.uniprot.org/help/fasta-headers
-
+            
             let parser = FastaParser()
             
             if input.hasPrefix("sp") || input.hasPrefix("swiss") || input.hasPrefix("tr") {
@@ -216,7 +223,7 @@ private final class _FastaDecoder: Decoder {
             else if input.hasPrefix("ENS") {
                 return parser.parseEnsemble(input)
             }
-
+            
             return parser.parseUnspecified(input)
         }
     }
