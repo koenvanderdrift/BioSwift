@@ -114,3 +114,38 @@ extension Collection {
         return try filter(test).count
     }
 }
+
+extension Collection where SubSequence == Self {
+    // via: https://www.objc.io/blog/2019/02/05/a-scanner-alternative/
+    
+    @discardableResult mutating func scan(_ condition: (Element) -> Bool) -> Element? {
+        guard let f = first, condition(f) else {
+            return nil
+        }
+        
+        return removeFirst()
+    }
+
+    @discardableResult mutating func scan(count: Int) -> Self? {
+        let result = prefix(count)
+        guard result.count == count else {
+            return nil
+        }
+        
+        removeFirst(count)
+        
+        return result
+    }
+    
+    @discardableResult mutating func scan(until condition: (Element) -> Bool) -> Self? {
+        guard let index = self.firstIndex(where: condition) else {
+            return nil
+        }
+        
+        let result = self[..<index]
+        defer { self = self[index...] }
+        
+        return result
+    }
+}
+

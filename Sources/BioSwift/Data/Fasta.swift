@@ -246,55 +246,24 @@ public struct FastaParser {
          * SequenceVersion is the version number of the sequence.
          */
         
-        let scanner = Scanner(string: input)
+        var entry = input[...]
+
+        entry.scan(until: { $0 == "|" })
+        entry.scan(count: 1)
         
-        if #available(macOS 10.15, iOS 13, *) {
-            var acc, name, org: String?
-
-            let _ = scanner.scanUpToCharacters(from: CharacterSet(charactersIn: "|"))
-            let _ = scanner.scanString("|")
-            acc = scanner.scanUpToString("|")
-
-            let _ = scanner.scanUpToCharacters(from: CharacterSet(charactersIn: " "))
-            let _ = scanner.scanString(" ")
-            name = scanner.scanUpToString(" OS=")
-
-            let _ = scanner.scanUpToCharacters(from: CharacterSet(charactersIn: "="))
-            let _ = scanner.scanString("=")
-            org = scanner.scanUpToCharacters(from: CharacterSet(charactersIn: "="))
-            
-            if let temp = org {
-                org = String(temp.dropLast(3))
-            }
-
-            guard let id = acc, let n = name, let o = org else {
-                return FastaRecord(accession: "", name: "", organism: "", sequence: "")
-            }
-            
-            return FastaRecord(accession: id, name: n, organism: o, sequence: "")
+        let acc = entry.scan(until: { $0 == "|" })
+        
+        entry.scan(count: 1)
+        let name = entry.scan(until: { $0 == "=" })?.dropLast(3)
+        
+        entry.scan(count: 1)
+        let org = entry.scan(until: { $0 == "=" })?.dropLast(3)
+        
+        guard let id = acc, let n = name, let o = org else {
+            return FastaRecord(accession: "", name: "", organism: "", sequence: "")
         }
-        else {
-            var acc, name, org: NSString?
-            
-            scanner.scanUpTo("|", into: nil)
-            scanner.scanString("|", into: nil)
-            scanner.scanUpTo("|", into: &acc)
-            scanner.scanUpTo(" ", into: nil)
-            scanner.scanUpTo(" OS=", into: &name)
-            scanner.scanUpTo("=", into: nil)
-            scanner.scanString("=", into: nil)
-            scanner.scanUpTo("=", into: &org)
-
-            if let temp = org {
-                org = NSString(utf8String: temp.substring(to: temp.length - 3))
-            }
-
-            guard let id = acc as String?, let n = name as String?, let o = org as String? else {
-                return FastaRecord(accession: "", name: "", organism: "", sequence: "")
-            }
-            
-            return FastaRecord(accession: id, name: n, organism: o, sequence: "")
-        }
+        
+        return FastaRecord(accession: String(id), name: String(n), organism: String(o), sequence: "")
     }
     
     func parseIPI(_ input: String) -> FastaRecord {

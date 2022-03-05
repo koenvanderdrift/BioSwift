@@ -136,4 +136,13 @@ final class BioSwiftTests: XCTestCase {
     func testMethylAverageMass() { // CH3
        XCTAssertEqual(methyl.averageMass.roundedDecimalAsString(to: 4), "15.0346")
     }
+    
+    func testLoadFasta() {
+        let fasta = try? parseFastaDataFromBundle(from: "ecoli")
+        XCTAssertEqual(fasta?.count, 4392)
+        
+        let record = fasta?.first(where: { $0.accession == "P02919" })
+        XCTAssertEqual(record?.name, "PBPB_ECOLI Penicillin-binding protein 1B")
+        XCTAssertEqual(record?.organism, "Escherichia coli (strain K12)")
+    }
 }
