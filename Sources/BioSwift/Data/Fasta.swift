@@ -8,21 +8,7 @@
 import Foundation
 import Combine
 
-public struct FastaRecord: Codable, Hashable {
-    public let accession: String
-    public let name: String
-    public let organism: String
-    public let sequence: String
-    
-    public init(accession: String, name: String, organism: String, sequence: String) {
-        self.accession = accession
-        self.name = name
-        self.organism = organism
-        self.sequence = sequence
-    }
-}
-
-let zeroFastaRecord = FastaRecord(accession: "", name: "", organism: "", sequence: "")
+public let zeroFastaRecord = FastaRecord(accession: "", entryName: "", proteinName: "", organism: "", sequence: "")
 
 public func parseFastaData(from fileName: String) throws -> [FastaRecord] {
     do {
@@ -42,195 +28,86 @@ public func parseFastaDataFromBundle(from fileName: String) throws -> [FastaReco
     }
 }
 
-public struct FastaDecoder: TopLevelDecoder {
-    //
-    // TODO: MORE ERROR CHECKING
-    //
-    public init() {}
+public struct FastaRecord: Codable, Hashable, Identifiable {
+    // TODO add DNA/RNA fasta parsing
+    public let id: UUID
+    public let accession: String
+    public let entryName: String
+    public let proteinName: String
+    public let organism: String
+    public let sequence: String
     
-    public func decode<T : Decodable>(_ type: T.Type, from data: Data) throws -> T {
-        var records: [FastaRecord] = []
-        
-        if let fastaArray = String(data: data, encoding: .utf8)?
-            .components(separatedBy: ">")
-            .dropFirst() {
-            
-            records = Array(fastaArray).concurrentMap( { fastaLine in
-                var result: FastaRecord = zeroFastaRecord
-                let decoder = _FastaDecoder(fastaLine)
-                
-                do {
-                    result = try FastaRecord(from: decoder)
-                } catch {
-                    debugPrint(error)
-                }
-                
-                return result
-            })
-        }
-        
-        return records as! T
+    public init(accession: String, entryName: String, proteinName: String, organism: String, sequence: String) {
+        self.id = UUID()
+        self.accession = accession
+        self.entryName = entryName
+        self.proteinName = proteinName
+        self.organism = organism
+        self.sequence = sequence
     }
 }
 
-private final class _FastaDecoder: Decoder {
-    
-    //
-    // via: https://talk.objc.io/episodes/S01E115-building-a-custom-xml-decoder
-    //
-    
-    let codingPath: [CodingKey] = []
-    let userInfo: [CodingUserInfoKey:Any] = [:]
-    let input: String
-    
-    init(_ input: String) {
-        self.input = input
-    }
-    
-    func container<Key>(keyedBy type: Key.Type) throws -> KeyedDecodingContainer<Key> where Key : CodingKey {
-        return KeyedDecodingContainer(KDC(input))
-    }
-    
-    func unkeyedContainer() throws -> UnkeyedDecodingContainer {
-        fatalError("TODO")
-    }
-    
-    func singleValueContainer() throws -> SingleValueDecodingContainer {
-        fatalError("TODO")
-    }
-    
-    struct KDC<Key: CodingKey>: KeyedDecodingContainerProtocol {
-        var codingPath: [CodingKey] = []
-        var allKeys: [Key] = []
-        
-        let lines: [String]
-        var record: FastaRecord = zeroFastaRecord
-        
-        init(_ input: String) {
-            self.lines = input.components(separatedBy: "\n")
-            
-            if let header = lines.first {
-                self.record = parseHeader(input: header)
-            }
-        }
-        
-        func contains(_ key: Key) -> Bool {
-            return true
-        }
-        
-        func decodeNil(forKey key: Key) throws -> Bool {
-            return true
-        }
-        
-        func decode(_ type: Bool.Type, forKey key: Key) throws -> Bool {
-            return true
-        }
-        
-        func decode(_ type: String.Type, forKey key: Key) throws -> String {
-            switch key.stringValue {
-            case "accession":
-                return self.record.accession
-            case "name":
-                return self.record.name
-            case "organism":
-                return self.record.organism
-            case "sequence":
-                return lines.dropFirst().joined()
-            default:
-                return ""
-            }
-        }
-        
-        func decode(_ type: Double.Type, forKey key: Key) throws -> Double {
-            return 0
-        }
-        
-        func decode(_ type: Float.Type, forKey key: Key) throws -> Float {
-            return 0
-        }
-        
-        func decode(_ type: Int.Type, forKey key: Key) throws -> Int {
-            return 0
-        }
-        
-        func decode(_ type: Int8.Type, forKey key: Key) throws -> Int8 {
-            return 0
-        }
-        
-        func decode(_ type: Int16.Type, forKey key: Key) throws -> Int16 {
-            return 0
-        }
-        
-        func decode(_ type: Int32.Type, forKey key: Key) throws -> Int32 {
-            return 0
-        }
-        
-        func decode(_ type: Int64.Type, forKey key: Key) throws -> Int64 {
-            return 0
-        }
-        
-        func decode(_ type: UInt.Type, forKey key: Key) throws -> UInt {
-            return 0
-        }
-        
-        func decode(_ type: UInt8.Type, forKey key: Key) throws -> UInt8 {
-            return 0
-        }
-        
-        func decode(_ type: UInt16.Type, forKey key: Key) throws -> UInt16 {
-            return 0
-        }
-        
-        func decode(_ type: UInt32.Type, forKey key: Key) throws -> UInt32 {
-            return 0
-        }
-        
-        func decode(_ type: UInt64.Type, forKey key: Key) throws -> UInt64 {
-            return 0
-        }
-        
-        func decode<T>(_ type: T.Type, forKey key: Key) throws -> T where T : Decodable {
-            fatalError("TODO")
-        }
-        
-        func nestedContainer<NestedKey>(keyedBy type: NestedKey.Type, forKey key: Key) throws -> KeyedDecodingContainer<NestedKey> where NestedKey : CodingKey {
-            fatalError("TODO")
-        }
-        
-        func nestedUnkeyedContainer(forKey key: Key) throws -> UnkeyedDecodingContainer {
-            fatalError("TODO")
-        }
-        
-        func superDecoder() throws -> Decoder {
-            fatalError("TODO")
-        }
-        
-        func superDecoder(forKey key: Key) throws -> Decoder {
-            fatalError("TODO")
-        }
-        
-        func parseHeader(input: String) -> FastaRecord {
-            // https://www.uniprot.org/help/fasta-headers
-            
-            let parser = FastaParser()
-            
-            if input.hasPrefix("sp") || input.hasPrefix("swiss") || input.hasPrefix("tr") {
-                return parser.parseSwissProt(input)
-            }
-            else if input.hasPrefix("IPI") {
-                return parser.parseIPI(input)
-            }
-            else if input.hasPrefix("ENS") {
-                return parser.parseEnsemble(input)
-            }
-            
-            return parser.parseUnspecified(input)
-        }
-    }
-}
+private final class FastaParser {
+    func parse(_ input: String) -> FastaRecord {
+        // https://www.uniprot.org/help/fasta-headers
 
-public struct FastaParser {
-    func parseSwissProt(_ input: String) -> FastaRecord {
+        var input = input[...]
+        
+        if input.hasPrefix(">") {
+            input.remove(at: input.startIndex)
+        }
+
+        if input.contains("ups|") {
+            return parseUPS(input)
+        }
+        
+        else if input.hasPrefix("sp") || input.hasPrefix("swiss") || input.hasPrefix("tr") {
+            return parseSwissProt(input)
+        }
+        
+        else if input.hasPrefix("IPI") {
+            return parseIPI(input)
+        }
+        
+        else if input.hasPrefix("ENS") {
+            return parseEnsemble(input)
+        }
+        
+        return parseUnspecified(input)
+    }
+
+    func parseUPS(_ input: Substring) -> FastaRecord {
+        // >P02768ups|ALBU_HUMAN_UPS Serum albumin (Chain 26-609) - Homo sapiens (Human) AHKSEVAHRFKDLGEENF…
+        var entry = input
+        var proteinName: Substring = ""
+        var org: Substring = ""
+        
+        let acc = entry.scan(until: { $0 == "|" })?.dropLast(3)
+        let _ = entry.scan(count: 1)
+        let entryName = entry.scan(until: { $0 == " " })
+
+        if let nameRange = entry.range(of: " - ") {
+            let nsRange = NSRange(nameRange, in: entry)
+            proteinName = entry.scan(count: nsRange.location) ?? ""
+        }
+        
+        let _ = entry.scan(count: 3)
+        
+        if let organismRange = entry.range(of: " ", options: .backwards) {
+            let nsRange = NSRange(organismRange, in: entry)
+            org = entry.scan(count: nsRange.location) ?? ""
+        }
+        
+        let seq = entry
+        
+        return FastaRecord(accession: String(acc ?? ""),
+                           entryName: String(entryName ?? "" ),
+                           proteinName: String(proteinName),
+                           organism: String(org),
+                           sequence: String(seq))
+    }
+    
+    func parseSwissProt(_ input: Substring) -> FastaRecord {
         /*
          * >db|UniqueIdentifier|EntryName ProteinName OS=OrganismName OX=OrganismIdentifier [GN=GeneName ]PE=ProteinExistence SV=SequenceVersion
          * >tr|Q8ADX7|Q8ADX7_9HIV1 Envelope glycoprotein gp160 OS=Human immunodeficiency virus 1 OX=11676 GN=env PE=3 SV=1
@@ -245,49 +122,218 @@ public struct FastaParser {
          * ProteinExistence is the numerical value describing the evidence for the existence of the protein.
          * SequenceVersion is the version number of the sequence.
          */
-        
+                
         var entry = input[...]
 
         entry.scan(until: { $0 == "|" })
         entry.scan(count: 1)
         
         let acc = entry.scan(until: { $0 == "|" })
-        
         entry.scan(count: 1)
-        let name = entry.scan(until: { $0 == "=" })?.dropLast(3)
-        
+
+        let entryName = entry.scan(until: { $0 == " " })
         entry.scan(count: 1)
+        
+        let proteinName = entry.scan(until: { $0 == "=" })?.dropLast(3)
+        entry.scan(count: 1)
+        
         let org = entry.scan(until: { $0 == "=" })?.dropLast(3)
+        let _ = entry.scan(until: { $0 == "\n" })
+
+        let seq = entry
         
-        guard let id = acc, let n = name, let o = org else {
-            return FastaRecord(accession: "", name: "", organism: "", sequence: "")
-        }
-        
-        return FastaRecord(accession: String(id), name: String(n), organism: String(o), sequence: "")
+        return FastaRecord(accession: String(acc ?? ""),
+                           entryName: String(entryName ?? ""),
+                           proteinName: String(proteinName ?? ""),
+                           organism: String(org ?? ""),
+                           sequence: String(seq))
     }
     
-    func parseIPI(_ input: String) -> FastaRecord {
+    func parseIPI(_ input: Substring) -> FastaRecord {
         // IPI00300415 IPI:IPI00300415.9|SWISS-PROT:Q8N431-1|TREMBL:D3DWQ7|ENSEMBL:ENSP00000354963;ENSP00000377037|REFSEQ:NP_778232|H-INV:HIT000094619|VEGA:OTTHUMP00000161522;OTTHUMP00000161538 Tax_Id=9606 Gene_Symbol=RASGEF1C Isoform 1 of Ras-GEF domain-containing family member 1C
         let info = input.components(separatedBy: "|")
         let acc = info[1]
-        let name = info.last!
+        let proteinName = info.last ?? ""
         
-        return FastaRecord(accession: acc, name: name, organism: "", sequence: "")
+        return FastaRecord(accession: acc, entryName: "", proteinName: proteinName, organism: "", sequence: "")
     }
     
-    func parseEnsemble(_ input: String) -> FastaRecord {
+    func parseEnsemble(_ input: Substring) -> FastaRecord {
         // ENSP00000391493 pep:known chromosome:GRCh37:2:160609001:160624471:1 gene:ENSG00000136536 transcript:ENST00000420397
         let info = input.components(separatedBy: " ")
-        let name = info[0]
+        let proteinName = info[0]
         
-        return FastaRecord(accession: "", name: name, organism: "", sequence: "")
+        return FastaRecord(accession: "", entryName: "", proteinName: proteinName, organism: "", sequence: "")
     }
     
-    func parseUnspecified(_ input: String) -> FastaRecord {
+    func parseUnspecified(_ input: Substring) -> FastaRecord {
         // DROME_HH_Q02936
         // DECOY_IPI00339224 Decoy sequence
-        let name = input.replacingOccurrences(of: "_", with: " ")
+        let proteinName = input.replacingOccurrences(of: "_", with: " ")
         
-        return FastaRecord(accession: "", name: name, organism: "", sequence: "")
+        return FastaRecord(accession: "", entryName: "", proteinName: proteinName, organism: "", sequence: "")
+    }
+}
+
+public final class FastaDecoder: TopLevelDecoder {
+    public init() {}
+    
+    public func decode<T : Decodable>(_ type: T.Type, from data: Data) throws -> T {
+        var records: [FastaRecord] = []
+        
+        if let fastaArray = String(data: data, encoding: .ascii)?.components(separatedBy: "\n>") {
+            records = fastaArray.concurrentMap( { fastaLine in
+                do {
+                    let decoder = _FastaDecoder(fastaLine)
+                    return try FastaRecord(from: decoder)
+                } catch {
+                    // TODO
+                    debugPrint(error)
+                }
+
+                return zeroFastaRecord
+            })
+        }
+        
+        return records as! T
+    }
+}
+
+private final class _FastaDecoder {
+    // via: https://talk.objc.io/episodes/S01E115-building-a-custom-xml-decoder
+
+    let codingPath: [CodingKey] = []
+    let userInfo: [CodingUserInfoKey : Any] = [:]
+    let input: String
+  
+    init(_ input: String) {
+        self.input = input
+    }
+}
+
+extension _FastaDecoder: Decoder {
+    func container<Key>(keyedBy type: Key.Type) throws -> KeyedDecodingContainer<Key> where Key : CodingKey {
+        return KeyedDecodingContainer(KDC(input))
+    }
+    
+    func unkeyedContainer() throws -> UnkeyedDecodingContainer {
+        throw DecodingError.valueNotFound(UnkeyedDecodingContainer.self, .init(codingPath: [], debugDescription: "no unkeyed container", underlyingError: nil))
+    }
+    
+    func singleValueContainer() throws -> SingleValueDecodingContainer {
+        throw DecodingError.valueNotFound(SingleValueDecodingContainer.self, .init(codingPath: [], debugDescription: "no single value container", underlyingError: nil))
+    }
+    
+    class KDC<Key: CodingKey>: KeyedDecodingContainerProtocol {
+        let codingPath: [CodingKey] = []
+        let allKeys: [Key] = []
+        
+        let record: FastaRecord
+        let parser = FastaParser()
+        
+        init(_ input: String) {
+            self.record = parser.parse(input)
+        }
+        
+        func contains(_ key: Key) -> Bool {
+            return allKeys.contains(where: { $0.stringValue == key.stringValue })
+        }
+        
+        func decodeNil(forKey key: Key) throws -> Bool {
+            if contains(key) {
+                return false
+            } else {
+                throw DecodingError.keyNotFound(key, .init(codingPath: [], debugDescription: "key not found", underlyingError: nil))
+            }
+        }
+        
+        func decode(_ type: Bool.Type, forKey key: Key) throws -> Bool {
+            throw DecodingError.typeMismatch(Bool.self, .init(codingPath: [], debugDescription: "type mismatch", underlyingError: nil))
+        }
+        
+        func decode(_ type: String.Type, forKey key: Key) throws -> String {
+            switch key.stringValue {
+            case "accession":
+                return self.record.accession
+            case "entryName":
+                return self.record.entryName
+            case "proteinName":
+                return self.record.proteinName
+            case "organism":
+                return self.record.organism
+            case "sequence":
+                return self.record.sequence
+            default:
+                return ""
+            }
+        }
+        
+        func decode(_ type: Double.Type, forKey key: Key) throws -> Double {
+            throw DecodingError.typeMismatch(Double.self, .init(codingPath: [], debugDescription: "type mismatch", underlyingError: nil))
+        }
+        
+        func decode(_ type: Float.Type, forKey key: Key) throws -> Float {
+            throw DecodingError.typeMismatch(Float.self, .init(codingPath: [], debugDescription: "type mismatch", underlyingError: nil))
+        }
+        
+        func decode(_ type: Int.Type, forKey key: Key) throws -> Int {
+            throw DecodingError.typeMismatch(Int.self, .init(codingPath: [], debugDescription: "type mismatch", underlyingError: nil))
+        }
+        
+        func decode(_ type: Int8.Type, forKey key: Key) throws -> Int8 {
+            throw DecodingError.typeMismatch(Int8.self, .init(codingPath: [], debugDescription: "type mismatch", underlyingError: nil))
+        }
+        
+        func decode(_ type: Int16.Type, forKey key: Key) throws -> Int16 {
+            throw DecodingError.typeMismatch(Int16.self, .init(codingPath: [], debugDescription: "type mismatch", underlyingError: nil))
+        }
+        
+        func decode(_ type: Int32.Type, forKey key: Key) throws -> Int32 {
+            throw DecodingError.typeMismatch(Int32.self, .init(codingPath: [], debugDescription: "type mismatch", underlyingError: nil))
+        }
+        
+        func decode(_ type: Int64.Type, forKey key: Key) throws -> Int64 {
+            throw DecodingError.typeMismatch(Int64.self, .init(codingPath: [], debugDescription: "type mismatch", underlyingError: nil))
+        }
+        
+        func decode(_ type: UInt.Type, forKey key: Key) throws -> UInt {
+            throw DecodingError.typeMismatch(UInt.self, .init(codingPath: [], debugDescription: "type mismatch", underlyingError: nil))
+        }
+        
+        func decode(_ type: UInt8.Type, forKey key: Key) throws -> UInt8 {
+            throw DecodingError.typeMismatch(UInt8.self, .init(codingPath: [], debugDescription: "type mismatch", underlyingError: nil))
+        }
+        
+        func decode(_ type: UInt16.Type, forKey key: Key) throws -> UInt16 {
+            throw DecodingError.typeMismatch(UInt16.self, .init(codingPath: [], debugDescription: "type mismatch", underlyingError: nil))
+        }
+        
+        func decode(_ type: UInt32.Type, forKey key: Key) throws -> UInt32 {
+            throw DecodingError.typeMismatch(UInt32.self, .init(codingPath: [], debugDescription: "type mismatch", underlyingError: nil))
+        }
+        
+        func decode(_ type: UInt64.Type, forKey key: Key) throws -> UInt64 {
+            throw DecodingError.typeMismatch(UInt64.self, .init(codingPath: [], debugDescription: "type mismatch", underlyingError: nil))
+        }
+        
+        func decode<T>(_ type: T.Type, forKey key: Key) throws -> T where T : Decodable {
+            return UUID() as! T
+        }
+        
+        func nestedContainer<NestedKey>(keyedBy type: NestedKey.Type, forKey key: Key) throws -> KeyedDecodingContainer<NestedKey> where NestedKey : CodingKey {
+            throw DecodingError.valueNotFound(KeyedDecodingContainer<NestedKey>.self, .init(codingPath: [], debugDescription: "no nested container", underlyingError: nil))
+        }
+        
+        func nestedUnkeyedContainer(forKey key: Key) throws -> UnkeyedDecodingContainer {
+            throw DecodingError.valueNotFound(UnkeyedDecodingContainer.self, .init(codingPath: [], debugDescription: "no nested container", underlyingError: nil))
+        }
+        
+        func superDecoder() throws -> Decoder {
+            throw DecodingError.valueNotFound(Decoder.self, .init(codingPath: [], debugDescription: "no super decoder", underlyingError: nil))
+        }
+        
+        func superDecoder(forKey key: Key) throws -> Decoder {
+            throw DecodingError.valueNotFound(Decoder.self, .init(codingPath: [], debugDescription: "no super decoder", underlyingError: nil))
+        }
     }
 }

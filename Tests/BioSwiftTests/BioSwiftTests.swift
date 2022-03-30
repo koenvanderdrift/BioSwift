@@ -142,7 +142,9 @@ final class BioSwiftTests: XCTestCase {
         XCTAssertEqual(fasta?.count, 4392)
         
         let record = fasta?.first(where: { $0.accession == "P02919" })
-        XCTAssertEqual(record?.name, "PBPB_ECOLI Penicillin-binding protein 1B")
+        
+        XCTAssertEqual(record?.entryName, "PBPB_ECOLI")
+        XCTAssertEqual(record?.proteinName, "Penicillin-binding protein 1B")
         XCTAssertEqual(record?.organism, "Escherichia coli (strain K12)")
     }
 }
