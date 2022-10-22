@@ -43,8 +43,8 @@ public class Enzyme: Codable {
     }
 }
 
-public extension Enzyme {
-    func regex() -> String {
+extension Enzyme {
+    public func regex() -> String {
         var regex = ""
 
         if cleaveDirection == "C" {

@@ -6,8 +6,8 @@ public protocol Structure: ChargedMass {
     var adducts: [Adduct] { get set }
 }
 
-public extension Structure {
-    func calculateMasses() -> MassContainer {
+extension Structure {
+    public func calculateMasses() -> MassContainer {
         return mass(of: formula.elements)
     }
 }

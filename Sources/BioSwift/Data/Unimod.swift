@@ -23,7 +23,7 @@ public struct UnimodController {
             } else {
                 debugPrint("Failed parsing unimod.xml")
             }
-
+            
             completion?(success)
         }
     }
@@ -71,14 +71,14 @@ public class UnimodParser: NSObject {
     var isNeutralLoss = false
 
     let rightArrow = "\u{2192}"
-
+    
     public func parseXML() -> Bool {
         var result = false
 
         guard let url = Bundle.module.url(forResource: "unimod", withExtension: "xml") else {
             fatalError("Unable to find unimod.xml")
         }
-
+        
         if let parser = XMLParser(contentsOf: url) {
             skipTitleStrings = [cation, unknown, xlink, atypeion, "2H", "13C", "15N"]
 
@@ -99,23 +99,20 @@ extension UnimodParser: XMLParserDelegate {
             isModification = true
 
             if let title = attributeDict[titleAttributeKey],
-               skipTitleStrings.contains(where: title.contains) == false
-            {
+                skipTitleStrings.contains(where: title.contains) == false {
                 modificationName = title.replacingOccurrences(of: "->", with: " " + rightArrow + " ")
             }
         } else if elementName == specificity {
             if let site = attributeDict[siteAttributeKey],
-               let classification = attributeDict[classificationAttributeKey], classification.contains("Isotopic label") == false
-            {
+                let classification = attributeDict[classificationAttributeKey], classification.contains("Isotopic label") == false {
                 modificationSites.append(site)
             }
         } else if elementName == neutralLoss {
             isNeutralLoss = true
         } else if elementName == element {
             if isNeutralLoss == false,
-               let symbol = attributeDict[symbolAttributeKey],
-               let number = attributeDict[numberAttributeKey]
-            {
+                let symbol = attributeDict[symbolAttributeKey],
+                let number = attributeDict[numberAttributeKey] {
                 if isAminoAcid == true {
                     aminoAcidElements[symbol] = Int(number)
                 } else if isModification == true {
@@ -126,9 +123,8 @@ extension UnimodParser: XMLParserDelegate {
             isAminoAcid = true
 
             if let title = attributeDict[titleAttributeKey],
-               let threeLetterCode = attributeDict[threeLetterAttributeKey],
-               let name = attributeDict[fullNameAttributeKey]
-            {
+                let threeLetterCode = attributeDict[threeLetterAttributeKey],
+                let name = attributeDict[fullNameAttributeKey] {
                 aminoAcidName = name
                 aminoAcidOneLetterCode = title
                 aminoAcidThreeLetterCode = threeLetterCode
@@ -156,7 +152,7 @@ extension UnimodParser: XMLParserDelegate {
                 let aa = AminoAcid(name: aminoAcidName, oneLetterCode: aminoAcidOneLetterCode, threeLetterCode: aminoAcidThreeLetterCode, elements: aminoAcidElements)
 
                 aminoAcidLibrary.append(aa)
-
+                
                 aminoAcidName.removeAll()
                 aminoAcidOneLetterCode.removeAll()
                 aminoAcidThreeLetterCode.removeAll()

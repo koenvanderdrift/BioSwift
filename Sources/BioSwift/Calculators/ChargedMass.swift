@@ -18,39 +18,39 @@ public protocol ChargedMass: Mass {
     var adducts: [Adduct] { get set }
 }
 
-public extension ChargedMass {
-    var charge: Int {
+extension ChargedMass {
+    public var charge: Int {
         return adducts.reduce(0) { $0 + $1.charge }
     }
-
-    mutating func setAdducts(type: Adduct, count: Int) {
+    
+    public mutating func setAdducts(type: Adduct, count: Int) {
         adducts = [Adduct](repeating: type, count: count)
     }
-
-    func pseudomolecularIon() -> MassContainer {
+    
+    public func pseudomolecularIon() -> MassContainer {
         return chargedMass()
     }
-
-    func chargedMass() -> MassContainer {
+    
+    public func chargedMass() -> MassContainer {
         let result = calculateMasses()
-
+        
         if adducts.count > 0 {
             let chargedMass = (
-                result + adducts.map { $0.group.masses - ($0.charge * electron.masses) }
+                result + adducts.map { $0.group.masses - ( $0.charge * electron.masses ) }
                     .reduce(zeroMass) { $0 + $1 }
-            ) / adducts.count
-
+                ) / adducts.count
+            
             return chargedMass
         }
-
+        
         return result
     }
 }
 
-public extension Collection where Element: Chain & ChargedMass {
-    func charge(minCharge: Int, maxCharge: Int) -> [Element] {
+extension Collection where Element: Chain & ChargedMass {
+    public func charge(minCharge: Int, maxCharge: Int) -> [Element] {
         return flatMap { sequence in
-            (minCharge ... maxCharge).map { charge in
+            (minCharge...maxCharge).map { charge in
                 var chargedSequence = sequence
                 chargedSequence.adducts.append(contentsOf: repeatElement(protonAdduct, count: charge))
 

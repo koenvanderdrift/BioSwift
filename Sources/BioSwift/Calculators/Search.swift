@@ -21,12 +21,12 @@ public enum MassToleranceType: String {
     case mmu
 }
 
-public extension MassToleranceType {
-    var minValue: Double {
+extension MassToleranceType {
+    public var minValue: Double {
         return 0.0
     }
 
-    var maxValue: Double {
+    public var maxValue: Double {
         switch self {
         case .ppm:
             return 10000.0
@@ -93,10 +93,10 @@ public struct MassSearchParameters {
     }
 }
 
-public extension Chain {
-    func searchSequence<T: RangedChain>(searchString: String) -> [T] {
+extension Chain {
+    public func searchSequence<T: RangedChain>(searchString: String) -> [T] {
         var result = [T]()
-
+        
         for range in sequenceString.sequenceRanges(of: searchString) {
             if var sub: T = subChain(with: range) as? T {
                 sub.rangeInParent = range
@@ -108,31 +108,31 @@ public extension Chain {
     }
 }
 
-public extension Chain {
-    func searchMass<T: RangedChain & ChargedMass>(params: MassSearchParameters) -> [T] {
+extension Chain {
+    public func searchMass<T: RangedChain & ChargedMass>(params: MassSearchParameters) -> [T] {
         var result = [T]()
 
         let massRange = params.massRange()
-        let count = numberOfResidues()
-
+        let count = self.numberOfResidues()
+        
         var start = 0
-
+        
         // Nterm: 1102.3525
         // 807.9348
         // Cterm: 979.0476
-
+        
         while start < count {
-            for index in start ..< count {
+            for index in start..<count {
                 guard var sub: T = subChain(from: start, to: index) as? T else { break }
                 sub.adducts = adducts
-                sub.rangeInParent = start ... index
-
+                sub.rangeInParent = start...index
+                
                 let chargedMass = sub.chargedMass()
-
+                
                 if chargedMass.averageMass > 1.05 * massRange.upperBound {
                     break
                 }
-
+                
                 switch params.massType {
                 case .monoisotopic:
                     if massRange.contains(chargedMass.monoisotopicMass) {
@@ -148,7 +148,7 @@ public extension Chain {
                     }
                 }
             }
-
+            
             start += 1
         }
 

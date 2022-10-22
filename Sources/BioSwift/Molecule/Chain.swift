@@ -10,18 +10,18 @@ import Foundation
 
 public typealias ChainRange = ClosedRange<Int>
 
-public let zeroChainRange: ChainRange = -1 ... 0
+public let zeroChainRange: ChainRange = -1...0
 public let zeroNSRange = NSMakeRange(NSNotFound, 0)
 
-public extension NSRange {
-    init(from range: ChainRange) {
+extension NSRange {
+    public init(from range: ChainRange) {
         self = NSMakeRange(range.lowerBound, range.upperBound - range.lowerBound + 1)
     }
+    
+    public func chainRange() -> ChainRange {
+        guard self.location != NSNotFound && self.length > 0 else { return zeroChainRange }
 
-    func chainRange() -> ChainRange {
-        guard location != NSNotFound, length > 0 else { return zeroChainRange }
-
-        return lowerBound ... upperBound - 1
+        return self.lowerBound...self.upperBound - 1
     }
 }
 
@@ -32,168 +32,168 @@ public protocol RangedChain: Chain {
 public protocol Chain: Structure {
     associatedtype ResidueType: Residue
 
-    var symbolLibrary: [Symbol] { get }
-
+    var symbolLibrary: [Symbol]  { get }
+    
     var residues: [ResidueType] { get set }
 
-    var termini: (first: ResidueType, last: ResidueType)? { get set }
+    var termini: (first: ResidueType, last: ResidueType)?  { get set }
     var adducts: [Adduct] { get set }
 
     var modifications: [LocalizedModification] { get set }
-
+    
     init(sequence: String)
     init(residues: [ResidueType])
 }
 
-public extension Chain {
-    static func == (lhs: Self, rhs: Self) -> Bool {
+extension Chain {
+    public static func == (lhs: Self, rhs: Self) -> Bool {
         return lhs.sequenceString == rhs.sequenceString && lhs.name == rhs.name
     }
-
-    var symbolSequence: [Symbol] {
+    
+    public var symbolSequence: [Symbol] {
         return residues
     }
-
-    var sequenceString: String {
+    
+    public var sequenceString: String {
         return residues.map { $0.identifier }.joined()
     }
-
-    var formula: Formula {
+    
+    public var formula: Formula {
         var f = Formula(residues.reduce("") { $0 + $1.formula.formulaString })
-
+        
         if let termini = termini {
             f += termini.first.formula + termini.last.formula
         } else {
             f += water.formula
         }
-
+        
         return f
     }
-
-    var symbolSet: SymbolSet? {
+    
+    public var symbolSet: SymbolSet? {
         return SymbolSet(array: symbolSequence)
     }
-
-    mutating func update(with sequence: String, in editedRange: NSRange, changeInLength: Int) {
+    
+    public mutating func update(with sequence: String, in editedRange: NSRange, changeInLength: Int) {
         if sequence == sequenceString {
             return
         }
-
+        
         switch changeInLength {
         case Int.min ..< 0:
             let range = editedRange.location ..< editedRange.location - changeInLength
             residues.removeSubrange(range)
-
+            
         case 0 ..< Int.max:
             let range = editedRange.location ..< editedRange.location + changeInLength
             let s = String(sequence[range])
-
+            
             let newResidues = createResidues(from: s)
             residues.insert(contentsOf: newResidues, at: editedRange.location)
-
+            
         default:
             fatalError("TODO")
         }
     }
-
-    func createResidues(from string: String) -> [ResidueType] {
+    
+    public func createResidues(from string: String) -> [ResidueType] {
         return string.compactMap { char in
             symbolLibrary.first(where: { $0.identifier == String(char) }) as? ResidueType
         }
     }
-
-    func symbol(at index: Int) -> Symbol? {
+    
+    public func symbol(at index: Int) -> Symbol? {
         return symbolSequence[index]
     }
-
-    func residue(at index: Int) -> Residue? {
+    
+    public func residue(at index: Int) -> Residue? {
         return residues[index]
     }
-
-    func residueLocations(with identifiers: [String]) -> [Int] {
+    
+    public func residueLocations(with identifiers: [String]) -> [Int] {
         let result = identifiers.map { i in
             residues.indices.filter { (residues[$0].identifier) == i }
         }
-
+        
         return result.flatMap { $0 }
     }
-
-    func numberOfResidues() -> Int {
+    
+    public func numberOfResidues() -> Int {
         return residues.count
     }
-
-    func subChain(with range: ChainRange) -> Self? {
+    
+    public func subChain(with range: ChainRange) -> Self? {
         guard let residues = residueChain(with: range) else { return nil }
-
-        var sub = Self(residues: residues)
-        sub.termini = termini
-
+        
+        var sub = Self.init(residues: residues)
+        sub.termini = self.termini
+        
         if range.lowerBound == 0 {
-            sub.termini?.first.modification = termini?.first.modification
+            sub.termini?.first.modification = self.termini?.first.modification
         }
-
+        
         if range.upperBound == numberOfResidues() {
-            sub.termini?.last.modification = termini?.last.modification
+            sub.termini?.last.modification = self.termini?.last.modification
         }
-
+        
         return sub
     }
 
-    func subChain(with range: NSRange) -> Self? {
+    public func subChain(with range: NSRange) -> Self? {
         return subChain(with: range.chainRange())
     }
-
-    func subChain(from: Int, to: Int) -> Self? {
+    
+    public func subChain(from: Int, to: Int) -> Self? {
         guard from < numberOfResidues(), to >= from else { return nil }
-
-        return subChain(with: from ... to)
+        
+        return subChain(with: from...to)
     }
 
-    func residueChain(with range: ChainRange) -> [ResidueType]? {
+    public func residueChain(with range: ChainRange) -> [ResidueType]? {
         guard range != zeroChainRange else { return nil }
-
+        
         return Array(residues[range])
     }
 
-    func residueChain(with range: NSRange) -> [ResidueType]? {
+    public func residueChain(with range: NSRange) -> [ResidueType]? {
         return residueChain(with: range.chainRange())
     }
-
-    func residueChain(from: Int, to: Int) -> [ResidueType]? {
+    
+    public func residueChain(from: Int, to: Int) -> [ResidueType]? {
         guard from < numberOfResidues(), to >= from else { return nil }
 
-        return residueChain(with: from ... to)
+        return residueChain(with: from...to)
     }
-
-    mutating func setTermini(first: ResidueType, last: ResidueType) {
+    
+    public mutating func setTermini(first: ResidueType, last: ResidueType) {
         termini = (first: first, last: last)
     }
-
-    func terminalMasses() -> MassContainer {
+    
+    public func terminalMasses() -> MassContainer {
         var result = zeroMass
-
+        
         if let first = termini?.first {
             result += first.masses
         }
-
+        
         if let last = termini?.last {
             result += last.masses
         }
-
+        
         return result
     }
-
-    func allowedModifications(at location: Int) -> [Modification]? {
+    
+    public func allowedModifications(at location: Int) -> [Modification]? {
         if let residue = residue(at: location) {
             return residue.allowedModifications()
         }
-
+        
         return nil
     }
-
-    func getModifications() -> [Modification] {
+    
+    public func getModifications() -> [Modification] {
         var result: [Modification] = []
-
+        
         residues.forEach {
             if let mod = $0.modification {
                 result.append(mod)
@@ -202,26 +202,26 @@ public extension Chain {
 
         return result
     }
-
-    mutating func setModifcations(_ mods: [LocalizedModification]) {
+    
+    public mutating func setModifcations(_ mods: [LocalizedModification]) {
         mods.forEach {
             addModification($0)
         }
     }
-
-    mutating func addModification(_ mod: LocalizedModification) {
+    
+    public mutating func addModification(_ mod: LocalizedModification) {
         residues.modifyElement(atIndex: mod.location) { residue in
             residue.setModification(mod.modification)
         }
     }
-
-    mutating func removeModification(at location: Int) {
+    
+    public mutating func removeModification(at location: Int) {
         residues.modifyElement(atIndex: location) { residue in
             residue.setModification(nil)
         }
     }
-
-    func modification(at location: Int) -> Modification? {
+    
+    public func modification(at location: Int) -> Modification? {
         return residue(at: location)?.modification
     }
 }

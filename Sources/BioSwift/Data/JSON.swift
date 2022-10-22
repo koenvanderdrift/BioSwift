@@ -12,7 +12,8 @@ public func parseJSONData<A: Decodable>(from fileName: String) throws -> [A] {
     do {
         let data = try loadData(from: fileName, withExtension: "json")
         return try JSONDecoder().decode([A].self, from: data)
-    } catch {
+    }
+    catch {
         throw LoadError.fileDecodingFailed(name: fileName)
     }
 }
@@ -21,7 +22,9 @@ public func parseJSONDataFromBundle<A: Decodable>(from fileName: String) throws 
     do {
         let data = try loadDataFromBundle(from: fileName, withExtension: "json")
         return try JSONDecoder().decode([A].self, from: data)
-    } catch {
+    }
+    catch {
         throw LoadError.fileDecodingFailed(name: fileName)
     }
 }
+

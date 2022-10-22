@@ -14,12 +14,12 @@ public protocol Residue: Structure, Symbol, Modifiable {
     var modification: Modification? { get set }
 }
 
-public extension Residue {
-    var identifier: String {
+extension Residue {
+    public var identifier: String {
         return oneLetterCode
     }
 
-    func calculateMasses() -> MassContainer {
+    public func calculateMasses() -> MassContainer {
         return mass(of: formula.elements) + modificationMasses()
     }
 }
