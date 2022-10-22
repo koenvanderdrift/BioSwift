@@ -19,9 +19,9 @@ public protocol Mass {
 
 // all masses from https://physics.nist.gov/cgi-bin/Compositions/stand_alone.pl
 
-extension Mass {
+public extension Mass {
     // TO DO rename function calls
-    public func mass(of symbols: [Symbol]?) -> MassContainer {
+    func mass(of symbols: [Symbol]?) -> MassContainer {
         var result = zeroMass
 
         if let massSymbols = symbols?.compactMap({ $0 as? Mass }) {
@@ -31,19 +31,19 @@ extension Mass {
         return result
     }
 
-    public func mass(of mass: [Mass]) -> MassContainer {
+    func mass(of mass: [Mass]) -> MassContainer {
         return mass.reduce(zeroMass) { $0 + $1.masses }
     }
 
-    public var monoisotopicMass: Dalton {
+    var monoisotopicMass: Dalton {
         return masses.monoisotopicMass
     }
 
-    public var averageMass: Dalton {
+    var averageMass: Dalton {
         return masses.averageMass
     }
 
-    public var nominalMass: Int {
+    var nominalMass: Int {
         return masses.nominalMass
     }
 }

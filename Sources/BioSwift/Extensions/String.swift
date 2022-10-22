@@ -10,16 +10,16 @@ import Foundation
 
 public let zeroStringRange: Range<String.Index> = String().startIndex ..< String().endIndex
 
-extension String {
+public extension String {
     // via: https://gist.github.com/robertmryan/1ca0deab3e3e53d54dccf421a5c64144
-    func uniqueSubStrings(size: Int, allowDuplicates: Bool = false) -> [String] {
+    internal func uniqueSubStrings(size: Int, allowDuplicates: Bool = false) -> [String] {
         return map { $0 }
             .combinations(size: size, allowDuplicates: allowDuplicates)
             .map { String($0.sorted()) }
             .uniqueElements()
     }
 
-    func sequencialSubStrings(size: Int) -> [String] {
+    internal func sequencialSubStrings(size: Int) -> [String] {
         var subStrings = [String]()
 
         for i in 0 ..< count {
@@ -34,7 +34,7 @@ extension String {
         return subStrings
     }
 
-    public func matches(for regex: String) -> [NSTextCheckingResult] {
+    func matches(for regex: String) -> [NSTextCheckingResult] {
         // https://www.raywenderlich.com/86205/nsregularexpression-swift-tutorial
 
         let string = self as NSString
@@ -51,57 +51,57 @@ extension String {
         }
     }
 
-    public func ranges(of substring: String, options: CompareOptions = [], locale: Locale? = nil) -> [Range<Index>] {
+    func ranges(of substring: String, options: CompareOptions = [], locale: Locale? = nil) -> [Range<Index>] {
         var ranges: [Range<Index>] = []
-        while let range = self.range(of: substring, options: options, range: (ranges.last?.upperBound ?? startIndex) ..< endIndex, locale: locale) {
+        while let range = range(of: substring, options: options, range: (ranges.last?.upperBound ?? startIndex) ..< endIndex, locale: locale) {
             ranges.append(range)
         }
         return ranges
     }
 
-    public func nsRanges(of substring: String, options: CompareOptions = [], locale: Locale? = nil) -> [NSRange] {
+    func nsRanges(of substring: String, options: CompareOptions = [], locale: Locale? = nil) -> [NSRange] {
         var nsRanges: [NSRange] = []
-        
+
         for range in ranges(of: substring, options: options, locale: locale) {
             nsRanges.append(NSRange(range, in: self))
         }
-        
+
         return nsRanges
     }
 
-    public func sequenceRanges(of substring: String, options: CompareOptions = [], locale: Locale? = nil) -> [ChainRange] {
+    func sequenceRanges(of substring: String, options: CompareOptions = [], locale: Locale? = nil) -> [ChainRange] {
         var sequenceRanges: [ChainRange] = []
-        
+
         for range in nsRanges(of: substring, options: options, locale: locale) {
             sequenceRanges.append(range.chainRange())
         }
-        
+
         return sequenceRanges
     }
 
-    func containsCharactersFrom(substring: String) -> Bool {
+    internal func containsCharactersFrom(substring: String) -> Bool {
         let set = CharacterSet(charactersIn: substring)
 
         return (rangeOfCharacter(from: set) != nil)
     }
 
-    func substring(from: Int, to: Int) -> Substring? {
+    internal func substring(from: Int, to: Int) -> Substring? {
         guard from <= to else { return nil }
         let nsrange = NSMakeRange(from, to - from)
 
         return substring(with: nsrange)
     }
 
-    public func substring(with sequenceRange: ChainRange) -> Substring? {
+    func substring(with sequenceRange: ChainRange) -> Substring? {
         return self[sequenceRange]
     }
 
-    public func substring(with nsrange: NSRange) -> Substring? {
+    func substring(with nsrange: NSRange) -> Substring? {
         return self[nsrange.chainRange()]
     }
 
-    public func nsrange(from sequenceRange: ChainRange) -> NSRange? {
-        return NSRange.init(from: sequenceRange)
+    func nsrange(from sequenceRange: ChainRange) -> NSRange? {
+        return NSRange(from: sequenceRange)
     }
 }
 

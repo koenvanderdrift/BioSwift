@@ -27,23 +27,23 @@ public struct DataLibrary {
     public var aminoAcids: [AminoAcid] {
         return library(.aminoAcids)
     }
-    
+
     public var elements: [ChemicalElement] {
         return library(.elements)
     }
-    
+
     public var enzymes: [Enzyme] {
         return library(.enzymes)
     }
-    
+
     public var hydropathy: [Hydro] {
         return library(.hydropathy)
     }
-    
+
     public var modifications: [Modification] {
         return library(.modifications)
     }
-    
+
     private func library<T: Decodable>(_ type: LibraryType) -> [T] {
         do {
             switch type {
@@ -61,10 +61,10 @@ public struct DataLibrary {
         } catch {
             print("Error occurred \(error)")
         }
-        
+
         return []
     }
-    
+
     public func loadUnimod(withCompletion completion: @escaping (Bool) -> Void) {
         UnimodController().loadUnimod { success in
             completion(success)

@@ -44,38 +44,37 @@ extension Modifiable {
     mutating func removeModification() {
         modification = nil
     }
-    
+
     func modificationMasses() -> MassContainer {
         return modification?.masses ?? zeroMass
     }
-
 }
 
 public struct Modification: Decodable {
-/*
+    /*
      via: https://www.unimod.org/fields.html
-     
+
      Site: Chosen from a controlled list of categories. Choose "N-term" or "C-Term" if the modification applies to a terminus independent of the identity of the terminal residue, (e.g. methylation of a carboxy terminus).
 
      Position: Chosen from a controlled list of categories. Choose "Anywhere" if the modification applies to a residue independent of its position, (e.g. oxidation of methionine). Choose "Any N-term" or "Any C-term" if the modification applies to a residue only when it is at a peptide terminus, (e.g. conversion of methionine to homoserine). Choose "Protein N-term" or "Protein C-term" if the modification only applies to the original terminus of the intact protein, not new peptide termini created by digestion, (e.g. post-translational acetylation of the protein amino terminus). If Site was specified as "N-term" or "C-Term", then "Anywhere" becomes equivalent to "Any N-term" or "Any C-term".
-*/
+     */
 
     public let name: String
     public let reactions: [Reaction]
     public let sites: [String] // sites it can attach to
 
     enum CodingKeys: String, CodingKey {
-        case name = "name"
-        case reactions = "reactions"
-        case sites = "sites"
+        case name
+        case reactions
+        case sites
     }
-    
-    public init(from decoder: Decoder) throws {
-        self.name = ""
-        self.reactions = []
-        self.sites = []
+
+    public init(from _: Decoder) throws {
+        name = ""
+        reactions = []
+        sites = []
     }
-    
+
     public init(name: String, reactions: [Reaction], sites: [String] = []) {
         self.name = name
         self.reactions = reactions
@@ -99,11 +98,11 @@ public struct Modification: Decodable {
 
         self.init(name: name, reactions: reactions, sites: sites)
     }
-    
+
     public init(_ modification: Modification) {
-        self.name = modification.name
-        self.sites = modification.sites
-        self.reactions = modification.reactions
+        name = modification.name
+        sites = modification.sites
+        reactions = modification.reactions
     }
 }
 
@@ -131,7 +130,7 @@ public struct LocalizedModification: Hashable {
     public let location: Int
     public let chain: Int
     public let modification: Modification
-    
+
     public init(_ modification: Modification, at location: Int, in chain: Int = 0) {
         self.location = location
         self.chain = chain
@@ -141,7 +140,7 @@ public struct LocalizedModification: Hashable {
 
 public struct Link: Hashable {
     public var mods: [LocalizedModification]
-    
+
     public init(mods: [LocalizedModification]) {
         self.mods = mods
     }
@@ -151,19 +150,19 @@ public struct Link: Hashable {
     }
 }
 
-extension Link {
+public extension Link {
     // https://codereview.stackexchange.com/questions/237295/comparing-two-structs-in-swift#
-    
-    public enum CompareResult {
+
+    enum CompareResult {
         case equal
         case intersect
         case disjoint
     }
 
-    public func compareLocations(with other: Link) -> CompareResult {
+    func compareLocations(with other: Link) -> CompareResult {
         let modsSet = Set(mods)
         let otherModsSet = Set(other.mods)
-        
+
         if modsSet == otherModsSet {
             return .equal
         } else if modsSet.isDisjoint(with: otherModsSet) {

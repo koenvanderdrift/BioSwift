@@ -6,7 +6,7 @@ public struct Formula {
     public var formulaString: String
 
     public var elements: [ChemicalElement] {
-        var result = [ChemicalElement] ()
+        var result = [ChemicalElement]()
 
         do {
             result = try parseElements()
@@ -18,7 +18,7 @@ public struct Formula {
     }
 
     public init(_ string: String) {
-        self.formulaString = string
+        formulaString = string
     }
 
     public init(_ dict: [String: Int]) {
@@ -38,13 +38,13 @@ public struct Formula {
     }
 
     public func countedElements() -> NSCountedSet {
-       return NSCountedSet(array: elements)
+        return NSCountedSet(array: elements)
     }
-    
+
     public func isotopes() -> NSCountedSet {
         return NSCountedSet(array: elements.map { $0.isotopes }.reduce([], +))
     }
-    
+
     public func countFor(element: String) -> Int {
         return elements.map { $0.symbol }.filter { $0 == element }.count
     }
@@ -61,7 +61,7 @@ extension Formula {
         case invalidFormula
     }
 
-    private func parseElements() throws -> [ChemicalElement]  {
+    private func parseElements() throws -> [ChemicalElement] {
         // https://github.com/cgohlke/molmass/blob/master/molmass/molmass.py
         // https://github.com/cgohlke/molmass/blob/master/molmass/elements.py
 
@@ -74,7 +74,7 @@ extension Formula {
         var elementCount = 0
         var elementName = ""
 
-        var result = [ChemicalElement] ()
+        var result = [ChemicalElement]()
 
         if i == 0 {
             return result
@@ -189,16 +189,15 @@ extension Formula: Equatable {
     }
 }
 
-extension Formula {
-    public static func + (lhs: Formula, rhs: Formula) -> Formula {
+public extension Formula {
+    static func + (lhs: Formula, rhs: Formula) -> Formula {
         return Formula(lhs.formulaString + rhs.formulaString)
     }
 
-    public static func += (lhs: inout Formula, rhs: Formula) {
+    static func += (lhs: inout Formula, rhs: Formula) {
         lhs = lhs + rhs
     }
 }
-
 
 /*
  # Common chemical groups
