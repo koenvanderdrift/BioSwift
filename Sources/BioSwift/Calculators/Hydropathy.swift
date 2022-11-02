@@ -27,7 +27,7 @@ public class Hydropathy {
         // http://isoelectric.org/www_old/files/practise-isoelectric-point.html
         // https://stackoverflow.com/questions/30545518/how-to-count-occurrences-of-an-element-in-a-swift-array
         guard
-            let pKaValues = hydropathyLibrary.first(where: { $0.name == "pKa" })?.values,
+            let pKaValues = hydrophathyValues(for: "pKa"),
             let cTerminalpKa = Double(pKaValues["CTerminal"]!),
             let nTerminalpKa = Double(pKaValues["NTerminal"]!),
             let asparticAcidpKa = Double(pKaValues["D"]!),
@@ -84,5 +84,12 @@ public class Hydropathy {
         }
 
         return pH
+    }
+    
+    public func hydrophathyValues(for name: String) -> [String:String]? {
+        guard let values = hydropathyLibrary.first(where: { $0.name == name })?.values
+        else { return nil }
+                    
+        return values
     }
 }
