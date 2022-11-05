@@ -21,22 +21,25 @@ public class Hydropathy {
     }
 
     public func isoElectricPoint() -> Double {
+        // http://isoelectric.org/www_old/files/practise-isoelectric-point.html
+        // https://stackoverflow.com/questions/30545518/how-to-count-occurrences-of-an-element-in-a-swift-array
+
         if residues.count == 0 {
             return 0.0
         }
-        // http://isoelectric.org/www_old/files/practise-isoelectric-point.html
-        // https://stackoverflow.com/questions/30545518/how-to-count-occurrences-of-an-element-in-a-swift-array
+        
+        let pKaValues = hydrophathyValues(for: "pKa")
+        
         guard
-            let pKaValues = hydrophathyValues(for: "pKa"),
-            let cTerminalpKa = Double(pKaValues["CTerminal"]!),
-            let nTerminalpKa = Double(pKaValues["NTerminal"]!),
-            let asparticAcidpKa = Double(pKaValues["D"]!),
-            let glutamicAcidpKa = Double(pKaValues["E"]!),
-            let cystinepKa = Double(pKaValues["C"]!),
-            let tyrosinepKa = Double(pKaValues["Y"]!),
-            let histidinepKa = Double(pKaValues["H"]!),
-            let lysinepKa = Double(pKaValues["K"]!),
-            let argininepKa = Double(pKaValues["R"]!)
+            let cTerminalpKa = pKaValues["CTerminal"],
+            let nTerminalpKa = pKaValues["NTerminal"],
+            let asparticAcidpKa = pKaValues["D"],
+            let glutamicAcidpKa = pKaValues["E"],
+            let cystinepKa = pKaValues["C"],
+            let tyrosinepKa = pKaValues["Y"],
+            let histidinepKa = pKaValues["H"],
+            let lysinepKa = pKaValues["K"],
+            let argininepKa = pKaValues["R"]
         else { return 0.0 }
 
         let numberOfAsparticAcid = Double(residues.count { $0.oneLetterCode == "D" })
@@ -86,10 +89,10 @@ public class Hydropathy {
         return pH
     }
     
-    public func hydrophathyValues(for name: String) -> [String:String]? {
+    public func hydrophathyValues(for name: String) -> [String : Double] {
         guard let values = hydropathyLibrary.first(where: { $0.name == name })?.values
-        else { return nil }
-                    
-        return values
+        else { return [:] }
+
+        return values.mapValues { Double($0)! }
     }
 }
