@@ -71,4 +71,10 @@ extension PolyPeptide {
     public func calculateMasses() -> MassContainer {
         return mass(of: residues) + terminalMasses()
     }
+    
+    public func hydropathyValues(for hydropathyType: String) -> [Double] {
+        let values = Hydropathy(residues: self.residues).hydrophathyValues(for: hydropathyType)
+        
+        return self.residues.compactMap { values[$0.oneLetterCode] }
+    }
 }
