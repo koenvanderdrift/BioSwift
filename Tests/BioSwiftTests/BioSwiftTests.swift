@@ -26,6 +26,7 @@ final class BioSwiftTests: XCTestCase {
     }
 
     func testSequenceLength() {
+        XCTAssertEqual(protein.sequenceLength(), 418)
         XCTAssertEqual(peptide.sequenceString.count, 5)
     }
 
@@ -143,6 +144,22 @@ final class BioSwiftTests: XCTestCase {
         XCTAssertEqual(record?.entryName, "PBPB_ECOLI")
         XCTAssertEqual(record?.proteinName, "Penicillin-binding protein 1B")
         XCTAssertEqual(record?.organism, "Escherichia coli (strain K12)")
+    }
+
+    func testSubChain() {
+        if let chain = protein.chains.first {
+            let range1: ChainRange = 4...10 // 1 based
+            let subChain1 = chain.subChain(removing: range1)
+            XCTAssertEqual(subChain1?.sequenceString, "MPSLLAGLCCLVPVSLAEDPQGDAAQKTDTSHHDQDHPTFNKITPNLAEFAFSLYRQLAHQSNSTNIFFSPVSIATAFAMLSLGTKADTHDEILEGLNFNLTEIPEAQIHEGFQELLRTLNQPDSQLQLTTGNGLFLSEGLKLVDKFLEDVKKLYHSEAFTVNFGDTEEAKKQINDYVEKGTQGKIVDLVKELDRDTVFALVNYIFFKGKWERPFEVKDTEEEDFHVDQVTTVKVPMMKRLGMFNIQHCKKLSSWVLLMKYLGNATAIFFLPDEGKLQHLENELTHDIITKFLENEDRRSASLHLPKLSITGTYDLKSVLGQLGITKVFSNGADLSGVTEEAPLKLSKAVHKAVLTIDEKGTEAAGAMFLEAIPMSIPPEVKFNKPFVFLMIEQNTKSPLFMGKVVNPTQK")
+            
+            let range2: ChainRange = 1...10 // 1 based
+            let subChain2 = chain.subChain(removing: range2)
+            XCTAssertEqual(subChain2?.sequenceString, "LLAGLCCLVPVSLAEDPQGDAAQKTDTSHHDQDHPTFNKITPNLAEFAFSLYRQLAHQSNSTNIFFSPVSIATAFAMLSLGTKADTHDEILEGLNFNLTEIPEAQIHEGFQELLRTLNQPDSQLQLTTGNGLFLSEGLKLVDKFLEDVKKLYHSEAFTVNFGDTEEAKKQINDYVEKGTQGKIVDLVKELDRDTVFALVNYIFFKGKWERPFEVKDTEEEDFHVDQVTTVKVPMMKRLGMFNIQHCKKLSSWVLLMKYLGNATAIFFLPDEGKLQHLENELTHDIITKFLENEDRRSASLHLPKLSITGTYDLKSVLGQLGITKVFSNGADLSGVTEEAPLKLSKAVHKAVLTIDEKGTEAAGAMFLEAIPMSIPPEVKFNKPFVFLMIEQNTKSPLFMGKVVNPTQK")
+
+            let range3: ChainRange = 11...400 // 1 based
+            let subChain3 = chain.subChain(removing: range3)
+            XCTAssertEqual(subChain3?.sequenceString, "MPSSVSWGILQNTKSPLFMGKVVNPTQK")
+        }
     }
 
     func testDigest() {

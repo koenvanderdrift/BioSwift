@@ -122,6 +122,29 @@ extension Chain {
         return residues.count
     }
     
+    public func subChain(removing range: ChainRange) -> Self? { // incoming range is 1 based
+
+        // xxxx - ++++++++++++
+        // ++ - xxxx - +++++++
+        // ++++++++++++ - xxxx
+        
+        let subResidues = residues.indices.compactMap { (range.lowerBound - 1)..<range.upperBound ~= $0 ? nil : residues[$0] }
+                
+        var sub = Self.init(residues: subResidues)
+        sub.termini = self.termini
+        
+        if range.lowerBound == 0 {
+            sub.termini?.first.modification = self.termini?.first.modification
+        }
+        
+        if range.upperBound == numberOfResidues() {
+            sub.termini?.last.modification = self.termini?.last.modification
+        }
+        
+        return sub
+    }
+    
+    
     public func subChain(with range: ChainRange) -> Self? {
         guard let residues = residueChain(with: range) else { return nil }
         
