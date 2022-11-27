@@ -136,11 +136,11 @@ extension Chain {
         var sub = Self.init(residues: subResidues)
         sub.termini = self.termini
         
-        if range.lowerBound == 0 {
+        if basedRange.lowerBound == 0 {
             sub.termini?.first.modification = self.termini?.first.modification
         }
         
-        if range.upperBound == numberOfResidues() {
+        if basedRange.upperBound == numberOfResidues() {
             sub.termini?.last.modification = self.termini?.last.modification
         }
         
