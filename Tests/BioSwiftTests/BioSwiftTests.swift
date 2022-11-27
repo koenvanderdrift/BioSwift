@@ -2,7 +2,6 @@
 import XCTest
 
 final class BioSwiftTests: XCTestCase {
-    
     var protein = Protein()
     var peptide = Peptide()
 
@@ -15,11 +14,11 @@ final class BioSwiftTests: XCTestCase {
 
         dataLibrary.loadUnimod { success in
             guard success else { return }
-            
+
             self.protein = Protein(sequence: "MPSSVSWGILLLAGLCCLVPVSLAEDPQGDAAQKTDTSHHDQDHPTFNKITPNLAEFAFSLYRQLAHQSNSTNIFFSPVSIATAFAMLSLGTKADTHDEILEGLNFNLTEIPEAQIHEGFQELLRTLNQPDSQLQLTTGNGLFLSEGLKLVDKFLEDVKKLYHSEAFTVNFGDTEEAKKQINDYVEKGTQGKIVDLVKELDRDTVFALVNYIFFKGKWERPFEVKDTEEEDFHVDQVTTVKVPMMKRLGMFNIQHCKKLSSWVLLMKYLGNATAIFFLPDEGKLQHLENELTHDIITKFLENEDRRSASLHLPKLSITGTYDLKSVLGQLGITKVFSNGADLSGVTEEAPLKLSKAVHKAVLTIDEKGTEAAGAMFLEAIPMSIPPEVKFNKPFVFLMIEQNTKSPLFMGKVVNPTQK")
-            
+
             self.peptide = Peptide(sequence: "DWSSD")
-            
+
             exp.fulfill()
         }
 
@@ -45,8 +44,7 @@ final class BioSwiftTests: XCTestCase {
         XCTAssertEqual(peptide.formula.countFor(element: "C"), 25)
     }
 
-    
-/*
+    /*
                         MH+1 (av)   MH+1 (mono)
      protpros            609.5731    609.2151
      molmass             609.5636    609.2156
@@ -54,17 +52,17 @@ final class BioSwiftTests: XCTestCase {
      bioswift (-el)      609.563     609.2151
      bioswift            609.5635    609.2156
      bioswift (+el)      609.5641    609.2162
-*/
+     */
 
     func testPeptideMonoisotopicMass() {
         peptide.setAdducts(type: protonAdduct, count: 1)
-        
+
         XCTAssertEqual(peptide.pseudomolecularIon().monoisotopicMass.roundedDecimalAsString(to: 4), "609.2151")
     }
 
     func testPeptideAverageMass() {
         peptide.setAdducts(type: protonAdduct, count: 1)
-        
+
         XCTAssertEqual(peptide.pseudomolecularIon().averageMass.roundedDecimalAsString(to: 4), "609.5636")
     } // 609.563
 
@@ -80,7 +78,7 @@ final class BioSwiftTests: XCTestCase {
             XCTAssertEqual(peptide.pseudomolecularIon().monoisotopicMass.roundedDecimalAsString(to: 4), "345.0944")
         }
     }
-    
+
 //    func testBioMolecule() {
 //        var bm = protein
 //    }
@@ -98,14 +96,13 @@ final class BioSwiftTests: XCTestCase {
             XCTAssertEqual(chain.pseudomolecularIon().averageMass.roundedDecimalAsString(to: 4), "46737.9568")
         }
     } // 46737.0703
-    
-    
+
     func testProteinFormula() {
         if var chain = protein.chains.first {
             chain.setAdducts(type: protonAdduct, count: 1)
             XCTAssertEqual(chain.formula.countedElements().count(for: "C"), 211)
         }
-        
+
 //        XCTAssertEqual(protein.formula, Formula.init("C2112H3314N539O629S13"))
     } // C2112H3313N539O629S13
 
@@ -115,13 +112,13 @@ final class BioSwiftTests: XCTestCase {
             XCTAssertEqual(chain.formula.elements.count, 6606)
         }
     }
-    
+
     func testFormulaAverageMass() { // C4H5NO3 + C11H10N2O + C3H5NO2 + C3H5NO2 + C4H5NO3 + H2O
 //        let formula = Formula("C2112H3313N539O629S13H")
 //        let masses = mass(of: formula.elements)
 //        debugPrint(masses)
         let group = FunctionalGroup(name: "", formula: "C25H32N6O12")
-        
+
         XCTAssertEqual(group.averageMass.roundedDecimalAsString(to: 4), "608.5557")
     } // 608.5556
 
@@ -134,17 +131,43 @@ final class BioSwiftTests: XCTestCase {
     }
 
     func testMethylAverageMass() { // CH3
-       XCTAssertEqual(methyl.averageMass.roundedDecimalAsString(to: 4), "15.0346")
+        XCTAssertEqual(methyl.averageMass.roundedDecimalAsString(to: 4), "15.0346")
     }
-    
+
     func testLoadFasta() {
         let fasta = try? parseFastaDataFromBundle(from: "ecoli")
         XCTAssertEqual(fasta?.count, 4392)
-        
+
         let record = fasta?.first(where: { $0.accession == "P02919" })
-        
+
         XCTAssertEqual(record?.entryName, "PBPB_ECOLI")
         XCTAssertEqual(record?.proteinName, "Penicillin-binding protein 1B")
         XCTAssertEqual(record?.organism, "Escherichia coli (strain K12)")
+    }
+
+    func testDigest() {
+        if let chain = protein.chains.first {
+            let missedCleavages = 1
+
+            let trypsin = enzymeLibrary.first(where: { $0.name == "Trypsin" })
+
+            if let regex = trypsin?.regex() {
+                let peptides: [Peptide] = chain.digest(using: regex, with: missedCleavages)
+
+                XCTAssertEqual(peptides[0].sequenceString, "MPSSVSWGILLLAGLCCLVPVSLAEDPQGDAAQK")
+                XCTAssertEqual(peptides[1].sequenceString, "TDTSHHDQDHPTFNK")
+            }
+
+            let aspN = enzymeLibrary.first(where: { $0.name == "Asp-N" })
+
+            if let regex = aspN?.regex() {
+                let peptides: [Peptide] = chain.digest(using: regex, with: missedCleavages)
+
+                let _ = print(peptides.map { $0.sequenceString })
+
+                XCTAssertEqual(peptides[0].sequenceString, "MPSSVSWGILLLAGLCCLVPVSLAE")
+                XCTAssertEqual(peptides[1].sequenceString, "DPQG")
+            }
+        }
     }
 }
