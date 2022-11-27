@@ -12,8 +12,8 @@ let package = Package(
             targets: ["BioSwift"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/apple/swift-algorithms.git", .upToNextMajor(from: "0.2.1")),
-        .package(url: "https://github.com/apple/swift-collections.git", .upToNextMajor(from: "0.0.3")),
+        .package(url: "https://github.com/apple/swift-algorithms", from: "1.0.0"),
+        .package(url: "https://github.com/apple/swift-collections", from: "1.0.0"),
     ],
     targets: [
         .target(
