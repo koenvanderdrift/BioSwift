@@ -72,18 +72,7 @@ public struct AminoAcid: Residue, Codable {
     }
 
     public init(name: String, oneLetterCode: String, threeLetterCode: String = "", elements: [String: Int]) {
-        var formulaString = ""
-
-        for (element, count) in elements {
-            formulaString.append(element)
-            if count > 1 {
-                formulaString.append(String(abs(count)))
-            }
-        }
-
-        let formula = Formula(formulaString)
-
-        self.init(name: name, oneLetterCode: oneLetterCode, threeLetterCode: threeLetterCode, formula: formula)
+        self.init(name: name, oneLetterCode: oneLetterCode, threeLetterCode: threeLetterCode, formula: Formula(elements))
 
         self.setProperties()
     }
