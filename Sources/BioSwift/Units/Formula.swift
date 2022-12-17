@@ -2,21 +2,13 @@ import Foundation
 
 public let zeroFormula = Formula("")
 
-public struct Formula {
+public class Formula {
     public var formulaString: String
 
-    public var elements: [ChemicalElement] {
-        var result = [ChemicalElement] ()
-
-        do {
-            result = try parseElements()
-        } catch {
-            debugPrint(error)
-        }
-
-        return result
-    }
-
+    public lazy var elements: [ChemicalElement] = {
+        return getElements()
+    }()
+    
     public init(_ string: String) {
         self.formulaString = string
     }
@@ -59,6 +51,18 @@ extension Formula {
         case elementNotFound
         case numberPrecedingFormula
         case invalidFormula
+    }
+    
+    private func getElements() -> [ChemicalElement] {
+        var result: [ChemicalElement] = []
+
+        do {
+            result = try parseElements()
+        } catch {
+            debugPrint(error)
+        }
+        
+        return result
     }
 
     private func parseElements() throws -> [ChemicalElement]  {
@@ -184,7 +188,7 @@ extension Formula {
 }
 
 extension Formula: Equatable {
-    public static func == (lhs: Self, rhs: Self) -> Bool {
+    public static func == (lhs: Formula, rhs: Formula) -> Bool {
         return lhs.countedElements() == rhs.countedElements()
     }
 }
