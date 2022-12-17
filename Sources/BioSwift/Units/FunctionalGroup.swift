@@ -80,9 +80,3 @@ extension FunctionalGroup: Hashable {
         hasher.combine(formula.formulaString)
     }
 }
-
-extension FunctionalGroup: Mass {
-    public func calculateMasses() -> MassContainer {
-        return mass(of: formula.elements)
-    }
-}

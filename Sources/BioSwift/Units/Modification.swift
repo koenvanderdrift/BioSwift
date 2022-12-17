@@ -64,6 +64,8 @@ public struct Modification: Decodable {
     public let reactions: [Reaction]
     public let sites: [String] // sites it can attach to
 
+    private(set) var _masses: MassContainer = zeroMass
+
     enum CodingKeys: String, CodingKey {
         case name = "name"
         case reactions = "reactions"
@@ -74,12 +76,16 @@ public struct Modification: Decodable {
         self.name = ""
         self.reactions = []
         self.sites = []
+        
+        _masses = calculateMasses()
     }
     
     public init(name: String, reactions: [Reaction], sites: [String] = []) {
         self.name = name
         self.reactions = reactions
         self.sites = sites
+
+        _masses = calculateMasses()
     }
 
     public init(name: String, elements: [String: Int], sites: [String] = []) {
@@ -104,6 +110,8 @@ public struct Modification: Decodable {
         self.name = modification.name
         self.sites = modification.sites
         self.reactions = modification.reactions
+
+        _masses = calculateMasses()
     }
 }
 
@@ -119,7 +127,7 @@ extension Modification: Hashable {
 
 extension Modification: Mass {
     public var masses: MassContainer {
-        return calculateMasses()
+        _masses
     }
 
     public func calculateMasses() -> MassContainer {

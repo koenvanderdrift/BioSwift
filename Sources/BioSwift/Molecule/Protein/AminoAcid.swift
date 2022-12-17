@@ -37,6 +37,8 @@ public struct AminoAcid: Residue, Codable {
 
     public var adducts: [Adduct]
 
+    private(set) var _masses: MassContainer = zeroMass
+
     private enum CodingKeys: String, CodingKey {
         case name
         case oneLetterCode
@@ -92,6 +94,8 @@ public struct AminoAcid: Residue, Codable {
         default:
             break
         }
+        
+        _masses = calculateMasses()
     }
 
     public func encode(to encoder: Encoder) throws {
@@ -125,6 +129,6 @@ extension AminoAcid: Hashable {
 
 extension AminoAcid: Mass {
     public var masses: MassContainer {
-        return calculateMasses()
+        return _masses + modificationMasses()
     }
 }
