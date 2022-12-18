@@ -21,12 +21,12 @@ public enum MassToleranceType: String {
     case mmu
 }
 
-extension MassToleranceType {
-    public var minValue: Double {
+public extension MassToleranceType {
+    var minValue: Double {
         return 0.0
     }
 
-    public var maxValue: Double {
+    var maxValue: Double {
         switch self {
         case .ppm:
             return 10000.0
@@ -72,7 +72,7 @@ public struct MassSearchParameters {
 
         switch tolerance.type {
         case .ppm:
-            let delta = toleranceValue / 1_000_000
+            let delta = toleranceValue / 1000000
             minMass = (1 - delta) * searchValue
             maxMass = (1 + delta) * searchValue
 
@@ -89,14 +89,14 @@ public struct MassSearchParameters {
             maxMass = searchValue + toleranceValue / 1000
         }
 
-        return Dalton(minMass) ... Dalton(maxMass)
+        return Dalton(minMass)...Dalton(maxMass)
     }
 }
 
-extension Chain {
-    public func searchSequence<T: RangedChain>(searchString: String) -> [T] {
+public extension Chain {
+    func searchSequence<T: RangedChain>(searchString: String) -> [T] {
         var result = [T]()
-        
+
         for range in sequenceString.sequenceRanges(of: searchString) {
             if var sub: T = subChain(with: range) as? T {
                 sub.rangeInParent = range
@@ -108,48 +108,158 @@ extension Chain {
     }
 }
 
-extension Chain {
-    public func searchMass<T: RangedChain & ChargedMass>(params: MassSearchParameters) -> [T] {
+public extension Chain {
+    func searchMass<T: RangedChain & ChargedMass>(params: MassSearchParameters) -> [T] {
         var result = [T]()
 
         let massRange = params.massRange()
         let count = self.numberOfResidues()
-        
+
         var start = 0
-        
+
         // Nterm: 1102.3525
         // 807.9348
         // Cterm: 979.0476
-        
+
         while start < count {
-            for index in start..<count {
-                guard var sub: T = subChain(from: start, to: index) as? T else { break }
+            for end in start..<count {
+                guard var sub: T = subChain(from: start, to: end) as? T else { break }
                 sub.adducts = adducts
-                sub.rangeInParent = start...index
-                
+                sub.rangeInParent = start...end
+
                 let chargedMass = sub.chargedMass()
-                
+
                 if chargedMass.averageMass > 1.05 * massRange.upperBound {
                     break
                 }
-                
+
                 switch params.massType {
                 case .monoisotopic:
                     if massRange.contains(chargedMass.monoisotopicMass) {
+                        print(chargedMass.monoisotopicMass)
+
                         result.append(sub)
+                        break
                     }
                 case .average:
                     if massRange.contains(chargedMass.averageMass) {
+                        print(chargedMass.monoisotopicMass)
+
                         result.append(sub)
+                        break
                     }
                 case .nominal:
                     if massRange.contains(Dalton(chargedMass.nominalMass)) {
+                        print(chargedMass.monoisotopicMass)
+
                         result.append(sub)
+                        break
                     }
                 }
             }
-            
+
             start += 1
+        }
+
+        return result
+    }
+
+    func searchMass2<T: RangedChain & ChargedMass>(params: MassSearchParameters) -> [T] {
+        var result = [T]()
+
+        let massRange = params.massRange()
+        let count = self.numberOfResidues()
+
+        var start = 0
+        var end = 0
+        var masses: MassContainer = self.terminalMasses() // FIX THIS
+
+        while start < count {
+            while end < count {
+                guard let temp = self.residue(at: end)?.masses else { break }
+                end += 1
+
+                masses += temp
+
+                let chargedMass = masses / params.adducts.count
+
+                if chargedMass.averageMass > 1.05 * massRange.upperBound {
+                    break
+                }
+
+                switch params.massType {
+                case .monoisotopic:
+                    if massRange.contains(chargedMass.monoisotopicMass) {
+                        guard var sub: T = subChain(from: start, to: end - 1) as? T else { break }
+
+                        sub.adducts = adducts
+                        sub.rangeInParent = start...end
+                        result.append(sub)
+                        break
+                    }
+                case .average:
+                    if massRange.contains(chargedMass.averageMass) {
+                        guard var sub: T = subChain(from: start, to: end - 1) as? T else { break }
+
+                        sub.adducts = adducts
+                        sub.rangeInParent = start...end
+                        result.append(sub)
+                        break
+                    }
+                case .nominal:
+                    if massRange.contains(Dalton(chargedMass.nominalMass)) {
+                        guard var sub: T = subChain(from: start, to: end - 1) as? T else { break }
+
+                        sub.adducts = adducts
+                        sub.rangeInParent = start...end
+                        result.append(sub)
+                        break
+                    }
+                }
+            }
+
+            while start < end {
+                guard let temp = self.residue(at: start)?.masses else { break }
+                start += 1
+
+                masses -= temp
+
+                let chargedMass = masses / params.adducts.count
+
+                if chargedMass.monoisotopicMass < 0.95 * massRange.lowerBound {
+                    break
+                }
+
+                switch params.massType {
+                case .monoisotopic:
+                    if massRange.contains(chargedMass.monoisotopicMass) {
+                        guard var sub: T = subChain(from: start, to: end - 1) as? T else { break }
+
+                        sub.adducts = adducts
+                        sub.rangeInParent = start...end - 1
+                        result.append(sub)
+                        break
+                    }
+                case .average:
+                    if massRange.contains(chargedMass.averageMass) {
+                        guard var sub: T = subChain(from: start, to: end - 1) as? T else { break }
+
+                        sub.adducts = adducts
+                        sub.rangeInParent = start...end - 1
+                        result.append(sub)
+                        break
+                    }
+                case .nominal:
+                    if massRange.contains(Dalton(chargedMass.nominalMass)) {
+                        guard var sub: T = subChain(from: start, to: end - 1) as? T else { break }
+
+                        sub.adducts = adducts
+                        sub.rangeInParent = start...end - 1
+                        result.append(sub)
+                        break
+                    }
+                }
+            }
         }
 
         return result

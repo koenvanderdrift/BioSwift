@@ -187,4 +187,31 @@ final class BioSwiftTests: XCTestCase {
             }
         }
     }
+    
+    func testSearch() {
+        if let chain = protein.chains.first {
+            let searchParameters = MassSearchParameters(searchValue: 609.2,
+                                                        tolerance: MassTolerance(type: .ppm, value: 500),
+                                                        searchType: .sequential,
+                                                        adducts: [protonAdduct],
+                                                        massType: .monoisotopic)
+            
+            var startingPoint = Date()
+
+            var peptides: [Peptide] = chain.searchMass(params: searchParameters)
+            print(peptides.map { $0.sequenceString })
+            print("\(startingPoint.timeIntervalSinceNow * -1) seconds elapsed")
+
+            startingPoint = Date()
+
+            peptides = chain.searchMass2(params: searchParameters)
+            print(peptides.map { $0.sequenceString })
+            print("\(startingPoint.timeIntervalSinceNow * -1) seconds elapsed")
+            
+            if peptides.isEmpty == false {
+                XCTAssertEqual(peptides[0].sequenceString, "IFFSP")
+            }
+
+        }
+    }
 }
