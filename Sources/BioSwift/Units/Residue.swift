@@ -18,8 +18,4 @@ extension Residue {
     public var identifier: String {
         return oneLetterCode
     }
-
-    public func calculateMasses() -> MassContainer {
-        return mass(of: formula.elements) + modificationMasses()
-    }
 }
