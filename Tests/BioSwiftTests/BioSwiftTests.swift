@@ -151,7 +151,7 @@ final class BioSwiftTests: XCTestCase {
             let range1: ChainRange = 3...9 // 0 based
             let subChain1 = chain.subChain(removing: range1)
             XCTAssertEqual(subChain1?.sequenceString, "MPSLLAGLCCLVPVSLAEDPQGDAAQKTDTSHHDQDHPTFNKITPNLAEFAFSLYRQLAHQSNSTNIFFSPVSIATAFAMLSLGTKADTHDEILEGLNFNLTEIPEAQIHEGFQELLRTLNQPDSQLQLTTGNGLFLSEGLKLVDKFLEDVKKLYHSEAFTVNFGDTEEAKKQINDYVEKGTQGKIVDLVKELDRDTVFALVNYIFFKGKWERPFEVKDTEEEDFHVDQVTTVKVPMMKRLGMFNIQHCKKLSSWVLLMKYLGNATAIFFLPDEGKLQHLENELTHDIITKFLENEDRRSASLHLPKLSITGTYDLKSVLGQLGITKVFSNGADLSGVTEEAPLKLSKAVHKAVLTIDEKGTEAAGAMFLEAIPMSIPPEVKFNKPFVFLMIEQNTKSPLFMGKVVNPTQK")
-            
+
             let range2: ChainRange = 0...9 // 0 based
             let subChain2 = chain.subChain(removing: range2)
             XCTAssertEqual(subChain2?.sequenceString, "LLAGLCCLVPVSLAEDPQGDAAQKTDTSHHDQDHPTFNKITPNLAEFAFSLYRQLAHQSNSTNIFFSPVSIATAFAMLSLGTKADTHDEILEGLNFNLTEIPEAQIHEGFQELLRTLNQPDSQLQLTTGNGLFLSEGLKLVDKFLEDVKKLYHSEAFTVNFGDTEEAKKQINDYVEKGTQGKIVDLVKELDRDTVFALVNYIFFKGKWERPFEVKDTEEEDFHVDQVTTVKVPMMKRLGMFNIQHCKKLSSWVLLMKYLGNATAIFFLPDEGKLQHLENELTHDIITKFLENEDRRSASLHLPKLSITGTYDLKSVLGQLGITKVFSNGADLSGVTEEAPLKLSKAVHKAVLTIDEKGTEAAGAMFLEAIPMSIPPEVKFNKPFVFLMIEQNTKSPLFMGKVVNPTQK")
@@ -187,31 +187,17 @@ final class BioSwiftTests: XCTestCase {
             }
         }
     }
-    
+
     func testSearch() {
         if let chain = protein.chains.first {
             let searchParameters = MassSearchParameters(searchValue: 609.2,
                                                         tolerance: MassTolerance(type: .ppm, value: 500),
                                                         searchType: .sequential,
-                                                        adducts: [protonAdduct],
                                                         massType: .monoisotopic)
             
-            var startingPoint = Date()
+            let peptides: [Peptide] = chain.searchMass(params: searchParameters)
 
-            var peptides: [Peptide] = chain.searchMass(params: searchParameters)
-            print(peptides.map { $0.sequenceString })
-            print("\(startingPoint.timeIntervalSinceNow * -1) seconds elapsed")
-
-            startingPoint = Date()
-
-            peptides = chain.searchMass2(params: searchParameters)
-            print(peptides.map { $0.sequenceString })
-            print("\(startingPoint.timeIntervalSinceNow * -1) seconds elapsed")
-            
-            if peptides.isEmpty == false {
-                XCTAssertEqual(peptides[0].sequenceString, "IFFSP")
-            }
-
+            XCTAssertEqual(peptides[0].sequenceString, "IFFSP")
         }
     }
 }
