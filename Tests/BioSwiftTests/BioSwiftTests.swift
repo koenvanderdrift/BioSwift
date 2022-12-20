@@ -188,7 +188,7 @@ final class BioSwiftTests: XCTestCase {
         }
     }
 
-    func testSearch() {
+    func testMassSearch() {
         if let chain = protein.chains.first {
             let searchParameters = MassSearchParameters(searchValue: 609.2,
                                                         tolerance: MassTolerance(type: .ppm, value: 500),
@@ -196,8 +196,26 @@ final class BioSwiftTests: XCTestCase {
                                                         massType: .monoisotopic)
             
             let peptides: [Peptide] = chain.searchMass(params: searchParameters)
+            print(peptides.map { $0.sequenceString })
 
-            XCTAssertEqual(peptides[0].sequenceString, "IFFSP")
+            XCTAssert(peptides.contains(where: { $0.sequenceString == "IFFSP" }))
         }
     }
-}
+    
+    func testMassSearchWithModification() {
+        if var chain = protein.chains.first,
+           let phos = modificationLibrary.filter({ $0.name.contains("Phospho") == true }).first {
+            
+            chain.addModification(LocalizedModification(phos, at: 76)) // zero-based
+            
+            let searchParameters = MassSearchParameters(searchValue: 689,
+                                                        tolerance: MassTolerance(type: .ppm, value: 500),
+                                                        searchType: .sequential,
+                                                        massType: .nominal)
+            
+            let peptides: [Peptide] = chain.searchMass(params: searchParameters)
+            print(peptides.map { $0.sequenceString })
+            
+            XCTAssert(peptides.contains(where: { $0.sequenceString == "IFFSP" }))
+        }
+    }}
