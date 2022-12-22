@@ -202,6 +202,19 @@ final class BioSwiftTests: XCTestCase {
         }
     }
     
+    func testLowMassSearch() {
+        if let chain = protein.chains.first {
+            let searchParameters = MassSearchParameters(searchValue: 1,
+                                                        tolerance: MassTolerance(type: .ppm, value: 20),
+                                                        searchType: .sequential,
+                                                        massType: .monoisotopic)
+            
+            let peptides: [Peptide] = chain.searchMass(params: searchParameters)
+            print(peptides.map { $0.sequenceString })
+
+            XCTAssert(peptides.count == 0)
+        }
+    }
     func testMassSearchWithModification() {
         if var chain = protein.chains.first,
            let phos = modificationLibrary.filter({ $0.name.contains("Phospho") == true }).first {

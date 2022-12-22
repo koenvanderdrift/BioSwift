@@ -149,7 +149,7 @@ public extension Chain {
                     break
                 }
                 
-                if let sub: T = subChain(with: start...(end - 1), for: masses, in: massRange) {
+                if end > start, let sub: T = subChain(with: start...(end - 1), for: masses, in: massRange) {
                     result.append(sub)
                     break
                 }
@@ -165,7 +165,7 @@ public extension Chain {
                     break
                 }
                 
-                if let sub: T = subChain(with: start...(end - 1), for: masses, in: massRange) {
+                if end > start, let sub: T = subChain(with: start...(end - 1), for: masses, in: massRange) {
                     result.append(sub)
                     break
                 }
