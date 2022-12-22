@@ -50,24 +50,6 @@ public struct MassTolerance {
     }
 }
 
-public typealias MassRange = ClosedRange<Dalton>
-
-extension MassRange {
-    func contains(_ masses: MassContainer) -> Bool {
-        self.contains(masses.monoisotopicMass) ||
-            self.contains(masses.averageMass) ||
-            self.contains(Dalton(masses.nominalMass))
-    }
-    
-    func lowerLimit(excludes masses: MassContainer) -> Bool {
-        return masses.monoisotopicMass < 0.95 * lowerBound
-    }
-
-    func upperLimit(excludes masses: MassContainer) -> Bool {
-        return masses.averageMass > 1.05 * upperBound
-    }
-}
-
 public struct MassSearchParameters {
     public var searchValue: Double
     public var tolerance: MassTolerance

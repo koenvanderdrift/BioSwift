@@ -9,6 +9,24 @@
 import Foundation
 
 public typealias Dalton = Double
+public typealias MassRange = ClosedRange<Dalton>
+
+extension MassRange {
+    func contains(_ masses: MassContainer) -> Bool {
+        self.contains(masses.monoisotopicMass) ||
+            self.contains(masses.averageMass) ||
+            self.contains(Dalton(masses.nominalMass))
+    }
+
+    func lowerLimit(excludes masses: MassContainer) -> Bool {
+        return masses.monoisotopicMass < 0.95 * lowerBound
+    }
+
+    func upperLimit(excludes masses: MassContainer) -> Bool {
+        return masses.averageMass > 1.05 * upperBound
+    }
+}
+
 public let zeroMass = MassContainer(monoisotopicMass: 0.0, averageMass: 0.0, nominalMass: 0)
 
 public protocol Mass {
@@ -19,31 +37,31 @@ public protocol Mass {
 
 // all masses from https://physics.nist.gov/cgi-bin/Compositions/stand_alone.pl
 
-extension Mass {
+public extension Mass {
     // TO DO rename function calls
-    public func mass(of symbols: [Symbol]?) -> MassContainer {
+    func mass(of symbols: [Symbol]?) -> MassContainer {
         var result = zeroMass
 
         if let massSymbols = symbols?.compactMap({ $0 as? Mass }) {
-            result = mass(of: massSymbols)
+            result = self.mass(of: massSymbols)
         }
 
         return result
     }
 
-    public func mass(of mass: [Mass]) -> MassContainer {
+    func mass(of mass: [Mass]) -> MassContainer {
         return mass.reduce(zeroMass) { $0 + $1.masses }
     }
 
-    public var monoisotopicMass: Dalton {
+    var monoisotopicMass: Dalton {
         return masses.monoisotopicMass
     }
 
-    public var averageMass: Dalton {
+    var averageMass: Dalton {
         return masses.averageMass
     }
 
-    public var nominalMass: Int {
+    var nominalMass: Int {
         return masses.nominalMass
     }
 }
