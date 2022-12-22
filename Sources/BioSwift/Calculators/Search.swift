@@ -59,12 +59,12 @@ extension MassRange {
             self.contains(Dalton(masses.nominalMass))
     }
     
-    func lowerLimit(includes masses: MassContainer) -> Bool {
-        return masses.monoisotopicMass >= 0.95 * lowerBound
+    func lowerLimit(excludes masses: MassContainer) -> Bool {
+        return masses.monoisotopicMass < 0.95 * lowerBound
     }
 
-    func upperLimit(includes masses: MassContainer) -> Bool {
-        return masses.averageMass <= 1.05 * upperBound
+    func upperLimit(excludes masses: MassContainer) -> Bool {
+        return masses.averageMass > 1.05 * upperBound
     }
 }
 
@@ -145,7 +145,7 @@ public extension Chain {
                 
                 masses += temp
                 
-                if !massRange.upperLimit(includes: masses) {
+                if massRange.upperLimit(excludes: masses) {
                     break
                 }
                 
@@ -160,7 +160,7 @@ public extension Chain {
                 
                 masses -= temp
                 
-                if !massRange.lowerLimit(includes: masses) {
+                if massRange.lowerLimit(excludes: masses) {
                     break
                 }
                 
