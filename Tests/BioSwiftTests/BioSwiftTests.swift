@@ -190,8 +190,8 @@ final class BioSwiftTests: XCTestCase {
 
     func testMassSearch() {
         if let chain = protein.chains.first {
-            let searchParameters = MassSearchParameters(searchValue: 609.2,
-                                                        tolerance: MassTolerance(type: .ppm, value: 500),
+            let searchParameters = MassSearchParameters(searchValue: 609.71,
+                                                        tolerance: MassTolerance(type: .ppm, value: 20),
                                                         searchType: .sequential,
                                                         massType: .monoisotopic)
             
@@ -209,7 +209,7 @@ final class BioSwiftTests: XCTestCase {
             chain.addModification(LocalizedModification(phos, at: 76)) // zero-based
             
             let searchParameters = MassSearchParameters(searchValue: 689,
-                                                        tolerance: MassTolerance(type: .ppm, value: 500),
+                                                        tolerance: MassTolerance(type: .ppm, value: 20),
                                                         searchType: .sequential,
                                                         massType: .nominal)
             
