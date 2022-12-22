@@ -23,9 +23,9 @@ public enum MassToleranceType: String {
 
 public extension MassToleranceType {
     var minValue: Double {
-        return 0.0
+        0.0
     }
-    
+
     var maxValue: Double {
         switch self {
         case .ppm:
@@ -43,7 +43,7 @@ public extension MassToleranceType {
 public struct MassTolerance {
     public var type: MassToleranceType
     public var value: Double
-    
+
     public init(type: MassToleranceType, value: Double) {
         self.type = type
         self.value = value
@@ -55,46 +55,46 @@ public struct MassSearchParameters {
     public var tolerance: MassTolerance
     public let searchType: SearchType
     public var massType: MassType
-    
+
     public init(searchValue: Double, tolerance: MassTolerance, searchType: SearchType, massType: MassType) {
         self.searchValue = searchValue
         self.tolerance = tolerance
         self.searchType = searchType
         self.massType = massType
     }
-    
+
     public var massRange: MassRange {
         var minMass = 0.0
         var maxMass = 0.0
         let toleranceValue = Double(tolerance.value)
-        
+
         switch tolerance.type {
         case .ppm:
-            let delta = toleranceValue / 1000000
+            let delta = toleranceValue / 1_000_000
             minMass = (1 - delta) * searchValue
             maxMass = (1 + delta) * searchValue
-            
+
         case .dalton:
             minMass = searchValue - toleranceValue
             maxMass = searchValue + toleranceValue
-            
+
         case .percent:
             minMass = searchValue - (toleranceValue * searchValue) / 100
             maxMass = searchValue + (toleranceValue * searchValue) / 100
-            
+
         case .mmu:
             minMass = searchValue - toleranceValue / 1000
             maxMass = searchValue + toleranceValue / 1000
         }
-        
-        return Dalton(minMass)...Dalton(maxMass)
+
+        return Dalton(minMass) ... Dalton(maxMass)
     }
 }
 
 public extension Chain {
     func searchSequence<T: RangedChain>(searchString: String) -> [T] {
         var result = [T]()
-        
+
         for range in sequenceString.sequenceRanges(of: searchString) {
             if var sub: T = subChain(with: range) as? T {
                 sub.adducts = adducts
@@ -103,7 +103,7 @@ public extension Chain {
                 result.append(sub)
             }
         }
-        
+
         return result
     }
 }
@@ -111,57 +111,57 @@ public extension Chain {
 public extension Chain {
     func searchMass<T: RangedChain & ChargedMass>(params: MassSearchParameters) -> [T] {
         var result = [T]()
-        
-        let count = self.numberOfResidues()
+
+        let count = numberOfResidues()
         let massRange = params.massRange
-        
+
         var start = 0
         var end = 0
-        
+
         var masses: MassContainer = water.masses
-        
+
         while start < count {
             while end < count {
-                guard let temp = self.residue(at: end)?.masses else { break }
+                guard let temp = residue(at: end)?.masses else { break }
                 end += 1
-                
+
                 masses += temp
-                
+
                 if massRange.upperLimit(excludes: masses) {
                     break
                 }
-                
-                if end > start, let sub: T = subChain(with: start...(end - 1), for: masses, in: massRange) {
+
+                if end > start, let sub: T = subChain(with: start ... (end - 1), for: masses, in: massRange) {
                     result.append(sub)
                     break
                 }
             }
-            
+
             while start < end {
-                guard let temp = self.residue(at: start)?.masses else { break }
+                guard let temp = residue(at: start)?.masses else { break }
                 start += 1
-                
+
                 masses -= temp
-                
+
                 if massRange.lowerLimit(excludes: masses) {
                     break
                 }
-                
-                if end > start, let sub: T = subChain(with: start...(end - 1), for: masses, in: massRange) {
+
+                if end > start, let sub: T = subChain(with: start ... (end - 1), for: masses, in: massRange) {
                     result.append(sub)
                     break
                 }
             }
         }
-        
+
         return result
     }
-    
+
     private func subChain<T: RangedChain & ChargedMass>(with chainRange: ChainRange, for masses: MassContainer, in massRange: MassRange) -> T? {
         if massRange.contains(masses), var sub: T = subChain(with: chainRange) as? T {
             sub.adducts = adducts
             sub.rangeInParent = chainRange
-            
+
             return sub
         }
 

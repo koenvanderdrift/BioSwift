@@ -17,7 +17,7 @@ public let proton = FunctionalGroup(name: "proton", formula: "H")
 public let sodium = FunctionalGroup(name: "sodium", formula: "Na")
 public let ammonium = FunctionalGroup(name: "ammonium", formula: "NH4")
 
-public struct FunctionalGroup: Structure, Codable {    
+public struct FunctionalGroup: Structure, Codable {
     public let name: String
     public let formula: Formula
     public var adducts: [Adduct]
@@ -32,27 +32,27 @@ public struct FunctionalGroup: Structure, Codable {
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
 
-        self.name = try container.decode(String.self, forKey: .name)
-        self.formula = Formula(try container.decode(String.self, forKey: .formula))
-        self.adducts = []
+        name = try container.decode(String.self, forKey: .name)
+        formula = Formula(try container.decode(String.self, forKey: .formula))
+        adducts = []
 
-        self._masses = calculateMasses()
+        _masses = calculateMasses()
     }
 
     public init(name: String, formula: String) {
         self.name = name
         self.formula = Formula(formula)
-        self.adducts = []
+        adducts = []
 
-        self._masses = calculateMasses()
+        _masses = calculateMasses()
     }
 
     public init(name: String, formula: [String: Int]) {
         self.name = name
         self.formula = Formula(formula)
-        self.adducts = []
+        adducts = []
 
-        self._masses = calculateMasses()
+        _masses = calculateMasses()
     }
 
     public func encode(to encoder: Encoder) throws {
@@ -62,17 +62,17 @@ public struct FunctionalGroup: Structure, Codable {
     }
 
     public var masses: MassContainer {
-        return _masses
+        _masses
     }
 
     var description: String {
-        return name
+        name
     }
 }
 
 extension FunctionalGroup: Hashable {
     public static func == (lhs: FunctionalGroup, rhs: FunctionalGroup) -> Bool {
-        return lhs.name == rhs.name
+        lhs.name == rhs.name
     }
 
     public func hash(into hasher: inout Hasher) {

@@ -5,12 +5,10 @@ public let zeroFormula = Formula("")
 public class Formula {
     public var formulaString: String
 
-    public lazy var elements: [ChemicalElement] = {
-        return getElements()
-    }()
-    
+    public lazy var elements: [ChemicalElement] = getElements()
+
     public init(_ string: String) {
-        self.formulaString = string
+        formulaString = string
     }
 
     public init(_ dict: [String: Int]) {
@@ -26,19 +24,19 @@ public class Formula {
     }
 
     var description: String {
-        return formulaString
+        formulaString
     }
 
     public func countedElements() -> NSCountedSet {
-       return NSCountedSet(array: elements)
+        NSCountedSet(array: elements)
     }
-    
+
     public func isotopes() -> NSCountedSet {
-        return NSCountedSet(array: elements.map { $0.isotopes }.reduce([], +))
+        NSCountedSet(array: elements.map(\.isotopes).reduce([], +))
     }
-    
+
     public func countFor(element: String) -> Int {
-        return elements.map { $0.symbol }.filter { $0 == element }.count
+        elements.map(\.symbol).filter { $0 == element }.count
     }
 }
 
@@ -52,7 +50,7 @@ extension Formula {
         case numberPrecedingFormula
         case invalidFormula
     }
-    
+
     private func getElements() -> [ChemicalElement] {
         var result: [ChemicalElement] = []
 
@@ -61,11 +59,11 @@ extension Formula {
         } catch {
             debugPrint(error)
         }
-        
+
         return result
     }
 
-    private func parseElements() throws -> [ChemicalElement]  {
+    private func parseElements() throws -> [ChemicalElement] {
         // https://github.com/cgohlke/molmass/blob/master/molmass/molmass.py
         // https://github.com/cgohlke/molmass/blob/master/molmass/elements.py
 
@@ -78,7 +76,7 @@ extension Formula {
         var elementCount = 0
         var elementName = ""
 
-        var result = [ChemicalElement] ()
+        var result = [ChemicalElement]()
 
         if i == 0 {
             return result
@@ -179,30 +177,29 @@ extension Formula {
     }
 
     private func isOpeningBracket(_ char: Character) -> Bool {
-        return "({[<".contains(char)
+        "({[<".contains(char)
     }
 
     private func isClosingBracket(_ char: Character) -> Bool {
-        return ")}]>".contains(char)
+        ")}]>".contains(char)
     }
 }
 
 extension Formula: Equatable {
     public static func == (lhs: Formula, rhs: Formula) -> Bool {
-        return lhs.countedElements() == rhs.countedElements()
+        lhs.countedElements() == rhs.countedElements()
     }
 }
 
-extension Formula {
-    public static func + (lhs: Formula, rhs: Formula) -> Formula {
-        return Formula(lhs.formulaString + rhs.formulaString)
+public extension Formula {
+    static func + (lhs: Formula, rhs: Formula) -> Formula {
+        Formula(lhs.formulaString + rhs.formulaString)
     }
 
-    public static func += (lhs: inout Formula, rhs: Formula) {
+    static func += (lhs: inout Formula, rhs: Formula) {
         lhs = lhs + rhs
     }
 }
-
 
 /*
  # Common chemical groups

@@ -148,15 +148,15 @@ final class BioSwiftTests: XCTestCase {
 
     func testSubChain() {
         if let chain = protein.chains.first {
-            let range1: ChainRange = 3...9 // 0 based
+            let range1: ChainRange = 3 ... 9 // 0 based
             let subChain1 = chain.subChain(removing: range1)
             XCTAssertEqual(subChain1?.sequenceString, "MPSLLAGLCCLVPVSLAEDPQGDAAQKTDTSHHDQDHPTFNKITPNLAEFAFSLYRQLAHQSNSTNIFFSPVSIATAFAMLSLGTKADTHDEILEGLNFNLTEIPEAQIHEGFQELLRTLNQPDSQLQLTTGNGLFLSEGLKLVDKFLEDVKKLYHSEAFTVNFGDTEEAKKQINDYVEKGTQGKIVDLVKELDRDTVFALVNYIFFKGKWERPFEVKDTEEEDFHVDQVTTVKVPMMKRLGMFNIQHCKKLSSWVLLMKYLGNATAIFFLPDEGKLQHLENELTHDIITKFLENEDRRSASLHLPKLSITGTYDLKSVLGQLGITKVFSNGADLSGVTEEAPLKLSKAVHKAVLTIDEKGTEAAGAMFLEAIPMSIPPEVKFNKPFVFLMIEQNTKSPLFMGKVVNPTQK")
 
-            let range2: ChainRange = 0...9 // 0 based
+            let range2: ChainRange = 0 ... 9 // 0 based
             let subChain2 = chain.subChain(removing: range2)
             XCTAssertEqual(subChain2?.sequenceString, "LLAGLCCLVPVSLAEDPQGDAAQKTDTSHHDQDHPTFNKITPNLAEFAFSLYRQLAHQSNSTNIFFSPVSIATAFAMLSLGTKADTHDEILEGLNFNLTEIPEAQIHEGFQELLRTLNQPDSQLQLTTGNGLFLSEGLKLVDKFLEDVKKLYHSEAFTVNFGDTEEAKKQINDYVEKGTQGKIVDLVKELDRDTVFALVNYIFFKGKWERPFEVKDTEEEDFHVDQVTTVKVPMMKRLGMFNIQHCKKLSSWVLLMKYLGNATAIFFLPDEGKLQHLENELTHDIITKFLENEDRRSASLHLPKLSITGTYDLKSVLGQLGITKVFSNGADLSGVTEEAPLKLSKAVHKAVLTIDEKGTEAAGAMFLEAIPMSIPPEVKFNKPFVFLMIEQNTKSPLFMGKVVNPTQK")
 
-            let range3: ChainRange = 11...400 // 1 based
+            let range3: ChainRange = 11 ... 400 // 1 based
             let subChain3 = chain.subChain(removing: range3, based: 1)
             XCTAssertEqual(subChain3?.sequenceString, "MPSSVSWGILQNTKSPLFMGKVVNPTQK")
         }
@@ -180,7 +180,7 @@ final class BioSwiftTests: XCTestCase {
             if let regex = aspN?.regex() {
                 let peptides: [Peptide] = chain.digest(using: regex, with: missedCleavages)
 
-                let _ = print(peptides.map { $0.sequenceString })
+                let _ = print(peptides.map(\.sequenceString))
 
                 XCTAssertEqual(peptides[0].sequenceString, "MPSSVSWGILLLAGLCCLVPVSLAE")
                 XCTAssertEqual(peptides[1].sequenceString, "DPQG")
@@ -194,41 +194,43 @@ final class BioSwiftTests: XCTestCase {
                                                         tolerance: MassTolerance(type: .ppm, value: 20),
                                                         searchType: .sequential,
                                                         massType: .monoisotopic)
-            
+
             let peptides: [Peptide] = chain.searchMass(params: searchParameters)
-            print(peptides.map { $0.sequenceString })
+            print(peptides.map(\.sequenceString))
 
             XCTAssert(peptides.contains(where: { $0.sequenceString == "IFFSP" }))
         }
     }
-    
+
     func testLowMassSearch() {
         if let chain = protein.chains.first {
             let searchParameters = MassSearchParameters(searchValue: 1,
                                                         tolerance: MassTolerance(type: .ppm, value: 20),
                                                         searchType: .sequential,
                                                         massType: .monoisotopic)
-            
+
             let peptides: [Peptide] = chain.searchMass(params: searchParameters)
-            print(peptides.map { $0.sequenceString })
+            print(peptides.map(\.sequenceString))
 
             XCTAssert(peptides.count == 0)
         }
     }
+
     func testMassSearchWithModification() {
         if var chain = protein.chains.first,
-           let phos = modificationLibrary.filter({ $0.name.contains("Phospho") == true }).first {
-            
+           let phos = modificationLibrary.filter({ $0.name.contains("Phospho") == true }).first
+        {
             chain.addModification(LocalizedModification(phos, at: 76)) // zero-based
-            
+
             let searchParameters = MassSearchParameters(searchValue: 689,
                                                         tolerance: MassTolerance(type: .ppm, value: 20),
                                                         searchType: .sequential,
                                                         massType: .nominal)
-            
+
             let peptides: [Peptide] = chain.searchMass(params: searchParameters)
-            print(peptides.map { $0.sequenceString })
-            
+            print(peptides.map(\.sequenceString))
+
             XCTAssert(peptides.contains(where: { $0.sequenceString == "IFFSP" }))
         }
-    }}
+    }
+}

@@ -9,9 +9,9 @@ public let lossOfAmmonia = Modification(name: "Loss of Ammonia", reactions: [.re
 public struct PolyPeptide: RangedChain {
     public var name: String = ""
     public var symbolLibrary: [Symbol] = aminoAcidLibrary
-    
+
     public var residues: [AminoAcid] = []
-    
+
     public var termini: (first: AminoAcid, last: AminoAcid)? = (nTerm, cTerm)
     public var adducts: [Adduct] = []
     public var modifications: [LocalizedModification] = []
@@ -19,62 +19,62 @@ public struct PolyPeptide: RangedChain {
     public var rangeInParent: ChainRange = zeroChainRange
 }
 
-extension PolyPeptide {
-    public init(sequence: String) {
-        self.residues = createResidues(from: sequence)
+public extension PolyPeptide {
+    init(sequence: String) {
+        residues = createResidues(from: sequence)
     }
-    
-    public init(residues: [AminoAcid]) {
+
+    init(residues: [AminoAcid]) {
         self.residues = residues
     }
-    
-    public var nTerminalModification: Modification? {
+
+    var nTerminalModification: Modification? {
         get {
             if let mod = termini?.first.modification {
                 return mod
             }
-            
+
             return nil
         }
         set {
             if var first = termini?.first, let last = termini?.last {
                 first.setModification(newValue)
-                
+
                 setTermini(first: first, last: last)
             }
         }
     }
 
-    public var cTerminalModification: Modification? {
+    var cTerminalModification: Modification? {
         get {
             if let mod = termini?.last.modification {
                 return mod
             }
-            
+
             return nil
         }
         set {
             if let first = termini?.first, var last = termini?.last {
                 last.setModification(newValue)
-                
+
                 setTermini(first: first, last: last)
             }
         }
     }
 }
 
-extension PolyPeptide {
-    public var masses: MassContainer {
-        return calculateMasses()
+public extension PolyPeptide {
+    var masses: MassContainer {
+        calculateMasses()
     }
-    
-    public func calculateMasses() -> MassContainer {
-        return mass(of: residues) + terminalMasses()
+
+    func calculateMasses() -> MassContainer {
+        mass(of: residues) + terminalMasses()
     }
-    
-    public func hydropathyValues(for hydropathyType: String) -> [Double] {
-        let values = Hydropathy(residues: self.residues).hydrophathyValues(for: hydropathyType)
-        
-        return self.residues.compactMap { values[$0.oneLetterCode] }
+
+    func hydropathyValues(for hydropathyType: String) -> [Double] {
+        let values = Hydropathy(residues: residues).hydrophathyValues(for: hydropathyType)
+
+        return residues.compactMap { values[$0.oneLetterCode] }
     }
 }

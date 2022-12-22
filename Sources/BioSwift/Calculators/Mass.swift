@@ -13,17 +13,17 @@ public typealias MassRange = ClosedRange<Dalton>
 
 extension MassRange {
     func contains(_ masses: MassContainer) -> Bool {
-        self.contains(masses.monoisotopicMass) ||
-            self.contains(masses.averageMass) ||
-            self.contains(Dalton(masses.nominalMass))
+        contains(masses.monoisotopicMass) ||
+            contains(masses.averageMass) ||
+            contains(Dalton(masses.nominalMass))
     }
 
     func lowerLimit(excludes masses: MassContainer) -> Bool {
-        return masses.monoisotopicMass < 0.95 * lowerBound
+        masses.monoisotopicMass < 0.95 * lowerBound
     }
 
     func upperLimit(excludes masses: MassContainer) -> Bool {
-        return masses.averageMass > 1.05 * upperBound
+        masses.averageMass > 1.05 * upperBound
     }
 }
 
@@ -43,26 +43,26 @@ public extension Mass {
         var result = zeroMass
 
         if let massSymbols = symbols?.compactMap({ $0 as? Mass }) {
-            result = self.mass(of: massSymbols)
+            result = mass(of: massSymbols)
         }
 
         return result
     }
 
     func mass(of mass: [Mass]) -> MassContainer {
-        return mass.reduce(zeroMass) { $0 + $1.masses }
+        mass.reduce(zeroMass) { $0 + $1.masses }
     }
 
     var monoisotopicMass: Dalton {
-        return masses.monoisotopicMass
+        masses.monoisotopicMass
     }
 
     var averageMass: Dalton {
-        return masses.averageMass
+        masses.averageMass
     }
 
     var nominalMass: Int {
-        return masses.nominalMass
+        masses.nominalMass
     }
 }
 
@@ -80,7 +80,7 @@ public struct MassContainer {
 
 extension MassContainer: Equatable {
     public static func + (lhs: MassContainer, rhs: MassContainer) -> MassContainer {
-        return MassContainer(monoisotopicMass: lhs.monoisotopicMass + rhs.monoisotopicMass, averageMass: lhs.averageMass + rhs.averageMass, nominalMass: lhs.nominalMass + rhs.nominalMass)
+        MassContainer(monoisotopicMass: lhs.monoisotopicMass + rhs.monoisotopicMass, averageMass: lhs.averageMass + rhs.averageMass, nominalMass: lhs.nominalMass + rhs.nominalMass)
     }
 
     public static func += (lhs: inout MassContainer, rhs: MassContainer) {
@@ -88,7 +88,7 @@ extension MassContainer: Equatable {
     }
 
     public static func - (lhs: MassContainer, rhs: MassContainer) -> MassContainer {
-        return MassContainer(monoisotopicMass: lhs.monoisotopicMass - rhs.monoisotopicMass, averageMass: lhs.averageMass - rhs.averageMass, nominalMass: lhs.nominalMass - rhs.nominalMass)
+        MassContainer(monoisotopicMass: lhs.monoisotopicMass - rhs.monoisotopicMass, averageMass: lhs.averageMass - rhs.averageMass, nominalMass: lhs.nominalMass - rhs.nominalMass)
     }
 
     public static func -= (lhs: inout MassContainer, rhs: MassContainer) {
@@ -96,10 +96,10 @@ extension MassContainer: Equatable {
     }
 
     public static func * (lhs: Int, rhs: MassContainer) -> MassContainer {
-        return MassContainer(monoisotopicMass: Dalton(lhs) * rhs.monoisotopicMass, averageMass: Dalton(lhs) * rhs.averageMass, nominalMass: lhs * rhs.nominalMass)
+        MassContainer(monoisotopicMass: Dalton(lhs) * rhs.monoisotopicMass, averageMass: Dalton(lhs) * rhs.averageMass, nominalMass: lhs * rhs.nominalMass)
     }
 
     public static func / (lhs: MassContainer, rhs: Int) -> MassContainer {
-        return MassContainer(monoisotopicMass: lhs.monoisotopicMass / Dalton(rhs), averageMass: lhs.averageMass / Dalton(rhs), nominalMass: Int(lhs.nominalMass / rhs))
+        MassContainer(monoisotopicMass: lhs.monoisotopicMass / Dalton(rhs), averageMass: lhs.averageMass / Dalton(rhs), nominalMass: Int(lhs.nominalMass / rhs))
     }
 }

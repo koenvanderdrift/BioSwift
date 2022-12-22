@@ -33,15 +33,15 @@ public extension BioMolecule {
 // Convenience accessors
 public extension BioMolecule {
     var formula: Formula {
-        return chains.reduce(zeroFormula) { $0 + $1.formula }
+        chains.reduce(zeroFormula) { $0 + $1.formula }
     }
 
     var residues: [Residue] {
-        return chains.reduce([]) { $0 + $1.residues }
+        chains.reduce([]) { $0 + $1.residues }
     }
 
     var charge: Int {
-        return chains.reduce(0) { $0 + $1.charge }
+        chains.reduce(0) { $0 + $1.charge }
     }
 
     func mass(chainIndex index: Int = -1) -> MassContainer {
@@ -85,7 +85,7 @@ public extension BioMolecule {
     }
 
     func sequenceString(chainIndex index: Int = 0) -> String {
-        return chains[index].sequenceString
+        chains[index].sequenceString
     }
 
     func selectionString(chainIndex index: Int = 0, range: ChainRange) -> String {
@@ -95,7 +95,7 @@ public extension BioMolecule {
     }
 
     func sequenceLength(chainIndex index: Int = 0) -> Int {
-        return chains[index].numberOfResidues()
+        chains[index].numberOfResidues()
     }
 
     func selectionLength(chainIndex index: Int = 0, range: ChainRange) -> Int {

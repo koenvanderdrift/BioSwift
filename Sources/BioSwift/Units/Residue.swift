@@ -14,8 +14,8 @@ public protocol Residue: Structure, Symbol, Modifiable {
     var modification: Modification? { get set }
 }
 
-extension Residue {
-    public var identifier: String {
-        return oneLetterCode
+public extension Residue {
+    var identifier: String {
+        oneLetterCode
     }
 }
