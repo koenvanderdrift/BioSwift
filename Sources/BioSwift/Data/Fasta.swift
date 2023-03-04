@@ -32,15 +32,7 @@ public func parseFastaDataFromBundle(from fileName: String) throws -> [FastaReco
 public func parseFastaData(from fileName: String) async throws -> [FastaRecord] {
     do {
         let fastaData = try loadData(from: fileName, withExtension: "fasta")
-
-        return await withTaskGroup(of: FastaRecord.self) { _ in
-
-            if let fastaArray = String(data: fastaData, encoding: .ascii)?.components(separatedBy: "\n>") {
-                return await FastaDecoder().decodeRecords(fastaArray)
-            }
-
-            return []
-        }
+        return await FastaDecoder().decodeRecords(fastaData)
     } catch {
         throw LoadError.fileDecodingFailed(name: fileName)
     }
@@ -49,16 +41,8 @@ public func parseFastaData(from fileName: String) async throws -> [FastaRecord] 
 @available(macOS 10.15.0, iOS 13.0, *)
 public func parseFastaDataFromBundle(from fileName: String) async throws -> [FastaRecord] {
     do {
-        let fastaData = try loadData(from: fileName, withExtension: "fasta")
-
-        return await withTaskGroup(of: FastaRecord.self) { _ in
-
-            if let fastaArray = String(data: fastaData, encoding: .ascii)?.components(separatedBy: "\n>") {
-                return await FastaDecoder().decodeRecords(fastaArray)
-            }
-
-            return []
-        }
+        let fastaData = try loadDataFromBundle(from: fileName, withExtension: "fasta")
+        return await FastaDecoder().decodeRecords(fastaData)
     } catch {
         throw LoadError.fileDecodingFailed(name: fileName)
     }
@@ -227,27 +211,32 @@ public final class FastaDecoder: TopLevelDecoder {
 
         return records as! T
     }
+}
 
-    @available(macOS 10.15.0, iOS 13.0, *)
-    func decodeRecords(_ fastaArray: [String]) async -> [FastaRecord] {
-        return await withTaskGroup(of: FastaRecord.self) { taskGroup in
-            var records = [FastaRecord]()
+@available(macOS 10.15.0, iOS 13.0, *)
+extension FastaDecoder {
+    func decodeRecords(_ fastaData: Data) async -> [FastaRecord] {
+        if let fastaArray = String(data: fastaData, encoding: .ascii)?.components(separatedBy: "\n>") {
+            return await withTaskGroup(of: FastaRecord.self) { taskGroup in
+                var records = [FastaRecord]()
 
-            for fastaLine in fastaArray {
-                taskGroup.addTask {
-                    await self.decodeRecord(from: fastaLine)
+                for fastaLine in fastaArray {
+                    taskGroup.addTask {
+                        await self.decodeRecord(from: fastaLine)
+                    }
                 }
-            }
 
-            for await record in taskGroup {
-                records.append(record)
-            }
+                for await record in taskGroup {
+                    records.append(record)
+                }
 
-            return records
+                return records
+            }
         }
+
+        return []
     }
 
-    @available(macOS 10.15.0, iOS 13.0, *)
     func decodeRecord(from fastaLine: String) async -> FastaRecord {
         var result = zeroFastaRecord
         let decoder = _FastaDecoder(fastaLine)
