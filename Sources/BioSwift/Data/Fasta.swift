@@ -28,6 +28,42 @@ public func parseFastaDataFromBundle(from fileName: String) throws -> [FastaReco
     }
 }
 
+@available(macOS 10.15.0, iOS 13.0, *)
+public func parseFastaData(from fileName: String) async throws -> [FastaRecord] {
+    do {
+        let fastaData = try loadData(from: fileName, withExtension: "fasta")
+
+        return await withTaskGroup(of: FastaRecord.self) { _ in
+
+            if let fastaArray = String(data: fastaData, encoding: .ascii)?.components(separatedBy: "\n>") {
+                return await FastaDecoder().decodeRecords(fastaArray)
+            }
+
+            return []
+        }
+    } catch {
+        throw LoadError.fileDecodingFailed(name: fileName)
+    }
+}
+
+@available(macOS 10.15.0, iOS 13.0, *)
+public func parseFastaDataFromBundle(from fileName: String) async throws -> [FastaRecord] {
+    do {
+        let fastaData = try loadData(from: fileName, withExtension: "fasta")
+
+        return await withTaskGroup(of: FastaRecord.self) { _ in
+
+            if let fastaArray = String(data: fastaData, encoding: .ascii)?.components(separatedBy: "\n>") {
+                return await FastaDecoder().decodeRecords(fastaArray)
+            }
+
+            return []
+        }
+    } catch {
+        throw LoadError.fileDecodingFailed(name: fileName)
+    }
+}
+
 public struct FastaRecord: Codable, Hashable, Identifiable {
     // TODO: add DNA/RNA fasta parsing
     public let id: UUID
@@ -190,6 +226,39 @@ public final class FastaDecoder: TopLevelDecoder {
         }
 
         return records as! T
+    }
+
+    @available(macOS 10.15.0, iOS 13.0, *)
+    func decodeRecords(_ fastaArray: [String]) async -> [FastaRecord] {
+        return await withTaskGroup(of: FastaRecord.self) { taskGroup in
+            var records = [FastaRecord]()
+
+            for fastaLine in fastaArray {
+                taskGroup.addTask {
+                    await self.decodeRecord(from: fastaLine)
+                }
+            }
+
+            for await record in taskGroup {
+                records.append(record)
+            }
+
+            return records
+        }
+    }
+
+    @available(macOS 10.15.0, iOS 13.0, *)
+    func decodeRecord(from fastaLine: String) async -> FastaRecord {
+        var result = zeroFastaRecord
+        let decoder = _FastaDecoder(fastaLine)
+
+        do {
+            result = try FastaRecord(from: decoder)
+        } catch {
+            debugPrint(error)
+        }
+
+        return result
     }
 }
 
