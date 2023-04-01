@@ -65,6 +65,10 @@ public struct DataLibrary {
         return []
     }
 
+    public func loadUnimod() async throws {
+        try await UnimodController().loadUnimod()
+    }
+    
     public func loadUnimod(withCompletion completion: @escaping (Bool) -> Void) {
         UnimodController().loadUnimod { success in
             completion(success)

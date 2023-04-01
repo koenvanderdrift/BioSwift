@@ -12,6 +12,7 @@ public enum LoadError: Error {
     case fileNotFound(name: String)
     case fileConversionFailed(name: String)
     case fileDecodingFailed(name: String)
+    case fileParsingFailed(name: String)
 }
 
 public func loadData(from fileName: String, withExtension fileExtension: String) throws -> Data {
