@@ -197,7 +197,7 @@ public final class FastaDecoder: TopLevelDecoder {
 
         if let fastaArray = String(data: data, encoding: .ascii)?.components(separatedBy: "\n>") {
             records = fastaArray.concurrentMap { fastaLine in
-                decodeRecord(from: fastaLine)
+                self.decodeRecord(from: fastaLine)
             }
         }
 
