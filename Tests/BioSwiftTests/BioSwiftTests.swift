@@ -26,7 +26,7 @@ final class BioSwiftTests: XCTestCase {
     }
 
     func testSequenceLength() {
-        XCTAssertEqual(protein.sequenceLength(), 418)
+        XCTAssertEqual(protein.sequenceLength(), 419)
         XCTAssertEqual(peptide.sequenceString.count, 5)
     }
 
