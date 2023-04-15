@@ -543,5 +543,46 @@
         "abundance": "6.87"
     }
     ]
+},
+{
+    "name": "Ruthenium",
+    "symbol": "Ru",
+    "isotopes": [{
+        "mass": "95.90759025",
+        "ordinalNumber": "96",
+        "abundance": "5.54"
+    },
+    {
+        "mass": "97.9052868",
+        "ordinalNumber": "98",
+        "abundance": "1.87"
+    },
+    {
+        "mass": "98.9059341",
+        "ordinalNumber": "99",
+        "abundance": "12.76"
+    },
+    {
+        "mass": "99.9042143",
+        "ordinalNumber": "100",
+        "abundance": "12.60"
+    },
+    {
+        "mass": "100.9055769",
+        "ordinalNumber": "101",
+        "abundance": "17.06"
+    },
+    {
+        "mass": "101.9043441",
+        "ordinalNumber": "102",
+        "abundance": "31.55"
+    },
+    {
+        "mass": "103.9054275",
+        "ordinalNumber": "104",
+        "abundance": "18.62"
+    }
+    ]
 }
+
 ]
