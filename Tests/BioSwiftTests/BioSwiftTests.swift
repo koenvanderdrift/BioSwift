@@ -11,17 +11,10 @@ final class BioSwiftTests: XCTestCase {
     }
 
     override func setUp() async throws {
-        try await super.setUp()
-        
         debugPrint("test setup")
 
-        let task = Task {
-            // https://stackoverflow.com/questions/29504712/how-can-i-get-xctest-to-wait-for-async-calls-in-setup-before-tests-are-run
-
-            try await dataLibrary.loadUnimod()
-
-        }
-        try await task.value
+        try await super.setUp()
+        try await dataLibrary.loadUnimod()
     }
     
     func testSequenceLength() {
