@@ -69,6 +69,25 @@ public class UnimodParser: NSObject {
 
     let rightArrow = "\u{2192}"
 
+    @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
+    public func parseXML() async throws {
+        skipTitleStrings = [cation, unknown, xlink, atypeion, "2H", "13C", "15N"]
+        
+        do {
+            let data = try loadDataFromBundle(from: "unimod", withExtension: "xml")
+            let parser = XMLParser(data: data)
+            parser.delegate = self
+
+            if parser.parse() == false {
+                if let error = parser.parserError {
+                    throw(error)
+                } else {
+                    throw LoadError.fileParsingFailed(name: "unimod")
+                }
+            }
+        }
+    }
+
     public func parseXML() throws {
         skipTitleStrings = [cation, unknown, xlink, atypeion, "2H", "13C", "15N"]
         
