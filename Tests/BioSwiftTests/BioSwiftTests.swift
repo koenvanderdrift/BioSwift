@@ -8,15 +8,15 @@ final class BioSwiftTests: XCTestCase {
 
     override class func setUp() {
         super.setUp()
+        
+        do {
+            try dataLibrary.loadUnimod()
+        }
+        catch {
+            debugPrint(error)
+        }
     }
 
-    override func setUp() async throws {
-        debugPrint("test setup")
-
-        try await super.setUp()
-        try await dataLibrary.loadUnimod()
-    }
-    
     func testSequenceLength() {
         XCTAssertEqual(testProtein.sequenceLength(), 418)
         XCTAssertEqual(testPeptide.sequenceString.count, 5)

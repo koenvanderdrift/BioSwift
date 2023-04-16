@@ -9,32 +9,19 @@
 import Foundation
 
 public struct UnimodController {
-    public func loadUnimod() async throws {
+    public func loadUnimod() throws {
         do {
+            debugPrint("Start parsing unimod.xml")
+
             let unimodParser = UnimodParser()
-            try await unimodParser.parseXML2()
+            try unimodParser.parseXML()
+
+            debugPrint("Finished parsing unimod.xml")
         }
         catch {
+            debugPrint("Failed parsing unimod.xml")
+
             throw(error)
-        }
-    }
-    
-    public func loadUnimod(withCompletion completion: ((Bool) -> Void)? = nil) {
-        DispatchQueue.global(qos: .userInitiated).async {
-            debugPrint("Start parsing unimod.xml")
-            
-            let unimodParser = UnimodParser()
-            let success = unimodParser.parseXML()
-            
-            if success {
-                DispatchQueue.main.async {
-                    debugPrint("Finished parsing unimod.xml")
-                }
-            } else {
-                debugPrint("Failed parsing unimod.xml")
-            }
-            
-            completion?(success)
         }
     }
 }
@@ -82,7 +69,7 @@ public class UnimodParser: NSObject {
 
     let rightArrow = "\u{2192}"
 
-    public func parseXML2() async throws {
+    public func parseXML() throws {
         skipTitleStrings = [cation, unknown, xlink, atypeion, "2H", "13C", "15N"]
         
         do {
@@ -98,24 +85,6 @@ public class UnimodParser: NSObject {
                 }
             }
         }
-    }
-    
-    public func parseXML() -> Bool {
-        var result = false
-
-        guard let url = Bundle.module.url(forResource: "unimod", withExtension: "xml") else {
-            fatalError("Unable to find unimod.xml")
-        }
-
-        if let parser = XMLParser(contentsOf: url) {
-            skipTitleStrings = [cation, unknown, xlink, atypeion, "2H", "13C", "15N"]
-
-            parser.delegate = self
-
-            result = parser.parse()
-        }
-
-        return result
     }
 }
 
