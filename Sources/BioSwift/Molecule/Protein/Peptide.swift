@@ -18,11 +18,11 @@ extension Peptide {
         var fragment = PeptideFragment(residues: residues, type: .precursor, adducts: self.adducts)
         
         if canLoseAmmonia() {
-            fragment.addModification(LocalizedModification(lossOfAmmonia, at: -1))
+            fragment.addModification(LocalizedModification(lossOfAmmonia, at: 0))
         }
         
         if canLoseWater() {
-            fragment.addModification(LocalizedModification(lossOfWater, at: -1))
+            fragment.addModification(LocalizedModification(lossOfWater, at: 0))
         }
         
         return [fragment]
