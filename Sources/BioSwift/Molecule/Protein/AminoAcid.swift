@@ -5,23 +5,23 @@ public let cTermString = "C-term"
 
 public struct AminoAcidProperties: OptionSet {
     public let rawValue: Int
-    
+
     public init(rawValue: Int) {
         self.rawValue = rawValue
     }
 
-    public static let polar        = AminoAcidProperties(rawValue: 1 << 0)
-    public static let nonpolar     = AminoAcidProperties(rawValue: 1 << 1)
-    public static let hydrophobic  = AminoAcidProperties(rawValue: 1 << 2)
-    public static let small        = AminoAcidProperties(rawValue: 1 << 3)
-    public static let tiny         = AminoAcidProperties(rawValue: 1 << 4)
-    public static let aromatic     = AminoAcidProperties(rawValue: 1 << 5)
-    public static let aliphatic    = AminoAcidProperties(rawValue: 1 << 6)
-    public static let negative     = AminoAcidProperties(rawValue: 1 << 7)
-    public static let positive     = AminoAcidProperties(rawValue: 1 << 8)
-    public static let uncharged    = AminoAcidProperties(rawValue: 1 << 9)
-    public static let chargedPos   = AminoAcidProperties(rawValue: 1 << 10)
-    public static let chargedNeg   = AminoAcidProperties(rawValue: 1 << 11)
+    public static let polar = AminoAcidProperties(rawValue: 1 << 0)
+    public static let nonpolar = AminoAcidProperties(rawValue: 1 << 1)
+    public static let hydrophobic = AminoAcidProperties(rawValue: 1 << 2)
+    public static let small = AminoAcidProperties(rawValue: 1 << 3)
+    public static let tiny = AminoAcidProperties(rawValue: 1 << 4)
+    public static let aromatic = AminoAcidProperties(rawValue: 1 << 5)
+    public static let aliphatic = AminoAcidProperties(rawValue: 1 << 6)
+    public static let negative = AminoAcidProperties(rawValue: 1 << 7)
+    public static let positive = AminoAcidProperties(rawValue: 1 << 8)
+    public static let uncharged = AminoAcidProperties(rawValue: 1 << 9)
+    public static let chargedPos = AminoAcidProperties(rawValue: 1 << 10)
+    public static let chargedNeg = AminoAcidProperties(rawValue: 1 << 11)
 }
 
 public struct AminoAcid: Residue, Codable {
@@ -36,6 +36,8 @@ public struct AminoAcid: Residue, Codable {
     public var modification: Modification?
 
     public var adducts: [Adduct]
+
+    private(set) var _masses: MassContainer = zeroMass
 
     private enum CodingKeys: String, CodingKey {
         case name
@@ -53,41 +55,30 @@ public struct AminoAcid: Residue, Codable {
         self.formula = formula
         self.represents = represents
         self.representedBy = representedBy
-        self.adducts = []
-        
+        adducts = []
+
         setProperties()
     }
 
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        self.represents = try container.decode([String].self, forKey: .represents)
-        self.representedBy = try container.decode([String].self, forKey: .representedBy)
-        self.oneLetterCode = try container.decode(String.self, forKey: .oneLetterCode)
-        self.threeLetterCode = try container.decode(String.self, forKey: .threeLetterCode)
-        self.formula = Formula(try container.decode(String.self, forKey: .formula))
-        self.name = try container.decode(String.self, forKey: .name)
-        self.adducts = []
+        represents = try container.decode([String].self, forKey: .represents)
+        representedBy = try container.decode([String].self, forKey: .representedBy)
+        oneLetterCode = try container.decode(String.self, forKey: .oneLetterCode)
+        threeLetterCode = try container.decode(String.self, forKey: .threeLetterCode)
+        formula = Formula(try container.decode(String.self, forKey: .formula))
+        name = try container.decode(String.self, forKey: .name)
+        adducts = []
 
         setProperties()
     }
 
     public init(name: String, oneLetterCode: String, threeLetterCode: String = "", elements: [String: Int]) {
-        var formulaString = ""
+        self.init(name: name, oneLetterCode: oneLetterCode, threeLetterCode: threeLetterCode, formula: Formula(elements))
 
-        for (element, count) in elements {
-            formulaString.append(element)
-            if count > 1 {
-                formulaString.append(String(abs(count)))
-            }
-        }
-
-        let formula = Formula(formulaString)
-
-        self.init(name: name, oneLetterCode: oneLetterCode, threeLetterCode: threeLetterCode, formula: formula)
-
-        self.setProperties()
+        setProperties()
     }
-    
+
     private mutating func setProperties() {
         switch oneLetterCode {
         case "A", "G", "L", "V", "M", "I":
@@ -103,6 +94,8 @@ public struct AminoAcid: Residue, Codable {
         default:
             break
         }
+
+        _masses = calculateMasses()
     }
 
     public func encode(to encoder: Encoder) throws {
@@ -116,17 +109,17 @@ public struct AminoAcid: Residue, Codable {
     }
 
     var description: String {
-        return threeLetterCode
+        threeLetterCode
     }
-    
+
     public func allowedModifications() -> [Modification] {
-        return modificationLibrary.filter { $0.sites.contains(identifier) == true }
+        modificationLibrary.filter { $0.sites.contains(identifier) == true }
     }
 }
 
 extension AminoAcid: Hashable {
     public static func == (lhs: AminoAcid, rhs: AminoAcid) -> Bool {
-        return lhs.threeLetterCode == rhs.threeLetterCode
+        lhs.threeLetterCode == rhs.threeLetterCode
     }
 
     public func hash(into hasher: inout Hasher) {
@@ -136,6 +129,6 @@ extension AminoAcid: Hashable {
 
 extension AminoAcid: Mass {
     public var masses: MassContainer {
-        return calculateMasses()
+        _masses + modificationMasses()
     }
 }

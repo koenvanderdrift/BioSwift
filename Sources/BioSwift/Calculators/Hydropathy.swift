@@ -27,9 +27,9 @@ public class Hydropathy {
         if residues.count == 0 {
             return 0.0
         }
-        
+
         let pKaValues = hydrophathyValues(for: "pKa")
-        
+
         guard
             let cTerminalpKa = pKaValues["CTerminal"],
             let nTerminalpKa = pKaValues["NTerminal"],
@@ -88,8 +88,8 @@ public class Hydropathy {
 
         return pH
     }
-    
-    public func hydrophathyValues(for name: String) -> [String : Double] {
+
+    public func hydrophathyValues(for name: String) -> [String: Double] {
         guard let values = hydropathyLibrary.first(where: { $0.name == name })?.values
         else { return [:] }
 

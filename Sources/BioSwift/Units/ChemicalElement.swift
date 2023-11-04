@@ -48,23 +48,23 @@ public struct ChemicalElement: Codable, Symbol {
     }
 
     public var identifier: String {
-        return symbol
+        symbol
     }
 
     var description: String {
-        return symbol
+        symbol
     }
 }
 
 extension ChemicalElement: Equatable {
     public static func == (lhs: Self, rhs: Self) -> Bool {
-        return lhs.symbol == rhs.symbol && lhs.name == rhs.name
+        lhs.symbol == rhs.symbol && lhs.name == rhs.name
     }
 }
 
 extension ChemicalElement: Mass {
     public var masses: MassContainer {
-        return _masses
+        _masses
     }
 
     public func calculateMasses() -> MassContainer {

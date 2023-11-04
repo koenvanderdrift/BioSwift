@@ -2,23 +2,13 @@ import Foundation
 
 public let zeroFormula = Formula("")
 
-public struct Formula {
+public class Formula {
     public var formulaString: String
 
-    public var elements: [ChemicalElement] {
-        var result = [ChemicalElement] ()
-
-        do {
-            result = try parseElements()
-        } catch {
-            debugPrint(error)
-        }
-
-        return result
-    }
+    public lazy var elements: [ChemicalElement] = getElements()
 
     public init(_ string: String) {
-        self.formulaString = string
+        formulaString = string
     }
 
     public init(_ dict: [String: Int]) {
@@ -34,19 +24,19 @@ public struct Formula {
     }
 
     var description: String {
-        return formulaString
+        formulaString
     }
 
     public func countedElements() -> NSCountedSet {
-       return NSCountedSet(array: elements)
+        NSCountedSet(array: elements)
     }
-    
+
     public func isotopes() -> NSCountedSet {
-        return NSCountedSet(array: elements.map { $0.isotopes }.reduce([], +))
+        NSCountedSet(array: elements.map(\.isotopes).reduce([], +))
     }
-    
+
     public func countFor(element: String) -> Int {
-        return elements.map { $0.symbol }.filter { $0 == element }.count
+        elements.map(\.symbol).filter { $0 == element }.count
     }
 }
 
@@ -61,7 +51,19 @@ extension Formula {
         case invalidFormula
     }
 
-    private func parseElements() throws -> [ChemicalElement]  {
+    private func getElements() -> [ChemicalElement] {
+        var result: [ChemicalElement] = []
+
+        do {
+            result = try parseElements()
+        } catch {
+            debugPrint(error)
+        }
+
+        return result
+    }
+
+    private func parseElements() throws -> [ChemicalElement] {
         // https://github.com/cgohlke/molmass/blob/master/molmass/molmass.py
         // https://github.com/cgohlke/molmass/blob/master/molmass/elements.py
 
@@ -74,7 +76,7 @@ extension Formula {
         var elementCount = 0
         var elementName = ""
 
-        var result = [ChemicalElement] ()
+        var result = [ChemicalElement]()
 
         if i == 0 {
             return result
@@ -175,30 +177,29 @@ extension Formula {
     }
 
     private func isOpeningBracket(_ char: Character) -> Bool {
-        return "({[<".contains(char)
+        "({[<".contains(char)
     }
 
     private func isClosingBracket(_ char: Character) -> Bool {
-        return ")}]>".contains(char)
+        ")}]>".contains(char)
     }
 }
 
 extension Formula: Equatable {
-    public static func == (lhs: Self, rhs: Self) -> Bool {
-        return lhs.countedElements() == rhs.countedElements()
+    public static func == (lhs: Formula, rhs: Formula) -> Bool {
+        lhs.countedElements() == rhs.countedElements()
     }
 }
 
-extension Formula {
-    public static func + (lhs: Formula, rhs: Formula) -> Formula {
-        return Formula(lhs.formulaString + rhs.formulaString)
+public extension Formula {
+    static func + (lhs: Formula, rhs: Formula) -> Formula {
+        Formula(lhs.formulaString + rhs.formulaString)
     }
 
-    public static func += (lhs: inout Formula, rhs: Formula) {
+    static func += (lhs: inout Formula, rhs: Formula) {
         lhs = lhs + rhs
     }
 }
-
 
 /*
  # Common chemical groups

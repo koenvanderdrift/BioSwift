@@ -1,547 +1,588 @@
 [{
-    "name": "Hydrogen",
-    "symbol": "H",
-    "isotopes": [{
-        "mass": "1.00782503223",
-        "ordinalNumber": "1",
-        "abundance": "99.9885"
+        "name": "Hydrogen",
+        "symbol": "H",
+        "isotopes": [{
+                "mass": "1.00782503223",
+                "ordinalNumber": "1",
+                "abundance": "99.9885"
+            },
+            {
+                "mass": "2.01410177812",
+                "ordinalNumber": "2",
+                "abundance": "0.0115"
+            },
+            {
+                "mass": "3.0160492779",
+                "ordinalNumber": "3",
+                "abundance": "0"
+            }
+        ]
     },
     {
-        "mass": "2.01410177812",
-        "ordinalNumber": "2",
-        "abundance": "0.0115"
+        "name": "Lithium",
+        "symbol": "Li",
+        "isotopes": [{
+                "mass": "6.0151228874",
+                "ordinalNumber": "6",
+                "abundance": "7.59"
+            },
+            {
+                "mass": "7.0160034366",
+                "ordinalNumber": "7",
+                "abundance": "92.41"
+            }
+        ]
     },
     {
-        "mass": "3.0160492779",
-        "ordinalNumber": "3",
-        "abundance": "0"
+        "name": "Boron",
+        "symbol": "B",
+        "isotopes": [{
+                "mass": "10.01293695",
+                "ordinalNumber": "10",
+                "abundance": "19.9"
+            },
+            {
+                "mass": "11.00930536",
+                "ordinalNumber": "11",
+                "abundance": "80.1"
+            }
+        ]
+    },
+    {
+        "name": "Carbon",
+        "symbol": "C",
+        "isotopes": [{
+                "mass": "12.000000000",
+                "ordinalNumber": "12",
+                "abundance": "98.93"
+            },
+            {
+                "mass": "13.00335483507",
+                "ordinalNumber": "13",
+                "abundance": "1.07"
+            },
+            {
+                "mass": "14.0032419884",
+                "ordinalNumber": "14",
+                "abundance": "0"
+            }
+        ]
+    },
+    {
+        "name": "Nitrogen",
+        "symbol": "N",
+        "isotopes": [{
+                "mass": "14.00307400443",
+                "ordinalNumber": "14",
+                "abundance": "99.636"
+            },
+            {
+                "mass": "15.00010889888",
+                "ordinalNumber": "15",
+                "abundance": "0.364"
+            }
+        ]
+    },
+    {
+        "name": "Oxygen",
+        "symbol": "O",
+        "isotopes": [{
+                "mass": "15.99491461957",
+                "ordinalNumber": "16",
+                "abundance": "99.757"
+            },
+            {
+                "mass": "16.99913175650",
+                "ordinalNumber": "17",
+                "abundance": "0.038"
+            },
+            {
+                "mass": "17.99915961286",
+                "ordinalNumber": "18",
+                "abundance": "0.205"
+            }
+        ]
+    },
+    {
+        "name": "Fluoride",
+        "symbol": "F",
+        "isotopes": [{
+                "mass": "18.99840316273",
+                "ordinalNumber": "19",
+                "abundance": "100"
+            },
+            {
+                "mass": "15.00010889888",
+                "ordinalNumber": "15",
+                "abundance": "0.364"
+            }
+        ]
+    },
+    {
+        "name": "Sodium",
+        "symbol": "Na",
+        "isotopes": [{
+            "mass": "22.9897677",
+            "ordinalNumber": "23",
+            "abundance": "100"
+        }]
+    },
+    {
+        "name": "Magnesium",
+        "symbol": "Mg",
+        "isotopes": [{
+                "mass": "23.985041697",
+                "ordinalNumber": "24",
+                "abundance": "78.99"
+            },
+            {
+                "mass": "24.985836976",
+                "ordinalNumber": "25",
+                "abundance": "10.00"
+            },
+            {
+                "mass": "25.982592968",
+                "ordinalNumber": "26",
+                "abundance": "11.01"
+            }
+        ]
+    },
+    {
+        "name": "Aluminum",
+        "symbol": "Al",
+        "isotopes": [{
+            "mass": "26.98153853",
+            "ordinalNumber": "27",
+            "abundance": "100"
+        }]
+    },
+    {
+        "name": "Silicon",
+        "symbol": "Si",
+        "isotopes": [{
+                "mass": "27.9769265325",
+                "ordinalNumber": "28",
+                "abundance": "92.223"
+            },
+            {
+                "mass": "28.976494700",
+                "ordinalNumber": "29",
+                "abundance": "4.685"
+            },
+            {
+                "mass": "29.97377017",
+                "ordinalNumber": "30",
+                "abundance": "3.092"
+            }
+        ]
+    },
+    {
+        "name": "Phosphorus",
+        "symbol": "P",
+        "isotopes": [{
+            "mass": "30.97376199842",
+            "ordinalNumber": "31",
+            "abundance": "100"
+        }]
+    },
+    {
+        "name": "Sulfur",
+        "symbol": "S",
+        "isotopes": [{
+                "mass": "31.9720711744",
+                "ordinalNumber": "32",
+                "abundance": "94.99"
+            },
+            {
+                "mass": "32.9714589098",
+                "ordinalNumber": "33",
+                "abundance": "0.75"
+            },
+            {
+                "mass": "33.967867004",
+                "ordinalNumber": "34",
+                "abundance": "4.25"
+            },
+            {
+                "mass": "35.96708071",
+                "ordinalNumber": "36",
+                "abundance": "0.01"
+            }
+        ]
+    },
+    {
+        "name": "Chloride",
+        "symbol": "Cl",
+        "isotopes": [{
+                "mass": "34.96885272",
+                "ordinalNumber": "35",
+                "abundance": "75.77"
+            },
+            {
+                "mass": "36.96590262",
+                "ordinalNumber": "37",
+                "abundance": "24.23"
+            }
+        ]
+    },
+    {
+        "name": "Potassium",
+        "symbol": "K",
+        "isotopes": [{
+                "mass": "38.9637074",
+                "ordinalNumber": "39",
+                "abundance": "93.2581"
+            },
+            {
+                "mass": "39.9639992",
+                "ordinalNumber": "40",
+                "abundance": "0.0117"
+            },
+            {
+                "mass": "40.9618254",
+                "ordinalNumber": "41",
+                "abundance": "6.7302"
+            }
+        ]
+    },
+    {
+        "name": "Calcium",
+        "symbol": "Ca",
+        "isotopes": [{
+                "mass": "39.962590863",
+                "ordinalNumber": "40",
+                "abundance": "96.941"
+            },
+            {
+                "mass": "41.95861783",
+                "ordinalNumber": "42",
+                "abundance": "0.647"
+            },
+            {
+                "mass": "42.95876644",
+                "ordinalNumber": "43",
+                "abundance": "0.135"
+            },
+            {
+                "mass": "43.95548156",
+                "ordinalNumber": "44",
+                "abundance": "2.086"
+            },
+            {
+                "mass": "45.9536890",
+                "ordinalNumber": "46",
+                "abundance": "0.004"
+            },
+            {
+                "mass": "47.95252276",
+                "ordinalNumber": "48",
+                "abundance": "0.187"
+            }
+        ]
+    },
+    {
+        "name": "Iron",
+        "symbol": "Fe",
+        "isotopes": [{
+                "mass": "53.93960899",
+                "ordinalNumber": "54",
+                "abundance": "5.845"
+            },
+            {
+                "mass": "55.93493633",
+                "ordinalNumber": "56",
+                "abundance": "91.754"
+            },
+            {
+                "mass": "56.93539284",
+                "ordinalNumber": "57",
+                "abundance": "2.119"
+            },
+            {
+                "mass": "57.93327443",
+                "ordinalNumber": "58",
+                "abundance": "0.282"
+            }
+        ]
+    },
+    {
+        "name": "Nickel",
+        "symbol": "Ni",
+        "isotopes": [{
+                "mass": "57.93534241",
+                "ordinalNumber": "58",
+                "abundance": "68.077"
+            },
+            {
+                "mass": "59.93078588",
+                "ordinalNumber": "60",
+                "abundance": "26.223"
+            },
+            {
+                "mass": "60.93105557",
+                "ordinalNumber": "61",
+                "abundance": "1.1399"
+            },
+            {
+                "mass": "61.92834537",
+                "ordinalNumber": "62",
+                "abundance": "3.36346"
+            },
+            {
+                "mass": "63.92796682",
+                "ordinalNumber": "64",
+                "abundance": "0.9255"
+            }
+        ]
+    },
+    {
+        "name": "Copper",
+        "symbol": "Cu",
+        "isotopes": [{
+                "mass": "62.92959772",
+                "ordinalNumber": "63",
+                "abundance": "69.15"
+            },
+            {
+                "mass": "64.92778970",
+                "ordinalNumber": "65",
+                "abundance": "30.85"
+            }
+
+        ]
+    },
+    {
+        "name": "Zinc",
+        "symbol": "Zn",
+        "isotopes": [{
+                "mass": "63.92914201",
+                "ordinalNumber": "64",
+                "abundance": "49.17"
+            },
+            {
+                "mass": "65.92603381",
+                "ordinalNumber": "66",
+                "abundance": "27.73"
+            },
+            {
+                "mass": "66.92712775",
+                "ordinalNumber": "67",
+                "abundance": "4.04"
+            },
+            {
+                "mass": "67.92484455",
+                "ordinalNumber": "68",
+                "abundance": "18.45"
+            },
+            {
+                "mass": "69.9253192",
+                "ordinalNumber": "70",
+                "abundance": "0.61"
+            }
+        ]
+    },
+    {
+        "name": "Selenium",
+        "symbol": "Se",
+        "isotopes": [{
+                "mass": "73.922477",
+                "ordinalNumber": "74",
+                "abundance": "0.89"
+            },
+            {
+                "mass": "75.919214",
+                "ordinalNumber": "76",
+                "abundance": "9.37"
+            },
+            {
+                "mass": "76.919915",
+                "ordinalNumber": "77",
+                "abundance": "7.63"
+            },
+            {
+                "mass": "77.917310",
+                "ordinalNumber": "78",
+                "abundance": "23.77"
+            },
+            {
+                "mass": "79.916522",
+                "ordinalNumber": "80",
+                "abundance": "49.61"
+            },
+            {
+                "mass": "81.916700",
+                "ordinalNumber": "82",
+                "abundance": "8.73"
+            }
+        ]
+    },
+    {
+        "name": "Arsenic",
+        "symbol": "As",
+        "isotopes": [{
+            "mass": "74.92159457",
+            "ordinalNumber": "75",
+            "abundance": "100"
+        }]
+    },
+    {
+        "name": "Bromide",
+        "symbol": "Br",
+        "isotopes": [{
+                "mass": "78.9183376",
+                "ordinalNumber": "79",
+                "abundance": "50.69"
+            },
+            {
+                "mass": "80.9162897",
+                "ordinalNumber": "81",
+                "abundance": "49.31"
+            }
+        ]
+    },
+    {
+        "name": "Molybdenium",
+        "symbol": "Mo",
+        "isotopes": [{
+                "mass": "91.90680796",
+                "ordinalNumber": "92",
+                "abundance": "14.53"
+            },
+            {
+                "mass": "93.90508490",
+                "ordinalNumber": "95",
+                "abundance": "15.84"
+            },
+            {
+                "mass": "94.90583877",
+                "ordinalNumber": "95",
+                "abundance": "9.15"
+            },
+            {
+                "mass": "95.90467612",
+                "ordinalNumber": "96",
+                "abundance": "16.67"
+            },
+            {
+                "mass": "96.90601812",
+                "ordinalNumber": "97",
+                "abundance": "9.60"
+            },
+            {
+                "mass": "97.90540482",
+                "ordinalNumber": "98",
+                "abundance": "24.39"
+            },
+            {
+                "mass": "99.9074718",
+                "ordinalNumber": "100",
+                "abundance": "9.82"
+            }
+        ]
+    },
+    {
+        "name": "Silver",
+        "symbol": "Ag",
+        "isotopes": [{
+                "mass": "106.9050916",
+                "ordinalNumber": "107",
+                "abundance": "51.839"
+            },
+            {
+                "mass": "108.9047553",
+                "ordinalNumber": "109",
+                "abundance": "48.161"
+            }
+        ]
+    },
+    {
+        "name": "Iodide",
+        "symbol": "I",
+        "isotopes": [{
+            "mass": "126.9044719",
+            "ordinalNumber": "127",
+            "abundance": "100"
+        }]
+    },
+    {
+        "name": "Mercury",
+        "symbol": "Hg",
+        "isotopes": [{
+                "mass": "195.9658326",
+                "ordinalNumber": "196",
+                "abundance": "0.15"
+            },
+            {
+                "mass": "197.96676860",
+                "ordinalNumber": "198",
+                "abundance": "9.97"
+            },
+            {
+                "mass": "198.96828064",
+                "ordinalNumber": "199",
+                "abundance": "16.87"
+            },
+            {
+                "mass": "199.96832659",
+                "ordinalNumber": "200",
+                "abundance": "23.10"
+            },
+            {
+                "mass": "200.97030284",
+                "ordinalNumber": "201",
+                "abundance": "13.18"
+            },
+            {
+                "mass": "201.97064340",
+                "ordinalNumber": "202",
+                "abundance": "29.86"
+            },
+            {
+                "mass": "203.97349398",
+                "ordinalNumber": "204",
+                "abundance": "6.87"
+            }
+        ]
+    },
+    {
+        "name": "Ruthenium",
+        "symbol": "Ru",
+        "isotopes": [{
+                "mass": "95.90759025",
+                "ordinalNumber": "96",
+                "abundance": "5.54"
+            },
+            {
+                "mass": "97.9052868",
+                "ordinalNumber": "98",
+                "abundance": "1.87"
+            },
+            {
+                "mass": "98.9059341",
+                "ordinalNumber": "99",
+                "abundance": "12.76"
+            },
+            {
+                "mass": "99.9042143",
+                "ordinalNumber": "100",
+                "abundance": "12.60"
+            },
+            {
+                "mass": "100.9055769",
+                "ordinalNumber": "101",
+                "abundance": "17.06"
+            },
+            {
+                "mass": "101.9043441",
+                "ordinalNumber": "102",
+                "abundance": "31.55"
+            },
+            {
+                "mass": "103.9054275",
+                "ordinalNumber": "104",
+                "abundance": "18.62"
+            }
+        ]
     }
-    ]
-},
-{
-    "name": "Lithium",
-    "symbol": "Li",
-    "isotopes": [{
-        "mass": "6.0151228874",
-        "ordinalNumber": "6",
-        "abundance": "7.59"
-    },
-    {
-        "mass": "7.0160034366",
-        "ordinalNumber": "7",
-        "abundance": "92.41"
-    }
-    ]
-},
-{
-    "name": "Boron",
-    "symbol": "B",
-    "isotopes": [{
-        "mass": "10.01293695",
-        "ordinalNumber": "10",
-        "abundance": "19.9"
-    },
-    {
-        "mass": "11.00930536",
-        "ordinalNumber": "11",
-        "abundance": "80.1"
-    }
-    ]
-},
-{
-    "name": "Carbon",
-    "symbol": "C",
-    "isotopes": [{
-        "mass": "12.000000000",
-        "ordinalNumber": "12",
-        "abundance": "98.93"
-    },
-    {
-        "mass": "13.00335483507",
-        "ordinalNumber": "13",
-        "abundance": "1.07"
-    },
-    {
-        "mass": "14.0032419884",
-        "ordinalNumber": "14",
-        "abundance": "0"
-    }
-    ]
-},
-{
-    "name": "Nitrogen",
-    "symbol": "N",
-    "isotopes": [{
-        "mass": "14.00307400443",
-        "ordinalNumber": "14",
-        "abundance": "99.636"
-    },
-    {
-        "mass": "15.00010889888",
-        "ordinalNumber": "15",
-        "abundance": "0.364"
-    }
-    ]
-},
-{
-    "name": "Oxygen",
-    "symbol": "O",
-    "isotopes": [{
-        "mass": "15.99491461957",
-        "ordinalNumber": "16",
-        "abundance": "99.757"
-    },
-    {
-        "mass": "16.99913175650",
-        "ordinalNumber": "17",
-        "abundance": "0.038"
-    },
-    {
-        "mass": "17.99915961286",
-        "ordinalNumber": "18",
-        "abundance": "0.205"
-    }
-    ]
-},
-{
-    "name": "Fluoride",
-    "symbol": "F",
-    "isotopes": [{
-        "mass": "18.99840316273",
-        "ordinalNumber": "19",
-        "abundance": "100"
-    },
-    {
-        "mass": "15.00010889888",
-        "ordinalNumber": "15",
-        "abundance": "0.364"
-    }
-    ]
-},
-{
-    "name": "Sodium",
-    "symbol": "Na",
-    "isotopes": [{
-        "mass": "22.9897677",
-        "ordinalNumber": "23",
-        "abundance": "100"
-    }]
-},
-{
-    "name": "Magnesium",
-    "symbol": "Mg",
-    "isotopes": [{
-        "mass": "23.985041697",
-        "ordinalNumber": "24",
-        "abundance": "78.99"
-    },
-    {
-        "mass": "24.985836976",
-        "ordinalNumber": "25",
-        "abundance": "10.00"
-    },
-    {
-        "mass": "25.982592968",
-        "ordinalNumber": "26",
-        "abundance": "11.01"
-    }
-    ]
-},
-{
-    "name": "Aluminum",
-    "symbol": "Al",
-    "isotopes": [{
-        "mass": "26.98153853",
-        "ordinalNumber": "27",
-        "abundance": "100"
-    }]
-},
-{
-    "name": "Silicon",
-    "symbol": "Si",
-    "isotopes": [{
-        "mass": "27.9769265325",
-        "ordinalNumber": "28",
-        "abundance": "92.223"
-    },
-    {
-        "mass": "28.976494700",
-        "ordinalNumber": "29",
-        "abundance": "4.685"
-    },
-    {
-        "mass": "29.97377017",
-        "ordinalNumber": "30",
-        "abundance": "3.092"
-    }
-    ]
-},
-{
-    "name": "Phosphorus",
-    "symbol": "P",
-    "isotopes": [{
-        "mass": "30.97376199842",
-        "ordinalNumber": "31",
-        "abundance": "100"
-    }]
-},
-{
-    "name": "Sulfur",
-    "symbol": "S",
-    "isotopes": [{
-        "mass": "31.9720711744",
-        "ordinalNumber": "32",
-        "abundance": "94.99"
-    },
-    {
-        "mass": "32.9714589098",
-        "ordinalNumber": "33",
-        "abundance": "0.75"
-    },
-    {
-        "mass": "33.967867004",
-        "ordinalNumber": "34",
-        "abundance": "4.25"
-    },
-    {
-        "mass": "35.96708071",
-        "ordinalNumber": "36",
-        "abundance": "0.01"
-    }
-    ]
-},
-{
-    "name": "Chloride",
-    "symbol": "Cl",
-    "isotopes": [{
-        "mass": "34.96885272",
-        "ordinalNumber": "35",
-        "abundance": "75.77"
-    },
-    {
-        "mass": "36.96590262",
-        "ordinalNumber": "37",
-        "abundance": "24.23"
-    }
-    ]
-},
-{
-    "name": "Potassium",
-    "symbol": "K",
-    "isotopes": [{
-        "mass": "38.9637074",
-        "ordinalNumber": "39",
-        "abundance": "93.2581"
-    },
-    {
-        "mass": "39.9639992",
-        "ordinalNumber": "40",
-        "abundance": "0.0117"
-    },
-    {
-        "mass": "40.9618254",
-        "ordinalNumber": "41",
-        "abundance": "6.7302"
-    }
-    ]
-},
-{
-    "name": "Calcium",
-    "symbol": "Ca",
-    "isotopes": [{
-        "mass": "39.962590863",
-        "ordinalNumber": "40",
-        "abundance": "96.941"
-    },
-    {
-        "mass": "41.95861783",
-        "ordinalNumber": "42",
-        "abundance": "0.647"
-    },
-    {
-        "mass": "42.95876644",
-        "ordinalNumber": "43",
-        "abundance": "0.135"
-    },
-    {
-        "mass": "43.95548156",
-        "ordinalNumber": "44",
-        "abundance": "2.086"
-    },
-    {
-        "mass": "45.9536890",
-        "ordinalNumber": "46",
-        "abundance": "0.004"
-    },
-    {
-        "mass": "47.95252276",
-        "ordinalNumber": "48",
-        "abundance": "0.187"
-    }
-    ]
-},
-{
-    "name": "Iron",
-    "symbol": "Fe",
-    "isotopes": [{
-        "mass": "53.93960899",
-        "ordinalNumber": "54",
-        "abundance": "5.845"
-    },
-    {
-        "mass": "55.93493633",
-        "ordinalNumber": "56",
-        "abundance": "91.754"
-    },
-    {
-        "mass": "56.93539284",
-        "ordinalNumber": "57",
-        "abundance": "2.119"
-    },
-    {
-        "mass": "57.93327443",
-        "ordinalNumber": "58",
-        "abundance": "0.282"
-    }
-    ]
-},
-{
-    "name": "Nickel",
-    "symbol": "Ni",
-    "isotopes": [{
-        "mass": "57.93534241",
-        "ordinalNumber": "58",
-        "abundance": "68.077"
-    },
-    {
-        "mass": "59.93078588",
-        "ordinalNumber": "60",
-        "abundance": "26.223"
-    },
-    {
-        "mass": "60.93105557",
-        "ordinalNumber": "61",
-        "abundance": "1.1399"
-    },
-    {
-        "mass": "61.92834537",
-        "ordinalNumber": "62",
-        "abundance": "3.36346"
-    },
-    {
-        "mass": "63.92796682",
-        "ordinalNumber": "64",
-        "abundance": "0.9255"
-    }
-    ]
-},
-{
-    "name": "Copper",
-    "symbol": "Cu",
-    "isotopes": [{
-        "mass": "62.92959772",
-        "ordinalNumber": "63",
-        "abundance": "69.15"
-    },
-    {
-        "mass": "64.92778970",
-        "ordinalNumber": "65",
-        "abundance": "30.85"
-    }
-    
-    ]
-},
-{
-    "name": "Zinc",
-    "symbol": "Zn",
-    "isotopes": [{
-        "mass": "63.92914201",
-        "ordinalNumber": "64",
-        "abundance": "49.17"
-    },
-    {
-        "mass": "65.92603381",
-        "ordinalNumber": "66",
-        "abundance": "27.73"
-    },
-    {
-        "mass": "66.92712775",
-        "ordinalNumber": "67",
-        "abundance": "4.04"
-    },
-    {
-        "mass": "67.92484455",
-        "ordinalNumber": "68",
-        "abundance": "18.45"
-    },
-    {
-        "mass": "69.9253192",
-        "ordinalNumber": "70",
-        "abundance": "0.61"
-    }
-    ]
-},
-{
-    "name": "Selenium",
-    "symbol": "Se",
-    "isotopes": [{
-        "mass": "73.922477",
-        "ordinalNumber": "74",
-        "abundance": "0.89"
-    },
-    {
-        "mass": "75.919214",
-        "ordinalNumber": "76",
-        "abundance": "9.37"
-    },
-    {
-        "mass": "76.919915",
-        "ordinalNumber": "77",
-        "abundance": "7.63"
-    },
-    {
-        "mass": "77.917310",
-        "ordinalNumber": "78",
-        "abundance": "23.77"
-    },
-    {
-        "mass": "79.916522",
-        "ordinalNumber": "80",
-        "abundance": "49.61"
-    },
-    {
-        "mass": "81.916700",
-        "ordinalNumber": "82",
-        "abundance": "8.73"
-    }
-    ]
-},
-{
-    "name": "Arsenic",
-    "symbol": "As",
-    "isotopes": [{
-        "mass": "74.92159457",
-        "ordinalNumber": "75",
-        "abundance": "100"
-    }]
-},
-{
-    "name": "Bromide",
-    "symbol": "Br",
-    "isotopes": [{
-        "mass": "78.9183376",
-        "ordinalNumber": "79",
-        "abundance": "50.69"
-    },
-    {
-        "mass": "80.9162897",
-        "ordinalNumber": "81",
-        "abundance": "49.31"
-    }
-    ]
-},
-{
-    "name": "Molybdenium",
-    "symbol": "Mo",
-    "isotopes": [{
-        "mass": "91.90680796",
-        "ordinalNumber": "92",
-        "abundance": "14.53"
-    },
-    {
-        "mass": "93.90508490",
-        "ordinalNumber": "95",
-        "abundance": "15.84"
-    },
-    {
-        "mass": "94.90583877",
-        "ordinalNumber": "95",
-        "abundance": "9.15"
-    },
-    {
-        "mass": "95.90467612",
-        "ordinalNumber": "96",
-        "abundance": "16.67"
-    },
-    {
-        "mass": "96.90601812",
-        "ordinalNumber": "97",
-        "abundance": "9.60"
-    },
-    {
-        "mass": "97.90540482",
-        "ordinalNumber": "98",
-        "abundance": "24.39"
-    },
-    {
-        "mass": "99.9074718",
-        "ordinalNumber": "100",
-        "abundance": "9.82"
-    }
-    ]
-},
-{
-    "name": "Silver",
-    "symbol": "Ag",
-    "isotopes": [{
-        "mass": "106.9050916",
-        "ordinalNumber": "107",
-        "abundance": "51.839"
-    },
-    {
-        "mass": "108.9047553",
-        "ordinalNumber": "109",
-        "abundance": "48.161"
-    }
-    ]
-},
-{
-    "name": "Iodide",
-    "symbol": "I",
-    "isotopes": [{
-        "mass": "126.9044719",
-        "ordinalNumber": "127",
-        "abundance": "100"
-    }]
-},
-{
-    "name": "Mercury",
-    "symbol": "Hg",
-    "isotopes": [{
-        "mass": "195.9658326",
-        "ordinalNumber": "196",
-        "abundance": "0.15"
-    },
-    {
-        "mass": "197.96676860",
-        "ordinalNumber": "198",
-        "abundance": "9.97"
-    },
-    {
-        "mass": "198.96828064",
-        "ordinalNumber": "199",
-        "abundance": "16.87"
-    },
-    {
-        "mass": "199.96832659",
-        "ordinalNumber": "200",
-        "abundance": "23.10"
-    },
-    {
-        "mass": "200.97030284",
-        "ordinalNumber": "201",
-        "abundance": "13.18"
-    },
-    {
-        "mass": "201.97064340",
-        "ordinalNumber": "202",
-        "abundance": "29.86"
-    },
-    {
-        "mass": "203.97349398",
-        "ordinalNumber": "204",
-        "abundance": "6.87"
-    }
-    ]
-}
+
 ]

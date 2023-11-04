@@ -12,6 +12,7 @@ public enum LoadError: Error {
     case fileNotFound(name: String)
     case fileConversionFailed(name: String)
     case fileDecodingFailed(name: String)
+    case fileParsingFailed(name: String)
 }
 
 public func loadData(from fileName: String, withExtension fileExtension: String) throws -> Data {
@@ -38,9 +39,6 @@ public func loadDataFromBundle(from fileName: String, withExtension fileExtensio
     return data
 }
 
-
-
-
 // via:  http://stackoverflow.com/questions/41402770/swift-parse-string-with-different-formats/41402868#41402868
 //
 // This type alias is just here to make the next line a bit more readable.
@@ -59,30 +57,30 @@ public func loadDataFromBundle(from fileName: String, withExtension fileExtensio
 // For example: String.hasPrefix("The quick brown fox")("The")
 // This has type `Bool`. It's the same as: "The quick brown fox".hasPrefix("The)
 //
-//typealias BoolInstanceMethod<T, U> = (_ instance: T) -> (_ arg: U) -> Bool
+// typealias BoolInstanceMethod<T, U> = (_ instance: T) -> (_ arg: U) -> Bool
 //
 // This function wraps a given instance method, in such a way as to reverse the
 // order of the curried arguements. The given instance method is usually called as:
 // Type.instanceMethod(instance)(arg), but this function allows you to swap it, to
 // call it as: apply(Type.instanceMethod)(arg)(instance)
 //
-//func apply<T, U>(instanceMethod: @escaping BoolInstanceMethod<T, U>) -> (_ arg: U) -> (_ instance: T) -> Bool {
+// func apply<T, U>(instanceMethod: @escaping BoolInstanceMethod<T, U>) -> (_ arg: U) -> (_ instance: T) -> Bool {
 //    return { arg in
 //        { instance in
 //            instanceMethod(instance)(arg)
 //        }
 //    }
-//}
+// }
 //
 // This pattern matching operator defines what it means to have a closure as a pattern.  If the closure evaluates to true when called
 // with `value` as an arg, then the `pattern` matches the `value`.
 //
-//func ~= <T>(pattern: (T) -> Bool, value: T) -> Bool {
+// func ~= <T>(pattern: (T) -> Bool, value: T) -> Bool {
 //    return pattern(value)
-//}
+// }
 //
 //
-//typealias SortDescriptor<A> = (A, A) -> Bool
+// typealias SortDescriptor<A> = (A, A) -> Bool
 //
 // func sortDescriptor<Value, Property>(property: @escaping (Value) -> Property, comparator: @escaping (Property) -> (Property) -> ComparisonResult) -> SortDescriptor<Value> {
 //    return { value1, value2 in
