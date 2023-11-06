@@ -15,17 +15,22 @@ extension Peptide {
     }
 
     func precursorIons() -> [PeptideFragment] {
+        var result: [PeptideFragment] = []
+        
         var fragment = PeptideFragment(residues: residues, type: .precursor, adducts: adducts)
+        result.append(fragment)
 
         if canLoseAmmonia() {
             fragment.addModification(LocalizedModification(lossOfAmmonia, at: 0))
+            result.append(fragment)
         }
 
         if canLoseWater() {
             fragment.addModification(LocalizedModification(lossOfWater, at: 0))
+            result.append(fragment)
         }
 
-        return [fragment]
+        return result
     }
 
     func immoniumIons() -> [PeptideFragment] {
@@ -138,7 +143,13 @@ public extension PeptideFragment {
     }
 
     func calculateMasses() -> MassContainer {
-        mass(of: residues) + terminalMasses()
+        var result = mass(of: residues) + terminalMasses()
+        
+        if fragmentType == .precursor {
+            result += water.masses
+        }
+        
+        return result
     }
 
     func terminalMasses() -> MassContainer {
