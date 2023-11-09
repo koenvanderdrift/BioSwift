@@ -225,4 +225,30 @@ final class BioSwiftTests: XCTestCase {
             XCTAssert(peptides.contains(where: { $0.sequenceString == "IFFSP" }))
         }
     }
+    
+    func testFragmentMass() {
+        var peptide = Peptide(sequence: "QRRPPGR")
+        peptide.setAdducts(type: protonAdduct, count: 2)
+
+        XCTAssert(peptide.chargedMass().monoisotopicMass.roundTo(places: 4) == 866.5067)
+        
+        let fragments = peptide.fragment()
+        
+        let precursors = fragments.filter { $0.fragmentType == .precursor }
+        XCTAssert(precursors.count == 2)
+        
+        XCTAssert(precursors[0].chargedMass().monoisotopicMass.roundTo(places: 4) == 866.5067)
+        XCTAssert(precursors[1].chargedMass().monoisotopicMass.roundTo(places: 4) == 849.4802)
+        
+        let immoniumIons = fragments.filter { $0.fragmentType == .immonium }
+        XCTAssert(immoniumIons.count == 4)
+
+        let nTerminalIons = fragments.filter { $0.fragmentType == .nTerminal }
+        print(nTerminalIons.map { $0.sequenceString })
+        XCTAssert(nTerminalIons.count == 5) // length - 2
+
+        let cTerminalIons = fragments.filter { $0.fragmentType == .cTerminal }
+        print(cTerminalIons.map { $0.sequenceString })
+        XCTAssert(cTerminalIons.count == 12) // length - 1
+    }
 }
