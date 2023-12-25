@@ -20,12 +20,12 @@ extension Peptide {
         var fragment = PeptideFragment(residues: residues, type: .precursor, adducts: adducts)
         result.append(fragment)
 
-        if canLoseAmmonia() {
+        if fragment.canLoseAmmonia() {
             fragment.addModification(LocalizedModification(lossOfAmmonia, at: 0))
             result.append(fragment)
         }
 
-        if canLoseWater() {
+        if fragment.canLoseWater() {
             fragment.addModification(LocalizedModification(lossOfWater, at: 0))
             result.append(fragment)
         }
@@ -56,7 +56,7 @@ extension Peptide {
             for i in 2 ... residues.count - 1 {
                 let index = residues.index(startIndex, offsetBy: i)
 
-                let fragment = PeptideFragment(residues: Array(residues[..<index]), type: .nTerminal, adducts: Array(repeatElement(protonAdduct, count: z)))
+                var fragment = PeptideFragment(residues: Array(residues[..<index]), type: .nTerminal, adducts: Array(repeatElement(protonAdduct, count: z)))
 
                 if z == 1 {
                     fragments.append(fragment)
@@ -64,6 +64,16 @@ extension Peptide {
                     if fragment.pseudomolecularIon().monoisotopicMass > pseudomolecularIon().monoisotopicMass {
                         fragments.append(fragment)
                     }
+                }
+                
+                if fragment.canLoseWater() {
+                    fragment.addModification(LocalizedModification(lossOfWater, at: 0))
+                    fragments.append(fragment)
+                }
+
+                if fragment.canLoseAmmonia() {
+                    fragment.addModification(LocalizedModification(lossOfAmmonia, at: 0))
+                    fragments.append(fragment)
                 }
             }
         }
@@ -82,21 +92,23 @@ extension Peptide {
             for i in 1 ... residues.count - 1 {
                 let index = residues.index(endIndex, offsetBy: -i)
 
-                let fragment = PeptideFragment(residues: Array(residues[..<index]), type: .cTerminal, adducts: Array(repeatElement(protonAdduct, count: z)))
+                var fragment = PeptideFragment(residues: Array(residues[..<index]), type: .cTerminal, adducts: Array(repeatElement(protonAdduct, count: z)))
 
                 fragments.append(fragment)
+
+                if fragment.canLoseWater() {
+                    fragment.addModification(LocalizedModification(lossOfWater, at: 0))
+                    fragments.append(fragment)
+                }
+
+                if fragment.canLoseAmmonia() {
+                    fragment.addModification(LocalizedModification(lossOfAmmonia, at: 0))
+                    fragments.append(fragment)
+                }
             }
         }
 
         return fragments
-    }
-
-    func canLoseWater() -> Bool {
-        sequenceString.containsCharactersFrom(substring: "STED")
-    }
-
-    func canLoseAmmonia() -> Bool {
-        sequenceString.containsCharactersFrom(substring: "RQNK")
     }
 
     //    public func isoElectricPoint() -> Double {
@@ -159,5 +171,13 @@ public extension PeptideFragment {
         }
 
         return result
+    }
+    
+    func canLoseWater() -> Bool {
+        sequenceString.containsCharactersFrom(substring: "STED")
+    }
+
+    func canLoseAmmonia() -> Bool {
+        sequenceString.containsCharactersFrom(substring: "RQNK")
     }
 }
