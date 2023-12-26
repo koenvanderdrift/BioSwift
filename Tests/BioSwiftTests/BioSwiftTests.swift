@@ -244,11 +244,30 @@ final class BioSwiftTests: XCTestCase {
         XCTAssert(immoniumIons.count == 4)
 
         let nTerminalIons = fragments.filter { $0.fragmentType == .nTerminal }
-        print(nTerminalIons.map { $0.sequenceString })
-        XCTAssert(nTerminalIons.count == 5) // length - 2
+//        print(nTerminalIons.map { $0.sequenceString })
+        XCTAssert(nTerminalIons.count == 10) // length - 2
 
         let cTerminalIons = fragments.filter { $0.fragmentType == .cTerminal }
-        print(cTerminalIons.map { $0.sequenceString })
-        XCTAssert(cTerminalIons.count == 12) // length - 1
+//        print(cTerminalIons.map { $0.sequenceString })
+        XCTAssert(cTerminalIons.count == 24) // length - 1
+    }
+    
+    func testFragmentCount() {
+        var peptide = Peptide(sequence: "SAMPLER")
+        peptide.setAdducts(type: protonAdduct, count: 1)
+        
+        let fragments = peptide.fragment()
+        
+        let precursors = fragments.filter { $0.fragmentType == .precursor }
+        XCTAssert(precursors.count == 3)
+        
+        let immoniumIons = fragments.filter { $0.fragmentType == .immonium }
+        XCTAssert(immoniumIons.count == 7)
+
+        let nTerminalIons = fragments.filter { $0.fragmentType == .nTerminal }
+        XCTAssert(nTerminalIons.count == 10)
+
+        let cTerminalIons = fragments.filter { $0.fragmentType == .cTerminal }.reversed()
+        XCTAssert(cTerminalIons.count == 17)
     }
 }

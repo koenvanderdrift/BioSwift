@@ -45,7 +45,7 @@ extension Peptide {
         return fragments
     }
 
-    func nTerminalIons() -> [PeptideFragment] { // b fragments
+    func nTerminalIons() -> [PeptideFragment] { // b fragments  // TODO: add a and c ions
         var fragments = [PeptideFragment]()
 
         guard adducts.count > 0 else { return fragments }
@@ -81,7 +81,7 @@ extension Peptide {
         return fragments
     }
 
-    func cTerminalIons() -> [PeptideFragment] { // y fragments
+    func cTerminalIons() -> [PeptideFragment] { // y fragments // TODO: add x and z ions
         var fragments = [PeptideFragment]()
 
         guard adducts.count > 0 else { return fragments }
@@ -92,7 +92,7 @@ extension Peptide {
             for i in 1 ... residues.count - 1 {
                 let index = residues.index(endIndex, offsetBy: -i)
 
-                var fragment = PeptideFragment(residues: Array(residues[..<index]), type: .cTerminal, adducts: Array(repeatElement(protonAdduct, count: z)))
+                var fragment = PeptideFragment(residues: Array(residues[index..<endIndex]), type: .cTerminal, adducts: Array(repeatElement(protonAdduct, count: z)))
 
                 fragments.append(fragment)
 
@@ -108,7 +108,7 @@ extension Peptide {
             }
         }
 
-        return fragments
+        return fragments.reversed()
     }
 
     //    public func isoElectricPoint() -> Double {
