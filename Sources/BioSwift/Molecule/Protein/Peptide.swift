@@ -155,7 +155,7 @@ public extension PeptideFragment {
     }
 
     func calculateMasses() -> MassContainer {
-        var result = mass(of: residues) + terminalMasses()
+        var result = mass(of: residues) + terminalMasses() + modificationMasses()
         
         if fragmentType == .precursor {
             result += water.masses
@@ -166,6 +166,7 @@ public extension PeptideFragment {
 
     func terminalMasses() -> MassContainer {
         var result = zeroMass
+        
         if fragmentType == .nTerminal {
             result -= (hydrogen.masses + hydroxyl.masses)
         }

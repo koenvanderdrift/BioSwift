@@ -69,7 +69,7 @@ public extension PolyPeptide {
     }
 
     func calculateMasses() -> MassContainer {
-        mass(of: residues) + terminalMasses()
+        mass(of: residues) + terminalMasses() + modificationMasses()
     }
 
     func hydropathyValues(for hydropathyType: String) -> [Double] {

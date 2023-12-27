@@ -194,6 +194,16 @@ public extension Chain {
         termini = (first: first, last: last)
     }
 
+    func modificationMasses() -> MassContainer {
+        var result = zeroMass
+        
+        modifications.forEach {
+            result += $0.modification.masses
+        }
+
+        return result
+    }
+
     func terminalMasses() -> MassContainer {
         var result = zeroMass
 
