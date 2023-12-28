@@ -17,16 +17,16 @@ extension Peptide {
     func precursorIons() -> [PeptideFragment] {
         var result: [PeptideFragment] = []
         
-        var fragment = PeptideFragment(residues: residues, type: .precursor, adducts: adducts)
+        let fragment = PeptideFragment(residues: residues, type: .precursor, adducts: adducts)
         result.append(fragment)
 
-        if fragment.canLoseAmmonia() {
-            fragment.addModification(LocalizedModification(lossOfAmmonia, at: 0))
+        if fragment.canLoseWater() {
+            let fragment = PeptideFragment(residues: residues, type: .precursor, adducts: adducts, modifications: [LocalizedModification(lossOfWater, at: 0)])
             result.append(fragment)
         }
 
-        if fragment.canLoseWater() {
-            fragment.addModification(LocalizedModification(lossOfWater, at: 0))
+        if fragment.canLoseAmmonia() {
+            let fragment = PeptideFragment(residues: residues, type: .precursor, adducts: adducts, modifications: [LocalizedModification(lossOfAmmonia, at: 0)])
             result.append(fragment)
         }
 
@@ -56,7 +56,7 @@ extension Peptide {
             for i in 2 ... residues.count - 1 {
                 let index = residues.index(startIndex, offsetBy: i)
 
-                var fragment = PeptideFragment(residues: Array(residues[..<index]), type: .nTerminal, adducts: Array(repeatElement(protonAdduct, count: z)))
+                let fragment = PeptideFragment(residues: Array(residues[..<index]), type: .nTerminal, adducts: Array(repeatElement(protonAdduct, count: z)))
 
                 if z == 1 {
                     fragments.append(fragment)
@@ -67,12 +67,12 @@ extension Peptide {
                 }
                 
                 if fragment.canLoseWater() {
-                    fragment.addModification(LocalizedModification(lossOfWater, at: 0))
+                    let fragment = PeptideFragment(residues: residues, type: .precursor, adducts: adducts, modifications: [LocalizedModification(lossOfWater, at: 0)])
                     fragments.append(fragment)
                 }
 
                 if fragment.canLoseAmmonia() {
-                    fragment.addModification(LocalizedModification(lossOfAmmonia, at: 0))
+                    let fragment = PeptideFragment(residues: residues, type: .precursor, adducts: adducts, modifications: [LocalizedModification(lossOfAmmonia, at: 0)])
                     fragments.append(fragment)
                 }
             }
@@ -92,17 +92,17 @@ extension Peptide {
             for i in 1 ... residues.count - 1 {
                 let index = residues.index(endIndex, offsetBy: -i)
 
-                var fragment = PeptideFragment(residues: Array(residues[index..<endIndex]), type: .cTerminal, adducts: Array(repeatElement(protonAdduct, count: z)))
+                let fragment = PeptideFragment(residues: Array(residues[index..<endIndex]), type: .cTerminal, adducts: Array(repeatElement(protonAdduct, count: z)))
 
                 fragments.append(fragment)
 
                 if fragment.canLoseWater() {
-                    fragment.addModification(LocalizedModification(lossOfWater, at: 0))
+                    let fragment = PeptideFragment(residues: residues, type: .precursor, adducts: adducts, modifications: [LocalizedModification(lossOfWater, at: 0)])
                     fragments.append(fragment)
                 }
 
                 if fragment.canLoseAmmonia() {
-                    fragment.addModification(LocalizedModification(lossOfAmmonia, at: 0))
+                    let fragment = PeptideFragment(residues: residues, type: .precursor, adducts: adducts, modifications: [LocalizedModification(lossOfAmmonia, at: 0)])
                     fragments.append(fragment)
                 }
             }
@@ -135,17 +135,18 @@ public struct PeptideFragment: RangedChain & Fragment {
 
 public extension PeptideFragment {
     init(sequence: String) {
-        residues = createResidues(from: sequence)
+        self.residues = createResidues(from: sequence)
     }
 
     init(residues: [AminoAcid]) {
         self.residues = residues
     }
 
-    init(residues: [AminoAcid], type: FragmentType, adducts: [Adduct]) {
+    init(residues: [AminoAcid], type: FragmentType, adducts: [Adduct], modifications: [LocalizedModification] = []) {
         self.residues = residues
-        fragmentType = type
+        self.fragmentType = type
         self.adducts = adducts
+        self.modifications = modifications
     }
 }
 

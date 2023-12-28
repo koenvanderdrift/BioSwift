@@ -236,8 +236,9 @@ final class BioSwiftTests: XCTestCase {
         let precursors = fragments.filter { $0.fragmentType == .precursor }
         
         XCTAssert(precursors[0].chargedMass().monoisotopicMass.roundTo(places: 4) == 803.4080)
-        XCTAssert(precursors[1].chargedMass().monoisotopicMass.roundTo(places: 4) == 786.3815)
-        
+        XCTAssert(precursors[1].chargedMass().monoisotopicMass.roundTo(places: 4) == 785.3974)
+        XCTAssert(precursors[2].chargedMass().monoisotopicMass.roundTo(places: 4) == 786.3815)
+
         let nTerminalIons = fragments.filter { $0.fragmentType == .nTerminal }
         let cTerminalIons = fragments.filter { $0.fragmentType == .cTerminal }
     }
