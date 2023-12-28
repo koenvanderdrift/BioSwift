@@ -67,12 +67,12 @@ extension Peptide {
                 }
                 
                 if fragment.canLoseWater() {
-                    let fragment = PeptideFragment(residues: residues, type: .precursor, adducts: adducts, modifications: [LocalizedModification(lossOfWater, at: 0)])
+                    let fragment = PeptideFragment(residues: residues, type: .nTerminal, adducts: adducts, modifications: [LocalizedModification(lossOfWater, at: 0)])
                     fragments.append(fragment)
                 }
 
                 if fragment.canLoseAmmonia() {
-                    let fragment = PeptideFragment(residues: residues, type: .precursor, adducts: adducts, modifications: [LocalizedModification(lossOfAmmonia, at: 0)])
+                    let fragment = PeptideFragment(residues: residues, type: .nTerminal, adducts: adducts, modifications: [LocalizedModification(lossOfAmmonia, at: 0)])
                     fragments.append(fragment)
                 }
             }
@@ -97,12 +97,12 @@ extension Peptide {
                 fragments.append(fragment)
 
                 if fragment.canLoseWater() {
-                    let fragment = PeptideFragment(residues: residues, type: .precursor, adducts: adducts, modifications: [LocalizedModification(lossOfWater, at: 0)])
+                    let fragment = PeptideFragment(residues: residues, type: .cTerminal, adducts: adducts, modifications: [LocalizedModification(lossOfWater, at: 0)])
                     fragments.append(fragment)
                 }
 
                 if fragment.canLoseAmmonia() {
-                    let fragment = PeptideFragment(residues: residues, type: .precursor, adducts: adducts, modifications: [LocalizedModification(lossOfAmmonia, at: 0)])
+                    let fragment = PeptideFragment(residues: residues, type: .cTerminal, adducts: adducts, modifications: [LocalizedModification(lossOfAmmonia, at: 0)])
                     fragments.append(fragment)
                 }
             }
