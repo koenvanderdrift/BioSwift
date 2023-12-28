@@ -5,6 +5,8 @@ public let cTerm = AminoAcid(name: cTermString, oneLetterCode: "", formula: Form
 
 public let lossOfWater = Modification(name: "Loss of Water", reactions: [.remove(water)], sites: ["S", "T", "E", "D"])
 public let lossOfAmmonia = Modification(name: "Loss of Ammonia", reactions: [.remove(ammonia)], sites: ["R", "Q", "N", "K"])
+public let lossOfCarbonyl = Modification(name: "Loss of Carbonyl", reactions: [.remove(carbonyl)])
+public let additionOfCarbonyl = Modification(name: "Addition of Carbonyl", reactions: [.add(carbonyl)])
 
 public struct PolyPeptide: RangedChain {
     public var name: String = ""

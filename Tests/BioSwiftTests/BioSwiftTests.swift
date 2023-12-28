@@ -239,17 +239,22 @@ final class BioSwiftTests: XCTestCase {
         XCTAssert(precursors[1].chargedMass().monoisotopicMass.roundTo(places: 4) == 786.3815)
         XCTAssert(precursors[2].chargedMass().monoisotopicMass.roundTo(places: 4) == 803.4080)
 
-        let nTerminalIons = fragments.filter { $0.fragmentType == .bIon }.sorted { $0.monoisotopicMass < $1.monoisotopicMass }
-        print(nTerminalIons.map {$0.chargedMass().monoisotopicMass.roundTo(places: 4)})
-        XCTAssert(nTerminalIons[0].chargedMass().monoisotopicMass.roundTo(places: 4) == 141.0659) // b2
-        XCTAssert(nTerminalIons[1].chargedMass().monoisotopicMass.roundTo(places: 4) == 159.0764) // b2-H2O
-        XCTAssert(nTerminalIons[2].chargedMass().monoisotopicMass.roundTo(places: 4) == 272.1063) // b3-H2O
+        let aIons = fragments.filter { $0.fragmentType == .aIon }.sorted { $0.monoisotopicMass < $1.monoisotopicMass }
+        XCTAssert(aIons[0].chargedMass().monoisotopicMass.roundTo(places: 4) == 131.0815) // a1
 
-        let cTerminalIons = fragments.reversed().filter { $0.fragmentType == .yIon }.sorted { $0.monoisotopicMass < $1.monoisotopicMass }
-        print(cTerminalIons.map {$0.chargedMass().monoisotopicMass.roundTo(places: 4)})
-        XCTAssert(cTerminalIons[0].chargedMass().monoisotopicMass.roundTo(places: 4) == 158.0924) // y1-NH3
-        XCTAssert(cTerminalIons[1].chargedMass().monoisotopicMass.roundTo(places: 4) == 175.1190) // y1
-        XCTAssert(cTerminalIons[2].chargedMass().monoisotopicMass.roundTo(places: 4) == 286.1510) // y2-H2O
+        let bIons = fragments.filter { $0.fragmentType == .bIon }.sorted { $0.monoisotopicMass < $1.monoisotopicMass }
+        XCTAssert(bIons[0].chargedMass().monoisotopicMass.roundTo(places: 4) == 141.0659) // b2
+        XCTAssert(bIons[1].chargedMass().monoisotopicMass.roundTo(places: 4) == 159.0764) // b2-H2O
+        XCTAssert(bIons[2].chargedMass().monoisotopicMass.roundTo(places: 4) == 272.1063) // b3-H2O
+
+        let xIons = fragments.reversed().filter { $0.fragmentType == .xIon }.sorted { $0.monoisotopicMass < $1.monoisotopicMass }
+        print(xIons.map {$0.chargedMass().monoisotopicMass.roundTo(places: 4)})
+        XCTAssert(xIons[0].chargedMass().monoisotopicMass.roundTo(places: 4) == 201.0982) // x1
+
+        let yIons = fragments.reversed().filter { $0.fragmentType == .yIon }.sorted { $0.monoisotopicMass < $1.monoisotopicMass }
+        XCTAssert(yIons[0].chargedMass().monoisotopicMass.roundTo(places: 4) == 158.0924) // y1-NH3
+        XCTAssert(yIons[1].chargedMass().monoisotopicMass.roundTo(places: 4) == 175.1190) // y1
+        XCTAssert(yIons[2].chargedMass().monoisotopicMass.roundTo(places: 4) == 286.1510) // y2-H2O
     }
     
     func testFragmentCount() {

@@ -9,6 +9,7 @@ import Foundation
 
 public let hydroxyl = FunctionalGroup(name: "hydroxyl", formula: "OH")
 public let ammonia = FunctionalGroup(name: "ammonia", formula: "NH3")
+public let carbonyl = FunctionalGroup(name: "carbonyl", formula: "CO")
 public let water = FunctionalGroup(name: "water", formula: "H2O")
 public let hydrogen = FunctionalGroup(name: "hydrogen", formula: "H")
 public let methyl = FunctionalGroup(name: "methyl", formula: "CH3")
