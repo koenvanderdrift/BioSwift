@@ -13,8 +13,10 @@ public enum FragmentType { // this is only for peptides...
     case immoniumIon
     case aIon
     case bIon
+    case cIon
     case yIon
     case xIon
+    case zIon
     case undefined
 }
 
