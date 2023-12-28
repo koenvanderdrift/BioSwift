@@ -233,14 +233,23 @@ final class BioSwiftTests: XCTestCase {
         XCTAssert(peptide.chargedMass().monoisotopicMass.roundTo(places: 4) == 803.4080)
         
         let fragments = peptide.fragment()
-        let precursors = fragments.filter { $0.fragmentType == .precursor }
+        let precursors = fragments.filter { $0.fragmentType == .precursorIon }.sorted { $0.monoisotopicMass < $1.monoisotopicMass }
         
-        XCTAssert(precursors[0].chargedMass().monoisotopicMass.roundTo(places: 4) == 803.4080)
-        XCTAssert(precursors[1].chargedMass().monoisotopicMass.roundTo(places: 4) == 785.3974)
-        XCTAssert(precursors[2].chargedMass().monoisotopicMass.roundTo(places: 4) == 786.3815)
+        XCTAssert(precursors[0].chargedMass().monoisotopicMass.roundTo(places: 4) == 785.3974)
+        XCTAssert(precursors[1].chargedMass().monoisotopicMass.roundTo(places: 4) == 786.3815)
+        XCTAssert(precursors[2].chargedMass().monoisotopicMass.roundTo(places: 4) == 803.4080)
 
-        let nTerminalIons = fragments.filter { $0.fragmentType == .nTerminal }
-        let cTerminalIons = fragments.filter { $0.fragmentType == .cTerminal }
+        let nTerminalIons = fragments.filter { $0.fragmentType == .bIon }.sorted { $0.monoisotopicMass < $1.monoisotopicMass }
+        print(nTerminalIons.map {$0.chargedMass().monoisotopicMass.roundTo(places: 4)})
+        XCTAssert(nTerminalIons[0].chargedMass().monoisotopicMass.roundTo(places: 4) == 141.0659) // b2
+        XCTAssert(nTerminalIons[1].chargedMass().monoisotopicMass.roundTo(places: 4) == 159.0764) // b2-H2O
+        XCTAssert(nTerminalIons[2].chargedMass().monoisotopicMass.roundTo(places: 4) == 272.1063) // b3-H2O
+
+        let cTerminalIons = fragments.reversed().filter { $0.fragmentType == .yIon }.sorted { $0.monoisotopicMass < $1.monoisotopicMass }
+        print(cTerminalIons.map {$0.chargedMass().monoisotopicMass.roundTo(places: 4)})
+        XCTAssert(cTerminalIons[0].chargedMass().monoisotopicMass.roundTo(places: 4) == 158.0924) // y1-NH3
+        XCTAssert(cTerminalIons[1].chargedMass().monoisotopicMass.roundTo(places: 4) == 175.1190) // y1
+        XCTAssert(cTerminalIons[2].chargedMass().monoisotopicMass.roundTo(places: 4) == 286.1510) // y2-H2O
     }
     
     func testFragmentCount() {
@@ -249,16 +258,16 @@ final class BioSwiftTests: XCTestCase {
         
         let fragments = peptide.fragment()
         
-        let precursors = fragments.filter { $0.fragmentType == .precursor }
+        let precursors = fragments.filter { $0.fragmentType == .precursorIon }
         XCTAssert(precursors.count == 3)
         
-        let immoniumIons = fragments.filter { $0.fragmentType == .immonium }
+        let immoniumIons = fragments.filter { $0.fragmentType == .immoniumIon }
         XCTAssert(immoniumIons.count == 7)
 
-        let nTerminalIons = fragments.filter { $0.fragmentType == .nTerminal }
+        let nTerminalIons = fragments.filter { $0.fragmentType == .bIon }
         XCTAssert(nTerminalIons.count == 10)
 
-        let cTerminalIons = fragments.filter { $0.fragmentType == .cTerminal }.reversed()
+        let cTerminalIons = fragments.filter { $0.fragmentType == .yIon }
         XCTAssert(cTerminalIons.count == 17)
     }
 }

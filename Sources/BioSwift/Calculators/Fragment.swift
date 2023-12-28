@@ -9,10 +9,10 @@
 import Foundation
 
 public enum FragmentType { // this is only for peptides...
-    case precursor
-    case immonium
-    case nTerminal
-    case cTerminal
+    case precursorIon
+    case immoniumIon
+    case bIon
+    case yIon
     case undefined
 }
 
