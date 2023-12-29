@@ -16,18 +16,18 @@ extension Peptide {
 
     func precursorIons() -> [PeptideFragment] {
         var result: [PeptideFragment] = []
-        
+
         let precursorIon = PeptideFragment(residues: residues, type: .precursorIon, adducts: adducts)
         result.append(precursorIon)
 
         if precursorIon.canLoseWater() {
-            let fragment = PeptideFragment(residues: residues, type: .precursorIon, adducts: adducts, modifications: [LocalizedModification(lossOfWater, at: 0)])
-            result.append(fragment)
+            let precursorIonLossOfWater = PeptideFragment(residues: residues, type: .precursorIon, adducts: adducts, modifications: [LocalizedModification(lossOfWater, at: 0)])
+            result.append(precursorIonLossOfWater)
         }
 
         if precursorIon.canLoseAmmonia() {
-            let fragment = PeptideFragment(residues: residues, type: .precursorIon, adducts: adducts, modifications: [LocalizedModification(lossOfAmmonia, at: 0)])
-            result.append(fragment)
+            let precursorIonLossOfAmmonia = PeptideFragment(residues: residues, type: .precursorIon, adducts: adducts, modifications: [LocalizedModification(lossOfAmmonia, at: 0)])
+            result.append(precursorIonLossOfAmmonia)
         }
 
         return result
@@ -43,7 +43,7 @@ extension Peptide {
         return result
     }
 
-    func nTerminalIons() -> [PeptideFragment] { // b, a ions, TODO: add c ions
+    func nTerminalIons() -> [PeptideFragment] {
         var result = [PeptideFragment]()
 
         guard adducts.count > 0 else { return result }
@@ -51,10 +51,23 @@ extension Peptide {
         let startIndex = residues.startIndex
 
         for z in 1 ... min(2, adducts.count) {
+            // add c1
+            let cIon = PeptideFragment(residues: [residues[0]], type: .cIon, adducts: Array(repeatElement(protonAdduct, count: z)))
+            
+            if cIon.residues[0].oneLetterCode != "P" {
+                if z == 1 {
+                    result.append(cIon)
+                } else {
+                    if cIon.pseudomolecularIon().monoisotopicMass > pseudomolecularIon().monoisotopicMass {
+                        result.append(cIon)
+                    }
+                }
+            }
+
             for i in 2 ... residues.count - 1 {
                 let index = residues.index(startIndex, offsetBy: i)
 
-                let bIon = PeptideFragment(residues: Array(residues[..<index]), type: .bIon, adducts: Array(repeatElement(protonAdduct, count: z)))
+                let bIon = PeptideFragment(residues: Array(residues[..<index]), type: .bIon, adducts: Array(repeatElement(protonAdduct, count: z)), modifications: modifications)
 
                 if z == 1 {
                     result.append(bIon)
@@ -63,18 +76,18 @@ extension Peptide {
                         result.append(bIon)
                     }
                 }
-                
+
                 if bIon.canLoseWater() {
-                    let fragment = PeptideFragment(residues: bIon.residues, type: .bIon, adducts: bIon.adducts, modifications: [LocalizedModification(lossOfWater, at: 0)])
-                    result.append(fragment)
+                    let bIonLossOfWater = PeptideFragment(residues: bIon.residues, type: .bIon, adducts: bIon.adducts, modifications: [LocalizedModification(lossOfWater, at: 0)])
+                    result.append(bIonLossOfWater)
                 }
 
                 if bIon.canLoseAmmonia() {
-                    let fragment = PeptideFragment(residues: bIon.residues, type: .bIon, adducts: bIon.adducts, modifications: [LocalizedModification(lossOfAmmonia, at: 0)])
-                    result.append(fragment)
+                    let bIonLossOfAmmonia = PeptideFragment(residues: bIon.residues, type: .bIon, adducts: bIon.adducts, modifications: [LocalizedModification(lossOfAmmonia, at: 0)])
+                    result.append(bIonLossOfAmmonia)
                 }
-                
-                let aIon = PeptideFragment(residues: bIon.residues, type: .aIon, adducts: bIon.adducts, modifications: [LocalizedModification(lossOfCarbonyl, at: 0)])
+
+                let aIon = PeptideFragment(residues: bIon.residues, type: .aIon, adducts: bIon.adducts)
 
                 if z == 1 {
                     result.append(aIon)
@@ -83,13 +96,25 @@ extension Peptide {
                         result.append(aIon)
                     }
                 }
+
+                let cIon = PeptideFragment(residues: bIon.residues, type: .cIon, adducts: bIon.adducts)
+
+                if cIon.residues.last?.oneLetterCode != "P" {
+                    if z == 1 {
+                        result.append(cIon)
+                    } else {
+                        if cIon.pseudomolecularIon().monoisotopicMass > pseudomolecularIon().monoisotopicMass {
+                            result.append(cIon)
+                        }
+                    }
+                }
             }
         }
 
         return result
     }
 
-    func cTerminalIons() -> [PeptideFragment] { // y, x ions  TODO: z ions
+    func cTerminalIons() -> [PeptideFragment] {
         var result = [PeptideFragment]()
 
         guard adducts.count > 0 else { return result }
@@ -100,23 +125,29 @@ extension Peptide {
             for i in 1 ... residues.count - 1 {
                 let index = residues.index(endIndex, offsetBy: -i)
 
-                let yIon = PeptideFragment(residues: Array(residues[index..<endIndex]), type: .yIon, adducts: Array(repeatElement(protonAdduct, count: z)))
+                let yIon = PeptideFragment(residues: Array(residues[index ..< endIndex]), type: .yIon, adducts: Array(repeatElement(protonAdduct, count: z)))
 
                 result.append(yIon)
 
                 if i > 1 && yIon.canLoseWater() {
-                    let fragment = PeptideFragment(residues: yIon.residues, type: .yIon, adducts: yIon.adducts, modifications: [LocalizedModification(lossOfWater, at: 0)])
-                    result.append(fragment)
+                    let yIonLossOfWater = PeptideFragment(residues: yIon.residues, type: .yIon, adducts: yIon.adducts, modifications: [LocalizedModification(lossOfWater, at: 0)])
+                    result.append(yIonLossOfWater)
                 }
 
                 if yIon.canLoseAmmonia() {
-                    let fragment = PeptideFragment(residues: yIon.residues, type: .yIon, adducts: yIon.adducts, modifications: [LocalizedModification(lossOfAmmonia, at: 0)])
-                    result.append(fragment)
+                    let yIonLossOfAmmonia = PeptideFragment(residues: yIon.residues, type: .yIon, adducts: yIon.adducts, modifications: [LocalizedModification(lossOfAmmonia, at: 0)])
+                    result.append(yIonLossOfAmmonia)
                 }
-                
-                let xIon = PeptideFragment(residues: yIon.residues, type: .xIon, adducts: yIon.adducts, modifications: [LocalizedModification(additionOfCarbonyl, at: 0)])
+
+                let xIon = PeptideFragment(residues: yIon.residues, type: .xIon, adducts: yIon.adducts)
 
                 result.append(xIon)
+
+                let zIon = PeptideFragment(residues: yIon.residues, type: .zIon, adducts: yIon.adducts)
+
+                if zIon.residues.first?.oneLetterCode != "P" {
+                    result.append(zIon)
+                }
             }
         }
 
@@ -169,26 +200,34 @@ public extension PeptideFragment {
 
     func calculateMasses() -> MassContainer {
         var result = mass(of: residues) + modificationMasses() + terminalMasses()
-        
+
         if fragmentType == .precursorIon {
             result += water.masses
         }
-        
-        if fragmentType == .yIon || fragmentType == .xIon {
-            result += (hydrogen.masses + hydroxyl.masses)
-            
+
+        if fragmentType == .aIon || fragmentType == .cIon {
+            if fragmentType == .aIon {
+                result -= carbonyl.masses
+            } else if fragmentType == .cIon {
+                result += ammonia.masses // TODO:
+            }
+        } else if fragmentType == .yIon || fragmentType == .xIon || fragmentType == .zIon {
+            result += water.masses
+
             if fragmentType == .xIon {
-                result -= (2 * hydrogen.masses)
+                result += (carbonyl.masses - 2 * hydrogen.masses)
+            } else if fragmentType == .zIon {
+                result -= oxygen.masses
             }
         }
-        
+
         return result
     }
 
     func terminalMasses() -> MassContainer {
         return zeroMass
     }
-    
+
     func canLoseWater() -> Bool {
         sequenceString.containsCharactersFrom(substring: "STED")
     }
