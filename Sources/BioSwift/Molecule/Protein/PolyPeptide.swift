@@ -1,5 +1,7 @@
 import Foundation
 
+public typealias Peptide = PolyPeptide
+
 public let nTerm = AminoAcid(name: nTermString, oneLetterCode: "", formula: Formula("H"))
 public let cTerm = AminoAcid(name: cTermString, oneLetterCode: "", formula: Formula("OH"))
 
@@ -79,4 +81,10 @@ public extension PolyPeptide {
 
         return residues.compactMap { values[$0.oneLetterCode] }
     }
+
+//    func isoElectricPoint() -> Double {
+//        let hydropathy = Hydropathy(symbolSet: CountedSet(sequenceString.map { String($0) }))
+//
+//        return hydropathy.isoElectricPoint()
+//    }
 }

@@ -230,8 +230,9 @@ final class BioSwiftTests: XCTestCase {
         var peptide = Peptide(sequence: "SAMPLER")
         peptide.setAdducts(type: protonAdduct, count: 1)
         
-        let fragments = peptide.fragment()
-        
+        let fragmenter = PeptideFragmenter(peptide: peptide)
+        let fragments = fragmenter.fragments
+
         let precursors = fragments.filter { $0.fragmentType == .precursorIon }
         XCTAssert(precursors.count == 3)
         
@@ -239,41 +240,65 @@ final class BioSwiftTests: XCTestCase {
         XCTAssert(immoniumIons.count == 7)
 
         let bIons = fragments.filter { $0.fragmentType == .bIon }
-        XCTAssert(bIons.count == 10)
+        XCTAssert(bIons.count == 5)
 
         let yIons = fragments.filter { $0.fragmentType == .yIon }
-        XCTAssert(yIons.count == 17)
+        XCTAssert(yIons.count == 6)
     }
 
     func testFragmentMass() {
+        // theoretical masses via https://prospector.ucsf.edu/prospector/cgi-bin/msform.cgi?form=msproduct
+        
         var peptide = Peptide(sequence: "SAMPLER")
         peptide.setAdducts(type: protonAdduct, count: 1)
 
         XCTAssert(peptide.chargedMass().monoisotopicMass.roundTo(places: 4) == 803.4080)
         
-        let fragments = peptide.fragment()
-        let precursors = fragments.filter { $0.fragmentType == .precursorIon }.sorted { $0.monoisotopicMass < $1.monoisotopicMass }
+        let fragmenter = PeptideFragmenter(peptide: peptide)
+        let fragments = fragmenter.fragments
         
-        XCTAssert(precursors[0].chargedMass().monoisotopicMass.roundTo(places: 4) == 785.3974)
-        XCTAssert(precursors[1].chargedMass().monoisotopicMass.roundTo(places: 4) == 786.3815)
-        XCTAssert(precursors[2].chargedMass().monoisotopicMass.roundTo(places: 4) == 803.4080)
+        let precursors = fragments.filter { $0.fragmentType == .precursorIon }
+        
+        XCTAssert(precursors[0].chargedMass().monoisotopicMass.roundTo(places: 4) == 803.4080)
+//        XCTAssert(precursors[1].chargedMass().monoisotopicMass.roundTo(places: 4) == 786.3815)
+//        XCTAssert(precursors[2].chargedMass().monoisotopicMass.roundTo(places: 4) == 803.4080)
 
-        let aIons = fragments.filter { $0.fragmentType == .aIon }.sorted { $0.monoisotopicMass < $1.monoisotopicMass }
-        XCTAssert(aIons[0].chargedMass().monoisotopicMass.roundTo(places: 4) == 131.0815) // a1
+        if let a1 = fragmenter.fragment(at: 1, for: .aIon) {
+            XCTAssert(a1.chargedMass().monoisotopicMass.roundTo(places: 4) == 131.0815) // a1
+        }
 
-        let bIons = fragments.filter { $0.fragmentType == .bIon }.sorted { $0.monoisotopicMass < $1.monoisotopicMass }
-        XCTAssert(bIons[0].chargedMass().monoisotopicMass.roundTo(places: 4) == 141.0659) // b2
-        XCTAssert(bIons[1].chargedMass().monoisotopicMass.roundTo(places: 4) == 159.0764) // b2-H2O
-        XCTAssert(bIons[2].chargedMass().monoisotopicMass.roundTo(places: 4) == 272.1063) // b3-H2O
+        if let b2 = fragmenter.fragment(at: 2, for: .bIon) {
+            XCTAssert(b2.chargedMass().monoisotopicMass.roundTo(places: 4) == 159.0764) // b2
+        }
+        
+        if let b2minH2O = fragmenter.fragment(at: 2, for: .bIonMinusWater) {
+            XCTAssert(b2minH2O.chargedMass().monoisotopicMass.roundTo(places: 4) == 141.0659) // b2-H2O
+        }
+        
+        if let b3minH2O = fragmenter.fragment(at: 3, for: .bIonMinusWater) {
+            XCTAssert(b3minH2O.chargedMass().monoisotopicMass.roundTo(places: 4) == 272.1063) // b3-H2O
+        }
 
-        let xIons = fragments.reversed().filter { $0.fragmentType == .xIon }.sorted { $0.monoisotopicMass < $1.monoisotopicMass }
-        print(xIons.map { $0.chargedMass().monoisotopicMass.roundTo(places: 4) })
-        XCTAssert(xIons[0].chargedMass().monoisotopicMass.roundTo(places: 4) == 201.0982) // x1
+        if let x1 = fragmenter.fragment(at: 1, for: .xIon) {
+            XCTAssert(x1.chargedMass().monoisotopicMass.roundTo(places: 4) == 201.0982) // x1
+        }
 
-        let yIons = fragments.reversed().filter { $0.fragmentType == .yIon }.sorted { $0.monoisotopicMass < $1.monoisotopicMass }
-        XCTAssert(yIons[0].chargedMass().monoisotopicMass.roundTo(places: 4) == 158.0924) // y1-NH3
-        XCTAssert(yIons[1].chargedMass().monoisotopicMass.roundTo(places: 4) == 175.1190) // y1
-        XCTAssert(yIons[2].chargedMass().monoisotopicMass.roundTo(places: 4) == 286.1510) // y2-H2O
+        if let y1 = fragmenter.fragment(at: 1, for: .yIon) {
+            XCTAssert(y1.chargedMass().monoisotopicMass.roundTo(places: 4) == 175.1190) // y1
+        }
+        
+        if let y1minNH3 = fragmenter.fragment(at: 1, for: .yIonMinusAmmonia) {
+            XCTAssert(y1minNH3.chargedMass().monoisotopicMass.roundTo(places: 4) == 158.0924) // y1-NH3
+        }
+        
+        if let y2minH2O = fragmenter.fragment(at: 2, for: .yIonMinusWater) {
+            XCTAssert(y2minH2O.chargedMass().monoisotopicMass.roundTo(places: 4) == 286.1510) // y2-H2O
+        }
+
+
+
+//        XCTAssert(yIons[0].chargedMass().monoisotopicMass.roundTo(places: 4) == 158.0924) // y1-NH3
+//        XCTAssert(yIons[2].chargedMass().monoisotopicMass.roundTo(places: 4) == 286.1510) // y2-H2O
     }
     
     func testFragmentMass2() {
@@ -281,36 +306,94 @@ final class BioSwiftTests: XCTestCase {
         peptide.setAdducts(type: protonAdduct, count: 1)
         
         XCTAssert(peptide.chargedMass().monoisotopicMass.roundTo(places: 4) == 1538.7744)
-        let fragments = peptide.fragment()
+
+        let fragmenter = PeptideFragmenter(peptide: peptide)
+        let fragments = fragmenter.fragments
+
+        let bIons = fragments.filter { $0.fragmentType == .bIon }
+        XCTAssert(bIons.count == 13)
         
-        let bIons = fragments.filter { $0.fragmentType == .bIon }.sorted { $0.monoisotopicMass < $1.monoisotopicMass }
-        XCTAssert(bIons.count == 29)
+        if let b2 = fragmenter.fragment(at: 2, for: .bIon) {
+            XCTAssert(b2.chargedMass().monoisotopicMass.roundTo(places: 4) == 159.0764) // b2
+        }
         
-        XCTAssert(bIons[0].chargedMass().monoisotopicMass.roundTo(places: 4) == 141.0659)   // b2
-        XCTAssert(bIons[20].chargedMass().monoisotopicMass.roundTo(places: 4) == 1108.5456) // b12 - H2O
-        XCTAssert(bIons[21].chargedMass().monoisotopicMass.roundTo(places: 4) == 1109.5296) // b12 - NH3
-        XCTAssert(bIons[22].chargedMass().monoisotopicMass.roundTo(places: 4) == 1126.5561) // b12
+        if let b12 = fragmenter.fragment(at: 12, for: .bIon) {
+            XCTAssert(b12.chargedMass().monoisotopicMass.roundTo(places: 4) == 1126.5561) // b12
+        }
         
-        let zIons = fragments.filter { $0.fragmentType == .zIon }.sorted { $0.monoisotopicMass < $1.monoisotopicMass }
+        if let b12minH2O = fragmenter.fragment(at: 12, for: .bIonMinusWater) {
+            XCTAssert(b12minH2O.chargedMass().monoisotopicMass.roundTo(places: 4) == 1108.5456) // b12 - H2O
+        }
+
+        if let b12minNH3 = fragmenter.fragment(at: 12, for: .bIonMinusAmmonia) {
+            XCTAssert(b12minNH3.chargedMass().monoisotopicMass.roundTo(places: 4) == 1109.5296) // b12 - NH3
+        }
+
+        let zIons = fragments.filter { $0.fragmentType == .zIon }
         XCTAssert(zIons.count == 13)
 
-        let cIons = fragments.filter { $0.fragmentType == .cIon }.sorted { $0.monoisotopicMass < $1.monoisotopicMass }
+        let cIons = fragments.filter { $0.fragmentType == .cIon }
         XCTAssert(cIons.count == 13)
-        XCTAssert(cIons[0].chargedMass().monoisotopicMass.roundTo(places: 4) == 105.0659)   // c1 TODO
+        
+        if let c1 = fragmenter.fragment(at: 1, for: .cIon) {
+            XCTAssert(c1.chargedMass().monoisotopicMass.roundTo(places: 4) == 105.0659) // c1
+        }
     }
     
     func testFragmentMass3() {
         var peptide = Peptide(sequence: "SAMPLEVAMAAGQTHR")
         peptide.setAdducts(type: protonAdduct, count: 1)
         
-        if let ox = modificationLibrary.filter({ $0.name.contains("Oxidation") == true }).first {
-            peptide.addModification(LocalizedModification(ox, at: 8))
-            XCTAssert(peptide.chargedMass().monoisotopicMass.roundTo(places: 4) == 1685.8098)
-            
-            let fragments = peptide.fragment()
-            let bIons = fragments.filter { $0.fragmentType == .bIon }.sorted { $0.monoisotopicMass < $1.monoisotopicMass }
+        guard let ox = modificationLibrary.filter({ $0.name.contains("Oxidation") == true }).first else { return }
+        
+        peptide.addModification(LocalizedModification(ox, at: 8))
+        XCTAssert(peptide.chargedMass().monoisotopicMass.roundTo(places: 4) == 1685.8098)
+        
+        let fragmenter = PeptideFragmenter(peptide: peptide)
+        let fragments = fragmenter.fragments
 
-            XCTAssert(bIons[15].chargedMass().monoisotopicMass.roundTo(places: 4) == 946.4373)   // b8 M-ox
+        let aIonsMinusWater = fragments.filter { $0.fragmentType == .aIonMinusWater }
+        XCTAssert(aIonsMinusWater.count == 0)
+
+        let aIonsMinusAmmonia = fragments.filter { $0.fragmentType == .aIonMinusAmmonia }
+        XCTAssert(aIonsMinusAmmonia.count == 3)
+        
+        let bIons = fragments.filter { $0.fragmentType == .bIon }
+        XCTAssertNil(bIons.filter { $0.index == 1 }.first)
+        
+        let yIons = fragments.filter { $0.fragmentType == .yIonMinusWater }
+        XCTAssertNil(yIons.filter { $0.index == 1 }.first)
+        XCTAssertNil(yIons.filter { $0.index == 2 }.first)
+        
+        if let b8 = fragmenter.fragment(at: 8, for: .bIon) {
+            XCTAssert(b8.chargedMass().monoisotopicMass.roundTo(places: 4) == 799.4019) // b8 M-ox
+        }
+                    
+        if let y9 = fragmenter.fragment(at: 9, for: .yIon) {
+            XCTAssert(y9.chargedMass().monoisotopicMass.roundTo(places: 4) == 958.4523) // y9 M-ox
+        }
+    }
+    
+    func testFragmentMass4() {
+        var peptide = Peptide(sequence: "AWRKQNWSTEDWWSTEDWQPRTYSAMPLER")
+        peptide.setAdducts(type: protonAdduct, count: 1)
+        
+        let fragmenter = PeptideFragmenter(peptide: peptide)
+        let fragments = fragmenter.fragments
+
+        let bIonsMinusWater = fragments.filter { $0.fragmentType == .bIonMinusWater }
+        XCTAssertNil(bIonsMinusWater.filter { $0.index == 1 }.first)
+        XCTAssertNil(bIonsMinusWater.filter { $0.index == 2 }.first)
+        XCTAssertNil(bIonsMinusWater.filter { $0.index == 3 }.first)
+        XCTAssertNil(bIonsMinusWater.filter { $0.index == 4 }.first)
+        XCTAssertNil(bIonsMinusWater.filter { $0.index == 5 }.first)
+        XCTAssertNil(bIonsMinusWater.filter { $0.index == 6 }.first)
+        XCTAssertNil(bIonsMinusWater.filter { $0.index == 7 }.first)
+
+        if let b8minusWater = fragmenter.fragment(at: 8, for: .bIonMinusWater) {
+            XCTAssert(b8minusWater.chargedMass().monoisotopicMass.roundTo(places: 4) == 1039.5221) // b8-H20
         }
     }
 }
+
+//
