@@ -32,7 +32,7 @@ public class PeptideFragmenter {
 
     lazy var fragments: [PeptideFragment] = precursorIons() + immoniumIons() + nTerminalIons() + cTerminalIons()
 
-    init(peptide: Peptide) {
+    public init(peptide: Peptide) {
         self.peptide = peptide
     }
 
