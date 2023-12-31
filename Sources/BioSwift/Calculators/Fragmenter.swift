@@ -48,12 +48,12 @@ public class PeptideFragmenter {
         result.append(precursorIon)
 
         if precursorIon.canLoseWater() {
-            let precursorIonLossOfWater = PeptideFragment(residues: peptide.residues, type: .precursorIon, adducts: peptide.adducts)
+            let precursorIonLossOfWater = PeptideFragment(residues: peptide.residues, type: .precursorIonMinusWater, adducts: peptide.adducts)
             result.append(precursorIonLossOfWater)
         }
 
         if precursorIon.canLoseAmmonia() {
-            let precursorIonLossOfAmmonia = PeptideFragment(residues: peptide.residues, type: .precursorIon, adducts: peptide.adducts)
+            let precursorIonLossOfAmmonia = PeptideFragment(residues: peptide.residues, type: .precursorIonMinusAmmonia, adducts: peptide.adducts)
             result.append(precursorIonLossOfAmmonia)
         }
 
