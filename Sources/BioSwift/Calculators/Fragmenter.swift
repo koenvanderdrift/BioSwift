@@ -48,12 +48,12 @@ public class PeptideFragmenter {
         result.append(precursorIon)
 
         if precursorIon.canLoseWater() {
-            let precursorIonLossOfWater = PeptideFragment(residues: peptide.residues, type: .precursorIon, adducts: peptide.adducts, modifications: [LocalizedModification(lossOfWater, at: 0)])
+            let precursorIonLossOfWater = PeptideFragment(residues: peptide.residues, type: .precursorIon, adducts: peptide.adducts)
             result.append(precursorIonLossOfWater)
         }
 
         if precursorIon.canLoseAmmonia() {
-            let precursorIonLossOfAmmonia = PeptideFragment(residues: peptide.residues, type: .precursorIon, adducts: peptide.adducts, modifications: [LocalizedModification(lossOfAmmonia, at: 0)])
+            let precursorIonLossOfAmmonia = PeptideFragment(residues: peptide.residues, type: .precursorIon, adducts: peptide.adducts)
             result.append(precursorIonLossOfAmmonia)
         }
 
@@ -99,18 +99,18 @@ public class PeptideFragmenter {
                 if z == 1 {
                     result.append(bIon)
                 } else {
-                    if bIon.pseudomolecularIon().monoisotopicMass > peptide.pseudomolecularIon().monoisotopicMass {
+                    if bIon.index == peptide.residues.count {
                         result.append(bIon)
                     }
                 }
 
                 if bIon.canLoseWater() {
-                    let bIonLossOfWater = PeptideFragment(residues: bIon.residues, type: .bIonMinusWater, index: index, adducts: bIon.adducts, modifications: [LocalizedModification(lossOfWater, at: 0)])
+                    let bIonLossOfWater = PeptideFragment(residues: bIon.residues, type: .bIonMinusWater, index: index, adducts: bIon.adducts)
                     result.append(bIonLossOfWater)
                 }
 
                 if bIon.canLoseAmmonia() {
-                    let bIonLossOfAmmonia = PeptideFragment(residues: bIon.residues, type: .bIonMinusAmmonia, index: index, adducts: bIon.adducts, modifications: [LocalizedModification(lossOfAmmonia, at: 0)])
+                    let bIonLossOfAmmonia = PeptideFragment(residues: bIon.residues, type: .bIonMinusAmmonia, index: index, adducts: bIon.adducts)
                     result.append(bIonLossOfAmmonia)
                 }
 
@@ -125,12 +125,12 @@ public class PeptideFragmenter {
                 }
 
                 if aIon.canLoseWater() {
-//                    let aIonLossOfWater = PeptideFragment(residues: bIon.residues, type: .aIonMinusWater, index: index, adducts: bIon.adducts, modifications: [LocalizedModification(lossOfAmmonia, at: 0)])
-//                    result.append(aIonLossOfWater)
+                    let aIonLossOfWater = PeptideFragment(residues: bIon.residues, type: .aIonMinusWater, index: index, adducts: bIon.adducts)
+                    result.append(aIonLossOfWater)
                 }
 
                 if aIon.sequenceString.contains("Q") {
-                    let aIonLossOfAmmonia = PeptideFragment(residues: bIon.residues, type: .aIonMinusAmmonia, index: index, adducts: bIon.adducts, modifications: [LocalizedModification(lossOfAmmonia, at: 0)])
+                    let aIonLossOfAmmonia = PeptideFragment(residues: bIon.residues, type: .aIonMinusAmmonia, index: index, adducts: bIon.adducts)
                     result.append(aIonLossOfAmmonia)
                 }
 
@@ -145,9 +145,9 @@ public class PeptideFragmenter {
                         }
                     }
                 }
+                
             }
         }
-
         return result
     }
 
@@ -166,12 +166,12 @@ public class PeptideFragmenter {
                 result.append(yIon)
 
                 if i > 1 && yIon.canLoseWater() {
-                    let yIonLossOfWater = PeptideFragment(residues: yIon.residues, type: .yIonMinusWater, index: i, adducts: yIon.adducts, modifications: [LocalizedModification(lossOfWater, at: 0)])
+                    let yIonLossOfWater = PeptideFragment(residues: yIon.residues, type: .yIonMinusWater, index: i, adducts: yIon.adducts)
                     result.append(yIonLossOfWater)
                 }
 
                 if yIon.canLoseAmmonia() {
-                    let yIonLossOfAmmonia = PeptideFragment(residues: yIon.residues, type: .yIonMinusAmmonia, index: i, adducts: yIon.adducts, modifications: [LocalizedModification(lossOfAmmonia, at: 0)])
+                    let yIonLossOfAmmonia = PeptideFragment(residues: yIon.residues, type: .yIonMinusAmmonia, index: i, adducts: yIon.adducts)
                     result.append(yIonLossOfAmmonia)
                 }
 
@@ -189,12 +189,12 @@ public class PeptideFragmenter {
         return result.reversed()
     }
 
-    public func fragment(at index: Int, for type: PeptideFragmentType) -> PeptideFragment? {
+    public func fragment(at index: Int, for type: PeptideFragmentType, with charge: Int = 1) -> PeptideFragment? {
         guard precursorIons().isEmpty == false else { return nil }
 
         let ions = fragments.filter { $0.fragmentType == type }
 
-        return ions.filter { $0.index == index }.first
+        return ions.filter { $0.index == index && $0.charge == charge }.first
     }
 }
 
@@ -239,25 +239,60 @@ public extension PeptideFragment {
 
     func calculateMasses() -> MassContainer {
         var result = mass(of: residues) + modificationMasses() + terminalMasses()
-
-        if fragmentType == .precursorIon {
+        
+        switch fragmentType {
+            
+        case .precursorIon:
             result += water.masses
-        }
+            
+        case .precursorIonMinusWater:
+            result += zeroMass
 
-        if fragmentType == .aIon || fragmentType == .cIon {
-            if fragmentType == .aIon {
-                result -= carbonyl.masses
-            } else if fragmentType == .cIon {
-                result += ammonia.masses // TODO:
-            }
-        } else if fragmentType == .yIon || fragmentType == .xIon || fragmentType == .zIon {
+        case .precursorIonMinusAmmonia:
+            result += (water.masses - ammonia.masses)
+
+        case .immoniumIon:
+            result += zeroMass
+
+        case .aIon:
+            result -= carbonyl.masses
+
+        case .aIonMinusWater:
+            result -= (carbonyl.masses + water.masses)
+
+        case .aIonMinusAmmonia:
+            result -= (carbonyl.masses + ammonia.masses)
+
+        case .bIon:
+            result += zeroMass
+
+        case .bIonMinusWater:
+            result -= water.masses
+
+        case .bIonMinusAmmonia:
+            result -= ammonia.masses
+
+        case .cIon:
+            result += ammonia.masses
+
+        case .yIon:
             result += water.masses
 
-            if fragmentType == .xIon {
-                result += (carbonyl.masses - 2 * hydrogen.masses)
-            } else if fragmentType == .zIon {
-                result -= oxygen.masses
-            }
+        case .yIonMinusWater:
+            result += zeroMass
+
+        case .yIonMinusAmmonia:
+            result += (water.masses - ammonia.masses)
+
+        case .xIon:
+            result += (water.masses + carbonyl.masses - 2 * hydrogen.masses)
+
+        case .zIon:
+            result += (water.masses - ammonia.masses + hydrogen.masses)
+
+        case .undefined:
+            result += zeroMass
+
         }
 
         return result
