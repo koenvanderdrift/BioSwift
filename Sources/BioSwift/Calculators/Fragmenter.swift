@@ -28,7 +28,7 @@ public enum PeptideFragmentType { // this is only for peptides...
 }
 
 public class PeptideFragmenter {
-    let peptide: Peptide
+    public let peptide: Peptide
 
     lazy var fragments: [PeptideFragment] = precursorIons() + immoniumIons() + nTerminalIons() + cTerminalIons()
 
