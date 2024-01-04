@@ -1,14 +1,12 @@
 import Foundation
 
-public typealias Peptide = PolyPeptide
-
 public let nTerm = AminoAcid(name: nTermString, oneLetterCode: "", formula: Formula("H"))
 public let cTerm = AminoAcid(name: cTermString, oneLetterCode: "", formula: Formula("OH"))
 
 public let lossOfWater = Modification(name: "Loss of Water", reactions: [.remove(water)], sites: ["S", "T", "E", "D"])
 public let lossOfAmmonia = Modification(name: "Loss of Ammonia", reactions: [.remove(ammonia)], sites: ["R", "Q", "N", "K"])
 
-public struct PolyPeptide: RangedChain {
+public struct Peptide: RangedChain {
     public var name: String = ""
     public var symbolLibrary: [Symbol] = aminoAcidLibrary
 
@@ -21,7 +19,7 @@ public struct PolyPeptide: RangedChain {
     public var rangeInParent: ChainRange = zeroChainRange
 }
 
-public extension PolyPeptide {
+public extension Peptide {
     init(sequence: String) {
         residues = createResidues(from: sequence)
     }
@@ -65,7 +63,7 @@ public extension PolyPeptide {
     }
 }
 
-public extension PolyPeptide {
+public extension Peptide {
     var masses: MassContainer {
         calculateMasses()
     }

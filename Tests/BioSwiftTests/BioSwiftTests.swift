@@ -446,4 +446,11 @@ final class BioSwiftTests: XCTestCase {
             XCTAssert(c1.chargedMass().monoisotopicMass.roundTo(places: 4) == 105.0659) // c1
         }
     }
+    
+    func testChargedResidues() {
+        let fragment = PeptideFragment(sequence: "AWRKQNWSTEDWWSHTEDWQPRTYSAMPLER")
+        
+        let numOfCharges = fragment.maxNumberOfCharges()
+        XCTAssert(numOfCharges == 5)
+    }
 }
