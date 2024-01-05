@@ -7,38 +7,6 @@
 
 import Foundation
 
-public enum PeptideFragmentType2 {
-    case immonium
-    case precursor(Precursor)
-    case nTerminal(NTerminal)
-    case cTerminal(CTerminal)
-    case undefined
-
-    public enum Precursor {
-        case precursorIon
-        case precursorIonMinusWater
-        case precursorIonMinusAmmonia
-    }
-
-    public enum NTerminal {
-        case aIon
-        case aIonMinusWater
-        case aIonMinusAmmonia
-        case bIon
-        case bIonMinusWater
-        case bIonMinusAmmonia
-        case cIon
-    }
-
-    public enum CTerminal {
-        case yIon
-        case yIonMinusWater
-        case yIonMinusAmmonia
-        case xIon
-        case zIon
-    }
-}
-
 public enum PeptideFragmentType { // this is only for peptides...
     case precursorIon
     case precursorIonMinusWater
@@ -57,6 +25,54 @@ public enum PeptideFragmentType { // this is only for peptides...
     case xIon
     case zIon
     case undefined
+
+    var isPrecursor: Bool { [.precursorIon, .precursorIonMinusWater, .precursorIonMinusAmmonia].contains(self) }
+    var isImmonium: Bool { [.immoniumIon].contains(self) }
+    var isNTerminal: Bool { [.aIon, .aIonMinusWater, .aIonMinusAmmonia, .bIon, .bIonMinusWater, .bIonMinusAmmonia, .cIon].contains(self) }
+    var isCTerminal: Bool { [.yIon, .yIonMinusWater, .yIonMinusAmmonia, .xIon, .zIon].contains(self) }
+
+    var masses: MassContainer {
+        switch self {
+        case .precursorIon:
+            return water.masses
+
+        case .precursorIonMinusAmmonia:
+            return water.masses - ammonia.masses
+
+        case .aIon:
+            return zeroMass - carbonyl.masses
+
+        case .aIonMinusWater:
+            return zeroMass - carbonyl.masses + water.masses
+
+        case .aIonMinusAmmonia:
+            return zeroMass - carbonyl.masses + ammonia.masses
+
+        case .bIonMinusWater:
+            return zeroMass - water.masses
+
+        case .bIonMinusAmmonia:
+            return zeroMass - ammonia.masses
+
+        case .cIon:
+            return ammonia.masses
+
+        case .yIon:
+            return water.masses
+
+        case .yIonMinusAmmonia:
+            return water.masses - ammonia.masses
+
+        case .xIon:
+            return water.masses + carbonyl.masses - 2 * hydrogen.masses
+
+        case .zIon:
+            return water.masses - ammonia.masses + hydrogen.masses
+
+        default:
+            return zeroMass
+        }
+    }
 }
 
 public class PeptideFragmenter {
@@ -291,62 +307,7 @@ public extension PeptideFragment {
     }
 
     func calculateMasses() -> MassContainer {
-        var result = mass(of: residues) + modificationMasses() + terminalMasses()
-
-        switch fragmentType {
-        case .precursorIon:
-            result += water.masses
-
-        case .precursorIonMinusWater:
-            result += zeroMass
-
-        case .precursorIonMinusAmmonia:
-            result += (water.masses - ammonia.masses)
-
-        case .immoniumIon:
-            result += zeroMass
-
-        case .aIon:
-            result -= carbonyl.masses
-
-        case .aIonMinusWater:
-            result -= (carbonyl.masses + water.masses)
-
-        case .aIonMinusAmmonia:
-            result -= (carbonyl.masses + ammonia.masses)
-
-        case .bIon:
-            result += zeroMass
-
-        case .bIonMinusWater:
-            result -= water.masses
-
-        case .bIonMinusAmmonia:
-            result -= ammonia.masses
-
-        case .cIon:
-            result += ammonia.masses
-
-        case .yIon:
-            result += water.masses
-
-        case .yIonMinusWater:
-            result += zeroMass
-
-        case .yIonMinusAmmonia:
-            result += (water.masses - ammonia.masses)
-
-        case .xIon:
-            result += (water.masses + carbonyl.masses - 2 * hydrogen.masses)
-
-        case .zIon:
-            result += (water.masses - ammonia.masses + hydrogen.masses)
-
-        case .undefined:
-            result += zeroMass
-        }
-
-        return result
+        return mass(of: residues) + modificationMasses() + terminalMasses() + fragmentType.masses
     }
 
     func terminalMasses() -> MassContainer {
@@ -370,15 +331,19 @@ public extension PeptideFragment {
     }
 
     func isPrecursor() -> Bool {
-        return fragmentType == .precursorIon || fragmentType == .precursorIonMinusWater || fragmentType == .precursorIonMinusAmmonia
+        return fragmentType.isPrecursor
+    }
+
+    func isImmonium() -> Bool {
+        return fragmentType.isImmonium
     }
 
     func isNterminal() -> Bool {
-        return fragmentType == .aIon || fragmentType == .aIonMinusWater || fragmentType == .aIonMinusAmmonia || fragmentType == .bIon || fragmentType == .bIonMinusWater || fragmentType == .bIonMinusAmmonia || fragmentType == .cIon
+        return fragmentType.isNTerminal
     }
 
     func isCterminal() -> Bool {
-        return fragmentType == .yIon || fragmentType == .yIonMinusWater || fragmentType == .yIonMinusAmmonia || fragmentType == .xIon || fragmentType == .zIon
+        return fragmentType.isCTerminal
     }
 
     func maxNumberOfCharges() -> Int {
