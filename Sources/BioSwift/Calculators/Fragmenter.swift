@@ -26,12 +26,12 @@ public enum PeptideFragmentType { // this is only for peptides...
     case zIon
     case undefined
 
-    var isPrecursor: Bool { [.precursorIon, .precursorIonMinusWater, .precursorIonMinusAmmonia].contains(self) }
-    var isImmonium: Bool { [.immoniumIon].contains(self) }
-    var isNTerminal: Bool { [.aIon, .aIonMinusWater, .aIonMinusAmmonia, .bIon, .bIonMinusWater, .bIonMinusAmmonia, .cIon].contains(self) }
-    var isCTerminal: Bool { [.yIon, .yIonMinusWater, .yIonMinusAmmonia, .xIon, .zIon].contains(self) }
+    public var isPrecursor: Bool { [.precursorIon, .precursorIonMinusWater, .precursorIonMinusAmmonia].contains(self) }
+    public var isImmonium: Bool { [.immoniumIon].contains(self) }
+    public var isNTerminal: Bool { [.aIon, .aIonMinusWater, .aIonMinusAmmonia, .bIon, .bIonMinusWater, .bIonMinusAmmonia, .cIon].contains(self) }
+    public var isCTerminal: Bool { [.yIon, .yIonMinusWater, .yIonMinusAmmonia, .xIon, .zIon].contains(self) }
 
-    var masses: MassContainer {
+    public var masses: MassContainer {
         switch self {
         case .precursorIon:
             return water.masses
