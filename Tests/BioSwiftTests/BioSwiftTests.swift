@@ -453,4 +453,9 @@ final class BioSwiftTests: XCTestCase {
         let numOfCharges = fragment.maxNumberOfCharges()
         XCTAssert(numOfCharges == 5)
     }
+    
+    func testallFragmentCases() {
+        let allCases = PeptideFragmentType.allCases
+        XCTAssert(allCases.count == 17)
+    }
 }

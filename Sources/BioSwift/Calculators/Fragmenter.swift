@@ -7,7 +7,7 @@
 
 import Foundation
 
-public enum PeptideFragmentType { // this is only for peptides...
+public enum PeptideFragmentType: CaseIterable { // this is only for peptides...
     case precursorIon
     case precursorIonMinusWater
     case precursorIonMinusAmmonia
