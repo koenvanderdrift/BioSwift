@@ -23,11 +23,11 @@ public class Formula {
         formulaString = formula
     }
 
-    var description: String {
+    public var description: String {
         formulaString
     }
     
-    var chemicalString: String {  // TODO
+    public var chemicalString: String {  // TODO
         var result = ""
 
         for c in formulaString {
