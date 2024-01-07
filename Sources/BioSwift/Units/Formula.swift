@@ -6,6 +6,7 @@ public class Formula {
     public var formulaString: String
 
     public lazy var elements: [ChemicalElement] = getElements()
+    public lazy var chemicalString: String = getChemicalString()
 
     public init(_ string: String) {
         formulaString = string
@@ -21,25 +22,6 @@ public class Formula {
         }
 
         formulaString = formula
-    }
-
-    public var description: String {
-        formulaString
-    }
-    
-    public var chemicalString: String {  // TODO
-        var result = ""
-
-        for c in formulaString {
-            if c.isNumber {
-                result.append(String(c).subSript())
-            }
-            else {
-                result.append(c)
-            }
-        }
-
-        return result
     }
 
     public func countedElements() -> NSCountedSet {
@@ -197,6 +179,21 @@ extension Formula {
 
     private func isClosingBracket(_ char: Character) -> Bool {
         ")}]>".contains(char)
+    }
+    
+    private func getChemicalString() -> String {
+        var result = ""
+
+        for c in formulaString {
+            if c.isNumber {
+                result.append(String(c).subSript())
+            }
+            else {
+                result.append(c)
+            }
+        }
+
+        return result
     }
 }
 
