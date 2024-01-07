@@ -29,6 +29,8 @@ final class BioSwiftTests: XCTestCase {
     
     func testFormula() {
         let formula = Formula("{AgCuRu4(H)2[CO]12}2")
+        
+        XCTAssertEqual(formula.chemicalString, "{AgCuRu₄(H)₂[CO]₁₂}₂")
         XCTAssertEqual(formula.countFor(element: "C"), 24)
     }
     

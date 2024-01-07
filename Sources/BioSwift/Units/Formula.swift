@@ -27,8 +27,19 @@ public class Formula {
         formulaString
     }
     
-    var chemicalString: String {
-        formulaString // TODO
+    var chemicalString: String {  // TODO
+        var result = ""
+
+        for c in formulaString {
+            if c.isNumber {
+                result.append(String(c).subSript())
+            }
+            else {
+                result.append(c)
+            }
+        }
+
+        return result
     }
 
     public func countedElements() -> NSCountedSet {
