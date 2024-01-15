@@ -460,4 +460,23 @@ final class BioSwiftTests: XCTestCase {
         let allCases = PeptideFragmentType.allCases
         XCTAssert(allCases.count == 17)
     }
+    
+    func testSubChainWithModificationsMass() {
+        var peptide = Peptide(sequence: "SAMPLEVCAAAGQTHR")
+        peptide.setAdducts(type: protonAdduct, count: 1)
+        XCTAssert(peptide.chargedMass().monoisotopicMass.roundTo(places: 4) == 1641.7836)
+
+        guard let cysMod = modificationLibrary.first(where: { $0.name.lowercased() == "Carboxymethyl".lowercased() })
+        else {
+            return
+        }
+
+        peptide.addModification(LocalizedModification(cysMod, at: 8))
+        XCTAssert(peptide.chargedMass().monoisotopicMass.roundTo(places: 4) == 1699.7891)
+        
+        let subChain = peptide.subChain(from: 3, to: 12)
+        XCTAssert(subChain?.sequenceString == "PLEVCAAAGQ")
+        XCTAssert(subChain?.modification(at: 5) == cysMod)
+        XCTAssert(subChain?.chargedMass().monoisotopicMass.roundTo(places: 4) == 1016.4717)
+    }
 }
