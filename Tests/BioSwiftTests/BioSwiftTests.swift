@@ -471,12 +471,12 @@ final class BioSwiftTests: XCTestCase {
             return
         }
 
-        peptide.addModification(LocalizedModification(cysMod, at: 8))
+        peptide.addModification(LocalizedModification(cysMod, at: 7)) // zero-based
         XCTAssert(peptide.chargedMass().monoisotopicMass.roundTo(places: 4) == 1699.7891)
         
-        let subChain = peptide.subChain(from: 3, to: 12)
+        let subChain = peptide.subChain(from: 3, to: 12) // zero-based
         XCTAssert(subChain?.sequenceString == "PLEVCAAAGQ")
-        XCTAssert(subChain?.modification(at: 5) == cysMod)
+        XCTAssert(subChain?.modification(at: 4) == cysMod) // zero-based
         XCTAssert(subChain?.chargedMass().monoisotopicMass.roundTo(places: 4) == 1016.4717)
     }
 }
