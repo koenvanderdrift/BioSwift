@@ -148,11 +148,11 @@ final class BioSwiftTests: XCTestCase {
         if let chain = testProtein.chains.first {
             let range1: ChainRange = 3 ... 9 // 0 based
             let subChain1 = chain.subChain(removing: range1)
-            XCTAssertEqual(subChain1?.sequenceString, "MPSLLAGLCCLVPVSLAEDPQGDAAQKTDTSHHDQDHPTFNKITPNLAEFAFSLYRQLAHQSNSTNIFFSPVSIATAFAMLSLGTKADTHDEILEGLNFNLTEIPEAQIHEGFQELLRTLNQPDSQLQLTTGNGLFLSEGLKLVDKFLEDVKKLYHSEAFTVNFGDTEEAKKQINDYVEKGTQGKIVDLVKELDRDTVFALVNYIFFKGKWERPFEVKDTEEEDFHVDQVTTVKVPMMKRLGMFNIQHCKKLSSWVLLMKYLGNATAIFFLPDEGKLQHLENELTHDIITKFLENEDRRSASLHLPKLSITGTYDLKSVLGQLGITKVFSNGADLSGVTEEAPLKLSKAVHKAVLTIDEKGTEAAGAMFLEAIPMSIPPEVKFNKPFVFMIEQNTKSPLFMGKVVNPTQK")
+            XCTAssertEqual(subChain1?.sequenceString, "MPSLLAGLCCLVPVSLAEDPQGDAAQKTDTSHHDQDHPTFNKITPNLAEFAFSLYRQLAHQSNSTNIFFSPIVSIATAFAMLSLGTKADTHDEILEGLNFNLTEIPEAQIHEGFQELLRTLNQPDSQLQLTTGNGLFLSEGLKLVDKFLEDVKKLYHSEAFTVNFGDTEEAKKQINDYVEKGTQGKIVDLVKELDRDTVFALVNYIFFKGKWERPFEVKDTEEEDFHVDQVTTVKVPMMKRLGMFNIQHCKKLSSWVLLMKYLGNATAIFFLPDEGKLQHLENELTHDIITKFLENEDRRSASLHLPKLSITGTYDLKSVLGQLGITKVFSNGADLSGVTEEAPLKLSKAVHKAVLTIDEKGTEAAGAMFLEAIPMSIPPEVKFNKPFVFMIEQNTKSPLFMGKVVNPTQK")
             
             let range2: ChainRange = 0 ... 9 // 0 based
             let subChain2 = chain.subChain(removing: range2)
-            XCTAssertEqual(subChain2?.sequenceString, "LLAGLCCLVPVSLAEDPQGDAAQKTDTSHHDQDHPTFNKITPNLAEFAFSLYRQLAHQSNSTNIFFSPVSIATAFAMLSLGTKADTHDEILEGLNFNLTEIPEAQIHEGFQELLRTLNQPDSQLQLTTGNGLFLSEGLKLVDKFLEDVKKLYHSEAFTVNFGDTEEAKKQINDYVEKGTQGKIVDLVKELDRDTVFALVNYIFFKGKWERPFEVKDTEEEDFHVDQVTTVKVPMMKRLGMFNIQHCKKLSSWVLLMKYLGNATAIFFLPDEGKLQHLENELTHDIITKFLENEDRRSASLHLPKLSITGTYDLKSVLGQLGITKVFSNGADLSGVTEEAPLKLSKAVHKAVLTIDEKGTEAAGAMFLEAIPMSIPPEVKFNKPFVFMIEQNTKSPLFMGKVVNPTQK")
+            XCTAssertEqual(subChain2?.sequenceString, "LLAGLCCLVPVSLAEDPQGDAAQKTDTSHHDQDHPTFNKITPNLAEFAFSLYRQLAHQSNSTNIFFSPIVSIATAFAMLSLGTKADTHDEILEGLNFNLTEIPEAQIHEGFQELLRTLNQPDSQLQLTTGNGLFLSEGLKLVDKFLEDVKKLYHSEAFTVNFGDTEEAKKQINDYVEKGTQGKIVDLVKELDRDTVFALVNYIFFKGKWERPFEVKDTEEEDFHVDQVTTVKVPMMKRLGMFNIQHCKKLSSWVLLMKYLGNATAIFFLPDEGKLQHLENELTHDIITKFLENEDRRSASLHLPKLSITGTYDLKSVLGQLGITKVFSNGADLSGVTEEAPLKLSKAVHKAVLTIDEKGTEAAGAMFLEAIPMSIPPEVKFNKPFVFMIEQNTKSPLFMGKVVNPTQK")
             
             let range3: ChainRange = 11 ... 400 // 1 based
             let subChain3 = chain.subChain(removing: range3, based: 1)
@@ -160,6 +160,24 @@ final class BioSwiftTests: XCTestCase {
         }
     }
     
+    func testSubChainWithModification() {
+        var peptide = Peptide(sequence: "SAMPLEVCAAAGQTHR")
+        peptide.setAdducts(type: protonAdduct, count: 1)
+        XCTAssert(peptide.chargedMass().monoisotopicMass.roundTo(places: 4) == 1641.7836)
+
+        guard let cysMod = modificationLibrary.first(where: { $0.name.lowercased() == "Carboxymethyl".lowercased() })
+        else {
+            return
+        }
+
+        peptide.addModification(LocalizedModification(cysMod, at: 7)) // zero-based
+        XCTAssert(peptide.chargedMass().monoisotopicMass.roundTo(places: 4) == 1699.7891)
+        
+        let subChain = peptide.subChain(from: 3, to: 12) // zero-based
+        XCTAssert(subChain?.sequenceString == "PLEVCAAAGQ")
+        XCTAssert(subChain?.modification(at: 4) == cysMod) // zero-based
+        XCTAssert(subChain?.chargedMass().monoisotopicMass.roundTo(places: 4) == 1016.4717)
+    }
     func testDigest() {
         if let chain = testProtein.chains.first {
             let missedCleavages = 1
@@ -459,24 +477,5 @@ final class BioSwiftTests: XCTestCase {
     func testallFragmentCases() {
         let allCases = PeptideFragmentType.allCases
         XCTAssert(allCases.count == 17)
-    }
-    
-    func testSubChainWithModificationsMass() {
-        var peptide = Peptide(sequence: "SAMPLEVCAAAGQTHR")
-        peptide.setAdducts(type: protonAdduct, count: 1)
-        XCTAssert(peptide.chargedMass().monoisotopicMass.roundTo(places: 4) == 1641.7836)
-
-        guard let cysMod = modificationLibrary.first(where: { $0.name.lowercased() == "Carboxymethyl".lowercased() })
-        else {
-            return
-        }
-
-        peptide.addModification(LocalizedModification(cysMod, at: 7)) // zero-based
-        XCTAssert(peptide.chargedMass().monoisotopicMass.roundTo(places: 4) == 1699.7891)
-        
-        let subChain = peptide.subChain(from: 3, to: 12) // zero-based
-        XCTAssert(subChain?.sequenceString == "PLEVCAAAGQ")
-        XCTAssert(subChain?.modification(at: 4) == cysMod) // zero-based
-        XCTAssert(subChain?.chargedMass().monoisotopicMass.roundTo(places: 4) == 1016.4717)
     }
 }
