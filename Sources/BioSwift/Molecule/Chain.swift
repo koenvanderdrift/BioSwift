@@ -135,6 +135,7 @@ public extension Chain {
 
         var sub = Self(residues: subResidues)
         sub.termini = termini
+        sub.adducts = adducts
 
         if basedRange.lowerBound == 0 {
             sub.termini?.first.modification = termini?.first.modification
@@ -152,7 +153,8 @@ public extension Chain {
 
         var sub = Self(residues: residues)
         sub.termini = termini
-
+        sub.adducts = adducts
+        
         if range.lowerBound == 0 {
             sub.termini?.first.modification = termini?.first.modification
         }
