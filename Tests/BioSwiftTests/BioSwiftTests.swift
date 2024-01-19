@@ -178,29 +178,28 @@ final class BioSwiftTests: XCTestCase {
         XCTAssert(subChain?.modification(at: 4) == cysMod) // zero-based
         XCTAssert(subChain?.chargedMass().monoisotopicMass.roundTo(places: 4) == 1016.4717)
     }
+
     func testDigest() {
-        if let chain = testProtein.chains.first {
-            let missedCleavages = 1
+        let digester = ProteinDigester(protein: testProtein)
+        
+        let missedCleavages = 1
             
-            let trypsin = enzymeLibrary.first(where: { $0.name == "Trypsin" })
+        let trypsin = enzymeLibrary.first(where: { $0.name == "Trypsin" })
             
-            if let regex = trypsin?.regex() {
-                let peptides: [Peptide] = chain.digest(using: regex, with: missedCleavages)
-                
-                XCTAssertEqual(peptides[0].sequenceString, "MPSSVSWGILLLAGLCCLVPVSLAEDPQGDAAQK")
-                XCTAssertEqual(peptides[1].sequenceString, "TDTSHHDQDHPTFNK")
-            }
+        if let regex = trypsin?.regex() {
+            let peptides: [Peptide] = digester.peptides(using: regex, with: missedCleavages)
             
-            let aspN = enzymeLibrary.first(where: { $0.name == "Asp-N" })
+            XCTAssertEqual(peptides[0].sequenceString, "MPSSVSWGILLLAGLCCLVPVSLAEDPQGDAAQK")
+            XCTAssertEqual(peptides[1].sequenceString, "TDTSHHDQDHPTFNK")
+        }
             
-            if let regex = aspN?.regex() {
-                let peptides: [Peptide] = chain.digest(using: regex, with: missedCleavages)
-                
-                let _ = print(peptides.map(\.sequenceString))
-                
-                XCTAssertEqual(peptides[0].sequenceString, "MPSSVSWGILLLAGLCCLVPVSLAE")
-                XCTAssertEqual(peptides[1].sequenceString, "DPQG")
-            }
+        let aspN = enzymeLibrary.first(where: { $0.name == "Asp-N" })
+            
+        if let regex = aspN?.regex() {
+            let peptides: [Peptide] = digester.peptides(using: regex, with: missedCleavages)
+            
+            XCTAssertEqual(peptides[0].sequenceString, "MPSSVSWGILLLAGLCCLVPVSLAE")
+            XCTAssertEqual(peptides[1].sequenceString, "DPQG")
         }
     }
     
