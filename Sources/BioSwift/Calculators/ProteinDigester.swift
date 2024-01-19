@@ -8,7 +8,7 @@
 
 import Foundation
 
-class ProteinDigester {
+public class ProteinDigester {
     public let protein: Protein
 
     public init(protein: Protein) {
