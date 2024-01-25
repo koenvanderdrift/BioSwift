@@ -25,8 +25,72 @@ public extension NSRange {
     }
 }
 
+public protocol RangedChain2 {
+    var rangeInParent: ChainRange { get set }
+}
+
 public protocol RangedChain: Chain {
     var rangeInParent: ChainRange { get set }
+}
+
+public struct Chain2<T: Residue>: Structure {
+    public var name: String = ""
+    public var formula: Formula = zeroFormula
+    public var adducts: [Adduct] = []
+    
+    public var residues: [T] = []
+    public var termini: (first: Residue, last: Residue)? = (nTerm, cTerm)
+    public var modifications: [LocalizedModification] = []
+    
+    init(sequence: String) {
+        self.residues = createResidues(from: sequence)
+    }
+    
+    init(residues: [T]) {
+        self.residues = residues
+    }
+    
+    public var masses: MassContainer {
+        calculateMasses()
+    }
+}
+
+extension Chain2 {
+    func createResidues(from string: String) -> [T] {
+        string.compactMap { char in
+            // don't hardcode library
+            aminoAcidLibrary.first(where: { $0.identifier == String(char) }) as? T
+        }
+    }
+
+    public func calculateMasses() -> MassContainer {
+        mass(of: residues) + terminalMasses() + modificationMasses()
+    }
+    
+    func modificationMasses() -> MassContainer {
+        var result = zeroMass
+        
+        modifications.forEach {
+            result += $0.modification.masses
+        }
+
+        return result
+    }
+
+    func terminalMasses() -> MassContainer {
+        var result = zeroMass
+
+        if let first = termini?.first {
+            result += first.masses
+        }
+
+        if let last = termini?.last {
+            result += last.masses
+        }
+
+        return result
+    }
+
 }
 
 public protocol Chain: Structure {

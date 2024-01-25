@@ -6,6 +6,11 @@ public let cTerm = AminoAcid(name: cTermString, oneLetterCode: "", formula: Form
 public let lossOfWater = Modification(name: "Loss of Water", reactions: [.remove(water)], sites: ["S", "T", "E", "D"])
 public let lossOfAmmonia = Modification(name: "Loss of Ammonia", reactions: [.remove(ammonia)], sites: ["R", "Q", "N", "K"])
 
+public struct Peptide2: RangedChain2 {
+    public var chain: any Chain
+    public var rangeInParent: ChainRange
+}
+
 public struct Peptide: RangedChain {
     public var name: String = ""
     public var symbolLibrary: [Symbol] = aminoAcidLibrary

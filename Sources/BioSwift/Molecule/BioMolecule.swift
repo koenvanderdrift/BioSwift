@@ -7,6 +7,16 @@
 
 import Foundation
 
+public struct BioMolecule2<T: Residue>: Structure {
+    public var name: String = ""
+    public var info: String = ""
+    public var formula: Formula = zeroFormula
+    public var masses: MassContainer = zeroMass
+    public var adducts: [Adduct] = []
+
+    public var chains: [Chain2<T>] = []
+}
+
 public struct BioMolecule<T: Chain> {
     public var name: String = ""
     public var chains: [T] = []
