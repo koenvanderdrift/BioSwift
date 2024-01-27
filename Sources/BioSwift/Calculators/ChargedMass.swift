@@ -47,7 +47,7 @@ public extension ChargedMass {
     }
 }
 
-public extension Collection where Element: Chain & ChargedMass {
+public extension Collection where Element: ChargedMass {
     func charge(minCharge: Int, maxCharge: Int) -> [Element] {
         flatMap { sequence in
             (minCharge ... maxCharge).map { charge in

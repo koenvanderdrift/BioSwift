@@ -3,8 +3,6 @@ import XCTest
 
 final class BioSwiftTests: XCTestCase {
     lazy var testProtein = Protein(sequence: "MPSSVSWGILLLAGLCCLVPVSLAEDPQGDAAQKTDTSHHDQDHPTFNKITPNLAEFAFSLYRQLAHQSNSTNIFFSPIVSIATAFAMLSLGTKADTHDEILEGLNFNLTEIPEAQIHEGFQELLRTLNQPDSQLQLTTGNGLFLSEGLKLVDKFLEDVKKLYHSEAFTVNFGDTEEAKKQINDYVEKGTQGKIVDLVKELDRDTVFALVNYIFFKGKWERPFEVKDTEEEDFHVDQVTTVKVPMMKRLGMFNIQHCKKLSSWVLLMKYLGNATAIFFLPDEGKLQHLENELTHDIITKFLENEDRRSASLHLPKLSITGTYDLKSVLGQLGITKVFSNGADLSGVTEEAPLKLSKAVHKAVLTIDEKGTEAAGAMFLEAIPMSIPPEVKFNKPFVFMIEQNTKSPLFMGKVVNPTQK")
-
-    lazy var testProtein2 = Protein2(sequence:  "MPSSVSWGILLLAGLCCLVPVSLAEDPQGDAAQKTDTSHHDQDHPTFNKITPNLAEFAFSLYRQLAHQSNSTNIFFSPIVSIATAFAMLSLGTKADTHDEILEGLNFNLTEIPEAQIHEGFQELLRTLNQPDSQLQLTTGNGLFLSEGLKLVDKFLEDVKKLYHSEAFTVNFGDTEEAKKQINDYVEKGTQGKIVDLVKELDRDTVFALVNYIFFKGKWERPFEVKDTEEEDFHVDQVTTVKVPMMKRLGMFNIQHCKKLSSWVLLMKYLGNATAIFFLPDEGKLQHLENELTHDIITKFLENEDRRSASLHLPKLSITGTYDLKSVLGQLGITKVFSNGADLSGVTEEAPLKLSKAVHKAVLTIDEKGTEAAGAMFLEAIPMSIPPEVKFNKPFVFMIEQNTKSPLFMGKVVNPTQK")
     
     lazy var testPeptide = Peptide(sequence: "DWSSD")
 
@@ -23,7 +21,7 @@ final class BioSwiftTests: XCTestCase {
         XCTAssertEqual(testProtein.sequenceLength(), 418)
         XCTAssertEqual(testPeptide.sequenceString.count, 5)
     }
-    
+        
     func testSequenceLengthWithIllegalCharacters() {
         let protein = Protein(sequence: "D___WS83SD")
         XCTAssertEqual(protein.sequenceLength(), 5)
@@ -37,10 +35,9 @@ final class BioSwiftTests: XCTestCase {
     }
     
     func testPeptideFormula() {
-        let peptide = Peptide(sequence: "DWSSD")
-        XCTAssertEqual(peptide.formula.countFor(element: "C"), 25)
+        XCTAssertEqual(testPeptide.formula.countFor(element: "C"), 25)
     }
-    
+
     /*
      MH+1 (av)   MH+1 (mono)
      protpros            609.5731    609.2151
@@ -479,19 +476,4 @@ final class BioSwiftTests: XCTestCase {
         let allCases = PeptideFragmentType.allCases
         XCTAssert(allCases.count == 17)
     }
-    
-    func testProtein2MonoisotopicMass() {
-        if var chain = testProtein2.chains.first {
-            chain.setAdducts(type: protonAdduct, count: 1)
-            XCTAssertEqual(chain.pseudomolecularIon().monoisotopicMass.roundedDecimalAsString(to: 4), "46708.0267")
-        }
-    }
-    
-    func testProtein2AverageMass() {
-        if var chain = testProtein2.chains.first {
-            chain.setAdducts(type: protonAdduct, count: 1)
-            XCTAssertEqual(chain.pseudomolecularIon().averageMass.roundedDecimalAsString(to: 4), "46737.9568")
-        }
-    } // 46737.0703
-
 }

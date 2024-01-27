@@ -96,7 +96,7 @@ public extension Chain {
         var result = [T]()
 
         for range in sequenceString.sequenceRanges(of: searchString) {
-            if var sub: T = subChain(with: range) as? T {
+            if var sub = subChain(with: range) {
                 sub.adducts = adducts
                 sub.rangeInParent = range
 

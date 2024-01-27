@@ -19,7 +19,7 @@ public class ProteinDigester {
         var peptides: [Peptide] = []
         
         for chain in protein.chains {
-            peptides += chain.digest(using: regex, with: missedCleavages)
+//            peptides += chain.digest(using: regex, with: missedCleavages)
         }
 
         return peptides
@@ -31,10 +31,10 @@ public class ProteinDigester {
 }
 
 extension Chain {
-    public func digest<T: RangedChain>(using regex: String, with missedCleavages: Int) -> [T] {
+    public func digest(using regex: String, with missedCleavages: Int) -> [Peptide] {
         let sites = cleavageSites(for: regex)
 
-        var subSequences = [T]()
+        var subSequences = [Peptide]()
 
         var start = residues.startIndex
         var end = start
@@ -42,7 +42,7 @@ extension Chain {
         for site in sites {
             end = residues.index(residues.startIndex, offsetBy: site)
 
-            if var new: T = subChain(from: start, to: end - 1) as? T {
+            if var new: Peptide = subChain(from: start, to: end - 1) as? Peptide {
                 new.rangeInParent = start ... end - 1
                 subSequences.append(new)
 
@@ -50,7 +50,7 @@ extension Chain {
             }
         }
 
-        if var final: T = subChain(from: start, to: residues.endIndex - 1) as? T {
+        if var final: Peptide = subChain(from: start, to: residues.endIndex - 1) as? Peptide {
             final.rangeInParent = start ... residues.endIndex - 1
             subSequences.append(final)
         }
@@ -59,7 +59,7 @@ extension Chain {
             return subSequences
         }
 
-        var joinedSubSequences = [T]()
+        var joinedSubSequences = [Peptide]()
 
         for mc in 0 ... missedCleavages {
             for (index, _) in subSequences.enumerated() {
@@ -67,7 +67,7 @@ extension Chain {
                 if subSequences.indices.contains(newIndex) {
                     let res = subSequences[index ... newIndex]
                         .reduce([]) { $0 + $1.residues }
-                    var new = T(residues: res)
+                    var new = Peptide(residues: res)
 
                     new.rangeInParent = subSequences[index].rangeInParent.lowerBound ... subSequences[newIndex].rangeInParent.upperBound
 

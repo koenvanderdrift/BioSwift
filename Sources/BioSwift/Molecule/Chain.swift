@@ -25,51 +25,73 @@ public extension NSRange {
     }
 }
 
-public protocol RangedChain2 {
-    var rangeInParent: ChainRange { get set }
-}
-
-public protocol RangedChain: Chain {
-    var rangeInParent: ChainRange { get set }
-}
-
-public struct Chain2<T: Residue>: Structure {
+public struct Chain<T: Residue>: Structure {
+    public var rangeInParent: ChainRange = zeroChainRange
+    
     public var name: String = ""
-    public var formula: Formula = zeroFormula
     public var adducts: [Adduct] = []
-    
+
     public var residues: [T] = []
-    public var termini: (first: Residue, last: Residue)? = (nTerm, cTerm)
-    public var modifications: [LocalizedModification] = []
-    
+    public var termini: (first: Residue, last: Residue)? = (nTerm, cTerm) // TODO: why are these residues instead of modifications?
+    public var modifications: [LocalizedModification] = [] // TODO: do we need LocalizedModification?
+
     init(sequence: String) {
         self.residues = createResidues(from: sequence)
     }
-    
+
     init(residues: [T]) {
         self.residues = residues
     }
-    
-    public var masses: MassContainer {
-        calculateMasses()
-    }
 }
 
-extension Chain2 {
+extension Chain {
+    static func == (lhs: Self, rhs: Self) -> Bool {
+        lhs.sequenceString == rhs.sequenceString && lhs.name == rhs.name
+    }
+
+    public var masses: MassContainer {
+        mass(of: residues) + modificationMasses() + terminalMasses()
+    }
+
+    public var formula: Formula {
+        var f = Formula(residues.reduce("") { $0 + $1.formula.formulaString })
+
+        if let termini {
+            f += termini.first.formula + termini.last.formula
+        } else {
+            f += water.formula
+        }
+
+        return f
+    }
+
+    var sequenceString: String {
+        residues.map(\.identifier).joined()
+    }
+    
+    var sequenceLength: Int {
+        numberOfResidues()
+    }
+
+
+    var symbolSequence: [Symbol] {
+        residues // TODO: Fix me
+    }
+
+    var symbolSet: SymbolSet? {
+        SymbolSet(array: symbolSequence)
+    }
+
     func createResidues(from string: String) -> [T] {
         string.compactMap { char in
-            // don't hardcode library
+            // TODO: don't hardcode library
             aminoAcidLibrary.first(where: { $0.identifier == String(char) }) as? T
         }
     }
 
-    public func calculateMasses() -> MassContainer {
-        mass(of: residues) + terminalMasses() + modificationMasses()
-    }
-    
     func modificationMasses() -> MassContainer {
         var result = zeroMass
-        
+
         modifications.forEach {
             result += $0.modification.masses
         }
@@ -91,53 +113,6 @@ extension Chain2 {
         return result
     }
 
-}
-
-public protocol Chain: Structure {
-    associatedtype ResidueType: Residue
-
-    var symbolLibrary: [Symbol] { get }
-
-    var residues: [ResidueType] { get set }
-
-    var termini: (first: ResidueType, last: ResidueType)? { get set }
-    var adducts: [Adduct] { get set }
-
-    var modifications: [LocalizedModification] { get set }
-
-    init(sequence: String)
-    init(residues: [ResidueType])
-}
-
-public extension Chain {
-    static func == (lhs: Self, rhs: Self) -> Bool {
-        lhs.sequenceString == rhs.sequenceString && lhs.name == rhs.name
-    }
-
-    var symbolSequence: [Symbol] {
-        residues
-    }
-
-    var sequenceString: String {
-        residues.map(\.identifier).joined()
-    }
-
-    var formula: Formula {
-        var f = Formula(residues.reduce("") { $0 + $1.formula.formulaString })
-
-        if let termini {
-            f += termini.first.formula + termini.last.formula
-        } else {
-            f += water.formula
-        }
-
-        return f
-    }
-
-    var symbolSet: SymbolSet? {
-        SymbolSet(array: symbolSequence)
-    }
-
     mutating func update(with sequence: String, in editedRange: NSRange, changeInLength: Int) {
         if sequence == sequenceString {
             return
@@ -157,12 +132,6 @@ public extension Chain {
 
         default:
             fatalError("TODO")
-        }
-    }
-
-    func createResidues(from string: String) -> [ResidueType] {
-        string.compactMap { char in
-            symbolLibrary.first(where: { $0.identifier == String(char) }) as? ResidueType
         }
     }
 
@@ -218,7 +187,7 @@ public extension Chain {
         var sub = Self(residues: residues)
         sub.termini = termini
         sub.adducts = adducts
-        
+
         if range.lowerBound == 0 {
             sub.termini?.first.modification = termini?.first.modification
         }
@@ -226,6 +195,8 @@ public extension Chain {
         if range.upperBound == numberOfResidues() {
             sub.termini?.last.modification = termini?.last.modification
         }
+
+        sub.rangeInParent = range
 
         return sub
     }
@@ -240,50 +211,28 @@ public extension Chain {
         return subChain(with: from ... to)
     }
 
-    func residueChain(with range: ChainRange) -> [ResidueType]? {
+    func residueChain(with range: ChainRange) -> [T]? {
         guard range != zeroChainRange else { return nil }
 
         return Array(residues[range])
     }
 
-    func residueChain(with range: NSRange) -> [ResidueType]? {
+    func residueChain(with range: NSRange) -> [T]? {
         residueChain(with: range.chainRange())
     }
 
-    func residueChain(from: Int, to: Int) -> [ResidueType]? {
+    func residueChain(from: Int, to: Int) -> [T]? {
         guard from < numberOfResidues(), to >= from else { return nil }
 
         return residueChain(with: from ... to)
     }
 
-    mutating func setTermini(first: ResidueType, last: ResidueType) {
+    mutating func setTermini(first: T, last: T) {
         termini = (first: first, last: last)
     }
+}
 
-    func modificationMasses() -> MassContainer {
-        var result = zeroMass
-        
-        modifications.forEach {
-            result += $0.modification.masses
-        }
-
-        return result
-    }
-
-    func terminalMasses() -> MassContainer {
-        var result = zeroMass
-
-        if let first = termini?.first {
-            result += first.masses
-        }
-
-        if let last = termini?.last {
-            result += last.masses
-        }
-
-        return result
-    }
-
+extension Chain {
     func allowedModifications(at location: Int) -> [Modification]? {
         if let residue = residue(at: location) {
             return residue.allowedModifications()
@@ -326,3 +275,243 @@ public extension Chain {
         residue(at: location)?.modification
     }
 }
+
+// MARK: Chain3
+
+//public protocol RangedChain: Chain3 {
+//    var rangeInParent: ChainRange { get set }
+//}
+//
+//public protocol Chain3: Structure {
+//    associatedtype ResidueType: Residue
+//
+//    var symbolLibrary: [Symbol] { get }
+//
+//    var residues: [ResidueType] { get set }
+//
+//    var termini: (first: ResidueType, last: ResidueType)? { get set }
+//    var adducts: [Adduct] { get set }
+//
+//    var modifications: [LocalizedModification] { get set }
+//
+//    init(sequence: String)
+//    init(residues: [ResidueType])
+//}
+//
+//public extension Chain3 {
+//    static func == (lhs: Self, rhs: Self) -> Bool {
+//        lhs.sequenceString == rhs.sequenceString && lhs.name == rhs.name
+//    }
+//
+//    var symbolSequence: [Symbol] {
+//        residues
+//    }
+//
+//    var sequenceString: String {
+//        residues.map(\.identifier).joined()
+//    }
+//
+//    var formula: Formula {
+//        var f = Formula(residues.reduce("") { $0 + $1.formula.formulaString })
+//
+//        if let termini {
+//            f += termini.first.formula + termini.last.formula
+//        } else {
+//            f += water.formula
+//        }
+//
+//        return f
+//    }
+//
+//    var symbolSet: SymbolSet? {
+//        SymbolSet(array: symbolSequence)
+//    }
+//
+//    mutating func update(with sequence: String, in editedRange: NSRange, changeInLength: Int) {
+//        if sequence == sequenceString {
+//            return
+//        }
+//
+//        switch changeInLength {
+//        case Int.min ..< 0:
+//            let range = editedRange.location ..< editedRange.location - changeInLength
+//            residues.removeSubrange(range)
+//
+//        case 0 ..< Int.max:
+//            let range = editedRange.location ..< editedRange.location + changeInLength
+//            let s = String(sequence[range])
+//
+//            let newResidues = createResidues(from: s)
+//            residues.insert(contentsOf: newResidues, at: editedRange.location)
+//
+//        default:
+//            fatalError("TODO")
+//        }
+//    }
+//
+//    func createResidues(from string: String) -> [ResidueType] {
+//        string.compactMap { char in
+//            symbolLibrary.first(where: { $0.identifier == String(char) }) as? ResidueType
+//        }
+//    }
+//
+//    func symbol(at index: Int) -> Symbol? {
+//        symbolSequence[index]
+//    }
+//
+//    func residue(at index: Int) -> Residue? {
+//        residues[index]
+//    }
+//
+//    func residueLocations(with identifiers: [String]) -> [Int] {
+//        let result = identifiers.map { i in
+//            residues.indices.filter { (residues[$0].identifier) == i }
+//        }
+//
+//        return result.flatMap { $0 }
+//    }
+//
+//    func numberOfResidues() -> Int {
+//        residues.count
+//    }
+//
+//    func subChain(removing range: ChainRange, based: Int = 0) -> Self? {
+//        // xxxx - ++++++++++++
+//        // ++ - xxxx - +++++++
+//        // ++++++++++++ - xxxx
+//
+//        let lowerBound = range.lowerBound - based
+//        let upperBound = range.upperBound - based
+//        let basedRange = lowerBound ... upperBound
+//
+//        let subResidues = residues.indices.compactMap { basedRange ~= $0 ? nil : residues[$0] }
+//
+//        var sub = Self(residues: subResidues)
+//        sub.termini = termini
+//        sub.adducts = adducts
+//
+//        if basedRange.lowerBound == 0 {
+//            sub.termini?.first.modification = termini?.first.modification
+//        }
+//
+//        if basedRange.upperBound == numberOfResidues() {
+//            sub.termini?.last.modification = termini?.last.modification
+//        }
+//
+//        return sub
+//    }
+//
+//    func subChain(with range: ChainRange) -> Self? {
+//        guard let residues = residueChain(with: range) else { return nil }
+//
+//        var sub = Self(residues: residues)
+//        sub.termini = termini
+//        sub.adducts = adducts
+//
+//        if range.lowerBound == 0 {
+//            sub.termini?.first.modification = termini?.first.modification
+//        }
+//
+//        if range.upperBound == numberOfResidues() {
+//            sub.termini?.last.modification = termini?.last.modification
+//        }
+//
+//        return sub
+//    }
+//
+//    func subChain(with range: NSRange) -> Self? {
+//        subChain(with: range.chainRange())
+//    }
+//
+//    func subChain(from: Int, to: Int) -> Self? {
+//        guard from < numberOfResidues(), to >= from else { return nil }
+//
+//        return subChain(with: from ... to)
+//    }
+//
+//    func residueChain(with range: ChainRange) -> [ResidueType]? {
+//        guard range != zeroChainRange else { return nil }
+//
+//        return Array(residues[range])
+//    }
+//
+//    func residueChain(with range: NSRange) -> [ResidueType]? {
+//        residueChain(with: range.chainRange())
+//    }
+//
+//    func residueChain(from: Int, to: Int) -> [ResidueType]? {
+//        guard from < numberOfResidues(), to >= from else { return nil }
+//
+//        return residueChain(with: from ... to)
+//    }
+//
+//    mutating func setTermini(first: ResidueType, last: ResidueType) {
+//        termini = (first: first, last: last)
+//    }
+//
+//    func modificationMasses() -> MassContainer {
+//        var result = zeroMass
+//
+//        modifications.forEach {
+//            result += $0.modification.masses
+//        }
+//
+//        return result
+//    }
+//
+//    func terminalMasses() -> MassContainer {
+//        var result = zeroMass
+//
+//        if let first = termini?.first {
+//            result += first.masses
+//        }
+//
+//        if let last = termini?.last {
+//            result += last.masses
+//        }
+//
+//        return result
+//    }
+//
+//    func allowedModifications(at location: Int) -> [Modification]? {
+//        if let residue = residue(at: location) {
+//            return residue.allowedModifications()
+//        }
+//
+//        return nil
+//    }
+//
+//    func getModifications() -> [Modification] {
+//        var result: [Modification] = []
+//
+//        residues.forEach {
+//            if let mod = $0.modification {
+//                result.append(mod)
+//            }
+//        }
+//
+//        return result
+//    }
+//
+//    mutating func setModifcations(_ mods: [LocalizedModification]) {
+//        mods.forEach {
+//            addModification($0)
+//        }
+//    }
+//
+//    mutating func addModification(_ mod: LocalizedModification) {
+//        residues.modifyElement(atIndex: mod.location) { residue in
+//            residue.setModification(mod.modification)
+//        }
+//    }
+//
+//    mutating func removeModification(at location: Int) {
+//        residues.modifyElement(atIndex: location) { residue in
+//            residue.setModification(nil)
+//        }
+//    }
+//
+//    func modification(at location: Int) -> Modification? {
+//        residue(at: location)?.modification
+//    }
+//}
