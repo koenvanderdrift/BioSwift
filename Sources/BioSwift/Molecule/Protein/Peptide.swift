@@ -9,6 +9,14 @@ public let lossOfAmmonia = Modification(name: "Loss of Ammonia", reactions: [.re
 public typealias Peptide = Chain<AminoAcid>
 
 public extension Peptide {
+//    func canLoseWater() -> Bool {
+//        return sequenceString.containsCharactersFrom(substring: "STED")
+//    }
+//    
+//    func canLoseAmmonia() -> Bool {
+//        return sequenceString.containsCharactersFrom(substring: "RQNK")
+//    }
+
     func hydropathyValues(for hydropathyType: String) -> [Double] {
         let values = Hydropathy(residues: residues).hydrophathyValues(for: hydropathyType)
 
@@ -31,7 +39,7 @@ public extension Peptide {
 //
 //public extension Peptide3 {
 //    init(sequence: String) {
-////        residues = createResidues(from: sequence)
+//        residues = createResidues(from: sequence)
 //    }
 //
 //    init(residues: [AminoAcid]) {
@@ -88,10 +96,9 @@ public extension Peptide {
 //        return residues.compactMap { values[$0.oneLetterCode] }
 //    }
 //
-////    func isoElectricPoint() -> Double {
-////        let hydropathy = Hydropathy(symbolSet: CountedSet(sequenceString.map { String($0) }))
-////
-////        return hydropathy.isoElectricPoint()
-////    }
-//}
+//    func isoElectricPoint() -> Double {
+//        let hydropathy = Hydropathy(symbolSet: CountedSet(sequenceString.map { String($0) }))
 //
+//        return hydropathy.isoElectricPoint()
+//    }
+//}

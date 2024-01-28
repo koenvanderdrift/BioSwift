@@ -27,13 +27,16 @@ public extension NSRange {
 
 public struct Chain<T: Residue>: Structure {
     public var rangeInParent: ChainRange = zeroChainRange
-    
+
     public var name: String = ""
     public var adducts: [Adduct] = []
 
     public var residues: [T] = []
     public var termini: (first: Residue, last: Residue)? = (nTerm, cTerm) // TODO: why are these residues instead of modifications?
     public var modifications: [LocalizedModification] = [] // TODO: do we need LocalizedModification?
+
+    public var fragmentType: PeptideFragmentType = .undefined
+    public var index: Int = -1
 
     init(sequence: String) {
         self.residues = createResidues(from: sequence)
@@ -68,11 +71,10 @@ extension Chain {
     var sequenceString: String {
         residues.map(\.identifier).joined()
     }
-    
-    var sequenceLength: Int {
-        numberOfResidues()
-    }
 
+    var sequenceLength: Int {
+        sequenceString.count
+    }
 
     var symbolSequence: [Symbol] {
         residues // TODO: Fix me
@@ -82,10 +84,21 @@ extension Chain {
         SymbolSet(array: symbolSequence)
     }
 
+    func symbol(at index: Int) -> Symbol? {
+        symbolSequence[index]
+    }
+
+    func residue(at index: Int) -> Residue? {
+        residues[index]
+    }
+
+    func numberOfResidues() -> Int {
+        residues.count
+    }
+
     func createResidues(from string: String) -> [T] {
         string.compactMap { char in
-            // TODO: don't hardcode library
-            aminoAcidLibrary.first(where: { $0.identifier == String(char) }) as? T
+            aminoAcidLibrary.first(where: { $0.identifier == String(char) }) as? T // TODO: don't hardcode library
         }
     }
 
@@ -135,24 +148,12 @@ extension Chain {
         }
     }
 
-    func symbol(at index: Int) -> Symbol? {
-        symbolSequence[index]
-    }
-
-    func residue(at index: Int) -> Residue? {
-        residues[index]
-    }
-
     func residueLocations(with identifiers: [String]) -> [Int] {
         let result = identifiers.map { i in
             residues.indices.filter { (residues[$0].identifier) == i }
         }
 
         return result.flatMap { $0 }
-    }
-
-    func numberOfResidues() -> Int {
-        residues.count
     }
 
     func subChain(removing range: ChainRange, based: Int = 0) -> Self? {
@@ -278,11 +279,11 @@ extension Chain {
 
 // MARK: Chain3
 
-//public protocol RangedChain: Chain3 {
+// public protocol RangedChain: Chain3 {
 //    var rangeInParent: ChainRange { get set }
-//}
+// }
 //
-//public protocol Chain3: Structure {
+// public protocol Chain3: Structure {
 //    associatedtype ResidueType: Residue
 //
 //    var symbolLibrary: [Symbol] { get }
@@ -296,9 +297,9 @@ extension Chain {
 //
 //    init(sequence: String)
 //    init(residues: [ResidueType])
-//}
+// }
 //
-//public extension Chain3 {
+// public extension Chain3 {
 //    static func == (lhs: Self, rhs: Self) -> Bool {
 //        lhs.sequenceString == rhs.sequenceString && lhs.name == rhs.name
 //    }
@@ -514,4 +515,4 @@ extension Chain {
 //    func modification(at location: Int) -> Modification? {
 //        residue(at: location)?.modification
 //    }
-//}
+// }
