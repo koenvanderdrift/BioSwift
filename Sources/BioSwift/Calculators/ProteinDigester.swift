@@ -19,7 +19,7 @@ public class ProteinDigester {
         var peptides: [Peptide] = []
         
         for chain in protein.chains {
-//            peptides += chain.digest(using: regex, with: missedCleavages)
+            peptides += chain.digest(using: regex, with: missedCleavages)
         }
 
         return peptides

@@ -18,19 +18,19 @@ public struct BioMolecule<T: Residue>: Structure {
 
 public extension BioMolecule {
     init(residues: [T]) {
-//        self.init(chain: T(residues: residues))
+        self.init(chain: Chain<T>(residues: residues))
     }
 
     init(sequence: String) {
-//        self.init(chain: T(sequence: sequence))
+        self.init(chain: Chain<T>(sequence: sequence))
     }
 
-    init(chain: T) {
-//        self.init(chains: [chain])
+    init(chain: Chain<T>) {
+        self.init(chains: [chain])
     }
 
-    init(chains: [T]) {
-//        self.chains = chains
+    init(chains: [Chain<T>]) {
+        self.chains = chains
     }
     
     func sequenceLength(chainIndex index: Int = 0) -> Int {
@@ -49,19 +49,19 @@ public extension BioMolecule {
         chains.reduce(0) { $0 + $1.charge }
     }
     
-//    func mass(chainIndex index: Int = -1) -> MassContainer {
-//        var chain: T
-//
-//        if index == -1 { // calculate for all chains when index = -1
-//            chain = concatenateChains()
-//        } else {
-//            chain = chains[index]
-//        }
-//
-//        chain.setAdducts(type: protonAdduct, count: charge)
-//
-//        return chain.pseudomolecularIon()
-//    }
+    func mass(chainIndex index: Int = -1) -> MassContainer {
+        var chain: Chain<T>
+
+        if index == -1 { // calculate for all chains when index = -1
+            chain = concatenateChains()
+        } else {
+            chain = chains[index]
+        }
+
+        chain.setAdducts(type: protonAdduct, count: charge)
+
+        return chain.pseudomolecularIon()
+    }
 
     func selectionMass(chainIndex index: Int = 0, _ range: ChainRange) -> MassContainer {
         guard var sub = chains[index].subChain(with: range) else { return zeroMass }
@@ -71,24 +71,23 @@ public extension BioMolecule {
         return sub.pseudomolecularIon()
     }
 
-//    func isoelectricPoint(chainIndex index: Int = -1) -> Double {
-//        var chain: T
-//
-//        if index == -1 { // calculate for all chains when index = -1
-//            chain = concatenateChains()
-//        } else {
-//            chain = chains[index]
-//        }
-//
-//        return Hydropathy(residues: chain.residues).isoElectricPoint()
-//    }
-//    
-//    func concatenateChains() -> T {
-//        let residues = chains.reduce([]) { $0 + $1.residues }
-//
-//        return T(residues: residues)
-//    }
+    func isoelectricPoint(chainIndex index: Int = -1) -> Double {
+        var chain: Chain<T>
 
+        if index == -1 { // calculate for all chains when index = -1
+            chain = concatenateChains()
+        } else {
+            chain = chains[index]
+        }
+
+        return Hydropathy(residues: chain.residues).isoElectricPoint()
+    }
+    
+    func concatenateChains() -> Chain<T> {
+        let residues = chains.reduce([]) { $0 + $1.residues }
+
+        return Chain<T>(residues: residues)
+    }
 }
 
 
