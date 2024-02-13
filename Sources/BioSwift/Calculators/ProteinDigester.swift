@@ -1,5 +1,5 @@
 //
-//  Digest.swift
+//  ProteinDigester.swift
 //  BioSwift
 //
 //  Created by Koen van der Drift on 7/12/18.
@@ -72,11 +72,15 @@ extension Chain {
                     new.rangeInParent = subSequences[index].rangeInParent.lowerBound ... subSequences[newIndex].rangeInParent.upperBound
 
                     if index == 0 {
-                        new.termini?.first.modification = termini?.first.modification
+                        if let mod = termini?.first {
+                            new.termini?.first = mod
+                        }
                     }
 
                     if newIndex == subSequences.count - 1 {
-                        new.termini?.last.modification = termini?.last.modification
+                        if let mod = termini?.last {
+                            new.termini?.last = mod
+                        }
                     }
 
                     joinedSubSequences.append(new)

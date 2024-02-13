@@ -3,9 +3,10 @@ import Foundation
 public let zeroFormula = Formula("")
 
 public class Formula {
-    public var formulaString: String
+    private var elementSet: NSCountedSet = []
 
     public lazy var elements: [ChemicalElement] = getElements()
+    public lazy var formulaString: String = getFormulaString()
     public lazy var chemicalString: String = getChemicalString()
 
     public init(_ string: String) {
@@ -14,14 +15,23 @@ public class Formula {
 
     public init(_ dict: [String: Int]) {
         var formula = ""
+        let set: NSCountedSet = []
+        
         for (element, count) in dict {
             formula.append(element)
             if count > 1 {
                 formula.append(String(count))
             }
+            
+            if count > 0 {
+                for _ in 0...count-1 {
+                    set.add(element)
+                }
+            }
         }
 
         formulaString = formula
+        elementSet = set
     }
 
     public func countedElements() -> NSCountedSet {
@@ -46,6 +56,16 @@ extension Formula {
         case elementNotFound
         case numberPrecedingFormula
         case invalidFormula
+    }
+    
+    private func getFormulaString() -> String {
+        var result = ""
+        
+        for e in elementSet {
+            print(e)
+        }
+        
+        return result
     }
 
     private func getElements() -> [ChemicalElement] {
@@ -210,6 +230,22 @@ public extension Formula {
 
     static func += (lhs: inout Formula, rhs: Formula) {
         lhs = lhs + rhs
+    }
+    
+    static func - (lhs: Formula, rhs: Formula) -> Formula {
+        var result: [String: Int] = [:]
+        
+        for e in lhs.elements {
+            let lcount = lhs.countFor(element: e.symbol)
+            let rcount = rhs.countFor(element: e.symbol)
+            result[e.symbol] = lcount - rcount
+        }
+        
+        return Formula(result)
+    }
+
+    static func -= (lhs: inout Formula, rhs: Formula) {
+        lhs = lhs - rhs
     }
 }
 

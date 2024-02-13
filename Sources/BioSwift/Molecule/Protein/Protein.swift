@@ -1,6 +1,6 @@
 //
 //  Protein.swift
-//
+//  BioSwift
 //
 //  Created by Koen van der Drift on 7/18/21.
 //

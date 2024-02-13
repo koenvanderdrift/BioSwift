@@ -34,6 +34,28 @@ final class BioSwiftTests: XCTestCase {
         XCTAssertEqual(formula.countFor(element: "C"), 24)
     }
     
+    func testAddFormulas() {
+        let formula1 = Formula("C12H23O7N5")
+        let formula2 = Formula("C2H2O2")
+        let formula3 = formula1 + formula2
+        
+        print(formula3.formulaString)
+        
+        XCTAssertEqual(formula3.countFor(element: "C"), 14)
+        XCTAssertEqual(formula3.countFor(element: "N"), 5)
+    }
+    
+    func testSubtractFormulas() {
+        let formula1 = Formula("C12H23O7N5")
+        let formula2 = Formula("C2H2O2")
+        let formula3 = formula1 - formula2
+        
+        print(formula3.formulaString)
+        
+        XCTAssertEqual(formula3.countFor(element: "C"), 10)
+        XCTAssertEqual(formula3.countFor(element: "N"), 5)
+    }
+
     func testPeptideFormula() {
         XCTAssertEqual(testPeptide.formula.countFor(element: "C"), 25)
     }

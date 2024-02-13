@@ -3,6 +3,9 @@ import Foundation
 public let unmodifiedString = "Unmodified"
 public let zeroModification = Modification(name: unmodifiedString, elements: [:])
 
+public let nTermModification = Modification(name: nTermString, reactions: [.add(hydrogen)])
+public let cTermModification = Modification(name: cTermString, reactions: [.add(hydroxyl)])
+
 public indirect enum Reaction {
     case add(FunctionalGroup)
     case remove(FunctionalGroup)
@@ -22,6 +25,21 @@ extension Reaction: Mass {
             result += group.masses
         case let .remove(group):
             result -= group.masses
+        case .undefined:
+            break
+        }
+
+        return result
+    }
+    
+    public var formula: Formula {
+        var result = zeroFormula
+
+        switch self {
+        case let .add(group):
+            result += group.formula
+        case let .remove(group):
+            result -= group.formula
         case .undefined:
             break
         }
@@ -127,6 +145,11 @@ extension Modification: Hashable {
 extension Modification: Mass {
     public var masses: MassContainer {
         _masses
+    }
+    
+    public var formula: Formula {
+        reactions.reduce(zeroFormula) { $0 + $1.formula }
+
     }
 
     public func calculateMasses() -> MassContainer {

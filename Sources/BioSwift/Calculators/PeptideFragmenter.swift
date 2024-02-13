@@ -1,6 +1,6 @@
 //
-//  Fragmenter.swift
-//
+//  PeptideFragmenter.swift
+//  BioSwift
 //
 //  Created by Koen van der Drift on 7/19/21.
 //
