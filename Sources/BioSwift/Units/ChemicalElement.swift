@@ -56,9 +56,13 @@ public struct ChemicalElement: Codable, Symbol {
     }
 }
 
-extension ChemicalElement: Equatable {
+extension ChemicalElement: Equatable, Hashable {
     public static func == (lhs: Self, rhs: Self) -> Bool {
         lhs.symbol == rhs.symbol && lhs.name == rhs.name
+    }
+    
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(name)
     }
 }
 

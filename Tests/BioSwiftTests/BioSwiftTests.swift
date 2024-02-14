@@ -120,7 +120,7 @@ final class BioSwiftTests: XCTestCase {
     func testProteinFormula() {
         if var chain = testProtein.chains.first {
             chain.setAdducts(type: protonAdduct, count: 1)
-            XCTAssertEqual(chain.formula.countedElements().count(for: "C"), 211)
+            XCTAssertEqual(chain.formula.countFor(element: "C"), 211)
         }
         
         //        XCTAssertEqual(protein.formula, Formula.init("C2112H3314N539O629S13"))
