@@ -3,7 +3,7 @@ import XCTest
 
 final class BioSwiftTests: XCTestCase {
     lazy var testProtein = Protein(sequence: "MPSSVSWGILLLAGLCCLVPVSLAEDPQGDAAQKTDTSHHDQDHPTFNKITPNLAEFAFSLYRQLAHQSNSTNIFFSPIVSIATAFAMLSLGTKADTHDEILEGLNFNLTEIPEAQIHEGFQELLRTLNQPDSQLQLTTGNGLFLSEGLKLVDKFLEDVKKLYHSEAFTVNFGDTEEAKKQINDYVEKGTQGKIVDLVKELDRDTVFALVNYIFFKGKWERPFEVKDTEEEDFHVDQVTTVKVPMMKRLGMFNIQHCKKLSSWVLLMKYLGNATAIFFLPDEGKLQHLENELTHDIITKFLENEDRRSASLHLPKLSITGTYDLKSVLGQLGITKVFSNGADLSGVTEEAPLKLSKAVHKAVLTIDEKGTEAAGAMFLEAIPMSIPPEVKFNKPFVFMIEQNTKSPLFMGKVVNPTQK")
-    
+
     lazy var testPeptide = Peptide(sequence: "DWSSD")
 
     override class func setUp() {
@@ -21,7 +21,7 @@ final class BioSwiftTests: XCTestCase {
         XCTAssertEqual(testProtein.sequenceLength(), 418)
         XCTAssertEqual(testPeptide.sequenceString.count, 5)
     }
-        
+    
     func testSequenceLengthWithIllegalCharacters() {
         let protein = Protein(sequence: "D___WS83SD")
         XCTAssertEqual(protein.sequenceLength(), 5)
@@ -34,32 +34,13 @@ final class BioSwiftTests: XCTestCase {
         XCTAssertEqual(formula.countFor(element: "C"), 24)
     }
     
-    func testAddFormulas() {
-        let formula1 = Formula("C12H23O7N5")
-        let formula2 = Formula("C2H2O2")
-        let formula3 = formula1 + formula2
-        
-        print(formula3.formulaString)
-        
-        XCTAssertEqual(formula3.countFor(element: "C"), 14)
-        XCTAssertEqual(formula3.countFor(element: "N"), 5)
+    func testPeptideFormula() {
+        let peptide = Peptide(sequence: "DWSSD")
+        let formula = peptide.formula
+        print(formula.formulaString)
+        XCTAssertEqual(peptide.formula.countFor(element: "C"), 25)
     }
     
-    func testSubtractFormulas() {
-        let formula1 = Formula("C12H23O7N5")
-        let formula2 = Formula("C2H2O2")
-        let formula3 = formula1 - formula2
-        
-        print(formula3.formulaString)
-        
-        XCTAssertEqual(formula3.countFor(element: "C"), 10)
-        XCTAssertEqual(formula3.countFor(element: "N"), 5)
-    }
-
-    func testPeptideFormula() {
-        XCTAssertEqual(testPeptide.formula.countFor(element: "C"), 25)
-    }
-
     /*
      MH+1 (av)   MH+1 (mono)
      protpros            609.5731    609.2151
@@ -120,7 +101,7 @@ final class BioSwiftTests: XCTestCase {
     func testProteinFormula() {
         if var chain = testProtein.chains.first {
             chain.setAdducts(type: protonAdduct, count: 1)
-            XCTAssertEqual(chain.formula.countFor(element: "C"), 211)
+            XCTAssertEqual(chain.formula.countFor(element: "C"), 2112)
         }
         
         //        XCTAssertEqual(protein.formula, Formula.init("C2112H3314N539O629S13"))

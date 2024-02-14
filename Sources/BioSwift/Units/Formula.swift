@@ -18,17 +18,18 @@ public class Formula {
     }
 
     public init(_ dict: [String: Int]) {
-        let set = NSCountedSet()
+        var string = ""
 
         for (element, count) in dict {
             if count > 0 {
-                for _ in 1...count {
-                    set.add(element)
+                string += element
+                if count > 1 {
+                    string += String(count)
                 }
             }
         }
 
-        elementSet = set
+        formulaString = string
     }
 
     public func isotopes() -> NSCountedSet {
@@ -36,7 +37,11 @@ public class Formula {
     }
 
     public func countFor(element: String) -> Int {
-        elements.map(\.symbol).filter { $0 == element }.count
+        guard let e = elementSet.compactMap({ $0 as? ChemicalElement })
+            .first(where: { $0.symbol == element })
+        else { return 0 }
+        
+        return elementSet.count(for: e)
     }
 }
 
@@ -73,7 +78,9 @@ extension Formula {
             let count = elementSet.count(for: e)
             if let e = e as? ChemicalElement {
                 result += e.symbol
-                result += String(count)
+                if count > 1 {
+                    result += String(count)
+                }
             }
         }
 
