@@ -36,6 +36,8 @@ final class BioSwiftTests: XCTestCase {
     
     func testPeptideFormula() {
         let peptide = Peptide(sequence: "DWSSD")
+        let formula = peptide.formula
+        print(formula.formulaString)
         XCTAssertEqual(peptide.formula.countFor(element: "C"), 25)
     }
     
@@ -99,7 +101,7 @@ final class BioSwiftTests: XCTestCase {
     func testProteinFormula() {
         if var chain = testProtein.chains.first {
             chain.setAdducts(type: protonAdduct, count: 1)
-            XCTAssertEqual(chain.formula.countFor(element: "C"), 211)
+            XCTAssertEqual(chain.formula.countFor(element: "C"), 2112)
         }
         
         //        XCTAssertEqual(protein.formula, Formula.init("C2112H3314N539O629S13"))
