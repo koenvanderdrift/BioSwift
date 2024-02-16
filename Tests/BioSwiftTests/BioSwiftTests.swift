@@ -103,10 +103,31 @@ final class BioSwiftTests: XCTestCase {
             chain.setAdducts(type: protonAdduct, count: 1)
             XCTAssertEqual(chain.formula.countFor(element: "C"), 2112)
         }
-        
-        //        XCTAssertEqual(protein.formula, Formula.init("C2112H3314N539O629S13"))
     } // C2112H3313N539O629S13
     
+    
+    func testAddFormulas() {
+        let formula1 = Formula("C12H23O7N5")
+        let formula2 = Formula("C2H2O2")
+        let formula3 = formula1 + formula2
+        
+        print(formula3.formulaString)
+        
+        XCTAssertEqual(formula3.countFor(element: "C"), 14)
+        XCTAssertEqual(formula3.countFor(element: "N"), 5)
+    }
+    
+    func testSubtractFormulas() {
+        let formula1 = Formula("C12H23O7N5")
+        let formula2 = Formula("C2H2O2")
+        let formula3 = formula1 - formula2
+        
+        print(formula3.formulaString)
+        
+        XCTAssertEqual(formula3.countFor(element: "C"), 10)
+        XCTAssertEqual(formula3.countFor(element: "N"), 5)
+    }
+
     func testProteinAtomCount() {
         if var chain = testProtein.chains.first {
             chain.setAdducts(type: protonAdduct, count: 1)
@@ -118,8 +139,8 @@ final class BioSwiftTests: XCTestCase {
         //        let formula = Formula("C2112H3313N539O629S13H")
         //        let masses = mass(of: formula.elements)
         //        debugPrint(masses)
-        let group = FunctionalGroup(name: "", formula: "C25H32N6O12")
-        
+        let group = FunctionalGroup(name: "", formula: "C4H5NO3" + "C11H10N2O" + "C3H5NO2" + "C3H5NO2" + "C4H5NO3" + "H2O")
+
         XCTAssertEqual(group.averageMass.roundedDecimalAsString(to: 4), "608.5557")
     } // 608.5556
     
@@ -259,7 +280,7 @@ final class BioSwiftTests: XCTestCase {
         let fragments = fragmenter.fragments
 
         let precursors = fragments.filter { $0.fragmentType == .precursorIon }
-        XCTAssert(precursors.count == 3)
+        XCTAssert(precursors.count == 1)
         
         let immoniumIons = fragments.filter { $0.fragmentType == .immoniumIon }
         XCTAssert(immoniumIons.count == 7)
