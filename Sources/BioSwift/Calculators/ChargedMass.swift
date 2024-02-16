@@ -14,43 +14,43 @@ public let protonAdduct = Adduct(group: proton, charge: 1)
 public let sodiumAdduct = Adduct(group: sodium, charge: 1)
 public let ammoniumAdduct = Adduct(group: ammonium, charge: 1)
 
-public protocol Chargeable: Mass {
+public protocol ChargedMass: Mass {
     var adducts: [Adduct] { get set }
 }
 
-extension Chargeable {
-    public var charge: Int {
-        return adducts.reduce(0) { $0 + $1.charge }
+public extension ChargedMass {
+    var charge: Int {
+        adducts.reduce(0) { $0 + $1.charge }
     }
-    
-    public mutating func setAdducts(type: Adduct, count: Int) {
+
+    mutating func setAdducts(type: Adduct, count: Int) {
         adducts = [Adduct](repeating: type, count: count)
     }
-    
-    public func pseudomolecularIon() -> MassContainer {
-        return chargedMass()
+
+    func pseudomolecularIon() -> MassContainer {
+        chargedMass()
     }
-    
-    public func chargedMass() -> MassContainer {
+
+    func chargedMass() -> MassContainer {
         let result = calculateMasses()
-        
+
         if adducts.count > 0 {
             let chargedMass = (
-                result + adducts.map { $0.group.masses - ( $0.charge * electron.masses ) }
+                result + adducts.map { $0.group.masses - ($0.charge * electron.masses) }
                     .reduce(zeroMass) { $0 + $1 }
-                ) / adducts.count
-            
+            ) / adducts.count
+
             return chargedMass
         }
-        
+
         return result
     }
 }
 
-extension Collection where Element: Chain & Chargeable {
-    public func charge(minCharge: Int, maxCharge: Int) -> [Element] {
-        return flatMap { sequence in
-            (minCharge...maxCharge).map { charge in
+public extension Collection where Element: Chain & ChargedMass {
+    func charge(minCharge: Int, maxCharge: Int) -> [Element] {
+        flatMap { sequence in
+            (minCharge ... maxCharge).map { charge in
                 var chargedSequence = sequence
                 chargedSequence.adducts.append(contentsOf: repeatElement(protonAdduct, count: charge))
 

@@ -8,40 +8,40 @@
 
 import Foundation
 
-// final class ThreadSafe<A> {
-//    // via: https://talk.objc.io/episodes/S01E90-concurrent-map
-//    private var _value: A
-//    private let queue = DispatchQueue(label: "ThreadSafe")
-//    init(_ value: A) {
-//        _value = value
-//    }
-//
-//    var value: A {
-//        return queue.sync { _value }
-//    }
-//
-//    func atomically(_ transform: (inout A) -> Void) {
-//        queue.sync {
-//            transform(&self._value)
-//        }
-//    }
-// }
-//
+final class ThreadSafe<A> {
+    // via: https://talk.objc.io/episodes/S01E90-concurrent-map
+    private var _value: A
+    private let queue = DispatchQueue(label: "ThreadSafe")
+    init(_ value: A) {
+        _value = value
+    }
+
+    var value: A {
+        queue.sync { _value }
+    }
+
+    func atomically(_ transform: (inout A) -> Void) {
+        queue.sync {
+            transform(&self._value)
+        }
+    }
+}
+
 extension Array {
-//    // via: https://talk.objc.io/episodes/S01E90-concurrent-map
-//    public func concurrentMap<B>(_ transform: @escaping (Element) -> B) -> [B] {
-//        let result = ThreadSafe([B?](repeating: nil, count: count))
-//
-//        DispatchQueue.concurrentPerform(iterations: count) { idx in
-//            let element = self[idx]
-//            let transformed = transform(element)
-//            result.atomically {
-//                $0[idx] = transformed
-//            }
-//        }
-//
-//        return result.value.map { $0! }
-//    }
+    // via: https://talk.objc.io/episodes/S01E90-concurrent-map
+    public func concurrentMap<B>(_ transform: @escaping (Element) -> B) -> [B] {
+        let result = ThreadSafe([B?](repeating: nil, count: count))
+
+        DispatchQueue.concurrentPerform(iterations: count) { idx in
+            let element = self[idx]
+            let transformed = transform(element)
+            result.atomically {
+                $0[idx] = transformed
+            }
+        }
+
+        return result.value.map { $0! }
+    }
 
     // via: https://gist.github.com/robertmryan/1ca0deab3e3e53d54dccf421a5c64144
     /// Return combinations of the elements of the array (ignoring the order of items in those combinations).
@@ -111,6 +111,40 @@ extension Array where Element: StringProtocol {
 
 extension Collection {
     func count(where test: (Element) throws -> Bool) rethrows -> Int {
-        return try filter(test).count
+        try filter(test).count
+    }
+}
+
+extension Collection where SubSequence == Self {
+    // via: https://www.objc.io/blog/2019/02/05/a-scanner-alternative/
+
+    @discardableResult mutating func scan(_ condition: (Element) -> Bool) -> Element? {
+        guard let f = first, condition(f) else {
+            return nil
+        }
+
+        return removeFirst()
+    }
+
+    @discardableResult mutating func scan(count: Int) -> Self? {
+        let result = prefix(count)
+        guard result.count == count else {
+            return nil
+        }
+
+        removeFirst(count)
+
+        return result
+    }
+
+    @discardableResult mutating func scan(until condition: (Element) -> Bool) -> Self? {
+        guard let index = firstIndex(where: condition) else {
+            return nil
+        }
+
+        let result = self[..<index]
+        defer { self = self[index...] }
+
+        return result
     }
 }

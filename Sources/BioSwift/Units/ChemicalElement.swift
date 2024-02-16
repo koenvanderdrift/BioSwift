@@ -1,7 +1,5 @@
 import Foundation
 
-public var elementsLibrary: Elements = loadJSONFromBundle(fileName: "elements")
-
 public let electron = ChemicalElement(name: "electron", symbol: "e", masses: MassContainer(monoisotopicMass: Dalton(0.00054858026), averageMass: Dalton(0.00054858026), nominalMass: 0))
 
 public struct Isotope: Codable {
@@ -50,23 +48,27 @@ public struct ChemicalElement: Codable, Symbol {
     }
 
     public var identifier: String {
-        return symbol
+        symbol
     }
 
     var description: String {
-        return symbol
+        symbol
     }
 }
 
-extension ChemicalElement: Equatable {
+extension ChemicalElement: Equatable, Hashable {
     public static func == (lhs: Self, rhs: Self) -> Bool {
-        return lhs.symbol == rhs.symbol && lhs.name == rhs.name
+        lhs.symbol == rhs.symbol && lhs.name == rhs.name
+    }
+    
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(name)
     }
 }
 
 extension ChemicalElement: Mass {
     public var masses: MassContainer {
-        return _masses
+        _masses
     }
 
     public func calculateMasses() -> MassContainer {

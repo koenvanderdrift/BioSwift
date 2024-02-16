@@ -1,5 +1,5 @@
 //
-//  ProteinDigester.swift
+//  Digest.swift
 //  BioSwift
 //
 //  Created by Koen van der Drift on 7/12/18.
@@ -31,10 +31,10 @@ public class ProteinDigester {
 }
 
 extension Chain {
-    public func digest(using regex: String, with missedCleavages: Int) -> [Peptide] {
+    public func digest<T: RangedChain>(using regex: String, with missedCleavages: Int) -> [T] {
         let sites = cleavageSites(for: regex)
 
-        var subSequences = [Peptide]()
+        var subSequences = [T]()
 
         var start = residues.startIndex
         var end = start
@@ -42,7 +42,7 @@ extension Chain {
         for site in sites {
             end = residues.index(residues.startIndex, offsetBy: site)
 
-            if var new: Peptide = subChain(from: start, to: end - 1) as? Peptide {
+            if var new: T = subChain(from: start, to: end - 1) as? T {
                 new.rangeInParent = start ... end - 1
                 subSequences.append(new)
 
@@ -50,7 +50,7 @@ extension Chain {
             }
         }
 
-        if var final: Peptide = subChain(from: start, to: residues.endIndex - 1) as? Peptide {
+        if var final: T = subChain(from: start, to: residues.endIndex - 1) as? T {
             final.rangeInParent = start ... residues.endIndex - 1
             subSequences.append(final)
         }
@@ -59,7 +59,7 @@ extension Chain {
             return subSequences
         }
 
-        var joinedSubSequences = [Peptide]()
+        var joinedSubSequences = [T]()
 
         for mc in 0 ... missedCleavages {
             for (index, _) in subSequences.enumerated() {
@@ -67,20 +67,16 @@ extension Chain {
                 if subSequences.indices.contains(newIndex) {
                     let res = subSequences[index ... newIndex]
                         .reduce([]) { $0 + $1.residues }
-                    var new = Peptide(residues: res)
+                    var new = T(residues: res)
 
                     new.rangeInParent = subSequences[index].rangeInParent.lowerBound ... subSequences[newIndex].rangeInParent.upperBound
 
                     if index == 0 {
-                        if let mod = termini?.first {
-                            new.termini?.first = mod
-                        }
+                        new.termini?.first.modification = termini?.first.modification
                     }
 
                     if newIndex == subSequences.count - 1 {
-                        if let mod = termini?.last {
-                            new.termini?.last = mod
-                        }
+                        new.termini?.last.modification = termini?.last.modification
                     }
 
                     joinedSubSequences.append(new)

@@ -9,22 +9,22 @@ let package = Package(
         // Products define the executables and libraries produced by a package, and make them visible to other packages.
         .library(
             name: "BioSwift",
-            targets: ["BioSwift"]),
+            targets: ["BioSwift"]
+        ),
     ],
     dependencies: [
-        .package(url: "https://github.com/apple/swift-algorithms.git", .upToNextMajor(from: "0.2.1")),
-        .package(url: "https://github.com/apple/swift-collections.git", .upToNextMajor(from: "0.0.3")),
     ],
     targets: [
         .target(
             name: "BioSwift",
             dependencies: [],
             resources: [
-              .process("Resources")
+                .process("Resources"),
             ]
         ),
         .testTarget(
             name: "BioSwiftTests",
-            dependencies: ["BioSwift"]),
+            dependencies: ["BioSwift"]
+        ),
     ]
 )

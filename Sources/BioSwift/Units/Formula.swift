@@ -3,9 +3,9 @@ import Foundation
 public let zeroFormula = Formula("")
 
 public class Formula {
-    private var elementSet: NSCountedSet = []
-
+    private lazy var elementSet: NSCountedSet = getElementsSet()
     public lazy var elements: [ChemicalElement] = getElements()
+
     public lazy var formulaString: String = getFormulaString()
     public lazy var chemicalString: String = getChemicalString()
 
@@ -13,29 +13,23 @@ public class Formula {
         formulaString = string
     }
 
+    public init(_ set: NSCountedSet) {
+        elementSet = set
+    }
+
     public init(_ dict: [String: Int]) {
-        var formula = ""
-        let set: NSCountedSet = []
-        
+        var string = ""
+
         for (element, count) in dict {
-            formula.append(element)
-            if count > 1 {
-                formula.append(String(count))
-            }
-            
             if count > 0 {
-                for _ in 0...count-1 {
-                    set.add(element)
+                string += element
+                if count > 1 {
+                    string += String(count)
                 }
             }
         }
 
-        formulaString = formula
-        elementSet = set
-    }
-
-    public func countedElements() -> NSCountedSet {
-        NSCountedSet(array: elements)
+        formulaString = string
     }
 
     public func isotopes() -> NSCountedSet {
@@ -43,7 +37,11 @@ public class Formula {
     }
 
     public func countFor(element: String) -> Int {
-        elements.map(\.symbol).filter { $0 == element }.count
+        guard let e = elementSet.compactMap({ $0 as? ChemicalElement })
+            .first(where: { $0.symbol == element })
+        else { return 0 }
+        
+        return elementSet.count(for: e)
     }
 }
 
@@ -57,19 +55,40 @@ extension Formula {
         case numberPrecedingFormula
         case invalidFormula
     }
-    
-    private func getFormulaString() -> String {
-        var result = ""
-        
-        for e in elementSet {
-            print(e)
-        }
-        
-        return result
-    }
 
     private func getElements() -> [ChemicalElement] {
         var result: [ChemicalElement] = []
+
+        for e in elementSet {
+            let count = elementSet.count(for: e)
+            if let e = e as? ChemicalElement {
+                for _ in 1...count {
+                    result.append(e)
+                }
+            }
+        }
+
+        return result
+    }
+
+    private func getFormulaString() -> String {
+        var result = ""
+
+        for e in elementSet {
+            let count = elementSet.count(for: e)
+            if let e = e as? ChemicalElement {
+                result += e.symbol
+                if count > 1 {
+                    result += String(count)
+                }
+            }
+        }
+
+        return result
+    }
+
+    private func getElementsSet() -> NSCountedSet {
+        var result = NSCountedSet()
 
         do {
             result = try parseElements()
@@ -80,7 +99,7 @@ extension Formula {
         return result
     }
 
-    private func parseElements() throws -> [ChemicalElement] {
+    private func parseElements() throws -> NSCountedSet {
         // https://github.com/cgohlke/molmass/blob/master/molmass/molmass.py
         // https://github.com/cgohlke/molmass/blob/master/molmass/elements.py
 
@@ -93,10 +112,10 @@ extension Formula {
         var elementCount = 0
         var elementName = ""
 
-        var result = [ChemicalElement]()
+        var allElements: [ChemicalElement] = []
 
         if i == 0 {
-            return result
+            return NSCountedSet(array: [])
         }
 
         // parse string backwards
@@ -161,7 +180,7 @@ extension Formula {
 
                 if let element = elementLibrary.first(where: { $0.identifier == elementName }) {
                     for _ in 0 ..< (elementCount * multiplication[parenthesisLevel]) {
-                        result.append(element)
+                        allElements.append(element)
                     }
                 } else {
                     throw ParseError.elementNotFound
@@ -186,11 +205,11 @@ extension Formula {
             throw ParseError.missingOpeningBracket
         }
 
-        if result.isEmpty {
+        if allElements.count == 0 {
             throw ParseError.invalidFormula
         }
 
-        return result
+        return NSCountedSet(array: allElements)
     }
 
     private func isOpeningBracket(_ char: Character) -> Bool {
@@ -200,15 +219,14 @@ extension Formula {
     private func isClosingBracket(_ char: Character) -> Bool {
         ")}]>".contains(char)
     }
-    
+
     private func getChemicalString() -> String {
         var result = ""
 
         for c in formulaString {
             if c.isNumber {
                 result.append(String(c).subSript())
-            }
-            else {
+            } else {
                 result.append(c)
             }
         }
@@ -219,33 +237,45 @@ extension Formula {
 
 extension Formula: Equatable {
     public static func == (lhs: Formula, rhs: Formula) -> Bool {
-        lhs.countedElements() == rhs.countedElements()
-    }
-}
-
-public extension Formula {
+        lhs.elementSet == rhs.elementSet
+    }    
+    
     static func + (lhs: Formula, rhs: Formula) -> Formula {
-        Formula(lhs.formulaString + rhs.formulaString)
+        Formula(lhs.elementSet + rhs.elementSet)
     }
 
     static func += (lhs: inout Formula, rhs: Formula) {
         lhs = lhs + rhs
     }
-    
+
     static func - (lhs: Formula, rhs: Formula) -> Formula {
-        var result: [String: Int] = [:]
-        
-        for e in lhs.elements {
-            let lcount = lhs.countFor(element: e.symbol)
-            let rcount = rhs.countFor(element: e.symbol)
-            result[e.symbol] = lcount - rcount
-        }
-        
-        return Formula(result)
+        return Formula(lhs.elementSet - rhs.elementSet)
     }
 
     static func -= (lhs: inout Formula, rhs: Formula) {
         lhs = lhs - rhs
+    }
+}
+
+extension NSCountedSet {
+    static func + (lhs: NSCountedSet, rhs: NSCountedSet) -> NSCountedSet {
+        let copy = lhs.mutableCopy() as! NSCountedSet
+        copy += rhs
+        return copy
+    }
+
+    static func += (lhs: NSCountedSet, rhs: NSCountedSet) {
+        lhs.union(.init(_immutableCocoaSet: rhs))
+    }
+
+    static func - (lhs: NSCountedSet, rhs: NSCountedSet) -> NSCountedSet {
+        let copy = lhs.mutableCopy() as! NSCountedSet
+        copy -= rhs
+        return copy
+    }
+
+    static func -= (lhs: NSCountedSet, rhs: NSCountedSet) {
+        lhs.minus(.init(_immutableCocoaSet: rhs))
     }
 }
 
@@ -287,7 +317,6 @@ public extension String {
         return result
     }
 }
-
 
 /*
  # Common chemical groups

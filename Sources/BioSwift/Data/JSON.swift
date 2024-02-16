@@ -8,24 +8,20 @@
 
 import Foundation
 
-public func loadJSONFromBundle<A: Decodable>(fileName: String) -> [A] {
-    guard let url = Bundle.module.url(forResource: fileName, withExtension: "json") else {
-        fatalError("Unable to find unimod.xml")
+public func parseJSONData<A: Decodable>(from fileName: String) throws -> [A] {
+    do {
+        let data = try loadData(from: fileName, withExtension: "json")
+        return try JSONDecoder().decode([A].self, from: data)
+    } catch {
+        throw LoadError.fileDecodingFailed(name: fileName)
     }
-
-    return loadJSONFromURL(url: url)
 }
 
-public func loadJSONFromURL<A: Decodable>(url: URL) -> [A] {
-    guard let data = try? Data(contentsOf: url) else {
-        fatalError("Unable to load \(url).json")
+public func parseJSONDataFromBundle<A: Decodable>(from fileName: String) throws -> [A] {
+    do {
+        let data = try loadDataFromBundle(from: fileName, withExtension: "json")
+        return try JSONDecoder().decode([A].self, from: data)
+    } catch {
+        throw LoadError.fileDecodingFailed(name: fileName)
     }
-
-    let decoder = JSONDecoder()
-
-    guard let result = try? decoder.decode([A].self, from: data) else {
-        fatalError("Failed to decode \(url).json")
-    }
-
-    return result
 }

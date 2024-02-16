@@ -1,7 +1,5 @@
 import Foundation
 
-public var enzymeLibrary: [Enzyme] = loadJSONFromBundle(fileName: "enzymes")
-
 // enum CleaveDirection {
 //    case C
 //    case N
@@ -45,8 +43,8 @@ public class Enzyme: Codable {
     }
 }
 
-extension Enzyme {
-    public func regex() -> String {
+public extension Enzyme {
+    func regex() -> String {
         var regex = ""
 
         if cleaveDirection == "C" {
