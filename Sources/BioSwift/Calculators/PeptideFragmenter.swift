@@ -315,15 +315,15 @@ public extension PeptideFragment {
     }
 
     func canLoseWater() -> Bool {
-        var result = sequenceString.containsCharactersFrom(substring: "STED")
+        return sequenceString.containsCharactersFrom(substring: "STED")
 
-        if fragmentType == .bIon, let last = sequenceString.last {
-            if "RQNKW".contains(last) {
-                result = false
-            }
-        }
-
-        return result
+//        if fragmentType == .bIon, let last = sequenceString.last {
+//            if "RQNKW".contains(last) {
+//               result = false
+//            }
+//        }
+//
+//        return result
     }
 
     func canLoseAmmonia() -> Bool {
