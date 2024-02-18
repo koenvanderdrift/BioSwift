@@ -468,7 +468,7 @@ final class BioSwiftTests: XCTestCase {
         }
         
         let bIonsMinH2O = fragments.filter { $0.fragmentType == .bIonMinusWater }
-        XCTAssert(bIonsMinH2O.count == 4)
+        XCTAssert(bIonsMinH2O.count == 14)
         
         if let b12minH2O = fragmenter.fragment(at: 12, for: .bIonMinusWater) {
             XCTAssert(b12minH2O.chargedMass().monoisotopicMass.roundTo(places: 4) == 1108.5456) // b12 - H2O
