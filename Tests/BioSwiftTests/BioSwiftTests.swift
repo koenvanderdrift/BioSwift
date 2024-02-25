@@ -500,4 +500,36 @@ final class BioSwiftTests: XCTestCase {
         let allCases = PeptideFragmentType.allCases
         XCTAssert(allCases.count == 17)
     }
+    
+    func testBiomolecule2() {
+        var peptide1 = Peptide2(residues: [alanine, alanine, serine, alanine, serine])
+        var peptide2 = Peptide2(residues: peptide1.residues + [serine, serine, alanine])
+
+        XCTAssert(peptide1.sequenceLength == 5)
+        XCTAssert(peptide2.sequenceLength == 8)
+
+        peptide1.setAdducts(type: protonAdduct, count: 1)
+        XCTAssert(peptide1.chargedMass().monoisotopicMass.roundTo(places: 4) == 406.1932)
+
+        peptide2.setAdducts(type: protonAdduct, count: 2)
+        XCTAssert(peptide2.chargedMass().monoisotopicMass.roundTo(places: 4) == 326.1508)
+        
+        var protein = Protein2(chains: [peptide1, peptide2])
+
+        XCTAssert(protein.sequence(for: 0) == "AASAS")
+        XCTAssert(protein.sequence(for: 1) == "AASASSSA")
+
+        XCTAssert(protein.aminoAcids(for: 0).map { $0.oneLetterCode } == ["A", "A", "S", "A", "S"])
+        XCTAssert(protein.aminoAcids(for: 1).map { $0.oneLetterCode } == ["A", "A", "S", "A", "S", "S", "S", "A"])
+
+        protein.setAdducts(type: protonAdduct, count: 1, for: 0)
+        protein.setAdducts(type: protonAdduct, count: 0, for: 1)
+        let mass1 = protein.chains[0].chargedMass().monoisotopicMass.roundTo(places: 4) // 406.1932
+        let mass2 = protein.chains[1].chargedMass().monoisotopicMass.roundTo(places: 4) // 650.2871
+        XCTAssert(mass1 == 406.1932)
+        XCTAssert(mass2 == 650.2871)
+        let mass = protein.chargedMass().monoisotopicMass.roundTo(places: 4) // 1055.4731
+
+        XCTAssert(protein.chargedMass().monoisotopicMass.roundTo(places: 4) == mass1 + mass2)
+   }
 }
