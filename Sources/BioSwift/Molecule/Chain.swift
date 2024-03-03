@@ -41,14 +41,6 @@ public protocol Chain: ChargedMass {
 }
 
 extension Chain {
-//    init(sequence: String) {
-//        self.residues = createResidues(from: sequence)
-//    }
-//
-//    init(residues: [Residue]) {
-//        self.residues = residues
-//    }
-    
     public var masses: MassContainer {
         calculateMasses()
     }
@@ -90,10 +82,6 @@ extension Chain {
     static func == (lhs: Self, rhs: Self) -> Bool {
         lhs.sequenceString == rhs.sequenceString && lhs.name == rhs.name
     }
-
-//    public var masses: MassContainer {
-//        mass(of: residues) + modificationMasses() + terminalMasses()
-//    }
 
     public var formula: Formula {
         var f = Formula(residues.reduce("") { $0 + $1.formula.formulaString })
@@ -245,59 +233,45 @@ extension Chain {
         termini = (first: first, last: last)
     }
     
+    func allowedModifications(at location: Int) -> [Modification]? {
+        if let residue = residue(at: location) {
+            return residue.allowedModifications()
+        }
+
+        return nil
+    }
+
+    func getModifications() -> [Modification] {
+        var result: [Modification] = []
+
+        residues.forEach {
+            if let mod = $0.modification {
+                result.append(mod)
+            }
+        }
+
+        return result
+    }
+
+    mutating func setModifcations(_ mods: [LocalizedModification]) {
+        mods.forEach {
+            addModification($0)
+        }
+    }
+
     mutating func addModification(_ mod: LocalizedModification) {
         residues.modifyElement(atIndex: mod.location) { residue in
             residue.setModification(mod.modification)
         }
     }
     
+    mutating func removeModification(at location: Int) {
+        residues.modifyElement(atIndex: location) { residue in
+            residue.setModification(nil)
+        }
+    }
+
     func modification(at location: Int) -> Modification? {
         residue(at: location)?.modification
     }
-
-
 }
-//
-//extension Chain2 {
-//    func allowedModifications(at location: Int) -> [Modification]? {
-//        if let residue = residue(at: location) {
-//            return residue.allowedModifications()
-//        }
-//
-//        return nil
-//    }
-//
-//    func getModifications() -> [Modification] {
-//        var result: [Modification] = []
-//
-//        residues.forEach {
-//            if let mod = $0.modification {
-//                result.append(mod)
-//            }
-//        }
-//
-//        return result
-//    }
-//
-//    mutating func setModifcations(_ mods: [LocalizedModification]) {
-//        mods.forEach {
-//            addModification($0)
-//        }
-//    }
-//
-//    mutating func addModification(_ mod: LocalizedModification) {
-//        residues.modifyElement(atIndex: mod.location) { residue in
-//            residue.setModification(mod.modification)
-//        }
-//    }
-//
-//    mutating func removeModification(at location: Int) {
-//        residues.modifyElement(atIndex: location) { residue in
-//            residue.setModification(nil)
-//        }
-//    }
-//
-//    func modification(at location: Int) -> Modification? {
-//        residue(at: location)?.modification
-//    }
-//}

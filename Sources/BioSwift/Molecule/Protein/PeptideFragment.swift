@@ -117,6 +117,10 @@ extension PeptideFragment {
             aminoAcidLibrary.first(where: { $0.identifier == String(char) })
         }
     }
+    
+    public func calculateMasses() -> MassContainer {
+        mass(of: residues) + modificationMasses() + terminalMasses() + fragmentType.masses
+    }
 }
 
 public extension PeptideFragment {

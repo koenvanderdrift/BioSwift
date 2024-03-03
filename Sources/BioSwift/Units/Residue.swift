@@ -23,15 +23,3 @@ public extension Residue {
         calculateMasses()
     }
 }
-
-//public protocol Residue: Structure, Symbol, Modifiable {
-//    var oneLetterCode: String { get }
-//    var threeLetterCode: String { get }
-//    var modification: Modification? { get set }
-//}
-//
-//public extension Residue {
-//    var identifier: String {
-//        oneLetterCode
-//    }
-//}
