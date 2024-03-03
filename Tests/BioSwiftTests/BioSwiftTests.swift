@@ -6,6 +6,9 @@ final class BioSwiftTests: XCTestCase {
 
     lazy var testPeptide = Peptide(sequence: "DWSSD")
 
+    lazy var alanine = AminoAcid(name: "Alanine", oneLetterCode: "A", threeLetterCode: "Ala", formula: Formula("C3H5NO"))
+    lazy var serine = AminoAcid(name: "Serine", oneLetterCode: "S", threeLetterCode: "Ser", formula: Formula("C3H5NO2"))
+
     override class func setUp() {
         super.setUp()
         
@@ -103,10 +106,31 @@ final class BioSwiftTests: XCTestCase {
             chain.setAdducts(type: protonAdduct, count: 1)
             XCTAssertEqual(chain.formula.countFor(element: "C"), 2112)
         }
-        
-        //        XCTAssertEqual(protein.formula, Formula.init("C2112H3314N539O629S13"))
     } // C2112H3313N539O629S13
     
+    
+    func testAddFormulas() {
+        let formula1 = Formula("C12H23O7N5")
+        let formula2 = Formula("C2H2O2")
+        let formula3 = formula1 + formula2
+        
+        print(formula3.formulaString)
+        
+        XCTAssertEqual(formula3.countFor(element: "C"), 14)
+        XCTAssertEqual(formula3.countFor(element: "N"), 5)
+    }
+    
+    func testSubtractFormulas() {
+        let formula1 = Formula("C12H23O7N5")
+        let formula2 = Formula("C2H2O2")
+        let formula3 = formula1 - formula2
+        
+        print(formula3.formulaString)
+        
+        XCTAssertEqual(formula3.countFor(element: "C"), 10)
+        XCTAssertEqual(formula3.countFor(element: "N"), 5)
+    }
+
     func testProteinAtomCount() {
         if var chain = testProtein.chains.first {
             chain.setAdducts(type: protonAdduct, count: 1)
@@ -118,8 +142,8 @@ final class BioSwiftTests: XCTestCase {
         //        let formula = Formula("C2112H3313N539O629S13H")
         //        let masses = mass(of: formula.elements)
         //        debugPrint(masses)
-        let group = FunctionalGroup(name: "", formula: "C25H32N6O12")
-        
+        let group = FunctionalGroup(name: "", formula: "C4H5NO3" + "C11H10N2O" + "C3H5NO2" + "C3H5NO2" + "C4H5NO3" + "H2O")
+
         XCTAssertEqual(group.averageMass.roundedDecimalAsString(to: 4), "608.5557")
     } // 608.5556
     
@@ -206,7 +230,7 @@ final class BioSwiftTests: XCTestCase {
     }
     
     func testMassSearch() {
-        if let chain = testProtein.chains.first {
+        if let chain = testProtein.chains.first as? Peptide{
             let searchParameters = MassSearchParameters(searchValue: 609.71,
                                                         tolerance: MassTolerance(type: .ppm, value: 20),
                                                         searchType: .sequential,
@@ -220,7 +244,7 @@ final class BioSwiftTests: XCTestCase {
     }
     
     func testLowMassSearch() {
-        if let chain = testProtein.chains.first {
+        if let chain = testProtein.chains.first as? Peptide {
             let searchParameters = MassSearchParameters(searchValue: 1,
                                                         tolerance: MassTolerance(type: .ppm, value: 20),
                                                         searchType: .sequential,
@@ -234,7 +258,7 @@ final class BioSwiftTests: XCTestCase {
     }
     
     func testMassSearchWithModification() {
-        if var chain = testProtein.chains.first,
+        if var chain = testProtein.chains.first as? Peptide,
            let phos = modificationLibrary.filter({ $0.name.contains("Phospho") == true }).first
         {
             chain.addModification(LocalizedModification(phos, at: 76)) // zero-based
@@ -259,7 +283,7 @@ final class BioSwiftTests: XCTestCase {
         let fragments = fragmenter.fragments
 
         let precursors = fragments.filter { $0.fragmentType == .precursorIon }
-        XCTAssert(precursors.count == 3)
+        XCTAssert(precursors.count == 1)
         
         let immoniumIons = fragments.filter { $0.fragmentType == .immoniumIon }
         XCTAssert(immoniumIons.count == 7)
@@ -447,7 +471,7 @@ final class BioSwiftTests: XCTestCase {
         }
         
         let bIonsMinH2O = fragments.filter { $0.fragmentType == .bIonMinusWater }
-        XCTAssert(bIonsMinH2O.count == 4)
+        XCTAssert(bIonsMinH2O.count == 14)
         
         if let b12minH2O = fragmenter.fragment(at: 12, for: .bIonMinusWater) {
             XCTAssert(b12minH2O.chargedMass().monoisotopicMass.roundTo(places: 4) == 1108.5456) // b12 - H2O
@@ -479,4 +503,36 @@ final class BioSwiftTests: XCTestCase {
         let allCases = PeptideFragmentType.allCases
         XCTAssert(allCases.count == 17)
     }
+    
+    func testBiomolecule2() {
+        var peptide1 = Peptide(residues: [alanine, alanine, serine, alanine, serine])
+        var peptide2 = Peptide(residues: peptide1.residues + [serine, serine, alanine])
+
+        XCTAssert(peptide1.sequenceLength == 5)
+        XCTAssert(peptide2.sequenceLength == 8)
+
+        peptide1.setAdducts(type: protonAdduct, count: 1)
+        XCTAssert(peptide1.chargedMass().monoisotopicMass.roundTo(places: 4) == 406.1932)
+
+        peptide2.setAdducts(type: protonAdduct, count: 2)
+        XCTAssert(peptide2.chargedMass().monoisotopicMass.roundTo(places: 4) == 326.1508)
+        
+        var protein = Protein(chains: [peptide1, peptide2])
+
+        XCTAssert(protein.sequence(for: 0) == "AASAS")
+        XCTAssert(protein.sequence(for: 1) == "AASASSSA")
+
+        XCTAssert(protein.aminoAcids(for: 0).map { $0.oneLetterCode } == ["A", "A", "S", "A", "S"])
+        XCTAssert(protein.aminoAcids(for: 1).map { $0.oneLetterCode } == ["A", "A", "S", "A", "S", "S", "S", "A"])
+
+        protein.setAdducts(type: protonAdduct, count: 1, for: 0)
+        protein.setAdducts(type: protonAdduct, count: 0, for: 1)
+        let mass1 = protein.chains[0].chargedMass().monoisotopicMass.roundTo(places: 4) // 406.1932
+        let mass2 = protein.chains[1].chargedMass().monoisotopicMass.roundTo(places: 4) // 650.2871
+        XCTAssert(mass1 == 406.1932)
+        XCTAssert(mass2 == 650.2871)
+        let mass = protein.chargedMass().monoisotopicMass.roundTo(places: 4) // 1055.4731
+
+        XCTAssert(protein.chargedMass().monoisotopicMass.roundTo(places: 4) == mass1 + mass2)
+   }
 }

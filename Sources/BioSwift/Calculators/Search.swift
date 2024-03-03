@@ -92,12 +92,10 @@ public struct MassSearchParameters {
 }
 
 public extension Chain {
-    func searchSequence<T: RangedChain>(searchString: String) -> [T] {
-        var result = [T]()
-
+    func searchSequence(searchString: String) -> [Self] {
+        var result: [Self] = []
         for range in sequenceString.sequenceRanges(of: searchString) {
-            if var sub: T = subChain(with: range) as? T {
-                sub.adducts = adducts
+            if var sub = subChain(with: range) {
                 sub.rangeInParent = range
 
                 result.append(sub)
@@ -109,8 +107,8 @@ public extension Chain {
 }
 
 public extension Chain {
-    func searchMass<T: RangedChain & ChargedMass>(params: MassSearchParameters) -> [T] {
-        var result = [T]()
+    func searchMass(params: MassSearchParameters) -> [Self] where Self: ChargedMass {
+        var result: [Self] = []
 
         let count = numberOfResidues()
         let massRange = params.massRange
@@ -131,7 +129,7 @@ public extension Chain {
                     break
                 }
 
-                if end > start, let sub: T = subChain(with: start ... (end - 1), for: masses, in: massRange) {
+                if end > start, let sub = subChain(with: start ... (end - 1), for: masses, in: massRange) {
                     result.append(sub)
                     break
                 }
@@ -147,7 +145,7 @@ public extension Chain {
                     break
                 }
 
-                if end > start, let sub: T = subChain(with: start ... (end - 1), for: masses, in: massRange) {
+                if end > start, let sub = subChain(with: start ... (end - 1), for: masses, in: massRange) {
                     result.append(sub)
                     break
                 }
@@ -157,9 +155,8 @@ public extension Chain {
         return result
     }
 
-    private func subChain<T: RangedChain & ChargedMass>(with chainRange: ChainRange, for masses: MassContainer, in massRange: MassRange) -> T? {
-        if massRange.contains(masses), var sub: T = subChain(with: chainRange) as? T {
-            sub.adducts = adducts
+    private func subChain(with chainRange: ChainRange, for masses: MassContainer, in massRange: MassRange) -> Self? where Self: ChargedMass {
+        if massRange.contains(masses), var sub = subChain(with: chainRange) {
             sub.rangeInParent = chainRange
 
             return sub

@@ -8,7 +8,7 @@
 
 import Foundation
 
-public protocol Residue: Structure, Symbol, Modifiable {
+public protocol Residue: Symbol, Structure, Modifiable {
     var oneLetterCode: String { get }
     var threeLetterCode: String { get }
     var modification: Modification? { get set }
@@ -17,5 +17,9 @@ public protocol Residue: Structure, Symbol, Modifiable {
 public extension Residue {
     var identifier: String {
         oneLetterCode
+    }
+
+    var masses: MassContainer {
+        calculateMasses()
     }
 }
