@@ -80,7 +80,20 @@ public protocol Fragmenting {
     var index: Int { get set }
 }
 
-public typealias PeptideFragment = Chain<AminoAcid>
+public struct PeptideFragment: Chain {
+    public var rangeInParent: ChainRange = zeroChainRange
+    public var name: String = ""
+    public var termini: (first: Modification, last: Modification)?
+    public var residues: [Residue] = []
+    public var adducts: [Adduct] = []
+    public var fragmentType: PeptideFragmentType = .undefined
+    public var index: Int = -1
+    public var modifications: [LocalizedModification] = []
+    
+    public var aminoAcids: [AminoAcid] {
+        residues as? [AminoAcid] ?? []
+    }
+}
 
 extension PeptideFragment {
     init(residues: [AminoAcid], type: PeptideFragmentType, index: Int = -1, adducts: [Adduct], modifications: [LocalizedModification] = []) {
@@ -90,12 +103,26 @@ extension PeptideFragment {
         self.adducts = adducts
         self.modifications = modifications
     }
+    
+    public init(sequence: String) {
+        self.residues = createResidues(from: sequence)
+    }
+    
+    public init(residues: [Residue]) {
+        self.residues = residues as? [AminoAcid] ?? []
+    }
+    
+    public func createResidues(from string: String) -> [Residue] {
+        string.compactMap { char in
+            aminoAcidLibrary.first(where: { $0.identifier == String(char) })
+        }
+    }
 }
 
 public extension PeptideFragment {
     func canLoseWater() -> Bool {
         return sequenceString.containsCharactersFrom(substring: "STED")
-        
+
 //        if fragmentType == .bIon, let last = sequenceString.last {
 //            if "RQNKW".contains(last) {
 //                result = false
@@ -104,7 +131,7 @@ public extension PeptideFragment {
 //
 //        return result
     }
-    
+
     func canLoseAmmonia() -> Bool {
         return sequenceString.containsCharactersFrom(substring: "RQNK")
     }
@@ -126,8 +153,10 @@ public extension PeptideFragment {
     }
 
     func maxNumberOfCharges() -> Int {
-        let num = residues.filter { $0.properties.contains([.chargedPos]) }.count
+        if let aa = residues as? [AminoAcid] {
+            return aa.filter { $0.properties.contains([.chargedPos]) }.count
+        }
 
-        return num
+        return 0
     }
 }

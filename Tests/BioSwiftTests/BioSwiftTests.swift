@@ -6,6 +6,9 @@ final class BioSwiftTests: XCTestCase {
 
     lazy var testPeptide = Peptide(sequence: "DWSSD")
 
+    lazy var alanine = AminoAcid(name: "Alanine", oneLetterCode: "A", threeLetterCode: "Ala", formula: Formula("C3H5NO"))
+    lazy var serine = AminoAcid(name: "Serine", oneLetterCode: "S", threeLetterCode: "Ser", formula: Formula("C3H5NO2"))
+
     override class func setUp() {
         super.setUp()
         
@@ -227,7 +230,7 @@ final class BioSwiftTests: XCTestCase {
     }
     
     func testMassSearch() {
-        if let chain = testProtein.chains.first {
+        if let chain = testProtein.chains.first as? Peptide{
             let searchParameters = MassSearchParameters(searchValue: 609.71,
                                                         tolerance: MassTolerance(type: .ppm, value: 20),
                                                         searchType: .sequential,
@@ -241,7 +244,7 @@ final class BioSwiftTests: XCTestCase {
     }
     
     func testLowMassSearch() {
-        if let chain = testProtein.chains.first {
+        if let chain = testProtein.chains.first as? Peptide {
             let searchParameters = MassSearchParameters(searchValue: 1,
                                                         tolerance: MassTolerance(type: .ppm, value: 20),
                                                         searchType: .sequential,
@@ -255,7 +258,7 @@ final class BioSwiftTests: XCTestCase {
     }
     
     func testMassSearchWithModification() {
-        if var chain = testProtein.chains.first,
+        if var chain = testProtein.chains.first as? Peptide,
            let phos = modificationLibrary.filter({ $0.name.contains("Phospho") == true }).first
         {
             chain.addModification(LocalizedModification(phos, at: 76)) // zero-based
@@ -502,8 +505,8 @@ final class BioSwiftTests: XCTestCase {
     }
     
     func testBiomolecule2() {
-        var peptide1 = Peptide2(residues: [alanine, alanine, serine, alanine, serine])
-        var peptide2 = Peptide2(residues: peptide1.residues + [serine, serine, alanine])
+        var peptide1 = Peptide(residues: [alanine, alanine, serine, alanine, serine])
+        var peptide2 = Peptide(residues: peptide1.residues + [serine, serine, alanine])
 
         XCTAssert(peptide1.sequenceLength == 5)
         XCTAssert(peptide2.sequenceLength == 8)
@@ -514,7 +517,7 @@ final class BioSwiftTests: XCTestCase {
         peptide2.setAdducts(type: protonAdduct, count: 2)
         XCTAssert(peptide2.chargedMass().monoisotopicMass.roundTo(places: 4) == 326.1508)
         
-        var protein = Protein2(chains: [peptide1, peptide2])
+        var protein = Protein(chains: [peptide1, peptide2])
 
         XCTAssert(protein.sequence(for: 0) == "AASAS")
         XCTAssert(protein.sequence(for: 1) == "AASASSSA")

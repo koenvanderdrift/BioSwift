@@ -129,6 +129,6 @@ extension AminoAcid: Hashable {
 
 extension AminoAcid: Mass {
     public var masses: MassContainer {
-        _masses + modificationMasses()
+        mass(of: formula.elements)
     }
 }
