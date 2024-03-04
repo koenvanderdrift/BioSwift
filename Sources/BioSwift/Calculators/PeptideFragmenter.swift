@@ -1,11 +1,6 @@
 //
-<<<<<<< HEAD
-//  Fragmenter.swift
-//
-=======
 //  PeptideFragmenter.swift
 //  BioSwift
->>>>>>> main
 //
 //  Created by Koen van der Drift on 7/19/21.
 //
@@ -203,92 +198,3 @@ public class PeptideFragmenter {
         return ions.filter { $0.index == index && $0.charge == charge }.first
     }
 }
-
-<<<<<<< HEAD
-public struct PeptideFragment: RangedChain {
-    public var name: String = ""
-    public var symbolLibrary: [Symbol] = aminoAcidLibrary
-
-    public var residues: [AminoAcid] = []
-
-    public var termini: (first: AminoAcid, last: AminoAcid)? = (nTerm, cTerm)
-    public var adducts: [Adduct] = []
-    public var modifications: [LocalizedModification] = []
-
-    public var rangeInParent: ChainRange = zeroChainRange
-
-    public var fragmentType: PeptideFragmentType = .undefined
-    public var index: Int = -1
-}
-
-public extension PeptideFragment {
-    init(sequence: String) {
-        self.residues = createResidues(from: sequence)
-    }
-
-    init(residues: [AminoAcid]) {
-        self.residues = residues
-    }
-
-    init(residues: [AminoAcid], type: PeptideFragmentType, index: Int = -1, adducts: [Adduct], modifications: [LocalizedModification] = []) {
-        self.residues = residues
-        self.fragmentType = type
-        self.index = index
-        self.adducts = adducts
-        self.modifications = modifications
-    }
-}
-
-public extension PeptideFragment {
-    var masses: MassContainer {
-        calculateMasses()
-    }
-
-    func calculateMasses() -> MassContainer {
-        return mass(of: residues) + modificationMasses() + terminalMasses() + fragmentType.masses
-    }
-
-    func terminalMasses() -> MassContainer {
-        return zeroMass
-    }
-
-    func canLoseWater() -> Bool {
-        var result = sequenceString.containsCharactersFrom(substring: "STED")
-
-        if fragmentType == .bIon, let last = sequenceString.last {
-            if "RQNKW".contains(last) {
-                result = false
-            }
-        }
-
-        return result
-    }
-
-    func canLoseAmmonia() -> Bool {
-        return sequenceString.containsCharactersFrom(substring: "RQNK")
-    }
-
-    func isPrecursor() -> Bool {
-        return fragmentType.isPrecursor
-    }
-
-    func isImmonium() -> Bool {
-        return fragmentType.isImmonium
-    }
-
-    func isNterminal() -> Bool {
-        return fragmentType.isNTerminal
-    }
-
-    func isCterminal() -> Bool {
-        return fragmentType.isCTerminal
-    }
-
-    func maxNumberOfCharges() -> Int {
-        let num = residues.filter { $0.properties.contains([.chargedPos]) }.count
-
-        return num
-    }
-}
-=======
->>>>>>> main
