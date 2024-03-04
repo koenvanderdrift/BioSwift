@@ -7,6 +7,8 @@
 
 import Foundation
 
+public let electron = MassContainer(monoisotopicMass: Dalton(0.00054858026), averageMass: Dalton(0.00054858026), nominalMass: 0)
+
 public let hydroxyl = FunctionalGroup(name: "hydroxyl", formula: "OH")
 public let ammonia = FunctionalGroup(name: "ammonia", formula: "NH3")
 public let carbonyl = FunctionalGroup(name: "carbonyl", formula: "CO")

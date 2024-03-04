@@ -104,10 +104,6 @@ public struct AminoAcid: Residue, Codable {
         try container.encode(representedBy, forKey: .representedBy)
     }
 
-    var description: String {
-        threeLetterCode
-    }
-
     public func allowedModifications() -> [Modification] {
         modificationLibrary.filter { $0.sites.contains(identifier) == true }
     }
@@ -120,11 +116,5 @@ extension AminoAcid: Hashable {
 
     public func hash(into hasher: inout Hasher) {
         hasher.combine(threeLetterCode)
-    }
-}
-
-extension AminoAcid: Mass {
-    public var masses: MassContainer {
-        mass(of: formula.elements) + modificationMasses()
     }
 }

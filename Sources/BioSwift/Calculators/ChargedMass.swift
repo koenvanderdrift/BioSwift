@@ -36,7 +36,7 @@ public extension ChargedMass {
 
         if adducts.count > 0 {
             let chargedMass = (
-                result + adducts.map { $0.group.masses - ($0.charge * electron.masses) }
+                result + adducts.map { $0.group.masses - ($0.charge * electron) }
                     .reduce(zeroMass) { $0 + $1 }
             ) / adducts.count
 

@@ -19,7 +19,11 @@ public extension Residue {
         oneLetterCode
     }
 
+    var description: String {
+        threeLetterCode
+    }
+
     var masses: MassContainer {
-        calculateMasses()
+        mass(of: formula.elements) + modificationMasses()
     }
 }

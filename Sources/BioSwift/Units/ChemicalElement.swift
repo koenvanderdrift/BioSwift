@@ -1,7 +1,5 @@
 import Foundation
 
-public let electron = ChemicalElement(name: "electron", symbol: "e", masses: MassContainer(monoisotopicMass: Dalton(0.00054858026), averageMass: Dalton(0.00054858026), nominalMass: 0))
-
 public struct Isotope: Codable {
     public let mass: String
     public let ordinalNumber: String
@@ -9,8 +7,6 @@ public struct Isotope: Codable {
 }
 
 public struct ChemicalElement: Codable, Symbol {
-    private(set) var _masses: MassContainer = zeroMass
-
     public let name: String
     public let symbol: String
     public let isotopes: [Isotope]
@@ -25,16 +21,6 @@ public struct ChemicalElement: Codable, Symbol {
         self.name = name
         self.symbol = symbol
         self.isotopes = isotopes
-
-        _masses = calculateMasses()
-    }
-
-    public init(name: String, symbol: String, masses: MassContainer) {
-        self.name = name
-        self.symbol = symbol
-        isotopes = []
-
-        _masses = masses
     }
 
     public init(from decoder: Decoder) throws {
@@ -43,8 +29,6 @@ public struct ChemicalElement: Codable, Symbol {
         name = try container.decode(String.self, forKey: .name)
         symbol = try container.decode(String.self, forKey: .symbol)
         isotopes = try container.decode([Isotope].self, forKey: .isotopes)
-
-        _masses = calculateMasses()
     }
 
     public var identifier: String {
@@ -68,7 +52,7 @@ extension ChemicalElement: Equatable, Hashable {
 
 extension ChemicalElement: Mass {
     public var masses: MassContainer {
-        _masses
+        calculateMasses()
     }
 
     public func calculateMasses() -> MassContainer {
