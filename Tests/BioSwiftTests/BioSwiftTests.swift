@@ -531,7 +531,7 @@ final class BioSwiftTests: XCTestCase {
         let mass2 = protein.chains[1].chargedMass().monoisotopicMass.roundTo(places: 4) // 650.2871
         XCTAssert(mass1 == 406.1932)
         XCTAssert(mass2 == 650.2871)
-        let mass = protein.chargedMass().monoisotopicMass.roundTo(places: 4) // 1055.4731
+//        let mass = protein.chargedMass().monoisotopicMass.roundTo(places: 4) // 1055.4731
 
         XCTAssert(protein.chargedMass().monoisotopicMass.roundTo(places: 4) == mass1 + mass2)
    }

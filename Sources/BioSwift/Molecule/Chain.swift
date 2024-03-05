@@ -78,12 +78,12 @@ extension Chain {
     }
 }
 
-extension Chain {
+public extension Chain {
     static func == (lhs: Self, rhs: Self) -> Bool {
         lhs.sequenceString == rhs.sequenceString && lhs.name == rhs.name
     }
 
-    public var formula: Formula {
+    var formula: Formula {
         var f = Formula(residues.reduce("") { $0 + $1.formula.formulaString })
 
         if let termini {
