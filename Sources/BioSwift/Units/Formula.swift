@@ -3,7 +3,7 @@ import Foundation
 public let zeroFormula = Formula("")
 
 public class Formula {
-    private lazy var elementSet: NSCountedSet = getElementsSet()
+    public lazy var elementSet: NSCountedSet = getElementsSet()
     public lazy var elements: [ChemicalElement] = getElements()
 
     public lazy var formulaString: String = getFormulaString()
