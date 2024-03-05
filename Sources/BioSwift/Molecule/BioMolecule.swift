@@ -9,21 +9,28 @@ import Foundation
 
 public struct BioMolecule<Residue> {
     public var adducts: [Adduct] = []
-    var chains: [any Chain] = []
+    public var chains: [any Chain] = []
     
-    init(chain: Chain) {
+    public init(chain: Chain) {
         self.init(chains: [chain])
     }
 
-    init(chains: [Chain]) {
+    public init(chains: [Chain]) {
         self.chains = chains
     }
-
 }
 
 extension BioMolecule: ChargedMass {
     public var masses: MassContainer {
         calculateMasses()
+    }
+
+    public var formula: Formula {
+        chains.reduce(zeroFormula) { $0 + $1.formula }
+    }
+    
+    public var charge: Int {
+        chains.reduce(0) { $0 + $1.charge }
     }
 
     public func calculateMasses() -> MassContainer {
@@ -50,16 +57,6 @@ extension BioMolecule: ChargedMass {
         chains[chainIndex].setAdducts(type: type, count: count)
         adducts = [Adduct](repeating: type, count: count)
     }
-    
-    var formula: Formula {
-        chains.reduce(zeroFormula) { $0 + $1.formula }
-    }
-    
-    var charge: Int {
-        chains.reduce(0) { $0 + $1.charge }
-    }
-
-
 }
 
 ////

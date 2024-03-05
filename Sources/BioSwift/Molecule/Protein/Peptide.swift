@@ -31,7 +31,7 @@ extension Peptide {
         self.residues = residues as? [AminoAcid] ?? []
     }
     
-    func hydropathyValues(for hydropathyType: String) -> [Double] {
+    public func hydropathyValues(for hydropathyType: String) -> [Double] {
         let values = Hydropathy(residues: residues).hydrophathyValues(for: hydropathyType)
 
         return residues.compactMap { values[$0.oneLetterCode] }

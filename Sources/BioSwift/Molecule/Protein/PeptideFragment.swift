@@ -96,7 +96,7 @@ public struct PeptideFragment: Chain {
 }
 
 extension PeptideFragment {
-    init(residues: [AminoAcid], type: PeptideFragmentType, index: Int = -1, adducts: [Adduct], modifications: [LocalizedModification] = []) {
+    public init(residues: [AminoAcid], type: PeptideFragmentType, index: Int = -1, adducts: [Adduct], modifications: [LocalizedModification] = []) {
         self.residues = residues
         self.fragmentType = type
         self.index = index

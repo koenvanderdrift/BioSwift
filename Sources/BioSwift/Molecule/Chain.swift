@@ -45,24 +45,24 @@ extension Chain {
         calculateMasses()
     }
 
-    public func calculateMasses() -> MassContainer {
-        mass(of: residues) + modificationMasses() + terminalMasses()
-    }
-
-    public var sequenceString: String {
+     public var sequenceString: String {
         residues.map(\.identifier).joined()
     }
 
-    var sequenceLength: Int {
+    public var sequenceLength: Int {
         sequenceString.count
     }
     
-    var symbolSequence: [Symbol] {
+    public var symbolSequence: [Symbol] {
         residues // TODO: Fix me
     }
 
-    var symbolSet: SymbolSet? {
+    public var symbolSet: SymbolSet? {
         SymbolSet(array: symbolSequence)
+    }
+
+    public func calculateMasses() -> MassContainer {
+        mass(of: residues) + modificationMasses() + terminalMasses()
     }
 
     func symbol(at index: Int) -> Symbol? {
