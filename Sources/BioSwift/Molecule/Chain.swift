@@ -26,7 +26,6 @@ public extension NSRange {
 }
 
 public protocol Chain: ChargedMass {
-    //    associatedtype Residue
     var residues: [Residue] { get set }
     var rangeInParent: ChainRange { get set }
     var name: String { get set }
@@ -38,44 +37,6 @@ public protocol Chain: ChargedMass {
     init(residues: [Residue])
     
     func createResidues(from string: String) -> [Residue]
-}
-
-extension Chain {
-    public var masses: MassContainer {
-        calculateMasses()
-    }
-
-     public var sequenceString: String {
-        residues.map(\.identifier).joined()
-    }
-
-    public var sequenceLength: Int {
-        sequenceString.count
-    }
-    
-    public var symbolSequence: [Symbol] {
-        residues // TODO: Fix me
-    }
-
-    public var symbolSet: SymbolSet? {
-        SymbolSet(array: symbolSequence)
-    }
-
-    public func calculateMasses() -> MassContainer {
-        mass(of: residues) + modificationMasses() + terminalMasses()
-    }
-
-    func symbol(at index: Int) -> Symbol? {
-        symbolSequence[index]
-    }
-
-    func residue(at index: Int) -> Residue? {
-        residues[index]
-    }
-
-    func numberOfResidues() -> Int {
-        residues.count
-    }
 }
 
 public extension Chain {
@@ -93,6 +54,44 @@ public extension Chain {
         }
 
         return f
+    }
+
+    var sequenceString: String {
+        residues.map(\.identifier).joined()
+    }
+
+    var sequenceLength: Int {
+        numberOfResidues
+    }
+    
+    var symbolSequence: [Symbol] {
+        residues // TODO: Fix me
+    }
+
+    var symbolSet: SymbolSet? {
+        SymbolSet(array: symbolSequence)
+    }
+
+    func symbol(at index: Int) -> Symbol? {
+        symbolSequence[index]
+    }
+
+    func residue(at index: Int) -> Residue? {
+        residues[index]
+    }
+
+    var numberOfResidues: Int {
+        residues.count
+    }
+}
+
+public extension Chain {
+    var masses: MassContainer {
+        calculateMasses()
+    }
+
+    func calculateMasses() -> MassContainer {
+        mass(of: residues) + modificationMasses() + terminalMasses()
     }
 
     func modificationMasses() -> MassContainer {
@@ -141,14 +140,6 @@ public extension Chain {
         }
     }
 
-    func residueLocations(with identifiers: [String]) -> [Int] {
-        let result = identifiers.map { i in
-            residues.indices.filter { (residues[$0].identifier) == i }
-        }
-
-        return result.flatMap { $0 }
-    }
-
     func subChain(removing range: ChainRange, based: Int = 0) -> Self? {
         // xxxx - ++++++++++++
         // ++ - xxxx - +++++++
@@ -170,7 +161,7 @@ public extension Chain {
             }
         }
 
-        if basedRange.upperBound == numberOfResidues() {
+        if basedRange.upperBound == numberOfResidues {
             if let mod = termini?.last {
                 sub.termini?.last = mod
             }
@@ -192,7 +183,7 @@ public extension Chain {
             }
         }
 
-        if range.upperBound == numberOfResidues() {
+        if range.upperBound == numberOfResidues {
             if let mod = termini?.last {
                 sub.termini?.last = mod
             }
@@ -208,7 +199,7 @@ public extension Chain {
     }
 
     func subChain(from: Int, to: Int) -> Self? {
-        guard from < numberOfResidues(), to >= from else { return nil }
+        guard from < numberOfResidues, to >= from else { return nil }
 
         return subChain(with: from ... to)
     }
@@ -224,9 +215,17 @@ public extension Chain {
     }
 
     func residueChain(from: Int, to: Int) -> [Residue]? {
-        guard from < numberOfResidues(), to >= from else { return nil }
+        guard from < numberOfResidues, to >= from else { return nil }
 
         return residueChain(with: from ... to)
+    }
+
+    func residueLocations(with identifiers: [String]) -> [Int] {
+        let result = identifiers.map { i in
+            residues.indices.filter { (residues[$0].identifier) == i }
+        }
+
+        return result.flatMap { $0 }
     }
 
     mutating func setTermini(first: Modification, last: Modification) {

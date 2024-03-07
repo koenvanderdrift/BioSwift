@@ -110,7 +110,7 @@ public extension Chain {
     func searchMass(params: MassSearchParameters) -> [Self] where Self: ChargedMass {
         var result: [Self] = []
 
-        let count = numberOfResidues()
+        let count = numberOfResidues
         let massRange = params.massRange
 
         var start = 0

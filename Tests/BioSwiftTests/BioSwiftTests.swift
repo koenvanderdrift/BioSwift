@@ -64,10 +64,10 @@ final class BioSwiftTests: XCTestCase {
     
     func testPeptideAverageMass() {
         testPeptide.setAdducts(type: protonAdduct, count: 1)
-        XCTAssertEqual(testPeptide.pseudomolecularIon().averageMass.roundedDecimalAsString(to: 4), "609.5731")
+        XCTAssertEqual(testPeptide.pseudomolecularIon().averageMass.roundedDecimalAsString(to: 4), "609.5731") // 609.563
 
         testPeptide.setAdducts(type: protonAdduct, count: 2)
-        XCTAssertEqual(testPeptide.pseudomolecularIon().averageMass.roundedDecimalAsString(to: 4), "305.2903")
+        XCTAssertEqual(testPeptide.pseudomolecularIon().averageMass.roundedDecimalAsString(to: 4), "305.2903") // 305.2852
     }
     
     func testPeptideSerinePhosphorylationMonoisotopicMass() {
@@ -83,31 +83,25 @@ final class BioSwiftTests: XCTestCase {
         }
     }
     
-    //    func testBioMolecule() {
-    //        var bm = protein
-    //    }
-    
     func testProteinMonoisotopicMass() {
-        if var chain = testProtein.chains.first {
-            chain.setAdducts(type: protonAdduct, count: 1)
-            XCTAssertEqual(chain.pseudomolecularIon().monoisotopicMass.roundedDecimalAsString(to: 4), "46708.0267")
-        }
+        testProtein.setAdducts(type: protonAdduct, count: 1)
+        XCTAssertEqual(testProtein.pseudomolecularIon().monoisotopicMass.roundedDecimalAsString(to: 4), "46708.0267")
     }
     
     func testProteinAverageMass() {
-        if var chain = testProtein.chains.first {
-            chain.setAdducts(type: protonAdduct, count: 1)
-            XCTAssertEqual(chain.pseudomolecularIon().averageMass.roundedDecimalAsString(to: 4), "46737.9568")
-        }
+        testProtein.setAdducts(type: protonAdduct, count: 1)
+        XCTAssertEqual(testProtein.pseudomolecularIon().averageMass.roundedDecimalAsString(to: 4), "46737.9568")
     } // 46737.0703
     
     func testProteinFormula() {
-        if var chain = testProtein.chains.first {
-            chain.setAdducts(type: protonAdduct, count: 1)
-            XCTAssertEqual(chain.formula.countFor(element: "C"), 2112)
-        }
+        testProtein.setAdducts(type: protonAdduct, count: 1)
+        XCTAssertEqual(testProtein.formula.countFor(element: "C"), 2112)
     } // C2112H3313N539O629S13
     
+    func testProteinIsoElectricPoint() {
+        let pKa = testProtein.isoelectricPoint(for: 0)
+        XCTAssertEqual(pKa.roundedDecimalAsString(to: 2), "5.37")
+    }
     
     func testAddFormulas() {
         let formula1 = Formula("C12H23O7N5")
@@ -132,9 +126,14 @@ final class BioSwiftTests: XCTestCase {
     }
 
     func testProteinAtomCount() {
-        if var chain = testProtein.chains.first {
-            chain.setAdducts(type: protonAdduct, count: 1)
-            XCTAssertEqual(chain.formula.elements.count, 6606)
+        testProtein.setAdducts(type: protonAdduct, count: 1)
+        XCTAssertEqual(testProtein.formula.elements.count, 6606)
+    }
+    
+    func testSymbolAtIndex() {
+        if let chain = testProtein.chains.first {
+            let symbol = chain.symbol(at: 14)
+            XCTAssertEqual(symbol?.identifier, "L")
         }
     }
     
@@ -230,7 +229,7 @@ final class BioSwiftTests: XCTestCase {
     }
     
     func testMassSearch() {
-        if let chain = testProtein.chains.first as? Peptide{
+        if let chain = testProtein.chains.first as? Peptide {
             let searchParameters = MassSearchParameters(searchValue: 609.71,
                                                         tolerance: MassTolerance(type: .ppm, value: 20),
                                                         searchType: .sequential,
@@ -531,8 +530,8 @@ final class BioSwiftTests: XCTestCase {
         let mass2 = protein.chains[1].chargedMass().monoisotopicMass.roundTo(places: 4) // 650.2871
         XCTAssert(mass1 == 406.1932)
         XCTAssert(mass2 == 650.2871)
-//        let mass = protein.chargedMass().monoisotopicMass.roundTo(places: 4) // 1055.4731
+        let mass = protein.chargedMass().monoisotopicMass.roundTo(places: 4) // 1055.4731
 
-        XCTAssert(protein.chargedMass().monoisotopicMass.roundTo(places: 4) == mass1 + mass2)
+        XCTAssert(mass == mass1 + mass2)
    }
 }

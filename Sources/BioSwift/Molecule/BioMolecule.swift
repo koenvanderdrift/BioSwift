@@ -9,7 +9,7 @@ import Foundation
 
 public struct BioMolecule<Residue> {
     public var adducts: [Adduct] = []
-    public var chains: [any Chain] = []
+    public var chains: [Chain]
     
     public init(chain: Chain) {
         self.init(chains: [chain])
@@ -24,21 +24,23 @@ extension BioMolecule: ChargedMass {
     public var masses: MassContainer {
         calculateMasses()
     }
-
-    public var formula: Formula {
-        chains.reduce(zeroFormula) { $0 + $1.formula }
-    }
     
     public var charge: Int {
         chains.reduce(0) { $0 + $1.charge }
     }
-
+    
     public func calculateMasses() -> MassContainer {
         return chains.reduce(zeroMass) { $0 + $1.masses }
     }
+}
+
+public extension BioMolecule {
+    var formula: Formula {
+        chains.reduce(zeroFormula) { $0 + $1.formula }
+    }
     
-    func sequenceLength(chainIndex index: Int = 0) -> Int {
-        chains[index].numberOfResidues()
+    func sequenceLength(for chainIndex: Int = 0) -> Int {
+        chains[chainIndex].numberOfResidues
     }
     
     func residues(for chainIndex: Int = 0) -> [Residue] {
@@ -56,6 +58,10 @@ extension BioMolecule: ChargedMass {
     mutating func setAdducts(type: Adduct, count: Int, for chainIndex: Int = 0) {
         chains[chainIndex].setAdducts(type: type, count: count)
         adducts = [Adduct](repeating: type, count: count)
+    }
+    
+    func isoelectricPoint(for chainIndex: Int = 0) -> Double {
+        return Hydropathy(residues: chains[chainIndex].residues).isoElectricPoint()
     }
 }
 
@@ -78,6 +84,13 @@ extension BioMolecule: ChargedMass {
 //    var modification: Modification? { get set }
 //}
 //
+
+//    func concatenateChains() -> Chain {
+//        let residues = chains.reduce([]) { $0 + $1.residues }
+//
+//        return Chain(residues: residues)
+//    }
+
 //public extension Residue2 {
 //    var identifier: String {
 //        oneLetterCode
@@ -140,27 +153,6 @@ extension BioMolecule: ChargedMass {
 //}
 //
 //struct BioMolecule2<Residue2> {
-//    var adducts: [Adduct] = []
-//    var chains: [any Chain2] = []
-//
-//    func residues(for chainIndex: Int = 0) -> [Residue2] {
-//        if let residues = chains[chainIndex].residues as? [Residue2] {
-//            return residues
-//        }
-//
-//        return []
-//    }
-//
-//    func sequence(for chainIndex: Int = 0) -> String {
-//        chains[chainIndex].sequenceString
-//    }
-//
-//    mutating func setAdducts(type: Adduct, count: Int, for chainIndex: Int = 0) {
-//        chains[chainIndex].setAdducts(type: type, count: count)
-//        adducts = [Adduct](repeating: type, count: count)
-//    }
-//}
-//
 //extension BioMolecule2: Mass, ChargedMass {
 //    public var masses: MassContainer {
 //        calculateMasses()

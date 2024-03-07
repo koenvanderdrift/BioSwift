@@ -14,6 +14,10 @@ extension Protein {
         self.chains = [Peptide(sequence: sequence)]
     }
     
+    public init(sequences: [String]) {
+        self.chains = sequences.map { Peptide(sequence: $0) }
+    }
+
     public init(residues: [AminoAcid]) {
         self.chains = [Peptide(residues: residues)]
     }

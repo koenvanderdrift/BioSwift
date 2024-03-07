@@ -141,7 +141,6 @@ extension Modification: Mass {
     
     public var formula: Formula {
         reactions.reduce(zeroFormula) { $0 + $1.formula }
-
     }
 
     public func calculateMasses() -> MassContainer {
