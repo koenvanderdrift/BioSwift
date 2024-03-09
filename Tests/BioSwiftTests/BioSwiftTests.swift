@@ -100,7 +100,7 @@ final class BioSwiftTests: XCTestCase {
     
     func testProteinIsoElectricPoint() {
         let pKa = testProtein.isoelectricPoint(for: 0)
-        XCTAssertEqual(pKa.roundedDecimalAsString(to: 2), "5.37")
+        XCTAssertEqual(pKa.roundedDecimalAsString(to: 2), "5.37") // 5.39
     }
     
     func testAddFormulas() {

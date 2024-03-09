@@ -95,27 +95,15 @@ public extension Chain {
     }
 
     func modificationMasses() -> MassContainer {
-        var result = zeroMass
-
-        modifications.forEach {
-            result += $0.modification.masses
-        }
-
-        return result
+        modifications.reduce(zeroMass) { $0 + $1.modification.masses }
     }
 
     func terminalMasses() -> MassContainer {
-        var result = zeroMass
-
-        if let first = termini?.first {
-            result += first.masses
+        if let termini {
+            return termini.first.masses + termini.last.masses
         }
-
-        if let last = termini?.last {
-            result += last.masses
-        }
-
-        return result
+        
+        return zeroMass
     }
 
     mutating func update(with sequence: String, in editedRange: NSRange, changeInLength: Int) {

@@ -39,17 +39,6 @@ public protocol Mass {
 // all masses from https://physics.nist.gov/cgi-bin/Compositions/stand_alone.pl
 
 public extension Mass {
-    // TO DO rename function calls
-    func mass(of symbols: [Symbol]?) -> MassContainer {
-        var result = zeroMass
-
-        if let massSymbols = symbols?.compactMap({ $0 as? Mass }) {
-            result = mass(of: massSymbols)
-        }
-
-        return result
-    }
-
     func mass(of mass: [Mass]) -> MassContainer {
         mass.reduce(zeroMass) { $0 + $1.masses }
     }
@@ -68,9 +57,9 @@ public extension Mass {
 }
 
 public enum MassType: String {
-    case average = "Average"
-    case monoisotopic = "Monoisotopic"
-    case nominal = "Nominal"
+    case average
+    case monoisotopic
+    case nominal
 }
 
 public struct MassContainer {

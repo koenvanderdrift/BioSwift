@@ -225,7 +225,7 @@ extension Formula {
 
         for c in formulaString {
             if c.isNumber {
-                result.append(String(c).subSript())
+                result.append(String(c).subScript())
             } else {
                 result.append(c)
             }
@@ -299,7 +299,7 @@ public extension String {
         return result
     }
 
-    func subSript() -> String {
+    func subScript() -> String {
         var result = ""
         for char in self {
             if char == "0" { result.append("\u{2080}") }
