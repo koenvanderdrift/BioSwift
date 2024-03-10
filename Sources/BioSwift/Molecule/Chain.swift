@@ -10,6 +10,15 @@ import Foundation
 
 public typealias ChainRange = ClosedRange<Int>
 
+extension ChainRange {
+    func based(_ based: Int) -> Self {
+        let lowerBound = self.lowerBound - based
+        let upperBound = self.upperBound - based
+
+        return lowerBound...upperBound
+    }
+}
+
 public let zeroChainRange: ChainRange = -1 ... 0
 public let zeroNSRange = NSMakeRange(NSNotFound, 0)
 
@@ -128,28 +137,24 @@ public extension Chain {
         }
     }
 
-    func subChain(removing range: ChainRange, based: Int = 0) -> Self? {
+    func subChain(removing range: ChainRange) -> Self? {
         // xxxx - ++++++++++++
         // ++ - xxxx - +++++++
         // ++++++++++++ - xxxx
 
-        let lowerBound = range.lowerBound - based
-        let upperBound = range.upperBound - based
-        let basedRange = lowerBound ... upperBound
-
-        let subResidues = residues.indices.compactMap { basedRange ~= $0 ? nil : residues[$0] }
+        let subResidues = residues.indices.compactMap { range ~= $0 ? nil : residues[$0] }
 
         var sub = Self(residues: subResidues)
         sub.termini = termini
         sub.adducts = adducts
 
-        if basedRange.lowerBound == 0 {
+        if range.lowerBound == 0 {
             if let mod = termini?.first {
                 sub.termini?.first = mod
             }
         }
 
-        if basedRange.upperBound == numberOfResidues {
+        if range.upperBound == numberOfResidues {
             if let mod = termini?.last {
                 sub.termini?.last = mod
             }
@@ -159,9 +164,9 @@ public extension Chain {
     }
 
     func subChain(with range: ChainRange) -> Self? {
-        guard let residues = residueChain(with: range) else { return nil }
+        guard let subResidues = residueChain(with: range) else { return nil }
 
-        var sub = Self(residues: residues)
+        var sub = Self(residues: subResidues)
         sub.termini = termini
         sub.adducts = adducts
 

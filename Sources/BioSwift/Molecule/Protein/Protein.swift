@@ -25,6 +25,22 @@ extension Protein {
     public func aminoAcids(for chainIndex: Int = 0) -> [AminoAcid] {
         self.residues(for: chainIndex) as [AminoAcid]
     }
+    
+    public func isoelectricPoint(for chainIndex: Int = 0) -> Double {
+        if let peptide = chains[chainIndex] as? Peptide {
+            return peptide.isoelectricPoint()
+        }
+        
+        return 0
+    }
+    
+    public func isoelectricPoint(for chainIndex: Int = 0, with range: ChainRange) -> Double {
+        if let peptide = chains[chainIndex].subChain(with: range) as? Peptide {
+            return peptide.isoelectricPoint()
+        }
+        
+        return 0
+    }
 }
 
 

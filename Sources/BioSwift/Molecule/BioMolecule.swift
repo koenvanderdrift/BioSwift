@@ -59,10 +59,6 @@ public extension BioMolecule {
         chains[chainIndex].setAdducts(type: type, count: count)
         adducts = [Adduct](repeating: type, count: count)
     }
-    
-    func isoelectricPoint(for chainIndex: Int = 0) -> Double {
-        return Hydropathy(residues: chains[chainIndex].residues).isoElectricPoint()
-    }
 }
 
 ////

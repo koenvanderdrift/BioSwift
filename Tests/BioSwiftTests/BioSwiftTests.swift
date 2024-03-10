@@ -103,6 +103,12 @@ final class BioSwiftTests: XCTestCase {
         XCTAssertEqual(pKa.roundedDecimalAsString(to: 2), "5.37") // 5.39
     }
     
+    func testProteinIsoElectricPointForRange() {
+        let range = 375...418
+        let pKa = testProtein.isoelectricPoint(for: 0, with: range.based(1))
+        XCTAssertEqual(pKa.roundedDecimalAsString(to: 2), "9.40") // 10.2
+    }
+
     func testAddFormulas() {
         let formula1 = Formula("C12H23O7N5")
         let formula2 = Formula("C2H2O2")
@@ -180,7 +186,7 @@ final class BioSwiftTests: XCTestCase {
             XCTAssertEqual(subChain2?.sequenceString, "LLAGLCCLVPVSLAEDPQGDAAQKTDTSHHDQDHPTFNKITPNLAEFAFSLYRQLAHQSNSTNIFFSPIVSIATAFAMLSLGTKADTHDEILEGLNFNLTEIPEAQIHEGFQELLRTLNQPDSQLQLTTGNGLFLSEGLKLVDKFLEDVKKLYHSEAFTVNFGDTEEAKKQINDYVEKGTQGKIVDLVKELDRDTVFALVNYIFFKGKWERPFEVKDTEEEDFHVDQVTTVKVPMMKRLGMFNIQHCKKLSSWVLLMKYLGNATAIFFLPDEGKLQHLENELTHDIITKFLENEDRRSASLHLPKLSITGTYDLKSVLGQLGITKVFSNGADLSGVTEEAPLKLSKAVHKAVLTIDEKGTEAAGAMFLEAIPMSIPPEVKFNKPFVFMIEQNTKSPLFMGKVVNPTQK")
             
             let range3: ChainRange = 11 ... 400 // 1 based
-            let subChain3 = chain.subChain(removing: range3, based: 1)
+            let subChain3 = chain.subChain(removing: range3.based(1))
             XCTAssertEqual(subChain3?.sequenceString, "MPSSVSWGILQNTKSPLFMGKVVNPTQK")
         }
     }

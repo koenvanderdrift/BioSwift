@@ -22,19 +22,23 @@ public struct Peptide: Chain {
     }
 }
 
-extension Peptide {
-    public init(sequence: String) {
+public extension Peptide {
+    init(sequence: String) {
         self.residues = createResidues(from: sequence)
     }
 
-    public init(residues: [Residue]) {
+    init(residues: [Residue]) {
         self.residues = residues as? [AminoAcid] ?? []
     }
     
-    public func hydropathyValues(for hydropathyType: String) -> [Double] {
+    func hydropathyValues(for hydropathyType: String) -> [Double] {
         let values = Hydropathy(residues: residues).hydrophathyValues(for: hydropathyType)
 
         return residues.compactMap { values[$0.oneLetterCode] }
+    }
+    
+    func isoelectricPoint() -> Double {
+        return Hydropathy(residues: residues).isoElectricPoint()
     }
 }
 
