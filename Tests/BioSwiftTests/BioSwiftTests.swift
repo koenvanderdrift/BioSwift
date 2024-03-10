@@ -104,8 +104,8 @@ final class BioSwiftTests: XCTestCase {
     }
     
     func testProteinIsoElectricPointForRange() {
-        let range = 375...418
-        let pKa = testProtein.isoelectricPoint(for: 0, with: range.based(1))
+        let range = 375 ... 418
+        let pKa = testProtein.isoelectricPoint(for: 0, with: range.toOneBased)
         XCTAssertEqual(pKa.roundedDecimalAsString(to: 2), "9.40") // 10.2
     }
 
@@ -186,7 +186,7 @@ final class BioSwiftTests: XCTestCase {
             XCTAssertEqual(subChain2?.sequenceString, "LLAGLCCLVPVSLAEDPQGDAAQKTDTSHHDQDHPTFNKITPNLAEFAFSLYRQLAHQSNSTNIFFSPIVSIATAFAMLSLGTKADTHDEILEGLNFNLTEIPEAQIHEGFQELLRTLNQPDSQLQLTTGNGLFLSEGLKLVDKFLEDVKKLYHSEAFTVNFGDTEEAKKQINDYVEKGTQGKIVDLVKELDRDTVFALVNYIFFKGKWERPFEVKDTEEEDFHVDQVTTVKVPMMKRLGMFNIQHCKKLSSWVLLMKYLGNATAIFFLPDEGKLQHLENELTHDIITKFLENEDRRSASLHLPKLSITGTYDLKSVLGQLGITKVFSNGADLSGVTEEAPLKLSKAVHKAVLTIDEKGTEAAGAMFLEAIPMSIPPEVKFNKPFVFMIEQNTKSPLFMGKVVNPTQK")
             
             let range3: ChainRange = 11 ... 400 // 1 based
-            let subChain3 = chain.subChain(removing: range3.based(1))
+            let subChain3 = chain.subChain(removing: range3.toOneBased)
             XCTAssertEqual(subChain3?.sequenceString, "MPSSVSWGILQNTKSPLFMGKVVNPTQK")
         }
     }
@@ -539,5 +539,5 @@ final class BioSwiftTests: XCTestCase {
         let mass = protein.chargedMass().monoisotopicMass.roundTo(places: 4) // 1055.4731
 
         XCTAssert(mass == mass1 + mass2)
-   }
+    }
 }

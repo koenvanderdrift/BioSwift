@@ -3,6 +3,7 @@
 //  BioSwift
 //
 //  Created by Koen van der Drift on 2/17/24.
+//  Copyright © 2024 Koen van der Drift. All rights reserved.
 //
 
 import Foundation
@@ -89,36 +90,36 @@ public struct PeptideFragment: Chain {
     public var fragmentType: PeptideFragmentType = .undefined
     public var index: Int = -1
     public var modifications: [LocalizedModification] = []
-    
+
     public var aminoAcids: [AminoAcid] {
         residues as? [AminoAcid] ?? []
     }
 }
 
-extension PeptideFragment {
-    public init(residues: [AminoAcid], type: PeptideFragmentType, index: Int = -1, adducts: [Adduct], modifications: [LocalizedModification] = []) {
+public extension PeptideFragment {
+    init(residues: [AminoAcid], type: PeptideFragmentType, index: Int = -1, adducts: [Adduct], modifications: [LocalizedModification] = []) {
         self.residues = residues
         self.fragmentType = type
         self.index = index
         self.adducts = adducts
         self.modifications = modifications
     }
-    
-    public init(sequence: String) {
+
+    init(sequence: String) {
         self.residues = createResidues(from: sequence)
     }
-    
-    public init(residues: [Residue]) {
+
+    init(residues: [Residue]) {
         self.residues = residues as? [AminoAcid] ?? []
     }
-    
-    public func createResidues(from string: String) -> [Residue] {
+
+    func createResidues(from string: String) -> [Residue] {
         string.compactMap { char in
             aminoAcidLibrary.first(where: { $0.identifier == String(char) })
         }
     }
-    
-    public func calculateMasses() -> MassContainer {
+
+    func calculateMasses() -> MassContainer {
         mass(of: residues) + modificationMasses() + terminalMasses() + fragmentType.masses
     }
 }

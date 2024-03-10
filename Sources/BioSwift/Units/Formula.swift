@@ -1,3 +1,11 @@
+//
+//  Formula.swift
+//  BioSwift
+//
+//  Created by Koen van der Drift on 3/15/18.
+//  Copyright © 2018 - 2024 Koen van der Drift. All rights reserved.
+//
+
 import Foundation
 
 public let zeroFormula = Formula("")
@@ -40,7 +48,7 @@ public class Formula {
         guard let e = elementSet.compactMap({ $0 as? ChemicalElement })
             .first(where: { $0.symbol == element })
         else { return 0 }
-        
+
         return elementSet.count(for: e)
     }
 }
@@ -62,7 +70,7 @@ extension Formula {
         for e in elementSet {
             let count = elementSet.count(for: e)
             if let e = e as? ChemicalElement {
-                for _ in 1...count {
+                for _ in 1 ... count {
                     result.append(e)
                 }
             }
@@ -238,8 +246,8 @@ extension Formula {
 extension Formula: Equatable {
     public static func == (lhs: Formula, rhs: Formula) -> Bool {
         lhs.elementSet == rhs.elementSet
-    }    
-    
+    }
+
     static func + (lhs: Formula, rhs: Formula) -> Formula {
         Formula(lhs.elementSet + rhs.elementSet)
     }

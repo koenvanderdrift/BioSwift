@@ -3,7 +3,7 @@
 //  BioSwift
 //
 //  Created by Koen van der Drift on 7/12/18.
-//  Copyright © 2018 Koen van der Drift. All rights reserved.
+//  Copyright © 2018 - 2024 Koen van der Drift. All rights reserved.
 //
 
 import Foundation
@@ -17,14 +17,14 @@ public class ProteinDigester {
 
     public func peptides(using regex: String, with missedCleavages: Int) -> [Peptide] {
         var peptides: [Peptide] = []
-        
+
         for chain in protein.chains {
             peptides += chain.digest(using: regex, with: missedCleavages)
         }
 
         return peptides
     }
-    
+
     private func digestChain() -> [Peptide] {
         []
     }

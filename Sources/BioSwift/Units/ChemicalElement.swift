@@ -1,3 +1,11 @@
+//
+//  ChemicalElement.swift
+//  BioSwift
+//
+//  Created by Koen van der Drift on 3/15/18.
+//  Copyright © 2018 - 2024 Koen van der Drift. All rights reserved.
+//
+
 import Foundation
 
 public struct Isotope: Codable {
@@ -44,7 +52,7 @@ extension ChemicalElement: Equatable, Hashable {
     public static func == (lhs: Self, rhs: Self) -> Bool {
         lhs.symbol == rhs.symbol && lhs.name == rhs.name
     }
-    
+
     public func hash(into hasher: inout Hasher) {
         hasher.combine(name)
     }

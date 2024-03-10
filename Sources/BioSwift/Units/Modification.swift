@@ -1,10 +1,21 @@
+//
+//  Modification.swift
+//  BioSwift
+//
+//  Created by Koen van der Drift on 3/22/20.
+//  Copyright © 2020 - 2024 Koen van der Drift. All rights reserved.
+//
+
 import Foundation
 
 public let unmodifiedString = "Unmodified"
 public let zeroModification = Modification(name: unmodifiedString, elements: [:])
 
-public let nTermModification = Modification(name: nTermString, reactions: [.add(hydrogen)])
-public let cTermModification = Modification(name: cTermString, reactions: [.add(hydroxyl)])
+public let nTermModification = Modification(name: "N-Term", reactions: [.add(hydrogen)])
+public let cTermModification = Modification(name: "C-Term", reactions: [.add(hydroxyl)])
+
+public let lossOfWater = Modification(name: "Loss of Water", reactions: [.remove(water)], sites: ["S", "T", "E", "D"])
+public let lossOfAmmonia = Modification(name: "Loss of Ammonia", reactions: [.remove(ammonia)], sites: ["R", "Q", "N", "K"])
 
 public indirect enum Reaction {
     case add(FunctionalGroup)
@@ -31,7 +42,7 @@ extension Reaction: Mass {
 
         return result
     }
-    
+
     public var formula: Formula {
         var result = zeroFormula
 
@@ -138,7 +149,7 @@ extension Modification: Mass {
     public var masses: MassContainer {
         calculateMasses()
     }
-    
+
     public var formula: Formula {
         reactions.reduce(zeroFormula) { $0 + $1.formula }
     }

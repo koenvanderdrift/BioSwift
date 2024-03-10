@@ -3,24 +3,24 @@
 //  BioSwift
 //
 //  Created by Koen van der Drift on 5/22/17.
-//  Copyright © 2017 Koen van der Drift. All rights reserved.
-//
+//  Copyright © 2017 - 2024 Koen van der Drift. All rights reserved.
+// 
 
 import Foundation
 
 public typealias ChainRange = ClosedRange<Int>
-
-extension ChainRange {
-    func based(_ based: Int) -> Self {
-        let lowerBound = self.lowerBound - based
-        let upperBound = self.upperBound - based
-
-        return lowerBound...upperBound
-    }
-}
-
 public let zeroChainRange: ChainRange = -1 ... 0
 public let zeroNSRange = NSMakeRange(NSNotFound, 0)
+
+public extension ChainRange {
+    var toOneBased: ChainRange {
+        self.lowerBound - 1 ... self.upperBound - 1
+    }
+    
+    var fromOneBased: ChainRange {
+        self.lowerBound + 1 ... self.upperBound + 1
+    }
+}
 
 public extension NSRange {
     init(from range: ChainRange) {
@@ -41,10 +41,10 @@ public protocol Chain: ChargedMass {
     var termini: (first: Modification, last: Modification)? { get set }
     var modifications: [LocalizedModification] { get set }
     var adducts: [Adduct] { get set }
-    
+
     init(sequence: String)
     init(residues: [Residue])
-    
+
     func createResidues(from string: String) -> [Residue]
 }
 
@@ -72,7 +72,7 @@ public extension Chain {
     var sequenceLength: Int {
         numberOfResidues
     }
-    
+
     var symbolSequence: [Symbol] {
         residues // TODO: Fix me
     }
@@ -111,7 +111,7 @@ public extension Chain {
         if let termini {
             return termini.first.masses + termini.last.masses
         }
-        
+
         return zeroMass
     }
 
@@ -224,7 +224,7 @@ public extension Chain {
     mutating func setTermini(first: Modification, last: Modification) {
         termini = (first: first, last: last)
     }
-    
+
     func allowedModifications(at location: Int) -> [Modification]? {
         if let residue = residue(at: location) {
             return residue.allowedModifications()
@@ -256,7 +256,7 @@ public extension Chain {
             residue.setModification(mod.modification)
         }
     }
-    
+
     mutating func removeModification(at location: Int) {
         residues.modifyElement(atIndex: location) { residue in
             residue.setModification(nil)

@@ -3,7 +3,7 @@
 //  BioSwift
 //
 //  Created by Koen van der Drift on 3/14/20.
-//  Copyright © 2020 Koen van der Drift. All rights reserved.
+//  Copyright © 2020 - 2024 Koen van der Drift. All rights reserved.
 //
 
 import Foundation
@@ -17,11 +17,10 @@ public struct UnimodController {
             try unimodParser.parseXML()
 
             debugPrint("Finished parsing unimod.xml")
-        }
-        catch {
+        } catch {
             debugPrint("Failed parsing unimod.xml")
 
-            throw(error)
+            throw (error)
         }
     }
 }
@@ -80,7 +79,7 @@ public class UnimodParser: NSObject {
 
             if parser.parse() == false {
                 if let error = parser.parserError {
-                    throw(error)
+                    throw (error)
                 } else {
                     throw LoadError.fileParsingFailed(name: "unimod")
                 }
@@ -98,7 +97,7 @@ public class UnimodParser: NSObject {
 
             if parser.parse() == false {
                 if let error = parser.parserError {
-                    throw(error)
+                    throw (error)
                 } else {
                     throw LoadError.fileParsingFailed(name: "unimod")
                 }

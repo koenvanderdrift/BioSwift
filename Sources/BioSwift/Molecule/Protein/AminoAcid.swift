@@ -1,7 +1,12 @@
-import Foundation
+//
+//  AminoAcid.swift
+//  BioSwift
+//
+//  Created by Koen van der Drift on 7/18/21.
+//  Copyright © 2021 - 2024 Koen van der Drift. All rights reserved.
+//
 
-public let nTermString = "N-term"
-public let cTermString = "C-term"
+import Foundation
 
 public struct AminoAcidProperties: OptionSet {
     public let rawValue: Int

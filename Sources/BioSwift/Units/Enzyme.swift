@@ -1,3 +1,11 @@
+//
+//  Enzyme.swift
+//  BioSwift
+//
+//  Created by Koen van der Drift on 3/15/18.
+//  Copyright © 2018 - 2024 Koen van der Drift. All rights reserved.
+//
+
 import Foundation
 
 // enum CleaveDirection {

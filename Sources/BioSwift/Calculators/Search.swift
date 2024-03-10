@@ -3,7 +3,7 @@
 //  BioSwift
 //
 //  Created by Koen van der Drift on 4/28/18.
-//  Copyright © 2018 Koen van der Drift. All rights reserved.
+//  Copyright © 2018 - 2024 Koen van der Drift. All rights reserved.
 //
 
 import Foundation
@@ -70,7 +70,7 @@ public struct MassSearchParameters {
 
         switch tolerance.type {
         case .ppm:
-            let delta = toleranceValue / 1_000_000
+            let delta = toleranceValue / 1000000
             minMass = (1 - delta) * searchValue
             maxMass = (1 + delta) * searchValue
 

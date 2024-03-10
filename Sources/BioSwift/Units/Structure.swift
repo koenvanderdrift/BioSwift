@@ -1,3 +1,11 @@
+//
+//  Structure.swift
+//  BioSwift
+//
+//  Created by Koen van der Drift on 9/21/19.
+//  Copyright © 2019 - 2024 Koen van der Drift. All rights reserved.
+//
+
 import Foundation
 
 public protocol Structure: ChargedMass {
