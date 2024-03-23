@@ -32,13 +32,13 @@ public struct BioMolecule<T: Residue> {
 But what if a BioMolecule consists of 2 different Residue chains? Eg protein with oligo?
 No problem, oligo will be a Chain as a modification
 
-Structure -&gt; Residue -&gt; Chain -&gt; BioMolecule
-Structure -&gt; FunctionalGroup
+Structure -> Residue -> Chain -> BioMolecule
+Structure -> FunctionalGroup
 Residue: AminoAcid, Nucleobase, Nucleoside, Nucleotide
 
-Protein = BioMolecule&lt;AminoAcid&gt;
-DNA = BioMolecule&lt;Nucleotide&gt;
-RNA = BioMolecule&lt;Nucleotide&gt;
+Protein = BioMolecule<AminoAcid>
+DNA = BioMolecule<Nucleotide>
+RNA = BioMolecule<Nucleotide>
 
 An oligo would be a protein modification (as a Chain)
 

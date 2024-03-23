@@ -24,6 +24,6 @@ public extension Residue {
     }
 
     var masses: MassContainer {
-        mass(of: formula.elements) + modificationMasses()
+        formula.masses + modificationMasses()
     }
 }

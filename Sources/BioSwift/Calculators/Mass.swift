@@ -27,35 +27,6 @@ extension MassRange {
     }
 }
 
-public let zeroMass = MassContainer(monoisotopicMass: 0.0, averageMass: 0.0, nominalMass: 0)
-public let electron = MassContainer(monoisotopicMass: Dalton(0.00054858026), averageMass: Dalton(0.00054858026), nominalMass: 0)
-
-public protocol Mass {
-    var masses: MassContainer { get }
-
-    func calculateMasses() -> MassContainer
-}
-
-// all masses from https://physics.nist.gov/cgi-bin/Compositions/stand_alone.pl
-
-public extension Mass {
-    func mass(of mass: [Mass]) -> MassContainer {
-        mass.reduce(zeroMass) { $0 + $1.masses }
-    }
-
-    var monoisotopicMass: Dalton {
-        masses.monoisotopicMass
-    }
-
-    var averageMass: Dalton {
-        masses.averageMass
-    }
-
-    var nominalMass: Int {
-        masses.nominalMass
-    }
-}
-
 public enum MassType: String {
     case average
     case monoisotopic
@@ -93,3 +64,80 @@ extension MassContainer: Equatable {
         MassContainer(monoisotopicMass: lhs.monoisotopicMass / Dalton(rhs), averageMass: lhs.averageMass / Dalton(rhs), nominalMass: Int(lhs.nominalMass / rhs))
     }
 }
+
+public typealias Adduct = (group: FunctionalGroup, charge: Int)
+
+public let protonAdduct = Adduct(group: proton, charge: 1)
+public let sodiumAdduct = Adduct(group: sodium, charge: 1)
+public let ammoniumAdduct = Adduct(group: ammonium, charge: 1)
+
+public let zeroMass = MassContainer(monoisotopicMass: 0.0, averageMass: 0.0, nominalMass: 0)
+public let electron = MassContainer(monoisotopicMass: Dalton(0.00054858026), averageMass: Dalton(0.00054858026), nominalMass: 0)
+
+public protocol Mass {
+    var masses: MassContainer { get }
+
+    func calculateMasses() -> MassContainer
+}
+
+// all masses from https://physics.nist.gov/cgi-bin/Compositions/stand_alone.pl
+
+public extension Mass {
+    var monoisotopicMass: Dalton {
+        masses.monoisotopicMass
+    }
+
+    var averageMass: Dalton {
+        masses.averageMass
+    }
+
+    var nominalMass: Int {
+        masses.nominalMass
+    }
+}
+
+public protocol ChargedMass: Mass {
+    var adducts: [Adduct] { get set }
+}
+
+public extension ChargedMass {
+    var charge: Int {
+        adducts.reduce(0) { $0 + $1.charge }
+    }
+
+    mutating func setAdducts(type: Adduct, count: Int) {
+        adducts = [Adduct](repeating: type, count: count)
+    }
+
+    func pseudomolecularIon() -> MassContainer {
+        massOverCharge()
+    }
+
+    func massOverCharge() -> MassContainer {
+        let masses = calculateMasses()
+
+        if charge > 0 {
+            let moverz = (
+                masses + adducts.map { $0.group.masses - ($0.charge * electron) }
+                    .reduce(zeroMass) { $0 + $1 }
+            ) / charge
+
+            return moverz
+        }
+
+        return masses
+    }
+}
+
+//public extension Collection where Element: ChargedMass {
+//    func charge(minCharge: Int, maxCharge: Int) -> [Element] {
+//        flatMap { sequence in
+//            (minCharge ... maxCharge).map { charge in
+//                var chargedSequence = sequence
+//                chargedSequence.adducts.append(contentsOf: repeatElement(protonAdduct, count: charge))
+//
+//                return chargedSequence
+//            }
+//        }
+//    }
+//}

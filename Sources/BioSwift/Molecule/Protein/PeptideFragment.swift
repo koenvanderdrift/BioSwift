@@ -120,7 +120,7 @@ public extension PeptideFragment {
     }
 
     func calculateMasses() -> MassContainer {
-        mass(of: residues) + modificationMasses() + terminalMasses() + fragmentType.masses
+        residueMasses() + modificationMasses() + terminalMasses() + fragmentType.masses
     }
 }
 

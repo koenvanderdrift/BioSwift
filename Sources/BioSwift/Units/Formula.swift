@@ -265,6 +265,16 @@ extension Formula: Equatable {
     }
 }
 
+extension Formula: Mass {
+    public var masses: MassContainer {
+        calculateMasses()
+    }
+    
+    public func calculateMasses() -> MassContainer {
+        elements.reduce(zeroMass) { $0 + $1.masses }
+    }
+}
+
 extension NSCountedSet {
     static func + (lhs: NSCountedSet, rhs: NSCountedSet) -> NSCountedSet {
         let copy = lhs.mutableCopy() as! NSCountedSet

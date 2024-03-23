@@ -100,7 +100,11 @@ public extension Chain {
     }
 
     func calculateMasses() -> MassContainer {
-        mass(of: residues) + modificationMasses() + terminalMasses()
+        residueMasses() + modificationMasses() + terminalMasses()
+    }
+
+    func residueMasses() -> MassContainer {
+        residues.reduce(zeroMass) { $0 + $1.masses }
     }
 
     func modificationMasses() -> MassContainer {
