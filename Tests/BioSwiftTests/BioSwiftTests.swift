@@ -54,6 +54,11 @@ final class BioSwiftTests: XCTestCase {
      bioswift (+el)      609.5641    609.2162
      */
     
+    func testAminoAcidMasses() {
+        XCTAssertEqual(serine.monoisotopicMass.roundedDecimalAsString(to: 5), "87.03203")
+        XCTAssertEqual(serine.averageMass.roundedDecimalAsString(to: 4), "87.0773")
+    }
+
     func testPeptideMonoisotopicMass() {
         testPeptide.setAdducts(type: protonAdduct, count: 1)
         XCTAssertEqual(testPeptide.pseudomolecularIon().monoisotopicMass.roundedDecimalAsString(to: 4), "609.2151")
