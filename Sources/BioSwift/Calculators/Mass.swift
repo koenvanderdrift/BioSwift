@@ -129,15 +129,15 @@ public extension ChargedMass {
     }
 }
 
-//public extension Collection where Element: ChargedMass {
-//    func charge(minCharge: Int, maxCharge: Int) -> [Element] {
-//        flatMap { sequence in
-//            (minCharge ... maxCharge).map { charge in
-//                var chargedSequence = sequence
-//                chargedSequence.adducts.append(contentsOf: repeatElement(protonAdduct, count: charge))
-//
-//                return chargedSequence
-//            }
-//        }
-//    }
-//}
+public extension Collection where Element: ChargedMass {
+    func charge(minCharge: Int, maxCharge: Int) -> [Element] {
+        flatMap { sequence in
+            (minCharge ... maxCharge).map { charge in
+                var chargedSequence = sequence
+                chargedSequence.adducts.append(contentsOf: repeatElement(protonAdduct, count: charge))
+
+                return chargedSequence
+            }
+        }
+    }
+}
