@@ -129,7 +129,7 @@ public extension Chain {
                     break
                 }
 
-                if end > start, let sub = subChain(with: start ... (end - 1), for: masses, in: massRange) {
+                if end > start, let sub = subChain(with: start ... (end - 1), for: masses, in: massRange, and: params.massType) {
                     result.append(sub)
                     break
                 }
@@ -145,7 +145,7 @@ public extension Chain {
                     break
                 }
 
-                if end > start, let sub = subChain(with: start ... (end - 1), for: masses, in: massRange) {
+                if end > start, let sub = subChain(with: start ... (end - 1), for: masses, in: massRange, and: params.massType) {
                     result.append(sub)
                     break
                 }
@@ -155,8 +155,8 @@ public extension Chain {
         return result
     }
 
-    private func subChain(with chainRange: ChainRange, for masses: MassContainer, in massRange: MassRange) -> Self? where Self: ChargedMass {
-        if massRange.contains(masses), var sub = subChain(with: chainRange) {
+    private func subChain(with chainRange: ChainRange, for masses: MassContainer, in massRange: MassRange, and type: MassType) -> Self? where Self: ChargedMass {
+        if massRange.contains(masses, for: type), var sub = subChain(with: chainRange) {
             sub.rangeInParent = chainRange
 
             return sub

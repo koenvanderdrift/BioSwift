@@ -12,10 +12,15 @@ public typealias Dalton = Double
 public typealias MassRange = ClosedRange<Dalton>
 
 extension MassRange {
-    func contains(_ masses: MassContainer) -> Bool {
-        contains(masses.monoisotopicMass) ||
-            contains(masses.averageMass) ||
-            contains(Dalton(masses.nominalMass))
+    func contains(_ masses: MassContainer, for type: MassType) -> Bool {
+        switch type {
+        case .monoisotopic:
+            return contains(masses.monoisotopicMass)
+        case .average:
+            return contains(masses.averageMass)
+        case .nominal:
+            return false
+        }
     }
 
     func lowerLimit(excludes masses: MassContainer) -> Bool {
