@@ -14,11 +14,11 @@ public enum SearchType: Int {
     case exhaustive
 }
 
-public enum MassToleranceType: String {
-    case ppm
+public enum MassToleranceType: String, CaseIterable {
+    case ppm = "ppm"
     case dalton = "Da"
     case percent = "%"
-    case mmu
+    case mmu = "mmu"
 }
 
 public extension MassToleranceType {
