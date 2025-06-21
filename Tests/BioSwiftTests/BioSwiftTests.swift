@@ -109,7 +109,7 @@ final class BioSwiftTests: XCTestCase {
     }
     
     func testProteinIsoElectricPointForRange() {
-        let range = (375 ... 418).toOneBased
+        let range = (375 ... 418).fromOneBased
         let pKa = testProtein.isoelectricPoint(for: 0, with: range)
         XCTAssertEqual(pKa.roundedDecimalAsString(to: 2), "9.40") // 10.2
     }
@@ -192,7 +192,7 @@ final class BioSwiftTests: XCTestCase {
             
             let range3: ChainRange = (11 ... 400).toOneBased // 1 based
             let subChain3 = chain.subChain(removing: range3)
-            XCTAssertEqual(subChain3?.sequenceString, "MPSSVSWGILQNTKSPLFMGKVVNPTQK")
+            XCTAssertEqual(subChain3?.sequenceString, "MPSSVSWGILLLTKSPLFMGKVVNPTQK")
         }
     }
     

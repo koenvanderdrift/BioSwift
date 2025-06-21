@@ -13,11 +13,11 @@ public let zeroChainRange: ChainRange = -1 ... 0
 public let zeroNSRange = NSMakeRange(NSNotFound, 0)
 
 public extension ChainRange {
-    var toOneBased: ChainRange {
+    var fromOneBased: ChainRange {
         self.lowerBound - 1 ... self.upperBound - 1
     }
     
-    var fromOneBased: ChainRange {
+    var toOneBased: ChainRange {
         self.lowerBound + 1 ... self.upperBound + 1
     }
 }
