@@ -44,11 +44,15 @@ public extension BioMolecule {
         return pseudomolecularIon().averageMass
     }
     
-    func selectedMonoIsotopicMass(range: ChainRange) -> Double {
+    func isoelectricPoint(chainIndex index: Int = 0) -> Double {
+        return Hydropathy(residues: chains[index].residues).isoElectricPoint()
+    }
+
+    func selectedMonoIsotopicMass(chainIndex index: Int = 0, _ range: ChainRange) -> Double {
         return selectionMass(range).monoisotopicMass
     }
     
-    func selectedAverageMass(range: ChainRange) -> Double {
+    func selectedAverageMass(chainIndex index: Int = 0, _ range: ChainRange) -> Double {
         return selectionMass(range).averageMass
     }
     
@@ -60,7 +64,13 @@ public extension BioMolecule {
         return sub.pseudomolecularIon()
     }
     
-    func selectionLength(chainIndex index: Int = 0, range: ChainRange) -> Int {
+    func selectedIsoelectricPoint(chainIndex index: Int = 0, _ range: ChainRange) -> Double {
+        guard let sub = chains[index].subChain(with: range) else { return 0.0 }
+
+        return Hydropathy(residues: sub.residues).isoElectricPoint()
+    }
+    
+    func selectionLength(chainIndex index: Int = 0, _ range: ChainRange) -> Int {
         guard let sub = chains[index].subChain(with: range) else { return 0 }
 
         return sub.numberOfResidues
