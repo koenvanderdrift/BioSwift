@@ -36,6 +36,38 @@ extension BioMolecule: ChargedMass {
 }
 
 public extension BioMolecule {
+    func monoIsotopicMass() -> Double {
+        return pseudomolecularIon().monoisotopicMass
+    }
+    
+    func averageMass() -> Double {
+        return pseudomolecularIon().averageMass
+    }
+    
+    func selectedMonoIsotopicMass(range: ChainRange) -> Double {
+        return selectionMass(range).monoisotopicMass
+    }
+    
+    func selectedAverageMass(range: ChainRange) -> Double {
+        return selectionMass(range).averageMass
+    }
+    
+    func selectionMass(chainIndex index: Int = 0, _ range: ChainRange) -> MassContainer {
+        guard var sub = chains[index].subChain(with: range) else { return zeroMass }
+        
+        sub.setAdducts(type: protonAdduct, count: charge)
+        
+        return sub.pseudomolecularIon()
+    }
+    
+    func selectionLength(chainIndex index: Int = 0, range: ChainRange) -> Int {
+        guard let sub = chains[index].subChain(with: range) else { return 0 }
+
+        return sub.numberOfResidues
+    }
+}
+
+public extension BioMolecule {
     var formula: Formula {
         chains.reduce(zeroFormula) { $0 + $1.formula }
     }
@@ -82,100 +114,6 @@ public extension BioMolecule {
 }
 
 
-// public protocol Residue2: Symbol, Structure {
-//    var oneLetterCode: String { get }
-//    var threeLetterCode: String { get }
-//    var modification: Modification? { get set }
-// }
-//
-
-//    func concatenateChains() -> Chain {
-//        let residues = chains.reduce([]) { $0 + $1.residues }
-//
-//        return Chain(residues: residues)
-//    }
-
-// public extension Residue2 {
-//    var identifier: String {
-//        oneLetterCode
-//    }
-//
-//    var masses: MassContainer {
-//        calculateMasses()
-//    }
-// }
-//
-// public struct AminoAcid2: Residue2 {
-//    public var name: String
-//    public var formula: Formula
-//    public var oneLetterCode: String
-//    public var threeLetterCode: String
-//    public var modification: Modification?
-//    public var adducts: [Adduct] = []
-// }
-//
-// extension AminoAcid2 {
-//    public func calculateMasses() -> MassContainer {
-//        mass(of: formula.elements)
-//    }
-// }
-//
-// public protocol Chain2: ChargedMass {
-//    associatedtype Residue2
-//    var residues: [Residue2] { get set }
-// }
-//
-// extension Chain2 {
-//    public var masses: MassContainer {
-//        calculateMasses()
-//    }
-//
-//    public func calculateMasses() -> MassContainer {
-//        if let r = residues as? [any Mass] {
-//            return mass(of: r) + water.masses
-//        }
-//
-//        return zeroMass
-//    }
-//
-//    public var sequenceString: String {
-//        if let r = residues as? [Symbol] {
-//            return r.map(\.identifier).joined()
-//        }
-//
-//        return ""
-//    }
-//
-//    var sequenceLength: Int {
-//        sequenceString.count
-//    }
-// }
-//
-// struct Peptide2: Chain2 {
-//    var residues: [AminoAcid2] = []
-//    var adducts: [Adduct] = []
-// }
-//
-// struct BioMolecule2<Residue2> {
-// extension BioMolecule2: Mass, ChargedMass {
-//    public var masses: MassContainer {
-//        calculateMasses()
-//    }
-//
-//    public func calculateMasses() -> MassContainer {
-//        return chains.reduce(zeroMass) { $0 + $1.masses }
-//    }
-// }
-//
-// typealias Protein2 = BioMolecule2<AminoAcid2>
-//
-// extension Protein2 {
-//    func aminoAcids(for chainIndex: Int = 0) -> [AminoAcid2] {
-//        self.residues(for: chainIndex) as [AminoAcid2]
-//    }
-// }
-//
-//
 // public struct BioMolecule2<T: Residue> {
 //    public var name: String = ""
 //    public var info: String = ""
@@ -286,14 +224,6 @@ public extension BioMolecule {
 //        chain.setAdducts(type: protonAdduct, count: charge)
 //
 //        return chain.pseudomolecularIon()
-//    }
-//
-//    func selectionMass(chainIndex index: Int = 0, _ range: ChainRange) -> MassContainer {
-//        guard var sub = chains[index].subChain(with: range) else { return zeroMass }
-//
-//        sub.setAdducts(type: protonAdduct, count: charge)
-//
-//        return sub.pseudomolecularIon()
 //    }
 //
 //    func isoelectricPoint(chainIndex index: Int = -1) -> Double {
