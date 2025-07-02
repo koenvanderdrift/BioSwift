@@ -103,7 +103,24 @@ public extension String {
     func nsrange(from sequenceRange: ChainRange) -> NSRange? {
         NSRange(from: sequenceRange)
     }
+    
+    func indicesOf(string: String) -> [Int] {
+        var indices = [Int]()
+        var searchStartIndex = startIndex
+
+        while searchStartIndex < endIndex,
+              let range = range(of: string, range: searchStartIndex ..< endIndex),
+              !range.isEmpty
+        {
+            let index = distance(from: startIndex, to: range.lowerBound)
+            indices.append(index)
+            searchStartIndex = range.upperBound
+        }
+
+        return indices
+    }
 }
+
 
 extension StringProtocol {
     subscript(offset: Int) -> Element {

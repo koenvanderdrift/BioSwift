@@ -60,7 +60,27 @@ public extension BioMolecule {
         chains[chainIndex].setAdducts(type: type, count: count)
         adducts = [Adduct](repeating: type, count: count)
     }
+
+    func countResidues<T>(for chainIndex: Int = 0) -> [T: Int] {
+        if let residues = residues(for: chainIndex) as? [T] {
+            let groupedResidues = Dictionary(grouping: residues, by: { $0 })
+                .mapValues { residues in residues.count }
+
+            return groupedResidues
+        }
+    
+        return [:]
+    }
+
+    func residueLocations(for chainIndex: Int = 0, with identifiers: [String]) -> [Int] {
+        let result = identifiers.map { i in
+            chains[chainIndex].sequenceString.indicesOf(string: i)
+        }
+        
+        return result.flatMap { $0 }
+    }
 }
+
 
 // public protocol Residue2: Symbol, Structure {
 //    var oneLetterCode: String { get }
