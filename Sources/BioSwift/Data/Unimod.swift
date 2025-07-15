@@ -30,9 +30,10 @@ public class UnimodParser: NSObject {
     private let specificity = "umod:specificity"
     private let neutralLoss = "umod:NeutralLoss"
     private let element = "umod:element"
-
+    
     private let titleAttributeKey = "title"
     private let siteAttributeKey = "site"
+    private let positionAttributeKey = "position"
     private let classificationAttributeKey = "classification"
     private let symbolAttributeKey = "symbol"
     private let numberAttributeKey = "number"
@@ -60,6 +61,7 @@ public class UnimodParser: NSObject {
 
     var modificationName = ""
     var modificationSites = [String]()
+    var modificationPositions = [String]()
     var modificationElements = [String: Int]()
 
     var aminoAcidName = ""
@@ -132,6 +134,9 @@ extension UnimodParser: XMLParserDelegate {
             {
                 modificationSites.append(site)
             }
+            else if let position = attributeDict[positionAttributeKey] {
+                modificationPositions.append(position)
+            }
         } else if elementName == neutralLoss {
             isNeutralLoss = true
         } else if elementName == element {
@@ -190,13 +195,14 @@ extension UnimodParser: XMLParserDelegate {
             isNeutralLoss = false
         } else if elementName == modification {
             if modificationName.isEmpty == false {
-                let mod = Modification(name: modificationName, elements: modificationElements, sites: modificationSites)
+                let mod = Modification(name: modificationName, elements: modificationElements, sites: modificationSites, positions: modificationPositions)
 
                 modificationLibrary.append(mod)
 
                 modificationName.removeAll()
-                modificationSites.removeAll()
                 modificationElements.removeAll()
+                modificationSites.removeAll()
+                modificationPositions.removeAll()
 
                 isModification = false
             }

@@ -91,26 +91,30 @@ public struct Modification: Decodable {
     public let name: String
     public let reactions: [Reaction]
     public let sites: [String] // sites it can attach to
+    public let positions: [String] // positions it can attach to
 
     enum CodingKeys: String, CodingKey {
         case name
         case reactions
         case sites
+        case positions
     }
 
     public init(from _: Decoder) throws {
         name = ""
         reactions = []
         sites = []
+        positions = []
     }
 
-    public init(name: String, reactions: [Reaction], sites: [String] = []) {
+    public init(name: String, reactions: [Reaction], sites: [String] = [], positions: [String] = []) {
         self.name = name
         self.reactions = reactions
         self.sites = sites
+        self.positions = positions
     }
 
-    public init(name: String, elements: [String: Int], sites: [String] = []) {
+    public init(name: String, elements: [String: Int], sites: [String] = [], positions: [String] = []) {
         var reactions = [Reaction]()
 
         let negativeElements = elements.filter { $0.value < 0 }
@@ -125,13 +129,14 @@ public struct Modification: Decodable {
             reactions.append(Reaction.add(group))
         }
 
-        self.init(name: name, reactions: reactions, sites: sites)
+        self.init(name: name, reactions: reactions, sites: sites, positions: positions)
     }
 
     public init(_ modification: Modification) {
         name = modification.name
         sites = modification.sites
         reactions = modification.reactions
+        positions = modification.positions
     }
 }
 
