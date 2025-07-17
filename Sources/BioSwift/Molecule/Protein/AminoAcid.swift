@@ -110,7 +110,11 @@ public struct AminoAcid: Residue, Codable {
     }
 
     public func allowedModifications() -> [Modification] {
-        modificationLibrary.filter { $0.sites.contains(identifier) == true }
+        modificationLibrary.filter { mod in
+            mod.specificities.contains { spec in
+                spec.site == identifier
+            }
+        }
     }
 }
 

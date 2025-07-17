@@ -14,8 +14,9 @@ public let zeroModification = Modification(name: unmodifiedString, elements: [:]
 public let nTermModification = Modification(name: "N-Term", reactions: [.add(hydrogen)])
 public let cTermModification = Modification(name: "C-Term", reactions: [.add(hydroxyl)])
 
-public let lossOfWater = Modification(name: "Loss of Water", reactions: [.remove(water)], sites: ["S", "T", "E", "D"])
-public let lossOfAmmonia = Modification(name: "Loss of Ammonia", reactions: [.remove(ammonia)], sites: ["R", "Q", "N", "K"])
+public let lossOfWater = Modification(name: "Loss of Water", reactions: [.remove(water)], specificities: [ModificationSpecificity(site: "S", position: "Anywhere"), ModificationSpecificity(site: "T", position: "Anywhere"), ModificationSpecificity(site: "E", position: "Anywhere"), ModificationSpecificity(site: "D", position: "Anywhere")])
+
+public let lossOfAmmonia = Modification(name: "Loss of Ammonia", reactions: [.remove(ammonia)], specificities: [ModificationSpecificity(site: "R", position: "Anywhere"), ModificationSpecificity(site: "Q", position: "Anywhere"), ModificationSpecificity(site: "SN", position: "Anywhere"), ModificationSpecificity(site: "K", position: "Anywhere")])
 
 public indirect enum Reaction {
     case add(FunctionalGroup)
@@ -79,7 +80,7 @@ extension Modifiable {
     }
 }
 
-public struct Modification: Decodable {
+public struct ModificationSpecificity {
     /*
      via: https://www.unimod.org/fields.html
 
@@ -88,33 +89,34 @@ public struct Modification: Decodable {
      Position: Chosen from a controlled list of categories. Choose "Anywhere" if the modification applies to a residue independent of its position, (e.g. oxidation of methionine). Choose "Any N-term" or "Any C-term" if the modification applies to a residue only when it is at a peptide terminus, (e.g. conversion of methionine to homoserine). Choose "Protein N-term" or "Protein C-term" if the modification only applies to the original terminus of the intact protein, not new peptide termini created by digestion, (e.g. post-translational acetylation of the protein amino terminus). If Site was specified as "N-term" or "C-Term", then "Anywhere" becomes equivalent to "Any N-term" or "Any C-term".
      */
 
+    let site: String
+    let position: String
+}
+
+public struct Modification: Decodable {
     public let name: String
     public let reactions: [Reaction]
-    public let sites: [String] // sites it can attach to
-    public let positions: [String] // positions it can attach to
+    public let specificities: [ModificationSpecificity]
 
     enum CodingKeys: String, CodingKey {
         case name
         case reactions
-        case sites
-        case positions
+        case specificity
     }
 
     public init(from _: Decoder) throws {
         name = ""
+        specificities = []
         reactions = []
-        sites = []
-        positions = []
     }
 
-    public init(name: String, reactions: [Reaction], sites: [String] = [], positions: [String] = []) {
+    public init(name: String, reactions: [Reaction], specificities: [ModificationSpecificity] = []) {
         self.name = name
+        self.specificities = specificities
         self.reactions = reactions
-        self.sites = sites
-        self.positions = positions
     }
 
-    public init(name: String, elements: [String: Int], sites: [String] = [], positions: [String] = []) {
+    public init(name: String, elements: [String: Int], specificities: [ModificationSpecificity] = []) {
         var reactions = [Reaction]()
 
         let negativeElements = elements.filter { $0.value < 0 }
@@ -129,14 +131,13 @@ public struct Modification: Decodable {
             reactions.append(Reaction.add(group))
         }
 
-        self.init(name: name, reactions: reactions, sites: sites, positions: positions)
+        self.init(name: name, reactions: reactions, specificities: specificities)
     }
 
     public init(_ modification: Modification) {
         name = modification.name
-        sites = modification.sites
+        specificities = modification.specificities
         reactions = modification.reactions
-        positions = modification.positions
     }
 }
 

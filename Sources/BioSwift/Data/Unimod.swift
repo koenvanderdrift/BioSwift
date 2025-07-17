@@ -60,9 +60,8 @@ public class UnimodParser: NSObject {
     var elementAverageMass = ""
 
     var modificationName = ""
-    var modificationSites = [String]()
-    var modificationPositions = [String]()
     var modificationElements = [String: Int]()
+    var modificationSpecificities = [ModificationSpecificity]()
 
     var aminoAcidName = ""
     var aminoAcidOneLetterCode = ""
@@ -129,13 +128,10 @@ extension UnimodParser: XMLParserDelegate {
                 modificationName = title.replacingOccurrences(of: "->", with: " " + rightArrow + " ")
             }
         } else if elementName == specificity {
-            if let site = attributeDict[siteAttributeKey],
+            if let site = attributeDict[siteAttributeKey], let position = attributeDict[positionAttributeKey],
                let classification = attributeDict[classificationAttributeKey], classification.contains("Isotopic label") == false
             {
-                modificationSites.append(site)
-            }
-            if let position = attributeDict[positionAttributeKey] {
-                modificationPositions.append(position)
+                modificationSpecificities.append(ModificationSpecificity(site: site, position: position))
             }
         } else if elementName == neutralLoss {
             isNeutralLoss = true
@@ -195,14 +191,13 @@ extension UnimodParser: XMLParserDelegate {
             isNeutralLoss = false
         } else if elementName == modification {
             if modificationName.isEmpty == false {
-                let mod = Modification(name: modificationName, elements: modificationElements, sites: modificationSites, positions: modificationPositions)
+                let mod = Modification(name: modificationName, elements: modificationElements, specificities: modificationSpecificities)
 
                 modificationLibrary.append(mod)
 
                 modificationName.removeAll()
                 modificationElements.removeAll()
-                modificationSites.removeAll()
-                modificationPositions.removeAll()
+                modificationSpecificities.removeAll()
 
                 isModification = false
             }
