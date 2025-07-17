@@ -30,7 +30,7 @@ public class UnimodParser: NSObject {
     private let specificity = "umod:specificity"
     private let neutralLoss = "umod:NeutralLoss"
     private let element = "umod:element"
-    
+
     private let titleAttributeKey = "title"
     private let siteAttributeKey = "site"
     private let positionAttributeKey = "position"
@@ -78,7 +78,7 @@ public class UnimodParser: NSObject {
 
     @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
     public func parseXML() async throws {
-        skipTitleStrings = [cation, unknown, xlink, atypeion, "2H", "13C", "15N"]
+//        skipTitleStrings = [cation, unknown, xlink, atypeion, "2H", "13C", "15N"]
 
         do {
             let data = try loadDataFromBundle(from: "unimod", withExtension: "xml")
@@ -96,7 +96,7 @@ public class UnimodParser: NSObject {
     }
 
     public func parseXML() throws {
-        skipTitleStrings = [cation, unknown, xlink, atypeion, "2H", "13C", "15N"]
+//        skipTitleStrings = [cation, unknown, xlink, atypeion, "2H", "13C", "15N"]
 
         do {
             let data = try loadDataFromBundle(from: "unimod", withExtension: "xml")
@@ -134,7 +134,7 @@ extension UnimodParser: XMLParserDelegate {
             {
                 modificationSites.append(site)
             }
-            else if let position = attributeDict[positionAttributeKey] {
+            if let position = attributeDict[positionAttributeKey] {
                 modificationPositions.append(position)
             }
         } else if elementName == neutralLoss {
@@ -181,9 +181,9 @@ extension UnimodParser: XMLParserDelegate {
         if elementName == elem {
             if elementFullName.isEmpty == false {
                 let chemicalElement = ChemicalElement(name: elementFullName, symbol: elementSymbol, monoisotopicMass: Dalton(elementMonoisotopicMass) ?? 0.0, averageMass: Dalton(elementAverageMass) ?? 0.0)
-                
+
                 elementLibrary.append(chemicalElement)
-                
+
                 elementSymbol.removeAll()
                 elementFullName.removeAll()
                 elementMonoisotopicMass.removeAll()
