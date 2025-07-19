@@ -14,9 +14,19 @@ public let zeroModification = Modification(name: unmodifiedString, elements: [:]
 public let nTermModification = Modification(name: "N-Term", reactions: [.add(hydrogen)])
 public let cTermModification = Modification(name: "C-Term", reactions: [.add(hydroxyl)])
 
-public let lossOfWater = Modification(name: "Loss of Water", reactions: [.remove(water)], specificities: [ModificationSpecificity(site: "S", position: "Anywhere"), ModificationSpecificity(site: "T", position: "Anywhere"), ModificationSpecificity(site: "E", position: "Anywhere"), ModificationSpecificity(site: "D", position: "Anywhere")])
+public let lossOfWater = Modification(name: "Loss of Water", reactions: [.remove(water)], specificities: [
+    ModificationSpecificity(site: "S"),
+    ModificationSpecificity(site: "T"),
+    ModificationSpecificity(site: "E"),
+    ModificationSpecificity(site: "D")
+])
 
-public let lossOfAmmonia = Modification(name: "Loss of Ammonia", reactions: [.remove(ammonia)], specificities: [ModificationSpecificity(site: "R", position: "Anywhere"), ModificationSpecificity(site: "Q", position: "Anywhere"), ModificationSpecificity(site: "SN", position: "Anywhere"), ModificationSpecificity(site: "K", position: "Anywhere")])
+public let lossOfAmmonia = Modification(name: "Loss of Ammonia", reactions: [.remove(ammonia)], specificities: [
+    ModificationSpecificity(site: "R"),
+    ModificationSpecificity(site: "Q"),
+    ModificationSpecificity(site: "N"),
+    ModificationSpecificity(site: "K")
+])
 
 public indirect enum Reaction {
     case add(FunctionalGroup)
@@ -84,13 +94,22 @@ public struct ModificationSpecificity {
     /*
      via: https://www.unimod.org/fields.html
 
-     Site: Chosen from a controlled list of categories. Choose "N-term" or "C-Term" if the modification applies to a terminus independent of the identity of the terminal residue, (e.g. methylation of a carboxy terminus).
+     Site: Chosen from a controlled list of categories. Choose "N-term" or "C-Term" if the modification applies to a terminus independent of the identity of the terminal residue, (e.g. methylation of a carboxy terminus). Required
 
-     Position: Chosen from a controlled list of categories. Choose "Anywhere" if the modification applies to a residue independent of its position, (e.g. oxidation of methionine). Choose "Any N-term" or "Any C-term" if the modification applies to a residue only when it is at a peptide terminus, (e.g. conversion of methionine to homoserine). Choose "Protein N-term" or "Protein C-term" if the modification only applies to the original terminus of the intact protein, not new peptide termini created by digestion, (e.g. post-translational acetylation of the protein amino terminus). If Site was specified as "N-term" or "C-Term", then "Anywhere" becomes equivalent to "Any N-term" or "Any C-term".
+     Position: Chosen from a controlled list of categories. Choose "Anywhere" if the modification applies to a residue independent of its position, (e.g. oxidation of methionine). Choose "Any N-term" or "Any C-term" if the modification applies to a residue only when it is at a peptide terminus, (e.g. conversion of methionine to homoserine). Choose "Protein N-term" or "Protein C-term" if the modification only applies to the original terminus of the intact protein, not new peptide termini created by digestion, (e.g. post-translational acetylation of the protein amino terminus). If Site was specified as "N-term" or "C-Term", then "Anywhere" becomes equivalent to "Any N-term" or "Any C-term". Required
+
+     Classification: Chosen from a controlled list of categories. If you would like additional categories defined, please email details to unimod@unimod.org Required
      */
 
     public let site: String
     public let position: String
+    public let classification: String
+    
+    public init(site: String, position: String = "Anywhere", classification: String = "") {
+        self.site = site
+        self.position = position
+        self.classification = classification
+    }
 }
 
 public struct Modification: Decodable {

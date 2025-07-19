@@ -129,9 +129,9 @@ extension UnimodParser: XMLParserDelegate {
             }
         } else if elementName == specificity {
             if let site = attributeDict[siteAttributeKey], let position = attributeDict[positionAttributeKey],
-               let classification = attributeDict[classificationAttributeKey], classification.contains("Isotopic label") == false
+               let classification = attributeDict[classificationAttributeKey]
             {
-                modificationSpecificities.append(ModificationSpecificity(site: site, position: position))
+                modificationSpecificities.append(ModificationSpecificity(site: site, position: position, classification: classification))
             }
         } else if elementName == neutralLoss {
             isNeutralLoss = true
