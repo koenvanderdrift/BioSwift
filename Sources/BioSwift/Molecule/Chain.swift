@@ -34,7 +34,7 @@ public extension NSRange {
     }
 }
 
-public protocol Chain: ChargedMass {
+public protocol Chain: Chargeable {
     var residues: [Residue] { get set }
     var rangeInParent: ChainRange { get set }
     var name: String { get set }

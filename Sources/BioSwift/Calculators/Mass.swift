@@ -101,11 +101,11 @@ public extension Mass {
     }
 }
 
-public protocol ChargedMass: Mass {
+public protocol Chargeable: Mass {
     var adducts: [Adduct] { get set }
 }
 
-public extension ChargedMass {
+public extension Chargeable {
     var charge: Int {
         adducts.reduce(0) { $0 + $1.charge }
     }
@@ -134,7 +134,7 @@ public extension ChargedMass {
     }
 }
 
-public extension Collection where Element: ChargedMass {
+public extension Collection where Element: Chargeable {
     func charge(minCharge: Int, maxCharge: Int) -> [Element] {
         flatMap { sequence in
             (minCharge ... maxCharge).map { charge in

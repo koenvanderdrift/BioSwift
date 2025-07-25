@@ -21,7 +21,7 @@ public struct BioMolecule<Residue> {
     }
 }
 
-extension BioMolecule: ChargedMass {
+extension BioMolecule: Chargeable {
     public var masses: MassContainer {
         calculateMasses()
     }
