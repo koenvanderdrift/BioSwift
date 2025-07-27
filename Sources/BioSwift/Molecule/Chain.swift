@@ -44,6 +44,15 @@ public struct Chain<T: Residue> {
     public var adducts: [Adduct] = []
     public var fragmentType: PeptideFragmentType = .undefined
     public var index = -1
+    
+    public init(sequence: String) {
+        self.sequence = sequence
+    }
+    
+    public init(residues: [T]) {
+        self.residues = residues
+    }
+
 }
 
 public extension Chain {
