@@ -96,11 +96,13 @@ extension Chain: Chargeable {
     public var masses: MassContainer {
         calculateMasses()
     }
-
+    
     public func calculateMasses() -> MassContainer {
         residueMasses() + modificationMasses() + terminalMasses()
     }
+}
 
+public extension Chain {
     func createResidues(from string: String) -> [T] {
         []
     }
