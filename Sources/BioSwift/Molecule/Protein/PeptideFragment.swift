@@ -81,22 +81,9 @@ public protocol Fragmenting {
     var index: Int { get set }
 }
 
-public struct PeptideFragment: Chain {
-    public var rangeInParent: ChainRange = zeroChainRange
-    public var name: String = ""
-    public var termini: (first: Modification, last: Modification)?
-    public var residues: [Residue] = []
-    public var adducts: [Adduct] = []
-    public var fragmentType: PeptideFragmentType = .undefined
-    public var index: Int = -1
-    public var modifications: [LocalizedModification] = []
+public typealias PeptideFragment = Chain<AminoAcid>
 
-    public var aminoAcids: [AminoAcid] {
-        residues as? [AminoAcid] ?? []
-    }
-}
-
-public extension PeptideFragment {
+extension PeptideFragment: Fragmenting {
     init(residues: [AminoAcid], type: PeptideFragmentType, index: Int = -1, adducts: [Adduct], modifications: [LocalizedModification] = []) {
         self.residues = residues
         self.fragmentType = type
@@ -109,11 +96,11 @@ public extension PeptideFragment {
         self.residues = createResidues(from: sequence)
     }
 
-    init(residues: [Residue]) {
-        self.residues = residues as? [AminoAcid] ?? []
+    init(residues: [T]) {
+        self.residues = residues
     }
 
-    func createResidues(from string: String) -> [Residue] {
+    func createResidues(from string: String) -> [T] {
         string.compactMap { char in
             aminoAcidLibrary.first(where: { $0.identifier == String(char) })
         }
@@ -158,10 +145,26 @@ public extension PeptideFragment {
     }
 
     func maxNumberOfCharges() -> Int {
-        if let aa = residues as? [AminoAcid] {
-            return aa.filter { $0.properties.contains([.chargedPos]) }.count
-        }
+        //if let aa = residues as? [AminoAcid] {
+            return residues.filter { $0.properties.contains([.chargedPos]) }.count
+        //}
 
-        return 0
+        //return 0
     }
 }
+
+//public struct PeptideFragment: Chain {
+//    public var rangeInParent: ChainRange = zeroChainRange
+//    public var name: String = ""
+//    public var termini: (first: Modification, last: Modification)?
+//    public var residues: [Residue] = []
+//    public var adducts: [Adduct] = []
+//    public var fragmentType: PeptideFragmentType = .undefined
+//    public var index: Int = -1
+//    public var modifications: [LocalizedModification] = []
+//
+//    public var aminoAcids: [AminoAcid] {
+//        residues as? [AminoAcid] ?? []
+//    }
+//}
+

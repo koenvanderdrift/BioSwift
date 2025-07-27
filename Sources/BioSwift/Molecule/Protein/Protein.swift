@@ -28,15 +28,11 @@ public extension Protein {
     }
 
     func isoelectricPoint(for chainIndex: Int = 0) -> Double {
-        if let peptide = chains[chainIndex] as? Peptide {
-            return peptide.isoelectricPoint()
-        }
-
-        return 0
+        return chains[chainIndex].isoelectricPoint()
     }
 
     func isoelectricPoint(for chainIndex: Int = 0, with range: ChainRange) -> Double {
-        if let peptide = chains[chainIndex].subChain(with: range) as? Peptide {
+        if let peptide = chains[chainIndex].subChain(with: range) {
             return peptide.isoelectricPoint()
         }
 

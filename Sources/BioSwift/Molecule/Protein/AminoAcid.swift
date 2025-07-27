@@ -117,13 +117,3 @@ public struct AminoAcid: Residue, Codable {
         }
     }
 }
-
-extension AminoAcid: Hashable {
-    public static func == (lhs: AminoAcid, rhs: AminoAcid) -> Bool {
-        lhs.threeLetterCode == rhs.threeLetterCode
-    }
-
-    public func hash(into hasher: inout Hasher) {
-        hasher.combine(threeLetterCode)
-    }
-}

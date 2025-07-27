@@ -8,7 +8,7 @@
 
 import Foundation
 
-public protocol Residue: Symbol, Structure, Modifiable {
+public protocol Residue: Symbol, Structure, Modifiable, Hashable {
     var oneLetterCode: String { get }
     var threeLetterCode: String { get }
     var modification: Modification? { get set }
@@ -25,5 +25,15 @@ public extension Residue {
 
     var masses: MassContainer {
         formula.masses + modificationMasses()
+    }
+}
+
+extension Residue {
+    public static func == (lhs: Self, rhs: Self) -> Bool {
+        lhs.threeLetterCode == rhs.threeLetterCode
+    }
+
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(threeLetterCode)
     }
 }

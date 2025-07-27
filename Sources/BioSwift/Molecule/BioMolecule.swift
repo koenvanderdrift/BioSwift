@@ -8,15 +8,15 @@
 
 import Foundation
 
-public struct BioMolecule<Residue> {
+public struct BioMolecule<T: Residue> {
     public var adducts: [Adduct] = []
-    public var chains: [Chain]
+    public var chains: [Chain<T>]
 
-    public init(chain: Chain) {
+    public init(chain: Chain<T>) {
         self.init(chains: [chain])
     }
 
-    public init(chains: [Chain]) {
+    public init(chains: [Chain<T>]) {
         self.chains = chains
     }
 }
@@ -86,12 +86,12 @@ public extension BioMolecule {
         chains[chainIndex].numberOfResidues
     }
 
-    func residues(for chainIndex: Int = 0) -> [Residue] {
-        if let residues = chains[chainIndex].residues as? [Residue] {
-            return residues
-        }
+    func residues(for chainIndex: Int = 0) -> [T] {
+//        if let residues = chains[chainIndex].residues {
+//            return residues
+//        }
 
-        return []
+        return chains[chainIndex].residues
     }
 
     func sequence(for chainIndex: Int = 0) -> String {
@@ -103,15 +103,12 @@ public extension BioMolecule {
         adducts = [Adduct](repeating: type, count: count)
     }
 
-    func countResidues<T>(for chainIndex: Int = 0) -> [T: Int] {
-        if let residues = residues(for: chainIndex) as? [T] {
-            let groupedResidues = Dictionary(grouping: residues, by: { $0 })
-                .mapValues { residues in residues.count }
+    func countResidues(for chainIndex: Int = 0) -> [T: Int] {
+        let residues = residues(for: chainIndex)
+        let groupedResidues = Dictionary(grouping: residues, by: { $0 })
+            .mapValues { residues in residues.count }
 
-            return groupedResidues
-        }
-    
-        return [:]
+        return groupedResidues
     }
 
     func residueLocations(for chainIndex: Int = 0, with identifiers: [String]) -> [Int] {

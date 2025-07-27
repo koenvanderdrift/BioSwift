@@ -14,9 +14,9 @@ public struct Hydro: Codable {
 }
 
 public class Hydropathy {
-    public var residues: [Residue] = []
+    public var residues: [any Residue] = []
 
-    public init(residues: [Residue]) {
+    public init(residues: [any Residue]) {
         self.residues = residues
     }
 
