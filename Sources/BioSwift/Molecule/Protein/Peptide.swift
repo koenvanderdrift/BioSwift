@@ -13,12 +13,18 @@ public typealias Peptide = Chain<AminoAcid>
 public extension Peptide {
     func hydropathyValues(for hydropathyType: String) -> [Double] {
         let values = Hydropathy(residues: residues).hydrophathyValues(for: hydropathyType)
-
+        
         return residues.compactMap { values[$0.oneLetterCode] }
     }
-
+    
     func isoelectricPoint() -> Double {
         return Hydropathy(residues: residues).isoElectricPoint()
+    }
+    
+    func createResidues(from string: String) -> [Residue] {
+        string.compactMap { char in
+            aminoAcidLibrary.first(where: { $0.identifier == String(char) })
+        }
     }
 }
 

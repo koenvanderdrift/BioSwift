@@ -47,12 +47,12 @@ public struct Chain<T: Residue> {
     
     public init(sequence: String) {
         self.sequence = sequence
+        self.residues = self.createResidues(from: sequence)
     }
     
     public init(residues: [T]) {
         self.residues = residues
     }
-
 }
 
 public extension Chain {
