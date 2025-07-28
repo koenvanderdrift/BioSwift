@@ -20,12 +20,6 @@ public extension Peptide {
     func isoelectricPoint() -> Double {
         return Hydropathy(residues: residues).isoElectricPoint()
     }
-    
-    func createResidues(from string: String) -> [Residue] {
-        string.compactMap { char in
-            aminoAcidLibrary.first(where: { $0.identifier == String(char) })
-        }
-    }
 }
 
 

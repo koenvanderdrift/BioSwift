@@ -42,16 +42,24 @@ public struct Chain<T: Residue> {
     public var termini: (first: Modification, last: Modification)?
     public var modifications: [LocalizedModification] = []
     public var adducts: [Adduct] = []
+    
+    // TODO: this is for PeptideFragment only
     public var fragmentType: PeptideFragmentType = .undefined
     public var index = -1
     
     public init(sequence: String) {
         self.sequence = sequence
-        self.residues = self.createResidues(from: sequence)
     }
     
     public init(residues: [T]) {
         self.residues = residues
+    }
+    
+    // TODO: make generic
+    public func createResidues(from string: String) -> [AminoAcid] {
+        string.compactMap { char in
+            aminoAcidLibrary.first(where: { $0.identifier == String(char) })
+        }
     }
 }
 
@@ -112,10 +120,6 @@ extension Chain: Chargeable {
 }
 
 public extension Chain {
-    func createResidues(from string: String) -> [T] {
-        []
-    }
-
     func residueMasses() -> MassContainer {
         residues.reduce(zeroMass) { $0 + $1.masses }
     }
@@ -146,9 +150,10 @@ public extension Chain {
             let range = editedRange.location ..< editedRange.location + changeInLength
             let s = String(sequence[range])
 
-            let newResidues = createResidues(from: s)
-            residues.insert(contentsOf: newResidues, at: editedRange.location)
-
+            if let newResidues = createResidues(from: s) as? [T] {
+                residues.insert(contentsOf: newResidues, at: editedRange.location)
+            }
+            
         default:
             fatalError("TODO")
         }

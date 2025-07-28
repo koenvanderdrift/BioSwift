@@ -93,17 +93,12 @@ extension PeptideFragment: Fragmenting {
     }
 
     init(sequence: String) {
+        self.sequence = sequence
         self.residues = createResidues(from: sequence)
     }
 
     init(residues: [T]) {
         self.residues = residues
-    }
-
-    func createResidues(from string: String) -> [T] {
-        string.compactMap { char in
-            aminoAcidLibrary.first(where: { $0.identifier == String(char) })
-        }
     }
 
     func calculateMasses() -> MassContainer {
