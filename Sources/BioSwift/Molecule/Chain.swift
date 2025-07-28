@@ -39,7 +39,7 @@ public struct Chain<T: Residue> {
     public var residues: [T] = []
     public var rangeInParent: ChainRange = zeroChainRange
     public var name: String = ""
-    public var termini: (first: Modification, last: Modification)?
+    public var termini: (first: Modification, last: Modification)? = (nTermModification, cTermModification)
     public var modifications: [LocalizedModification] = []
     public var adducts: [Adduct] = []
     
