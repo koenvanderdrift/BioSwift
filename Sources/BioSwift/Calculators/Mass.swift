@@ -33,9 +33,9 @@ extension MassRange {
 }
 
 public enum MassType: String {
-    case average
-    case monoisotopic
-    case nominal
+    case average = "average"
+    case monoisotopic = "monoisotopic"
+    case nominal = "nominal"
 }
 
 public struct MassContainer {
