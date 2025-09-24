@@ -28,12 +28,12 @@ public extension Residue {
     }
 }
 
-extension Residue {
-    public static func == (lhs: Self, rhs: Self) -> Bool {
+public extension Residue {
+    static func == (lhs: Self, rhs: Self) -> Bool {
         lhs.threeLetterCode == rhs.threeLetterCode
     }
 
-    public func hash(into hasher: inout Hasher) {
+    func hash(into hasher: inout Hasher) {
         hasher.combine(threeLetterCode)
     }
 }

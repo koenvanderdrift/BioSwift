@@ -34,7 +34,7 @@ public struct FunctionalGroup: Structure, Codable {
         let container = try decoder.container(keyedBy: CodingKeys.self)
 
         name = try container.decode(String.self, forKey: .name)
-        formula = Formula(try container.decode(String.self, forKey: .formula))
+        formula = try Formula(container.decode(String.self, forKey: .formula))
         adducts = []
     }
 

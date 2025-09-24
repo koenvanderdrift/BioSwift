@@ -86,7 +86,7 @@ public typealias PeptideFragment = Chain<AminoAcid>
 extension PeptideFragment: Fragmenting {
     init(residues: [AminoAcid], type: PeptideFragmentType, index: Int = -1, adducts: [Adduct], modifications: [LocalizedModification] = []) {
         self.residues = residues
-        self.fragmentType = type
+        fragmentType = type
         self.index = index
         self.adducts = adducts
         self.modifications = modifications
@@ -94,7 +94,7 @@ extension PeptideFragment: Fragmenting {
 
     init(sequence: String) {
         self.sequence = sequence
-        self.residues = createResidues(from: sequence)
+        residues = createResidues(from: sequence)
     }
 
     init(residues: [T]) {
@@ -140,15 +140,15 @@ public extension PeptideFragment {
     }
 
     func maxNumberOfCharges() -> Int {
-        //if let aa = residues as? [AminoAcid] {
-            return residues.filter { $0.properties.contains([.chargedPos]) }.count
-        //}
+        // if let aa = residues as? [AminoAcid] {
+        return residues.filter { $0.properties.contains([.chargedPos]) }.count
+        // }
 
-        //return 0
+        // return 0
     }
 }
 
-//public struct PeptideFragment: Chain {
+// public struct PeptideFragment: Chain {
 //    public var rangeInParent: ChainRange = zeroChainRange
 //    public var name: String = ""
 //    public var termini: (first: Modification, last: Modification)?
@@ -161,5 +161,4 @@ public extension PeptideFragment {
 //    public var aminoAcids: [AminoAcid] {
 //        residues as? [AminoAcid] ?? []
 //    }
-//}
-
+// }

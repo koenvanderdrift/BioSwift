@@ -269,7 +269,7 @@ extension Formula: Mass {
     public var masses: MassContainer {
         calculateMasses()
     }
-    
+
     public func calculateMasses() -> MassContainer {
         elements.reduce(zeroMass) { $0 + $1.masses }
     }

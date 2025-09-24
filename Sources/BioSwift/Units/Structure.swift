@@ -8,7 +8,6 @@
 
 import Foundation
 
-
 // TODO: rethink Structure, Mass, ChargedMass
 
 public protocol Structure: Mass {

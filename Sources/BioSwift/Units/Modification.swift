@@ -18,14 +18,14 @@ public let lossOfWater = Modification(name: "Loss of Water", reactions: [.remove
     ModificationSpecificity(site: "S"),
     ModificationSpecificity(site: "T"),
     ModificationSpecificity(site: "E"),
-    ModificationSpecificity(site: "D")
+    ModificationSpecificity(site: "D"),
 ])
 
 public let lossOfAmmonia = Modification(name: "Loss of Ammonia", reactions: [.remove(ammonia)], specificities: [
     ModificationSpecificity(site: "R"),
     ModificationSpecificity(site: "Q"),
     ModificationSpecificity(site: "N"),
-    ModificationSpecificity(site: "K")
+    ModificationSpecificity(site: "K"),
 ])
 
 public indirect enum Reaction {
@@ -104,7 +104,7 @@ public struct ModificationSpecificity {
     public let site: String
     public let position: String
     public let classification: String
-    
+
     public init(site: String, position: String = "Anywhere", classification: String = "") {
         self.site = site
         self.position = position

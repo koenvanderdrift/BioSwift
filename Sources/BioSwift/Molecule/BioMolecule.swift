@@ -39,37 +39,37 @@ public extension BioMolecule {
     func monoIsotopicMass() -> Double {
         return pseudomolecularIon().monoisotopicMass
     }
-    
+
     func averageMass() -> Double {
         return pseudomolecularIon().averageMass
     }
-    
+
     func isoelectricPoint(chainIndex index: Int = 0) -> Double {
         return Hydropathy(residues: chains[index].residues).isoElectricPoint()
     }
 
-    func selectedMonoIsotopicMass(chainIndex index: Int = 0, _ range: ChainRange) -> Double {
+    func selectedMonoIsotopicMass(chainIndex _: Int = 0, _ range: ChainRange) -> Double {
         return selectionMass(range).monoisotopicMass
     }
-    
-    func selectedAverageMass(chainIndex index: Int = 0, _ range: ChainRange) -> Double {
+
+    func selectedAverageMass(chainIndex _: Int = 0, _ range: ChainRange) -> Double {
         return selectionMass(range).averageMass
     }
-    
+
     func selectionMass(chainIndex index: Int = 0, _ range: ChainRange) -> MassContainer {
         guard var sub = chains[index].subChain(with: range) else { return zeroMass }
-        
+
         sub.setAdducts(type: protonAdduct, count: charge)
-        
+
         return sub.pseudomolecularIon()
     }
-    
+
     func selectedIsoelectricPoint(chainIndex index: Int = 0, _ range: ChainRange) -> Double {
         guard let sub = chains[index].subChain(with: range) else { return 0.0 }
 
         return Hydropathy(residues: sub.residues).isoElectricPoint()
     }
-    
+
     func selectionLength(chainIndex index: Int = 0, _ range: ChainRange) -> Int {
         guard let sub = chains[index].subChain(with: range) else { return 0 }
 
@@ -115,11 +115,10 @@ public extension BioMolecule {
         let result = identifiers.map { i in
             chains[chainIndex].sequenceString.indicesOf(string: i)
         }
-        
+
         return result.flatMap { $0 }
     }
 }
-
 
 // public struct BioMolecule2<T: Residue> {
 //    public var name: String = ""

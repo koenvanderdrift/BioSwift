@@ -15,10 +15,10 @@ public enum SearchType: Int {
 }
 
 public enum MassToleranceType: String, CaseIterable {
-    case ppm = "ppm"
+    case ppm
     case dalton = "Da"
     case percent = "%"
-    case mmu = "mmu"
+    case mmu
 }
 
 public extension MassToleranceType {
@@ -70,7 +70,7 @@ public struct MassSearchParameters {
 
         switch tolerance.type {
         case .ppm:
-            let delta = toleranceValue / 1000000
+            let delta = toleranceValue / 1_000_000
             minMass = (1 - delta) * searchValue
             maxMass = (1 + delta) * searchValue
 

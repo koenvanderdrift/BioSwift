@@ -13,17 +13,16 @@ public typealias Peptide = Chain<AminoAcid>
 public extension Peptide {
     func hydropathyValues(for hydropathyType: String) -> [Double] {
         let values = Hydropathy(residues: residues).hydrophathyValues(for: hydropathyType)
-        
+
         return residues.compactMap { values[$0.oneLetterCode] }
     }
-    
+
     func isoelectricPoint() -> Double {
         return Hydropathy(residues: residues).isoElectricPoint()
     }
 }
 
-
-//public struct Peptide: Chain {
+// public struct Peptide: Chain {
 //    public var rangeInParent: ChainRange = zeroChainRange
 //    public var name: String = ""
 //    public var termini: (first: Modification, last: Modification)? = (nTermModification, cTermModification)
@@ -40,5 +39,5 @@ public extension Peptide {
 //    public var aminoAcids: [AminoAcid] {
 //        residues as? [AminoAcid] ?? []
 //    }
-//}
+// }
 //

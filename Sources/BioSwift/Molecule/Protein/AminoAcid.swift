@@ -69,7 +69,7 @@ public struct AminoAcid: Residue, Codable {
         representedBy = try container.decode([String].self, forKey: .representedBy)
         oneLetterCode = try container.decode(String.self, forKey: .oneLetterCode)
         threeLetterCode = try container.decode(String.self, forKey: .threeLetterCode)
-        formula = Formula(try container.decode(String.self, forKey: .formula))
+        formula = try Formula(container.decode(String.self, forKey: .formula))
         name = try container.decode(String.self, forKey: .name)
         adducts = []
 

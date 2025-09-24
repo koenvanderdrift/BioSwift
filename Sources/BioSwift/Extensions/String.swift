@@ -82,7 +82,7 @@ public extension String {
     internal func containsCharactersFrom(substring: String) -> Bool {
         let set = CharacterSet(charactersIn: substring)
 
-        return (rangeOfCharacter(from: set) != nil)
+        return rangeOfCharacter(from: set) != nil
     }
 
     internal func substring(from: Int, to: Int) -> Substring? {
@@ -103,7 +103,7 @@ public extension String {
     func nsrange(from sequenceRange: ChainRange) -> NSRange? {
         NSRange(from: sequenceRange)
     }
-    
+
     func indicesOf(string: String) -> [Int] {
         var indices = [Int]()
         var searchStartIndex = startIndex
@@ -120,7 +120,6 @@ public extension String {
         return indices
     }
 }
-
 
 extension StringProtocol {
     subscript(offset: Int) -> Element {

@@ -32,12 +32,12 @@ public struct ChemicalElement: Codable, Symbol {
         self.symbol = symbol
         self.isotopes = isotopes
     }
-    
+
     public init(name: String, symbol: String, monoisotopicMass: Dalton, averageMass: Dalton) {
         self.name = name
         self.symbol = symbol
-        self.isotopes = []
-        
+        isotopes = []
+
         self.monoisotopicMass = monoisotopicMass
         self.averageMass = averageMass
     }
@@ -75,7 +75,6 @@ extension ChemicalElement: Mass {
     }
 
     public func calculateMasses() -> MassContainer {
-        
         var currentAbundance = Dalton(0.0)
 
         var monoisotopicMass = Dalton(0.0)

@@ -167,7 +167,7 @@ public class PeptideFragmenter {
                 let yIon = PeptideFragment(residues: Array(peptide.residues[index ..< endIndex]), type: .yIon, index: i, adducts: Array(repeatElement(protonAdduct, count: z)))
                 result.append(yIon)
 
-                if i > 1 && yIon.canLoseWater() {
+                if i > 1, yIon.canLoseWater() {
                     let yIonLossOfWater = PeptideFragment(residues: yIon.residues, type: .yIonMinusWater, index: i, adducts: yIon.adducts)
                     result.append(yIonLossOfWater)
                 }

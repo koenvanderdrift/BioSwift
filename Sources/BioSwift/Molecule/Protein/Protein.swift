@@ -12,19 +12,19 @@ public typealias Protein = BioMolecule<AminoAcid>
 
 public extension Protein {
     init(sequence: String) {
-        self.chains = [Peptide(sequence: sequence)]
+        chains = [Peptide(sequence: sequence)]
     }
 
     init(sequences: [String]) {
-        self.chains = sequences.map { Peptide(sequence: $0) }
+        chains = sequences.map { Peptide(sequence: $0) }
     }
 
     init(residues: [AminoAcid]) {
-        self.chains = [Peptide(residues: residues)]
+        chains = [Peptide(residues: residues)]
     }
 
     func aminoAcids(for chainIndex: Int = 0) -> [AminoAcid] {
-        self.residues(for: chainIndex) as [AminoAcid]
+        residues(for: chainIndex) as [AminoAcid]
     }
 
     func isoelectricPoint(for chainIndex: Int = 0) -> Double {

@@ -14,11 +14,11 @@ public let zeroNSRange = NSMakeRange(NSNotFound, 0)
 
 public extension ChainRange {
     var fromOneBased: ChainRange {
-        self.lowerBound - 1 ... self.upperBound - 1
+        lowerBound - 1 ... upperBound - 1
     }
 
     var toOneBased: ChainRange {
-        self.lowerBound + 1 ... self.upperBound + 1
+        lowerBound + 1 ... upperBound + 1
     }
 }
 
@@ -42,19 +42,19 @@ public struct Chain<T: Residue> {
     public var termini: (first: Modification, last: Modification)? = (nTermModification, cTermModification)
     public var modifications: [LocalizedModification] = []
     public var adducts: [Adduct] = []
-    
+
     // TODO: this is for PeptideFragment only
     public var fragmentType: PeptideFragmentType = .undefined
     public var index = -1
-    
+
     public init(sequence: String) {
         self.sequence = sequence
     }
-    
+
     public init(residues: [T]) {
         self.residues = residues
     }
-    
+
     // TODO: make generic
     public func createResidues(from string: String) -> [AminoAcid] {
         string.compactMap { char in
@@ -113,7 +113,7 @@ extension Chain: Chargeable {
     public var masses: MassContainer {
         calculateMasses()
     }
-    
+
     public func calculateMasses() -> MassContainer {
         residueMasses() + modificationMasses() + terminalMasses()
     }
@@ -153,7 +153,7 @@ public extension Chain {
             if let newResidues = createResidues(from: s) as? [T] {
                 residues.insert(contentsOf: newResidues, at: editedRange.location)
             }
-            
+
         default:
             fatalError("TODO")
         }
@@ -258,8 +258,8 @@ public extension Chain {
     func getModifications() -> [Modification] {
         var result: [Modification] = []
 
-        residues.forEach {
-            if let mod = $0.modification {
+        for residue in residues {
+            if let mod = residue.modification {
                 result.append(mod)
             }
         }
@@ -268,8 +268,8 @@ public extension Chain {
     }
 
     mutating func setModifcations(_ mods: [LocalizedModification]) {
-        mods.forEach {
-            addModification($0)
+        for mod in mods {
+            addModification(mod)
         }
     }
 
@@ -290,8 +290,7 @@ public extension Chain {
     }
 }
 
-
-//public protocol Chain: Chargeable {
+// public protocol Chain: Chargeable {
 //    var residues: [Residue] { get set }
 //    var rangeInParent: ChainRange { get set }
 //    var name: String { get set }
@@ -303,9 +302,9 @@ public extension Chain {
 //    init(residues: [Residue])
 //
 //    func createResidues(from string: String) -> [Residue]
-//}
+// }
 //
-//public extension Chain {
+// public extension Chain {
 //    static func == (lhs: Self, rhs: Self) -> Bool {
 //        lhs.sequenceString == rhs.sequenceString && lhs.name == rhs.name
 //    }
@@ -349,9 +348,9 @@ public extension Chain {
 //    var numberOfResidues: Int {
 //        residues.count
 //    }
-//}
+// }
 //
-//public extension Chain {
+// public extension Chain {
 //    var masses: MassContainer {
 //        calculateMasses()
 //    }
@@ -527,4 +526,4 @@ public extension Chain {
 //    func modification(at location: Int) -> Modification? {
 //        residue(at: location)?.modification
 //    }
-//}
+// }

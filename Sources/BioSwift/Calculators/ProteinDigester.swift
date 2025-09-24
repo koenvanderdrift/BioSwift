@@ -33,7 +33,7 @@ public class ProteinDigester {
 extension Chain {
     // TODO: this is Protein only
     // TODO: recreate residues
-    
+
     public func digest(using regex: String, with missedCleavages: Int) -> [Peptide] {
         let sites = cleavageSites(for: regex)
 
