@@ -115,7 +115,13 @@ extension Chain: Chargeable {
     }
 
     public func calculateMasses() -> MassContainer {
-        residueMasses() + modificationMasses() + terminalMasses()
+        let result = residueMasses() + modificationMasses()
+        
+        if result != zeroMass {
+            return result + terminalMasses()
+        }
+        
+        return zeroMass
     }
 }
 

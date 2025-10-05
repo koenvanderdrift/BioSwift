@@ -102,7 +102,13 @@ extension PeptideFragment: Fragmenting {
     }
 
     func calculateMasses() -> MassContainer {
-        residueMasses() + modificationMasses() + terminalMasses() + fragmentType.masses
+        let result = residueMasses() + modificationMasses() + fragmentType.masses
+        
+        if result != zeroMass {
+            return result + terminalMasses()
+        }
+        
+        return zeroMass
     }
 }
 
