@@ -213,6 +213,11 @@ final class BioSwiftTests: XCTestCase {
         XCTAssert(subChain?.modification(at: 4) == cysMod) // zero-based
         XCTAssert(subChain?.massOverCharge().monoisotopicMass.roundTo(places: 4) == 1016.4717)
     }
+    
+    func testEmptySequence() {
+        let peptide = Peptide(sequence: "")
+        XCTAssertEqual(peptide.pseudomolecularIon().monoisotopicMass, zeroMass.monoisotopicMass)
+    }
 
     func testDigest() {
         let digester = ProteinDigester(protein: testProtein)
@@ -239,7 +244,7 @@ final class BioSwiftTests: XCTestCase {
     }
 
     func testMassSearch() {
-        if let chain = testProtein.chains.first as? Peptide {
+        if let chain = testProtein.chains.first {
             let searchParameters = MassSearchParameters(searchValue: 609.71,
                                                         tolerance: MassTolerance(type: .ppm, value: 20),
                                                         searchType: .sequential,
@@ -253,7 +258,7 @@ final class BioSwiftTests: XCTestCase {
     }
 
     func testLowMassSearch() {
-        if let chain = testProtein.chains.first as? Peptide {
+        if let chain = testProtein.chains.first {
             let searchParameters = MassSearchParameters(searchValue: 1,
                                                         tolerance: MassTolerance(type: .ppm, value: 20),
                                                         searchType: .sequential,
@@ -267,7 +272,7 @@ final class BioSwiftTests: XCTestCase {
     }
 
     func testMassSearchWithModification() {
-        if var chain = testProtein.chains.first as? Peptide,
+        if var chain = testProtein.chains.first,
            let phos = modificationLibrary.filter({ $0.name.contains("Phospho") == true }).first
         {
             chain.addModification(LocalizedModification(phos, at: 76)) // zero-based
