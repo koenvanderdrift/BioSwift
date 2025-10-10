@@ -8,7 +8,7 @@
 
 import Foundation
 
-public typealias Peptide = Chain
+public typealias Peptide = Chain<AminoAcid>
 
 public extension Peptide {
     func hydropathyValues(for hydropathyType: String) -> [Double] {

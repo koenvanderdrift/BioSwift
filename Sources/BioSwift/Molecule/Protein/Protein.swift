@@ -8,7 +8,7 @@
 
 import Foundation
 
-public typealias Protein = BioMolecule
+public typealias Protein = BioMolecule<AminoAcid>
 
 public extension Protein {
     init(sequence: String) {
@@ -24,7 +24,7 @@ public extension Protein {
     }
 
     func aminoAcids(for chainIndex: Int = 0) -> [AminoAcid] {
-        residues(for: chainIndex) as! [AminoAcid]
+        residues(for: chainIndex) as [AminoAcid]
     }
 
     func isoelectricPoint(for chainIndex: Int = 0) -> Double {
