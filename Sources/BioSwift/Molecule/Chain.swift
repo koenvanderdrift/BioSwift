@@ -8,6 +8,12 @@
 
 import Foundation
 
+public enum ResidueType: String, CaseIterable {
+    case unknown
+    case aminoAcid
+    case nucleicAcid
+}
+
 public typealias ChainRange = ClosedRange<Int>
 public let zeroChainRange: ChainRange = -1 ... 0
 public let zeroNSRange = NSMakeRange(NSNotFound, 0)
@@ -34,9 +40,10 @@ public extension NSRange {
     }
 }
 
-public struct Chain<T: Residue> {
+public struct Chain {
     public var sequence: String = ""
-    public var residues: [T] = []
+    public var residues: [any Residue] = []
+    public var residueType: ResidueType = .unknown
     public var rangeInParent: ChainRange = zeroChainRange
     public var name: String = ""
     public var termini: (first: Modification, last: Modification)? = (nTermModification, cTermModification)
@@ -51,12 +58,12 @@ public struct Chain<T: Residue> {
         self.sequence = sequence
     }
 
-    public init(residues: [T]) {
+    public init(residues: [any Residue]) {
         self.residues = residues
     }
 
     // TODO: make generic
-    public func createResidues(from string: String) -> [AminoAcid] {
+    public func createResidues(from string: String) -> [any Residue] {
         string.compactMap { char in
             aminoAcidLibrary.first(where: { $0.identifier == String(char) })
         }
@@ -100,7 +107,7 @@ public extension Chain {
         symbolSequence[index]
     }
 
-    func residue(at index: Int) -> T? {
+    func residue(at index: Int) -> (any Residue)? {
         residues[index]
     }
 
@@ -156,9 +163,8 @@ public extension Chain {
             let range = editedRange.location ..< editedRange.location + changeInLength
             let s = String(sequence[range])
 
-            if let newResidues = createResidues(from: s) as? [T] {
-                residues.insert(contentsOf: newResidues, at: editedRange.location)
-            }
+            let newResidues = createResidues(from: s)
+            residues.insert(contentsOf: newResidues, at: editedRange.location)
 
         default:
             fatalError("TODO")
@@ -225,17 +231,17 @@ public extension Chain {
         return subChain(with: from ... to)
     }
 
-    func residueChain(with range: ChainRange) -> [T]? {
+    func residueChain(with range: ChainRange) -> [any Residue]? {
         guard range != zeroChainRange else { return nil }
 
         return Array(residues[range])
     }
 
-    func residueChain(with range: NSRange) -> [T]? {
+    func residueChain(with range: NSRange) -> [any Residue]? {
         residueChain(with: range.chainRange())
     }
 
-    func residueChain(from: Int, to: Int) -> [T]? {
+    func residueChain(from: Int, to: Int) -> [any Residue]? {
         guard from < numberOfResidues, to >= from else { return nil }
 
         return residueChain(with: from ... to)

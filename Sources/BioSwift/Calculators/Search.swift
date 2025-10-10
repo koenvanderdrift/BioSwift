@@ -107,7 +107,7 @@ public extension Chain {
 }
 
 public extension Chain {
-    func searchMass(params: MassSearchParameters) -> [Self] where Self: Chargeable {
+    func searchMass(params: MassSearchParameters) -> [Self] {
         var result: [Self] = []
 
         let count = numberOfResidues
@@ -155,7 +155,7 @@ public extension Chain {
         return result
     }
 
-    private func subChain(with chainRange: ChainRange, for masses: MassContainer, in massRange: MassRange, and type: MassType) -> Self? where Self: Chargeable {
+    private func subChain(with chainRange: ChainRange, for masses: MassContainer, in massRange: MassRange, and type: MassType) -> Self? {
         if massRange.contains(masses, for: type), var sub = subChain(with: chainRange) {
             sub.rangeInParent = chainRange
 

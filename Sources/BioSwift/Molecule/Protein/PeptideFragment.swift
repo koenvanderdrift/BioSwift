@@ -81,7 +81,7 @@ public protocol Fragmenting {
     var index: Int { get set }
 }
 
-public typealias PeptideFragment = Chain<AminoAcid>
+public typealias PeptideFragment = Chain
 
 extension PeptideFragment: Fragmenting {
     init(residues: [AminoAcid], type: PeptideFragmentType, index: Int = -1, adducts: [Adduct], modifications: [LocalizedModification] = []) {
@@ -90,25 +90,7 @@ extension PeptideFragment: Fragmenting {
         self.index = index
         self.adducts = adducts
         self.modifications = modifications
-    }
-
-    init(sequence: String) {
-        self.sequence = sequence
-        residues = createResidues(from: sequence)
-    }
-
-    init(residues: [T]) {
-        self.residues = residues
-    }
-
-    func calculateMasses() -> MassContainer {
-        let result = residueMasses() + modificationMasses() + fragmentType.masses
-        
-        if result != zeroMass {
-            return result + terminalMasses()
-        }
-        
-        return zeroMass
+        self.residueType = .aminoAcid
     }
 }
 
@@ -146,11 +128,12 @@ public extension PeptideFragment {
     }
 
     func maxNumberOfCharges() -> Int {
-        // if let aa = residues as? [AminoAcid] {
-        return residues.filter { $0.properties.contains([.chargedPos]) }.count
-        // }
+        // TODO: fix me
+//        // if let aa = residues as? [AminoAcid] {
+//        return residues.filter { $0.properties.contains([.chargedPos]) }.count
+//        // }
 
-        // return 0
+        return 0
     }
 }
 

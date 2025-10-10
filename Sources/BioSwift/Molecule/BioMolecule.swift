@@ -8,15 +8,15 @@
 
 import Foundation
 
-public struct BioMolecule<T: Residue> {
+public struct BioMolecule {
     public var adducts: [Adduct] = []
-    public var chains: [Chain<T>]
+    public var chains: [Chain]
 
-    public init(chain: Chain<T>) {
+    public init(chain: Chain) {
         self.init(chains: [chain])
     }
 
-    public init(chains: [Chain<T>]) {
+    public init(chains: [Chain]) {
         self.chains = chains
     }
 }
@@ -86,7 +86,7 @@ public extension BioMolecule {
         chains[chainIndex].numberOfResidues
     }
 
-    func residues(for chainIndex: Int = 0) -> [T] {
+    func residues(for chainIndex: Int = 0) -> [any Residue] {
 //        if let residues = chains[chainIndex].residues {
 //            return residues
 //        }
@@ -103,7 +103,7 @@ public extension BioMolecule {
         adducts = [Adduct](repeating: type, count: count)
     }
 
-    func countResidues(for chainIndex: Int = 0) -> [T: Int] {
+    func countResidues(for chainIndex: Int = 0) -> [any Residue : Int] {
         let residues = residues(for: chainIndex)
         let groupedResidues = Dictionary(grouping: residues, by: { $0 })
             .mapValues { residues in residues.count }
