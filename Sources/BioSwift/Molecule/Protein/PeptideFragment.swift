@@ -81,33 +81,68 @@ public protocol Fragmenting {
     var index: Int { get set }
 }
 
-public typealias PeptideFragment = Chain<AminoAcid>
+public struct PeptideFragment: Chain {
+    public typealias T = AminoAcid
+
+    public var name: String = ""
+    public var sequence: String = ""
+    public var residues: [AminoAcid] = []
+    public var termini: (first: Modification, last: Modification)?
+    public var modifications: [LocalizedModification] = []
+    public var adducts: [Adduct] = []
+    public var rangeInParent: ChainRange = zeroChainRange
+    public var library: [AminoAcid] = aminoAcidLibrary
+    public var fragmentType: PeptideFragmentType = .undefined
+    public var index = -1
+
+    public init(sequence: String) {
+        self.sequence = sequence
+        self.residues = createResidues(from: sequence)
+    }
+
+    public init(residues: [AminoAcid]) {
+        self.residues = residues
+    }
+
+    public func createResidues(from string: String) -> [AminoAcid] {
+        string.compactMap { char in
+            aminoAcidLibrary.first(where: { $0.identifier == String(char) })
+        }
+    }
+}
 
 extension PeptideFragment: Fragmenting {
     init(residues: [AminoAcid], type: PeptideFragmentType, index: Int = -1, adducts: [Adduct], modifications: [LocalizedModification] = []) {
         self.residues = residues
-        fragmentType = type
+        self.fragmentType = type
         self.index = index
         self.adducts = adducts
         self.modifications = modifications
     }
+}
 
-    init(sequence: String) {
-        self.sequence = sequence
-        residues = createResidues(from: sequence)
+extension PeptideFragment: Chargeable {
+    public var masses: MassContainer {
+        calculateMasses()
     }
 
-    init(residues: [T]) {
-        self.residues = residues
+    public func calculateMasses() -> MassContainer {
+        residueMasses() + modificationMasses() + terminalMasses() + fragmentType.masses
     }
 
-    func calculateMasses() -> MassContainer {
-        let result = residueMasses() + modificationMasses() + fragmentType.masses
-        
-        if result != zeroMass {
-            return result + terminalMasses()
+    func residueMasses() -> MassContainer {
+        residues.reduce(zeroMass) { $0 + $1.masses }
+    }
+
+    func modificationMasses() -> MassContainer {
+        modifications.reduce(zeroMass) { $0 + $1.modification.masses }
+    }
+
+    func terminalMasses() -> MassContainer {
+        if let termini {
+            return termini.first.masses + termini.last.masses
         }
-        
+
         return zeroMass
     }
 }
@@ -153,18 +188,3 @@ public extension PeptideFragment {
         // return 0
     }
 }
-
-// public struct PeptideFragment: Chain {
-//    public var rangeInParent: ChainRange = zeroChainRange
-//    public var name: String = ""
-//    public var termini: (first: Modification, last: Modification)?
-//    public var residues: [Residue] = []
-//    public var adducts: [Adduct] = []
-//    public var fragmentType: PeptideFragmentType = .undefined
-//    public var index: Int = -1
-//    public var modifications: [LocalizedModification] = []
-//
-//    public var aminoAcids: [AminoAcid] {
-//        residues as? [AminoAcid] ?? []
-//    }
-// }

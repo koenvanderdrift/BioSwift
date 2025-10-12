@@ -8,9 +8,35 @@
 
 import Foundation
 
-public typealias Peptide = Chain<AminoAcid>
+public struct Peptide: Chain {
+    public typealias T = AminoAcid
 
-public extension Peptide {
+    public var name: String = ""
+    public var sequence: String = ""
+    public var residues: [AminoAcid] = []
+    public var termini: (first: Modification, last: Modification)?
+    public var modifications: [LocalizedModification] = []
+    public var adducts: [Adduct] = []
+    public var rangeInParent: ChainRange = zeroChainRange
+    public var library: [AminoAcid] = aminoAcidLibrary
+
+    public init(sequence: String) {
+        self.sequence = sequence
+        self.residues = createResidues(from: sequence)
+    }
+
+    public init(residues: [AminoAcid]) {
+        self.residues = residues
+    }
+
+    public func createResidues(from string: String) -> [AminoAcid] {
+        string.compactMap { char in
+            aminoAcidLibrary.first(where: { $0.identifier == String(char) })
+        }
+    }
+}
+
+extension Peptide {
     func hydropathyValues(for hydropathyType: String) -> [Double] {
         let values = Hydropathy(residues: residues).hydrophathyValues(for: hydropathyType)
 
@@ -22,22 +48,28 @@ public extension Peptide {
     }
 }
 
-// public struct Peptide: Chain {
-//    public var rangeInParent: ChainRange = zeroChainRange
-//    public var name: String = ""
-//    public var termini: (first: Modification, last: Modification)? = (nTermModification, cTermModification)
-//    public var modifications: [LocalizedModification] = []
-//    public var residues: [Residue] = []
-//    public var adducts: [Adduct] = []
-//
-//    public func createResidues(from string: String) -> [Residue] {
-//        string.compactMap { char in
-//            aminoAcidLibrary.first(where: { $0.identifier == String(char) })
-//        }
-//    }
-//
-//    public var aminoAcids: [AminoAcid] {
-//        residues as? [AminoAcid] ?? []
-//    }
-// }
-//
+extension Peptide: Chargeable {
+    public var masses: MassContainer {
+        calculateMasses()
+    }
+
+    public func calculateMasses() -> MassContainer {
+        residueMasses() + modificationMasses() + terminalMasses()
+    }
+
+    func residueMasses() -> MassContainer {
+        residues.reduce(zeroMass) { $0 + $1.masses }
+    }
+
+    func modificationMasses() -> MassContainer {
+        modifications.reduce(zeroMass) { $0 + $1.modification.masses }
+    }
+
+    func terminalMasses() -> MassContainer {
+        if let termini {
+            return termini.first.masses + termini.last.masses
+        }
+
+        return zeroMass
+    }
+}
