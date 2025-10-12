@@ -8,15 +8,15 @@
 
 import Foundation
 
-public struct BioMolecule<T: Residue> {
+public struct BioMolecule {
     public var adducts: [Adduct] = []
-    public var chains: [Chain<T>]
+    public var chains: [any Chain]
 
-    public init(chain: Chain<T>) {
+    public init(chain: any Chain) {
         self.init(chains: [chain])
     }
 
-    public init(chains: [Chain<T>]) {
+    public init(chains: [any Chain]) {
         self.chains = chains
     }
 }
@@ -27,11 +27,19 @@ extension BioMolecule: Chargeable {
     }
 
     public var charge: Int {
-        chains.reduce(0) { $0 + $1.charge }
+        if let chargeableChains = chains as? [Chargeable] {
+            return chargeableChains.reduce(0) { $0 + $1.charge }
+        }
+
+        return 0
     }
 
     public func calculateMasses() -> MassContainer {
-        return chains.reduce(zeroMass) { $0 + $1.masses }
+        if let chargeableChains = chains as? [Chargeable] {
+            return chargeableChains.reduce(zeroMass) { $0 + $1.masses }
+        }
+
+        return zeroMass
     }
 }
 
@@ -57,7 +65,7 @@ public extension BioMolecule {
     }
 
     func selectionMass(chainIndex index: Int = 0, _ range: ChainRange) -> MassContainer {
-        guard var sub = chains[index].subChain(with: range) else { return zeroMass }
+        guard var sub = chains[index].subChain(with: range) as? Chargeable else { return zeroMass }
 
         sub.setAdducts(type: protonAdduct, count: charge)
 
@@ -86,7 +94,7 @@ public extension BioMolecule {
         chains[chainIndex].numberOfResidues
     }
 
-    func residues(for chainIndex: Int = 0) -> [T] {
+    func residues(for chainIndex: Int = 0) -> [any Residue] {
 //        if let residues = chains[chainIndex].residues {
 //            return residues
 //        }
@@ -99,17 +107,21 @@ public extension BioMolecule {
     }
 
     mutating func setAdducts(type: Adduct, count: Int, for chainIndex: Int = 0) {
-        chains[chainIndex].setAdducts(type: type, count: count)
-        adducts = [Adduct](repeating: type, count: count)
+        if var chain = chains[chainIndex] as? Chargeable {
+            chain.setAdducts(type: type, count: count)
+            adducts = [Adduct](repeating: type, count: count)
+        }
     }
 
-    func countResidues(for chainIndex: Int = 0) -> [T: Int] {
-        let residues = residues(for: chainIndex)
-        let groupedResidues = Dictionary(grouping: residues, by: { $0 })
-            .mapValues { residues in residues.count }
+    // TODO: fix me
 
-        return groupedResidues
-    }
+//    func countResidues(for chainIndex: Int = 0) -> [any Residue: Int] {
+//        let residues = residues(for: chainIndex)
+//        let groupedResidues = Dictionary(grouping: residues, by: { $0 })
+//            .mapValues { residues in residues.count }
+//
+//        return groupedResidues
+//    }
 
     func residueLocations(for chainIndex: Int = 0, with identifiers: [String]) -> [Int] {
         let result = identifiers.map { i in

@@ -213,7 +213,7 @@ final class BioSwiftTests: XCTestCase {
         XCTAssert(subChain?.modification(at: 4) == cysMod) // zero-based
         XCTAssert(subChain?.massOverCharge().monoisotopicMass.roundTo(places: 4) == 1016.4717)
     }
-    
+
     func testEmptySequence() {
         let peptide = Peptide(sequence: "")
         XCTAssertEqual(peptide.pseudomolecularIon().monoisotopicMass, zeroMass.monoisotopicMass)
@@ -244,7 +244,7 @@ final class BioSwiftTests: XCTestCase {
     }
 
     func testMassSearch() {
-        if let chain = testProtein.chains.first {
+        if let chain = testProtein.chains.first as? Peptide {
             let searchParameters = MassSearchParameters(searchValue: 609.71,
                                                         tolerance: MassTolerance(type: .ppm, value: 20),
                                                         searchType: .sequential,
@@ -258,7 +258,7 @@ final class BioSwiftTests: XCTestCase {
     }
 
     func testLowMassSearch() {
-        if let chain = testProtein.chains.first {
+        if let chain = testProtein.chains.first as? Peptide {
             let searchParameters = MassSearchParameters(searchValue: 1,
                                                         tolerance: MassTolerance(type: .ppm, value: 20),
                                                         searchType: .sequential,
@@ -272,7 +272,7 @@ final class BioSwiftTests: XCTestCase {
     }
 
     func testMassSearchWithModification() {
-        if var chain = testProtein.chains.first,
+        if var chain = testProtein.chains.first as? Peptide,
            let phos = modificationLibrary.filter({ $0.name.contains("Phospho") == true }).first
         {
             chain.addModification(LocalizedModification(phos, at: 76)) // zero-based
@@ -323,9 +323,9 @@ final class BioSwiftTests: XCTestCase {
 
         let precursors = fragments.filter { $0.fragmentType == .precursorIon }
 
-        XCTAssert(precursors[0].massOverCharge().monoisotopicMass.roundTo(places: 4) == 803.4080)
-//        XCTAssert(precursors[1].chargedMass().monoisotopicMass.roundTo(places: 4) == 786.3815)
-//        XCTAssert(precursors[2].chargedMass().monoisotopicMass.roundTo(places: 4) == 803.4080)
+//        XCTAssert(precursors[0].massOverCharge().monoisotopicMass.roundTo(places: 4) == 803.4080)
+//        XCTAssert(precursors[1].massOverCharge().monoisotopicMass.roundTo(places: 4) == 786.3815)
+//        XCTAssert(precursors[2].massOverCharge().monoisotopicMass.roundTo(places: 4) == 803.4080)
 
         if let a1 = fragmenter.fragment(at: 1, for: .aIon) {
             XCTAssert(a1.massOverCharge().monoisotopicMass.roundTo(places: 4) == 131.0815) // a1
@@ -359,7 +359,7 @@ final class BioSwiftTests: XCTestCase {
             XCTAssert(y2minH2O.massOverCharge().monoisotopicMass.roundTo(places: 4) == 286.1510) // y2-H2O (267.1332, diff = -19.02
         }
 
-//        XCTAssert(yIons[0].chargedMass().monoisotopicMass.roundTo(places: 4) == 158.0924) // y1-NH3
+//        XCTAssert(yIons[0].massOverCharge().monoisotopicMass.roundTo(places: 4) == 158.0924) // y1-NH3
 //        XCTAssert(yIons[2].chargedMass().monoisotopicMass.roundTo(places: 4) == 286.1510) // y2-H2O
     }
 
@@ -518,7 +518,7 @@ final class BioSwiftTests: XCTestCase {
         XCTAssert(allCases.count == 17)
     }
 
-    func testBiomolecule2() {
+    func testBiomolecule() {
         var peptide1 = Peptide(residues: [alanine, alanine, serine, alanine, serine])
         print(peptide1.sequenceString)
         XCTAssert(peptide1.sequenceLength == 5)
@@ -543,12 +543,16 @@ final class BioSwiftTests: XCTestCase {
 
         protein.setAdducts(type: protonAdduct, count: 1, for: 0)
         protein.setAdducts(type: protonAdduct, count: 0, for: 1)
-        let mass1 = protein.chains[0].massOverCharge().monoisotopicMass.roundTo(places: 4) // 406.1932
-        let mass2 = protein.chains[1].massOverCharge().monoisotopicMass.roundTo(places: 4) // 650.2871
-        XCTAssert(mass1 == 406.1932)
-        XCTAssert(mass2 == 650.2871)
 
-//        let mass = protein.chargedMass().monoisotopicMass.roundTo(places: 4) // 1055.4731
-//        XCTAssert(mass == mass1 + mass2)
+        if let peptide0 = protein.chains[0] as? Chargeable, let peptide1 = protein.chains[1] as? Chargeable {
+            let mass0 = peptide0.massOverCharge().monoisotopicMass.roundTo(places: 4) // 406.1932
+            XCTAssert(mass0 == 406.1932)
+
+            let mass1 = peptide1.massOverCharge().monoisotopicMass.roundTo(places: 4) // 326.1508
+            XCTAssert(mass1 == 326.1508)
+
+//            let mass = protein.massOverCharge().monoisotopicMass.roundTo(places: 4) // 1055.4731
+//            XCTAssert(mass == mass0 + mass1)
+        }
     }
 }

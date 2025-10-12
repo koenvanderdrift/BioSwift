@@ -53,7 +53,7 @@ public protocol Chain {
     func createResidues(from string: String) -> [T]
 }
 
-public extension Chain {
+extension Chain {
     static func == (lhs: Self, rhs: Self) -> Bool {
         lhs.sequenceString == rhs.sequenceString && lhs.name == rhs.name
     }
