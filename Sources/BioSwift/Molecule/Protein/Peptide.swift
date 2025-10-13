@@ -38,7 +38,7 @@ public struct Peptide: Chain {
     }
 }
 
-extension Peptide {
+public extension Peptide {
     func hydropathyValues(for hydropathyType: String) -> [Double] {
         let values = Hydropathy(residues: residues).hydrophathyValues(for: hydropathyType)
 
