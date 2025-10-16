@@ -70,6 +70,12 @@ extension MassContainer: Equatable {
     }
 }
 
+extension MassContainer: Comparable {
+    public static func < (lhs: MassContainer, rhs: MassContainer) -> Bool {
+        return lhs.averageMass < rhs.averageMass
+    }
+}
+
 public typealias Adduct = (group: FunctionalGroup, charge: Int)
 
 public let protonAdduct = Adduct(group: proton, charge: 1)
