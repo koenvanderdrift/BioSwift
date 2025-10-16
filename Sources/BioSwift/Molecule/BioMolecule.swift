@@ -113,15 +113,22 @@ public extension BioMolecule {
         }
     }
 
-    // TODO: fix me
+    func countAllResidues(for chainIndex: Int = 0) -> NSCountedSet {
+        chains[chainIndex].countAllResidues()
+    }
 
-//    func countResidues(for chainIndex: Int = 0) -> [any Residue: Int] {
-//        let residues = residues(for: chainIndex)
-//        let groupedResidues = Dictionary(grouping: residues, by: { $0 })
-//            .mapValues { residues in residues.count }
-//
-//        return groupedResidues
-//    }
+    func countOneResidue(with identifier: String, for chainIndex: Int = 0) -> Int {
+        let countedResidues = countAllResidues(for: chainIndex)
+        
+        if let res = chains[chainIndex].library
+            .first(where: { $0.identifier == identifier }) {
+            return countedResidues.count(for: res)
+        }
+        
+        return 0
+    }
+
+
 
     func residueLocations(for chainIndex: Int = 0, with identifiers: [String]) -> [Int] {
         let result = identifiers.map { i in

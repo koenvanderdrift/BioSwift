@@ -24,6 +24,23 @@ final class BioSwiftTests: XCTestCase {
         XCTAssertEqual(testPeptide.sequenceString.count, 5)
     }
 
+    func testProteinResidueCount() {
+        let cysCount = testProtein.countOneResidue(with: "C")
+        XCTAssertEqual(cysCount, 3)
+        
+        let glnCount = testProtein.countOneResidue(with: "Q")
+        XCTAssertEqual(glnCount, 18)
+    }
+
+    func testPeptideResidueCount() {
+        let countedSet = testPeptide.countAllResidues()
+        
+        if let ser = aminoAcidLibrary.first(where: { $0.identifier == "S" }) {
+            let aaCount = countedSet.count(for: ser)
+            XCTAssertEqual(aaCount, 2)
+        }
+    }
+
     func testSequenceLengthWithIllegalCharacters() {
         let protein = Protein(sequence: "D___WS83SD")
         XCTAssertEqual(protein.sequenceLength(), 5)

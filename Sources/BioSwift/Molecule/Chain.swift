@@ -100,6 +100,10 @@ public extension Chain {
 }
 
 public extension Chain {
+    func countAllResidues() -> NSCountedSet {
+        NSCountedSet(array: residues)
+    }
+
     mutating func update(with sequence: String, in editedRange: NSRange, changeInLength: Int) {
         if sequence == sequenceString {
             return
