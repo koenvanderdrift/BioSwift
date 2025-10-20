@@ -130,6 +130,19 @@ final class BioSwiftTests: XCTestCase {
         XCTAssertEqual(pKa.roundedDecimalAsString(to: 2), "9.40") // 10.2
     }
 
+    func testProteinSerinePhosphorylationMonoisotopicMass() {
+        if let phos = modificationLibrary.filter({ $0.name.contains("Phospho") == true }).first {
+            testProtein.addModification(mod: LocalizedModification(phos, at: 3)) // zero-based
+            testProtein.setAdducts(type: protonAdduct, count: 1)
+
+            XCTAssertEqual(testProtein.pseudomolecularIon().monoisotopicMass.roundedDecimalAsString(to: 4), "46788.0230")
+
+            testProtein.setAdducts(type: protonAdduct, count: 2)
+
+            XCTAssertEqual(testProtein.pseudomolecularIon().monoisotopicMass.roundedDecimalAsString(to: 4), "46708.0267")
+        }
+    }
+
     func testAddFormulas() {
         let formula1 = Formula("C12H23O7N5")
         let formula2 = Formula("C2H2O2")

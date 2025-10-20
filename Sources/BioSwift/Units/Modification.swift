@@ -11,8 +11,8 @@ import Foundation
 public let unmodifiedString = "Unmodified"
 public let zeroModification = Modification(name: unmodifiedString, elements: [:])
 
-public let nTermModification = Modification(name: "N-Term", reactions: [.add(hydrogen)])
-public let cTermModification = Modification(name: "C-Term", reactions: [.add(hydroxyl)])
+public let hydrogenModification = Modification(name: "Hydrogen", reactions: [.add(hydrogen)])
+public let hydroxylModification = Modification(name: "Hydroxyl", reactions: [.add(hydroxyl)])
 
 public let lossOfWater = Modification(name: "Loss of Water", reactions: [.remove(water)], specificities: [
     ModificationSpecificity(site: "S"),

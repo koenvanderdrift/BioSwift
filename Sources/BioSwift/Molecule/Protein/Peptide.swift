@@ -22,13 +22,13 @@ public struct Peptide: Chain {
 
     public init(sequence: String) {
         self.sequence = sequence
-        self.sequence.isEmpty == false ? self.termini = (nTermModification, cTermModification) : nil
+        self.sequence.isEmpty == false ? self.termini = (hydrogenModification, hydroxylModification) : nil
         self.residues = createResidues(from: sequence)
     }
 
     public init(residues: [AminoAcid]) {
         self.residues = residues
-        self.residues.isEmpty == false ? self.termini = (nTermModification, cTermModification) : nil
+        self.residues.isEmpty == false ? self.termini = (hydrogenModification, hydroxylModification) : nil
     }
 
     public func createResidues(from string: String) -> [AminoAcid] {

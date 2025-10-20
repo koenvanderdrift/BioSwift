@@ -112,6 +112,10 @@ public extension BioMolecule {
             adducts = [Adduct](repeating: type, count: count)
         }
     }
+    
+    mutating func addModification(mod: LocalizedModification, for chainIndex: Int = 0) {
+        chains[chainIndex].addModification(mod)
+    }
 
     func countAllResidues(for chainIndex: Int = 0) -> NSCountedSet {
         chains[chainIndex].countAllResidues()
