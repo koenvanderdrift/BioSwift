@@ -33,6 +33,7 @@ public extension NSRange {
         return lowerBound ... upperBound - 1
     }
 }
+
 // https://medium.com/swift2go/mastering-generics-with-protocols-the-specification-pattern-5e2e303af4ca
 
 public protocol Chain {
@@ -241,14 +242,16 @@ public extension Chain {
     }
 
     mutating func addModification(_ mod: LocalizedModification) {
-        residues.modifyElement(atIndex: mod.location) { residue in
-            residue.setModification(mod.modification)
+        if var r = residue(at: mod.location) {
+            r.setModification(mod.modification)
+            residues[mod.location] = r
         }
     }
 
     mutating func removeModification(at location: Int) {
-        residues.modifyElement(atIndex: location) { residue in
-            residue.setModification(nil)
+        if var r = residue(at: location) {
+            r.removeModification()
+            residues[location] = r
         }
     }
 

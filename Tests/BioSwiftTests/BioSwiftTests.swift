@@ -27,14 +27,14 @@ final class BioSwiftTests: XCTestCase {
     func testProteinResidueCount() {
         let cysCount = testProtein.countOneResidue(with: "C")
         XCTAssertEqual(cysCount, 3)
-        
+
         let glnCount = testProtein.countOneResidue(with: "Q")
         XCTAssertEqual(glnCount, 18)
     }
 
     func testPeptideResidueCount() {
         let countedSet = testPeptide.countAllResidues()
-        
+
         if let ser = aminoAcidLibrary.first(where: { $0.identifier == "S" }) {
             let aaCount = countedSet.count(for: ser)
             XCTAssertEqual(aaCount, 2)
@@ -94,13 +94,16 @@ final class BioSwiftTests: XCTestCase {
     func testPeptideSerinePhosphorylationMonoisotopicMass() {
         if let phos = modificationLibrary.filter({ $0.name.contains("Phospho") == true }).first {
             testPeptide.addModification(LocalizedModification(phos, at: 3)) // zero-based
-            testPeptide.setAdducts(type: protonAdduct, count: 1)
 
+            testPeptide.setAdducts(type: protonAdduct, count: 1)
             XCTAssertEqual(testPeptide.pseudomolecularIon().monoisotopicMass.roundedDecimalAsString(to: 4), "689.1814")
 
             testPeptide.setAdducts(type: protonAdduct, count: 2)
-
             XCTAssertEqual(testPeptide.pseudomolecularIon().monoisotopicMass.roundedDecimalAsString(to: 4), "345.0944")
+
+            testPeptide.removeModification(at: 3)
+            testPeptide.setAdducts(type: protonAdduct, count: 1)
+            XCTAssertEqual(testPeptide.pseudomolecularIon().monoisotopicMass.roundedDecimalAsString(to: 4), "609.2151")
         }
     }
 

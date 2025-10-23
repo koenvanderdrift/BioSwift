@@ -77,12 +77,14 @@ public protocol Modifiable {
 }
 
 extension Modifiable {
-    mutating func setModification(_ modification: Modification?) {
-        self.modification = modification
+    mutating func setModification(_ modification: Modification) {
+        if allowedModifications().contains(modification) {
+            self.modification = modification
+        }
     }
 
     mutating func removeModification() {
-        modification = nil
+        modification = zeroModification
     }
 
     func modificationMasses() -> MassContainer {

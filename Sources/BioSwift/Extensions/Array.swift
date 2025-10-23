@@ -86,18 +86,6 @@ extension Array {
             indices.append(i)
         }
     }
-
-    mutating func modifyForEach(_ body: (_ index: Index, _ element: inout Element) -> Void) {
-        for index in indices {
-            modifyElement(atIndex: index) { body(index, &$0) }
-        }
-    }
-
-    mutating func modifyElement(atIndex index: Index, _ modifyElement: (_ element: inout Element) -> Void) {
-        var element = self[index]
-        modifyElement(&element)
-        self[index] = element
-    }
 }
 
 extension Array where Element: StringProtocol {
