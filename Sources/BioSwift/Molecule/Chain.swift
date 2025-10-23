@@ -40,7 +40,6 @@ public protocol Chain {
     associatedtype T: Residue
 
     var name: String { get set }
-    var sequence: String { get set }
     var residues: [T] { get set }
     var termini: (first: Modification, last: Modification)? { get set }
     var modifications: [LocalizedModification] { get set }
@@ -103,6 +102,12 @@ public extension Chain {
 public extension Chain {
     func countAllResidues() -> NSCountedSet {
         NSCountedSet(array: residues)
+    }
+
+    mutating func replaceResidue(at location: Int, with residue: any Residue) {
+        if let r = residue as? Self.T {
+            residues[location] = r
+        }
     }
 
     mutating func update(with sequence: String, in editedRange: NSRange, changeInLength: Int) {

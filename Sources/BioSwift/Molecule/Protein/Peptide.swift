@@ -12,7 +12,6 @@ public struct Peptide: Chain {
     public typealias T = AminoAcid
 
     public var name: String = ""
-    public var sequence: String = ""
     public var residues: [AminoAcid] = []
     public var termini: (first: Modification, last: Modification)?
     public var modifications: [LocalizedModification] = []
@@ -21,9 +20,8 @@ public struct Peptide: Chain {
     public var library: [AminoAcid] = aminoAcidLibrary
 
     public init(sequence: String) {
-        self.sequence = sequence
-        self.sequence.isEmpty == false ? self.termini = (hydrogenModification, hydroxylModification) : nil
         self.residues = createResidues(from: sequence)
+        self.residues.isEmpty == false ? self.termini = (hydrogenModification, hydroxylModification) : nil
     }
 
     public init(residues: [AminoAcid]) {

@@ -180,6 +180,15 @@ final class BioSwiftTests: XCTestCase {
         }
     }
 
+    func testReplaceAminoAcid() {
+        XCTAssertEqual(testPeptide.sequenceString, "DWSSD")
+
+        if let gly = aminoAcidLibrary.first(where: { $0.identifier == "G" }) {
+            testPeptide.replaceResidue(at: 0, with: gly)
+            XCTAssertEqual(testPeptide.sequenceString, "GWSSD")
+        }
+    }
+
     func testFormulaAverageMass() { // C4H5NO3 + C11H10N2O + C3H5NO2 + C3H5NO2 + C4H5NO3 + H2O
         //        let formula = Formula("C2112H3313N539O629S13H")
         //        let masses = mass(of: formula.elements)
