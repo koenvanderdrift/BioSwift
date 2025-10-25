@@ -25,19 +25,6 @@ public struct FunctionalGroup: Structure, Codable {
     public let formula: Formula
     public var adducts: [Adduct]
 
-    private enum CodingKeys: String, CodingKey {
-        case name
-        case formula
-    }
-
-    public init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-
-        name = try container.decode(String.self, forKey: .name)
-        formula = try Formula(container.decode(String.self, forKey: .formula))
-        adducts = []
-    }
-
     public init(name: String, formula: String) {
         self.name = name
         self.formula = Formula(formula)
@@ -48,12 +35,6 @@ public struct FunctionalGroup: Structure, Codable {
         self.name = name
         self.formula = Formula(formula)
         adducts = []
-    }
-
-    public func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(name, forKey: .name)
-        try container.encode(formula.formulaString, forKey: .formula)
     }
 
     public var masses: MassContainer {

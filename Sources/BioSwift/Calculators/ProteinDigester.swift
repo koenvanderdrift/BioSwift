@@ -75,15 +75,11 @@ extension Chain {
                     new.rangeInParent = subSequences[index].rangeInParent.lowerBound ... subSequences[newIndex].rangeInParent.upperBound
 
                     if index == 0 {
-                        if let mod = termini?.first {
-                            new.termini?.first = mod
-                        }
+                        new.nTerminal = self.nTerminal
                     }
 
                     if newIndex == subSequences.count - 1 {
-                        if let mod = termini?.last {
-                            new.termini?.last = mod
-                        }
+                        new.cTerminal = self.cTerminal
                     }
 
                     joinedSubSequences.append(new)

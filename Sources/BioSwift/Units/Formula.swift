@@ -10,7 +10,7 @@ import Foundation
 
 public let zeroFormula = Formula("")
 
-public class Formula {
+public class Formula: Codable {
     public lazy var elementSet: NSCountedSet = getElementsSet()
     public lazy var elements: [ChemicalElement] = getElements()
 

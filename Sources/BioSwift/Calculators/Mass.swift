@@ -76,7 +76,10 @@ extension MassContainer: Comparable {
     }
 }
 
-public typealias Adduct = (group: FunctionalGroup, charge: Int)
+public struct Adduct: Codable {
+    var group: FunctionalGroup
+    var charge: Int
+}
 
 public let protonAdduct = Adduct(group: proton, charge: 1)
 public let sodiumAdduct = Adduct(group: sodium, charge: 1)

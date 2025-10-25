@@ -21,12 +21,6 @@ public struct ChemicalElement: Codable, Symbol {
     public var monoisotopicMass: Dalton = 0.0
     public var averageMass: Dalton = 0.0
 
-    private enum CodingKeys: String, CodingKey {
-        case name
-        case symbol
-        case isotopes
-    }
-
     public init(name: String, symbol: String, isotopes: [Isotope]) {
         self.name = name
         self.symbol = symbol
@@ -40,14 +34,6 @@ public struct ChemicalElement: Codable, Symbol {
 
         self.monoisotopicMass = monoisotopicMass
         self.averageMass = averageMass
-    }
-
-    public init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-
-        name = try container.decode(String.self, forKey: .name)
-        symbol = try container.decode(String.self, forKey: .symbol)
-        isotopes = try container.decode([Isotope].self, forKey: .isotopes)
     }
 
     public var identifier: String {
@@ -75,6 +61,7 @@ extension ChemicalElement: Mass {
     }
 
     public func calculateMasses() -> MassContainer {
+        //return MassContainer(monoisotopicMass: monoisotopicMass, averageMass: averageMass, nominalMass: Int(monoisotopicMass))
         var currentAbundance = Dalton(0.0)
 
         var monoisotopicMass = Dalton(0.0)

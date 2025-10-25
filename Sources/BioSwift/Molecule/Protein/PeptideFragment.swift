@@ -8,7 +8,7 @@
 
 import Foundation
 
-public enum PeptideFragmentType: CaseIterable {
+public enum PeptideFragmentType: CaseIterable, Codable {
     case precursorIon
     case precursorIonMinusWater
     case precursorIonMinusAmmonia
@@ -81,13 +81,14 @@ public protocol Fragmenting {
     var index: Int { get set }
 }
 
-public struct PeptideFragment: Chain {
+public struct PeptideFragment: Chain, Codable {
     public typealias T = AminoAcid
 
     public var name: String = ""
     public var sequence: String = ""
     public var residues: [AminoAcid] = []
-    public var termini: (first: Modification, last: Modification)?
+    public var nTerminal: Modification = hydrogenModification
+    public var cTerminal: Modification = hydroxylModification
     public var modifications: [LocalizedModification] = []
     public var adducts: [Adduct] = []
     public var rangeInParent: ChainRange = zeroChainRange
@@ -139,11 +140,7 @@ extension PeptideFragment: Chargeable {
     }
 
     func terminalMasses() -> MassContainer {
-        if let termini {
-            return termini.first.masses + termini.last.masses
-        }
-
-        return zeroMass
+        return nTerminal.masses + cTerminal.masses
     }
 }
 

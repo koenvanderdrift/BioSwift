@@ -41,8 +41,9 @@ public protocol Chain {
 
     var name: String { get set }
     var residues: [T] { get set }
-    var termini: (first: Modification, last: Modification)? { get set }
     var modifications: [LocalizedModification] { get set }
+    var nTerminal: Modification { get set }
+    var cTerminal: Modification { get set }
     var adducts: [Adduct] { get set }
     var rangeInParent: ChainRange { get set }
     var library: [T] { get set }
@@ -61,11 +62,7 @@ public extension Chain {
     var formula: Formula {
         var f = Formula(residues.reduce("") { $0 + $1.formula.formulaString })
 
-        if let termini {
-            f += termini.first.formula + termini.last.formula
-        } else {
-            f += water.formula
-        }
+        f += nTerminal.formula + cTerminal.formula
 
         return f
     }
@@ -140,20 +137,21 @@ public extension Chain {
         let subResidues = residues.indices.compactMap { range ~= $0 ? nil : residues[$0] }
 
         var sub = Self(residues: subResidues)
-        sub.termini = termini
+        sub.nTerminal = nTerminal
+        sub.cTerminal = cTerminal
         sub.adducts = adducts
 
-        if range.lowerBound == 0 {
-            if let mod = termini?.first {
-                sub.termini?.first = mod
-            }
-        }
-
-        if range.upperBound == numberOfResidues {
-            if let mod = termini?.last {
-                sub.termini?.last = mod
-            }
-        }
+//        if range.lowerBound == 0 {
+//            if let mod = termini?.first {
+//                sub.termini?.first = mod
+//            }
+//        }
+//
+//        if range.upperBound == numberOfResidues {
+//            if let mod = termini?.last {
+//                sub.termini?.last = mod
+//            }
+//        }
 
         return sub
     }
@@ -162,20 +160,21 @@ public extension Chain {
         guard let subResidues = residueChain(with: range) else { return nil }
 
         var sub = Self(residues: subResidues)
-        sub.termini = termini
+        sub.nTerminal = nTerminal
+        sub.cTerminal = cTerminal
         sub.adducts = adducts
 
-        if range.lowerBound == 0 {
-            if let mod = termini?.first {
-                sub.termini?.first = mod
-            }
-        }
-
-        if range.upperBound == numberOfResidues {
-            if let mod = termini?.last {
-                sub.termini?.last = mod
-            }
-        }
+//        if range.lowerBound == 0 {
+//            if let mod = termini?.first {
+//                sub.termini?.first = mod
+//            }
+//        }
+//
+//        if range.upperBound == numberOfResidues {
+//            if let mod = termini?.last {
+//                sub.termini?.last = mod
+//            }
+//        }
 
         sub.rangeInParent = range
 
@@ -216,8 +215,9 @@ public extension Chain {
         return result.flatMap { $0 }
     }
 
-    mutating func setTermini(first: Modification, last: Modification) {
-        termini = (first: first, last: last)
+    mutating func setTermini(nTerm: Modification, cTerm: Modification) {
+        nTerminal = nTerm
+        cTerminal = cTerm
     }
 
     func allowedModifications(at location: Int) -> [Modification]? {
