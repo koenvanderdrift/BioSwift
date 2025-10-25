@@ -32,6 +32,7 @@ public struct FunctionalGroup: Structure, Codable {
     }
 
     public init(name: String, formula: [String: Int]) {
+        // TODO: switch to [ChemicalElement: Int] ?
         self.name = name
         self.formula = Formula(formula)
         adducts = []

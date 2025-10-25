@@ -36,6 +36,14 @@ public struct ChemicalElement: Codable, Symbol {
         self.averageMass = averageMass
     }
 
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+
+        name = try container.decode(String.self, forKey: .name)
+        symbol = try container.decode(String.self, forKey: .symbol)
+        isotopes = try container.decode([Isotope].self, forKey: .isotopes)
+    }
+
     public var identifier: String {
         symbol
     }
@@ -61,7 +69,6 @@ extension ChemicalElement: Mass {
     }
 
     public func calculateMasses() -> MassContainer {
-        //return MassContainer(monoisotopicMass: monoisotopicMass, averageMass: averageMass, nominalMass: Int(monoisotopicMass))
         var currentAbundance = Dalton(0.0)
 
         var monoisotopicMass = Dalton(0.0)

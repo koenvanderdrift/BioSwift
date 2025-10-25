@@ -116,10 +116,10 @@ public class UnimodParser: NSObject {
 // MARK: XML Parser Delegate
 
 extension UnimodParser: XMLParserDelegate {
-    public func parser(_: XMLParser, didStartElement elementName: String, namespaceURI _: String?, qualifiedName _: String?, attributes attributeDict: [String: String] = [:]) {
-        if elementName == elements {
+    public func parser(_: XMLParser, didStartElement xmlElementName: String, namespaceURI _: String?, qualifiedName _: String?, attributes attributeDict: [String: String] = [:]) {
+        if xmlElementName == elements {
             isElements = true
-        } else if elementName == modification {
+        } else if xmlElementName == modification {
             isModification = true
 
             if let title = attributeDict[titleAttributeKey],
@@ -127,15 +127,15 @@ extension UnimodParser: XMLParserDelegate {
             {
                 modificationName = title.replacingOccurrences(of: "->", with: " " + rightArrow + " ")
             }
-        } else if elementName == specificity {
+        } else if xmlElementName == specificity {
             if let site = attributeDict[siteAttributeKey], let position = attributeDict[positionAttributeKey],
                let classification = attributeDict[classificationAttributeKey]
             {
                 modificationSpecificities.append(ModificationSpecificity(site: site, position: position, classification: classification))
             }
-        } else if elementName == neutralLoss {
+        } else if xmlElementName == neutralLoss {
             isNeutralLoss = true
-        } else if elementName == element {
+        } else if xmlElementName == element {
             if isNeutralLoss == false,
                let symbol = attributeDict[symbolAttributeKey],
                let number = attributeDict[numberAttributeKey]
@@ -146,7 +146,7 @@ extension UnimodParser: XMLParserDelegate {
                     modificationElements[symbol] = Int(number)
                 }
             }
-        } else if elementName == elem {
+        } else if xmlElementName == elem {
 //            if isElements == true {
             if let symbol = attributeDict[titleAttributeKey],
                let name = attributeDict[fullNameAttributeKey],
@@ -159,7 +159,7 @@ extension UnimodParser: XMLParserDelegate {
                 elementAverageMass = averageMass
             }
 //            }
-        } else if elementName == aminoAcid {
+        } else if xmlElementName == aminoAcid {
             isAminoAcid = true
 
             if let title = attributeDict[titleAttributeKey],
@@ -173,8 +173,8 @@ extension UnimodParser: XMLParserDelegate {
         }
     }
 
-    public func parser(_: XMLParser, didEndElement elementName: String, namespaceURI _: String?, qualifiedName _: String?) {
-        if elementName == elem {
+    public func parser(_: XMLParser, didEndElement xmlElementName: String, namespaceURI _: String?, qualifiedName _: String?) {
+        if xmlElementName == elem {
             if elementFullName.isEmpty == false {
                 let chemicalElement = ChemicalElement(name: elementFullName, symbol: elementSymbol, monoisotopicMass: Dalton(elementMonoisotopicMass) ?? 0.0, averageMass: Dalton(elementAverageMass) ?? 0.0)
 
@@ -185,11 +185,11 @@ extension UnimodParser: XMLParserDelegate {
                 elementMonoisotopicMass.removeAll()
                 elementAverageMass.removeAll()
             }
-        } else if elementName == elements {
+        } else if xmlElementName == elements {
             isElements = false
-        } else if elementName == neutralLoss {
+        } else if xmlElementName == neutralLoss {
             isNeutralLoss = false
-        } else if elementName == modification {
+        } else if xmlElementName == modification {
             if modificationName.isEmpty == false {
                 let mod = Modification(name: modificationName, elements: modificationElements, specificities: modificationSpecificities)
 
@@ -201,7 +201,7 @@ extension UnimodParser: XMLParserDelegate {
 
                 isModification = false
             }
-        } else if elementName == aminoAcid {
+        } else if xmlElementName == aminoAcid {
             if aminoAcidName.isEmpty == false {
                 let aa = AminoAcid(name: aminoAcidName, oneLetterCode: aminoAcidOneLetterCode, threeLetterCode: aminoAcidThreeLetterCode, elements: aminoAcidElements)
 

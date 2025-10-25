@@ -53,10 +53,13 @@ final class BioSwiftTests: XCTestCase {
         XCTAssertEqual(formula.countFor(element: "C"), 24)
     }
 
+    func testProteinFormula() {
+        let formula = testProtein.formula
+        XCTAssertEqual(testProtein.formula.countFor(element: "C"), 2112)
+    } // C2112H3313N539O629S13
+
     func testPeptideFormula() {
         let peptide = Peptide(sequence: "DWSSD")
-        let formula = peptide.formula
-        print(formula.formulaString)
         XCTAssertEqual(peptide.formula.countFor(element: "C"), 25)
     }
 
@@ -117,11 +120,6 @@ final class BioSwiftTests: XCTestCase {
         XCTAssertEqual(testProtein.pseudomolecularIon().averageMass.roundedDecimalAsString(to: 4), "46737.9568")
     } // 46737.0703
 
-    func testProteinFormula() {
-        testProtein.setAdducts(type: protonAdduct, count: 1)
-        XCTAssertEqual(testProtein.formula.countFor(element: "C"), 2112)
-    } // C2112H3313N539O629S13
-
     func testProteinIsoElectricPoint() {
         let pKa = testProtein.isoelectricPoint(for: 0)
         XCTAssertEqual(pKa.roundedDecimalAsString(to: 2), "5.37") // 5.39
@@ -170,7 +168,7 @@ final class BioSwiftTests: XCTestCase {
 
     func testProteinAtomCount() {
         testProtein.setAdducts(type: protonAdduct, count: 1)
-        XCTAssertEqual(testProtein.formula.elements.count, 6606)
+        XCTAssertEqual(testProtein.formula.countAllElements(), 6606)
     }
 
     func testSymbolAtIndex() {

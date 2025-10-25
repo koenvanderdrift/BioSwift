@@ -9,7 +9,7 @@
 import Foundation
 
 public let unmodifiedString = "Unmodified"
-public let zeroModification = Modification(name: unmodifiedString, elements: [:])
+public let zeroModification = Modification(name: unmodifiedString, reactions: [.undefined])
 
 public let hydrogenModification = Modification(name: "Hydrogen", reactions: [.add(hydrogen)])
 public let hydroxylModification = Modification(name: "Hydroxyl", reactions: [.add(hydroxyl)])
@@ -118,7 +118,7 @@ public struct Modification: Codable {
     public let name: String
     public let reactions: [Reaction]
     public let specificities: [ModificationSpecificity]
-    
+
     public init(name: String, reactions: [Reaction], specificities: [ModificationSpecificity] = []) {
         self.name = name
         self.specificities = specificities
@@ -126,6 +126,8 @@ public struct Modification: Codable {
     }
 
     public init(name: String, elements: [String: Int], specificities: [ModificationSpecificity] = []) {
+        // TODO: switch to [ChemicalElement: Int] ?
+
         var reactions = [Reaction]()
 
         let negativeElements = elements.filter { $0.value < 0 }
