@@ -53,7 +53,11 @@ extension Peptide: Chargeable {
     }
 
     public func calculateMasses() -> MassContainer {
-        residueMasses() + modificationMasses() + terminalMasses()
+        if residues.isEmpty {
+            return zeroMass
+        }
+
+        return residueMasses() + modificationMasses() + terminalMasses()
     }
 
     func residueMasses() -> MassContainer {

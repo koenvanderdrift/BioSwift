@@ -475,6 +475,10 @@ final class BioSwiftTests: XCTestCase {
             XCTAssert(y9.massOverCharge().monoisotopicMass.roundTo(places: 4) == 958.4523) // y9 M-ox
         }
 
+        if let x9 = fragmenter.fragment(at: 9, for: .xIon) {
+            XCTAssert(x9.massOverCharge().monoisotopicMass.roundTo(places: 4) == 984.4316) // x9 M-ox
+        }
+        
         let zIons = fragments.filter { $0.fragmentType == .zIon }
         XCTAssertNil(zIons.filter { $0.index == 13 }.first)
 

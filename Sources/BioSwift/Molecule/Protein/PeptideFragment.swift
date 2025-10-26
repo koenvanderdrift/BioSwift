@@ -49,26 +49,32 @@ public enum PeptideFragmentType: CaseIterable, Codable {
         case .aIonMinusAmmonia:
             return zeroMass - carbonyl.masses + ammonia.masses
 
+        case .bIon:
+            return zeroMass - hydrogen.masses
+
         case .bIonMinusWater:
-            return zeroMass - water.masses
+            return zeroMass - water.masses - hydrogen.masses
 
         case .bIonMinusAmmonia:
-            return zeroMass - ammonia.masses
+            return zeroMass - ammonia.masses - hydrogen.masses
 
         case .cIon:
-            return ammonia.masses
+            return ammonia.masses - hydrogen.masses
 
         case .yIon:
-            return water.masses
+            return hydrogen.masses
+
+        case .yIonMinusWater:
+            return hydrogen.masses - water.masses
 
         case .yIonMinusAmmonia:
-            return water.masses - ammonia.masses
+            return hydrogen.masses - ammonia.masses
 
         case .xIon:
-            return water.masses + carbonyl.masses - 2 * hydrogen.masses
+            return carbonyl.masses - hydrogen.masses
 
         case .zIon:
-            return water.masses - ammonia.masses + hydrogen.masses
+            return zeroMass - ammonia.masses + 2 * hydrogen.masses
 
         default:
             return zeroMass
@@ -87,8 +93,8 @@ public struct PeptideFragment: Chain, Codable {
     public var name: String = ""
     public var sequence: String = ""
     public var residues: [AminoAcid] = []
-    public var nTerminal: Modification = hydrogenModification
-    public var cTerminal: Modification = hydroxylModification
+    public var nTerminal: Modification = zeroModification
+    public var cTerminal: Modification = zeroModification
     public var modifications: [LocalizedModification] = []
     public var adducts: [Adduct] = []
     public var rangeInParent: ChainRange = zeroChainRange
@@ -113,12 +119,14 @@ public struct PeptideFragment: Chain, Codable {
 }
 
 extension PeptideFragment: Fragmenting {
-    init(residues: [AminoAcid], type: PeptideFragmentType, index: Int = -1, adducts: [Adduct], modifications: [LocalizedModification] = []) {
+    init(residues: [AminoAcid], type: PeptideFragmentType, index: Int = -1, adducts: [Adduct], modifications: [LocalizedModification] = [], nTerm: Modification = zeroModification, cTerm: Modification = zeroModification) {
         self.residues = residues
         self.fragmentType = type
         self.index = index
         self.adducts = adducts
         self.modifications = modifications
+        self.nTerminal = nTerm
+        self.cTerminal = cTerm
     }
 }
 
