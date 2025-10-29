@@ -12,10 +12,8 @@ final class BioSwiftTests: XCTestCase {
     override class func setUp() {
         super.setUp()
 
-        do {
-            try dataLibrary.loadUnimod()
-        } catch {
-            debugPrint(error)
+        Task {
+            try await dataLibrary.loadUnimod()
         }
     }
 

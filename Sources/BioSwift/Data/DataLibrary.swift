@@ -66,7 +66,12 @@ public struct DataLibrary {
         return []
     }
 
-    public func loadUnimod() throws {
-        try UnimodController().loadUnimod()
+    public func loadUnimod() async throws {
+        do  {
+            try await UnimodController().loadUnimod()
+        }
+        catch {
+            debugPrint(error)
+        }
     }
 }

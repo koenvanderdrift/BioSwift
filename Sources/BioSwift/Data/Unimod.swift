@@ -9,7 +9,7 @@
 import Foundation
 
 public struct UnimodController {
-    public func loadUnimod() throws {
+    public func loadUnimod() async throws {
         do {
             debugPrint("Start parsing unimod.xml")
 
