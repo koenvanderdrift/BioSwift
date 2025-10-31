@@ -36,7 +36,7 @@ public extension NSRange {
 
 // https://medium.com/swift2go/mastering-generics-with-protocols-the-specification-pattern-5e2e303af4ca
 
-public protocol Chain {
+public protocol Chain: Codable {
     associatedtype T: Residue
 
     var name: String { get set }

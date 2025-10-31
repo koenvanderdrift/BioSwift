@@ -21,6 +21,27 @@ public struct BioMolecule {
     }
 }
 
+extension BioMolecule: Codable {
+    enum CodingKeys: String, CodingKey {
+        case adducts
+        case chains
+    }
+    
+    public init(from decoder: any Decoder) throws {
+        do {
+            let container = try decoder.container(keyedBy: CodingKeys.self)
+            
+            adducts = try container.decode([Adduct].self, forKey: .adducts)
+            chains = []
+        }
+    }
+    
+    public func encode(to encoder: any Encoder) throws {
+    
+    }
+}
+
+
 extension BioMolecule: Chargeable {
     public var masses: MassContainer {
         calculateMasses()
