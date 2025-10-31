@@ -12,31 +12,31 @@ public struct Protein: BioMolecule {
     public var adducts: [Adduct] = []
     public var chains: [Peptide]
 
-    init(chains: [Peptide]) {
+    public init(chains: [Peptide]) {
         self.chains = chains
     }
 
-    init(sequence: String) {
+    public init(sequence: String) {
         chains = [Peptide(sequence: sequence)]
     }
 
-    init(sequences: [String]) {
+    public init(sequences: [String]) {
         chains = sequences.map { Peptide(sequence: $0) }
     }
 
-    init(residues: [AminoAcid]) {
+    public init(residues: [AminoAcid]) {
         chains = [Peptide(residues: residues)]
     }
 
-    func aminoAcids(for chainIndex: Int = 0) -> [AminoAcid] {
+    public func aminoAcids(for chainIndex: Int = 0) -> [AminoAcid] {
         residues(for: chainIndex) as? [AminoAcid] ?? []
     }
 
-    func isoelectricPoint(for chainIndex: Int = 0) -> Double {
+    public func isoelectricPoint(for chainIndex: Int = 0) -> Double {
         chains[chainIndex].isoelectricPoint()
     }
 
-    func isoelectricPoint(for chainIndex: Int = 0, with range: ChainRange) -> Double {
+    public func isoelectricPoint(for chainIndex: Int = 0, with range: ChainRange) -> Double {
         if let peptide = chains[chainIndex].subChain(with: range) {
             return peptide.isoelectricPoint()
         }
