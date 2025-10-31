@@ -87,9 +87,7 @@ public protocol Fragmenting {
     var index: Int { get set }
 }
 
-public struct PeptideFragment: Chain, Codable {
-    public typealias T = AminoAcid
-
+public struct PeptideFragment: Chain, Codable, Fragmenting {
     public var name: String = ""
     public var sequence: String = ""
     public var residues: [AminoAcid] = []
@@ -111,15 +109,7 @@ public struct PeptideFragment: Chain, Codable {
         self.residues = residues
     }
 
-    public func createResidues(from string: String) -> [AminoAcid] {
-        string.compactMap { char in
-            aminoAcidLibrary.first(where: { $0.identifier == String(char) })
-        }
-    }
-}
-
-extension PeptideFragment: Fragmenting {
-    init(residues: [AminoAcid], type: PeptideFragmentType, index: Int = -1, adducts: [Adduct], modifications: [LocalizedModification] = [], nTerm: Modification = zeroModification, cTerm: Modification = zeroModification) {
+    public init(residues: [AminoAcid], type: PeptideFragmentType, index: Int = -1, adducts: [Adduct], modifications: [LocalizedModification] = [], nTerm: Modification = zeroModification, cTerm: Modification = zeroModification) {
         self.residues = residues
         self.fragmentType = type
         self.index = index
@@ -127,6 +117,12 @@ extension PeptideFragment: Fragmenting {
         self.modifications = modifications
         self.nTerminal = nTerm
         self.cTerminal = cTerm
+    }
+
+    public func createResidues(from string: String) -> [AminoAcid] {
+        string.compactMap { char in
+            aminoAcidLibrary.first(where: { $0.identifier == String(char) })
+        }
     }
 }
 

@@ -9,8 +9,6 @@
 import Foundation
 
 public struct Peptide: Chain, Codable {
-    public typealias T = AminoAcid
-
     public var name: String = ""
     public var residues: [AminoAcid] = []
     public var nTerminal: Modification = hydrogenModification

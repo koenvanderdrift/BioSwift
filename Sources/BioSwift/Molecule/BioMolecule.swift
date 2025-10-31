@@ -8,46 +8,18 @@
 
 import Foundation
 
-public struct BioMolecule {
-    public var adducts: [Adduct] = []
-    public var chains: [any Chain]
+public protocol BioMolecule: Chargeable {
+    associatedtype T: Chain
 
-    public init(chain: any Chain) {
-        self.init(chains: [chain])
-    }
-
-    public init(chains: [any Chain]) {
-        self.chains = chains
-    }
+    var chains: [T] { get set }
 }
 
-extension BioMolecule: Codable {
-    enum CodingKeys: String, CodingKey {
-        case adducts
-        case chains
-    }
-    
-    public init(from decoder: any Decoder) throws {
-        do {
-            let container = try decoder.container(keyedBy: CodingKeys.self)
-            
-            adducts = try container.decode([Adduct].self, forKey: .adducts)
-            chains = []
-        }
-    }
-    
-    public func encode(to encoder: any Encoder) throws {
-    
-    }
-}
-
-
-extension BioMolecule: Chargeable {
-    public var masses: MassContainer {
+public extension BioMolecule {
+    var masses: MassContainer {
         calculateMasses()
     }
 
-    public var charge: Int {
+    var charge: Int {
         if let chargeableChains = chains as? [Chargeable] {
             return chargeableChains.reduce(0) { $0 + $1.charge }
         }
@@ -55,16 +27,14 @@ extension BioMolecule: Chargeable {
         return 0
     }
 
-    public func calculateMasses() -> MassContainer {
+    func calculateMasses() -> MassContainer {
         if let chargeableChains = chains as? [Chargeable] {
             return chargeableChains.reduce(zeroMass) { $0 + $1.masses }
         }
 
         return zeroMass
     }
-}
 
-public extension BioMolecule {
     func monoIsotopicMass() -> Double {
         return pseudomolecularIon().monoisotopicMass
     }
@@ -130,10 +100,10 @@ public extension BioMolecule {
     mutating func setAdducts(type: Adduct, count: Int, for chainIndex: Int = 0) {
         if var chain = chains[chainIndex] as? Chargeable {
             chain.setAdducts(type: type, count: count)
-            adducts = [Adduct](repeating: type, count: count)
+//            adducts = [Adduct](repeating: type, count: count)
         }
     }
-    
+
     mutating func addModification(mod: LocalizedModification, for chainIndex: Int = 0) {
         chains[chainIndex].addModification(mod)
     }
@@ -144,16 +114,15 @@ public extension BioMolecule {
 
     func countOneResidue(with identifier: String, for chainIndex: Int = 0) -> Int {
         let countedResidues = countAllResidues(for: chainIndex)
-        
+
         if let res = chains[chainIndex].library
-            .first(where: { $0.identifier == identifier }) {
+            .first(where: { $0.identifier == identifier })
+        {
             return countedResidues.count(for: res)
         }
-        
+
         return 0
     }
-
-
 
     func residueLocations(for chainIndex: Int = 0, with identifiers: [String]) -> [Int] {
         let result = identifiers.map { i in
