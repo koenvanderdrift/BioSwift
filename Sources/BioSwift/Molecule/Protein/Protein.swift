@@ -8,7 +8,7 @@
 
 import Foundation
 
-public struct Protein: BioMolecule {
+public struct Protein: BioMolecule, Codable {
     public var adducts: [Adduct] = []
     public var chains: [Peptide]
 
