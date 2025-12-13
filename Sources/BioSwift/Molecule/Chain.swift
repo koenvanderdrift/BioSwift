@@ -101,28 +101,48 @@ public extension Chain {
         NSCountedSet(array: residues)
     }
 
+    mutating func insertResidue(_ residue: any Residue, at location: Int) {
+        if let r = residue as? Self.T {
+            residues.insert(r, at: location)
+        }
+    }
+
+    mutating func insertResidues(_ newResidues: [any Residue], at location: Int) {
+        if let r = newResidues as? [Self.T] {
+            residues.insert(contentsOf: r, at: location)
+        }
+    }
+
+    mutating func removeResidue(at location: Int) {
+        residues.remove(at: location)
+    }
+
+    mutating func removeResidues(at location: Int) {
+        // TODO
+    }
+
     mutating func replaceResidue(at location: Int, with residue: any Residue) {
         if let r = residue as? Self.T {
             residues[location] = r
         }
     }
 
-    mutating func update(with sequence: String, in editedRange: NSRange, changeInLength: Int) {
+    mutating func update(with sequence: String, in range: NSRange, changeInLength: Int) {
         if sequence == sequenceString {
             return
         }
 
         switch changeInLength {
         case Int.min ..< 0:
-            let range = editedRange.location ..< editedRange.location - changeInLength
-            residues.removeSubrange(range)
+            let subRange = range.location ..< range.location - changeInLength
+            residues.removeSubrange(subRange)
 
         case 0 ..< Int.max:
-            let range = editedRange.location ..< editedRange.location + changeInLength
-            let s = String(sequence[range])
+            let subRange = range.location ..< range.location + changeInLength
+            let s = String(sequence[subRange])
 
             let newResidues = createResidues(from: s)
-            residues.insert(contentsOf: newResidues, at: editedRange.location)
+            residues.insert(contentsOf: newResidues, at: range.location)
 
         default:
             fatalError("TODO")

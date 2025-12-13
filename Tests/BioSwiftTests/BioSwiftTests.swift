@@ -6,6 +6,7 @@ final class BioSwiftTests: XCTestCase {
 
     lazy var testPeptide = Peptide(sequence: "DWSSD")
 
+//    lazy var ala = aminoAcidLibrary.first(where: { $0.identifier == "A" })
     lazy var alanine = AminoAcid(name: "Alanine", oneLetterCode: "A", threeLetterCode: "Ala", formula: Formula("C3H5NO"))
     lazy var serine = AminoAcid(name: "Serine", oneLetterCode: "S", threeLetterCode: "Ser", formula: Formula("C3H5NO2"))
 
@@ -52,7 +53,6 @@ final class BioSwiftTests: XCTestCase {
     }
 
     func testProteinFormula() {
-        let formula = testProtein.formula
         XCTAssertEqual(testProtein.formula.countFor(element: "C"), 2112)
     } // C2112H3313N539O629S13
 
@@ -185,6 +185,30 @@ final class BioSwiftTests: XCTestCase {
         }
     }
 
+    func testRemoveAminoAcid() {
+        XCTAssertEqual(testPeptide.sequenceString, "DWSSD")
+        testPeptide.removeResidue(at: 3)
+        XCTAssertEqual(testPeptide.sequenceString, "DWSD")
+    }
+
+    func testInsertAminoAcid() {
+        XCTAssertEqual(testPeptide.sequenceString, "DWSSD")
+        if let gly = aminoAcidLibrary.first(where: { $0.identifier == "G" }) {
+            testPeptide.insertResidue(gly, at: 2)
+        }
+
+        XCTAssertEqual(testPeptide.sequenceString, "DWGSSD")
+    }
+
+    func testInsertAminoAcids() {
+        XCTAssertEqual(testPeptide.sequenceString, "DWSSD")
+        if let gly = aminoAcidLibrary.first(where: { $0.identifier == "G" }), let pro = aminoAcidLibrary.first(where: { $0.identifier == "P" }) {
+            testPeptide.insertResidues([gly, pro, pro], at: 2)
+        }
+
+        XCTAssertEqual(testPeptide.sequenceString, "DWGPPSSD")
+    }
+
     func testFormulaAverageMass() { // C4H5NO3 + C11H10N2O + C3H5NO2 + C3H5NO2 + C4H5NO3 + H2O
         //        let formula = Formula("C2112H3313N539O629S13H")
         //        let masses = mass(of: formula.elements)
@@ -236,7 +260,7 @@ final class BioSwiftTests: XCTestCase {
     func testSubChainWithModification() {
         var peptide = Peptide(sequence: "SAMPLEVCAAAGQTHR")
         peptide.setAdducts(type: protonAdduct, count: 1)
-        XCTAssert(peptide.massOverCharge().monoisotopicMass.roundTo(places: 4) == 1641.7836)
+        XCTAssert(peptide.monoisotopicMass.roundTo(places: 4) == 1641.7836)
 
         guard let cysMod = modificationLibrary.first(where: { $0.name.lowercased() == "Carboxymethyl".lowercased() })
         else {
@@ -244,12 +268,12 @@ final class BioSwiftTests: XCTestCase {
         }
 
         peptide.addModification(LocalizedModification(cysMod, at: 7)) // zero-based
-        XCTAssert(peptide.massOverCharge().monoisotopicMass.roundTo(places: 4) == 1699.7891)
+        XCTAssert(peptide.monoisotopicMass.roundTo(places: 4) == 1699.7891)
 
         let subChain = peptide.subChain(from: 3, to: 12) // zero-based
         XCTAssert(subChain?.sequenceString == "PLEVCAAAGQ")
         XCTAssert(subChain?.modification(at: 4) == cysMod) // zero-based
-        XCTAssert(subChain?.massOverCharge().monoisotopicMass.roundTo(places: 4) == 1016.4717)
+        XCTAssert(subChain?.monoisotopicMass.roundTo(places: 4) == 1016.4717)
     }
 
     func testEmptySequence() {
@@ -282,7 +306,7 @@ final class BioSwiftTests: XCTestCase {
     }
 
     func testMassSearch() {
-        if let chain = testProtein.chains.first as? Peptide {
+        if let chain = testProtein.chains.first {
             let searchParameters = MassSearchParameters(searchValue: 609.71,
                                                         tolerance: MassTolerance(type: .ppm, value: 20),
                                                         searchType: .sequential,
@@ -296,7 +320,7 @@ final class BioSwiftTests: XCTestCase {
     }
 
     func testLowMassSearch() {
-        if let chain = testProtein.chains.first as? Peptide {
+        if let chain = testProtein.chains.first {
             let searchParameters = MassSearchParameters(searchValue: 1,
                                                         tolerance: MassTolerance(type: .ppm, value: 20),
                                                         searchType: .sequential,
@@ -310,7 +334,7 @@ final class BioSwiftTests: XCTestCase {
     }
 
     func testMassSearchWithModification() {
-        if var chain = testProtein.chains.first as? Peptide,
+        if var chain = testProtein.chains.first,
            let phos = modificationLibrary.filter({ $0.name.contains("Phospho") == true }).first
         {
             chain.addModification(LocalizedModification(phos, at: 76)) // zero-based
@@ -476,7 +500,7 @@ final class BioSwiftTests: XCTestCase {
         if let x9 = fragmenter.fragment(at: 9, for: .xIon) {
             XCTAssert(x9.massOverCharge().monoisotopicMass.roundTo(places: 4) == 984.4316) // x9 M-ox
         }
-        
+
         let zIons = fragments.filter { $0.fragmentType == .zIon }
         XCTAssertNil(zIons.filter { $0.index == 13 }.first)
 
@@ -586,15 +610,15 @@ final class BioSwiftTests: XCTestCase {
         protein.setAdducts(type: protonAdduct, count: 1, for: 0)
         protein.setAdducts(type: protonAdduct, count: 0, for: 1)
 
-        if let peptide0 = protein.chains[0] as? Chargeable, let peptide1 = protein.chains[1] as? Chargeable {
-            let mass0 = peptide0.massOverCharge().monoisotopicMass.roundTo(places: 4) // 406.1932
-            XCTAssert(mass0 == 406.1932)
+        let peptide3 = protein.chains[0]
+        let peptide4 = protein.chains[1]
+        let mass0 = peptide3.monoisotopicMass.roundTo(places: 4) // 406.1932
+        XCTAssert(mass0 == 406.1932)
 
-            let mass1 = peptide1.massOverCharge().monoisotopicMass.roundTo(places: 4) // 326.1508
-            XCTAssert(mass1 == 326.1508)
+        let mass1 = peptide4.monoisotopicMass.roundTo(places: 4) // 326.1508
+        XCTAssert(mass1 == 326.1508)
 
-//            let mass = protein.massOverCharge().monoisotopicMass.roundTo(places: 4) // 1055.4731
-//            XCTAssert(mass == mass0 + mass1)
-        }
+        let mass = protein.monoisotopicMass.roundTo(places: 4) // 1055.4731
+        XCTAssert(mass == mass0 + mass1)
     }
 }
