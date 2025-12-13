@@ -116,16 +116,18 @@ public struct ModificationSpecificity: Codable {
 
 public struct Modification: Codable {
     public let name: String
+    public let fullName: String
     public let reactions: [Reaction]
     public let specificities: [ModificationSpecificity]
 
-    public init(name: String, reactions: [Reaction], specificities: [ModificationSpecificity] = []) {
+    public init(name: String, fullName: String = "", reactions: [Reaction], specificities: [ModificationSpecificity] = []) {
         self.name = name
+        self.fullName = fullName
         self.specificities = specificities
         self.reactions = reactions
     }
 
-    public init(name: String, elements: [String: Int], specificities: [ModificationSpecificity] = []) {
+    public init(name: String, fullName: String = "", elements: [String: Int], specificities: [ModificationSpecificity] = []) {
         // TODO: switch to [ChemicalElement: Int] ?
 
         var reactions = [Reaction]()
@@ -142,13 +144,14 @@ public struct Modification: Codable {
             reactions.append(Reaction.add(group))
         }
 
-        self.init(name: name, reactions: reactions, specificities: specificities)
+        self.init(name: name, fullName: fullName, reactions: reactions, specificities: specificities)
     }
 
     public init(_ modification: Modification) {
-        name = modification.name
-        specificities = modification.specificities
-        reactions = modification.reactions
+        self.name = modification.name
+        self.fullName = modification.fullName
+        self.specificities = modification.specificities
+        self.reactions = modification.reactions
     }
 }
 

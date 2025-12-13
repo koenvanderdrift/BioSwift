@@ -59,7 +59,8 @@ public class UnimodParser: NSObject {
     var elementMonoisotopicMass = ""
     var elementAverageMass = ""
 
-    var modificationName = ""
+    var modificationTitle = ""
+    var modificationFullName = ""
     var modificationElements = [String: Int]()
     var modificationSpecificities = [ModificationSpecificity]()
 
@@ -125,8 +126,13 @@ extension UnimodParser: XMLParserDelegate {
             if let title = attributeDict[titleAttributeKey],
                skipTitleStrings.contains(where: title.contains) == false
             {
-                modificationName = title.replacingOccurrences(of: "->", with: " " + rightArrow + " ")
+                modificationTitle = title.replacingOccurrences(of: "->", with: " " + rightArrow + " ")
             }
+            if let fullName = attributeDict[fullNameAttributeKey],
+               skipTitleStrings.contains(where: fullName.contains) == false {
+                modificationFullName = fullName
+            }
+
         } else if xmlElementName == specificity {
             if let site = attributeDict[siteAttributeKey], let position = attributeDict[positionAttributeKey],
                let classification = attributeDict[classificationAttributeKey]
@@ -190,12 +196,13 @@ extension UnimodParser: XMLParserDelegate {
         } else if xmlElementName == neutralLoss {
             isNeutralLoss = false
         } else if xmlElementName == modification {
-            if modificationName.isEmpty == false {
-                let mod = Modification(name: modificationName, elements: modificationElements, specificities: modificationSpecificities)
+            if modificationTitle.isEmpty == false {
+                let mod = Modification(name: modificationTitle, fullName: modificationFullName, elements: modificationElements, specificities: modificationSpecificities)
 
                 modificationLibrary.append(mod)
 
-                modificationName.removeAll()
+                modificationTitle.removeAll()
+                modificationFullName.removeAll()
                 modificationElements.removeAll()
                 modificationSpecificities.removeAll()
 

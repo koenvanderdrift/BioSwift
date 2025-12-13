@@ -93,7 +93,7 @@ final class BioSwiftTests: XCTestCase {
     }
 
     func testPeptideSerinePhosphorylationMonoisotopicMass() {
-        if let phos = modificationLibrary.filter({ $0.name.contains("Phospho") == true }).first {
+        if let phos = modificationLibrary.first(where: { $0.name == "Phospho" }) {
             testPeptide.addModification(LocalizedModification(phos, at: 3)) // zero-based
 
             testPeptide.setAdducts(type: protonAdduct, count: 1)
@@ -130,15 +130,26 @@ final class BioSwiftTests: XCTestCase {
     }
 
     func testProteinSerinePhosphorylationMonoisotopicMass() {
-        if let phos = modificationLibrary.filter({ $0.name.contains("Phospho") == true }).first {
+        if let phos = modificationLibrary.first(where: { $0.name == "Phospho" }) {
             testProtein.addModification(mod: LocalizedModification(phos, at: 3)) // zero-based
             testProtein.setAdducts(type: protonAdduct, count: 1)
 
+            XCTAssertEqual(phos.fullName, "Phosphorylation")
             XCTAssertEqual(testProtein.pseudomolecularIon().monoisotopicMass.roundedDecimalAsString(to: 4), "46788.0230")
 
             testProtein.setAdducts(type: protonAdduct, count: 2)
 
             XCTAssertEqual(testProtein.pseudomolecularIon().monoisotopicMass.roundedDecimalAsString(to: 4), "46708.0267")
+        }
+    }
+    
+    func testModificationFullName() {
+        if let pnTAG = modificationLibrary.first(where: { $0.name == "PnTAG" }) {
+            XCTAssertEqual(pnTAG.fullName, "6-Phosphonohexanoylation")
+        }
+
+        if let TMTpro = modificationLibrary.first(where: { $0.name == "Label:13C(6)15N(2)+TMTpro" }) {
+            XCTAssertEqual(TMTpro.fullName, "TMTpro Tandem Mass Tag 13C(6) 15N(2) Silac label")
         }
     }
 
@@ -262,11 +273,12 @@ final class BioSwiftTests: XCTestCase {
         peptide.setAdducts(type: protonAdduct, count: 1)
         XCTAssert(peptide.monoisotopicMass.roundTo(places: 4) == 1641.7836)
 
-        guard let cysMod = modificationLibrary.first(where: { $0.name.lowercased() == "Carboxymethyl".lowercased() })
+        guard let cysMod = modificationLibrary.first(where: { $0.name == "Carboxymethyl" })
         else {
             return
         }
 
+        XCTAssertEqual(cysMod.fullName, "Iodoacetic acid derivative")
         peptide.addModification(LocalizedModification(cysMod, at: 7)) // zero-based
         XCTAssert(peptide.monoisotopicMass.roundTo(places: 4) == 1699.7891)
 
@@ -335,8 +347,7 @@ final class BioSwiftTests: XCTestCase {
 
     func testMassSearchWithModification() {
         if var chain = testProtein.chains.first,
-           let phos = modificationLibrary.filter({ $0.name.contains("Phospho") == true }).first
-        {
+           let phos = modificationLibrary.first(where:{ $0.name == "Phospho" }) {
             chain.addModification(LocalizedModification(phos, at: 76)) // zero-based
 
             let searchParameters = MassSearchParameters(searchValue: 689,
@@ -467,46 +478,48 @@ final class BioSwiftTests: XCTestCase {
     func testFragmentMass3() {
         var peptide = Peptide(sequence: "SAMPLEVAMAAGQTHR")
         peptide.setAdducts(type: protonAdduct, count: 1)
-
-        guard let ox = modificationLibrary.filter({ $0.name.contains("Oxidation") == true }).first else { return }
-
+        
+        if let ox = modificationLibrary.first(where: { $0.name == "Oxidation" }) {
+        
+        XCTAssertEqual(ox.fullName, "Oxidation or Hydroxylation")
         peptide.addModification(LocalizedModification(ox, at: 8))
         XCTAssert(peptide.massOverCharge().monoisotopicMass.roundTo(places: 4) == 1685.8098)
-
+        
         let fragmenter = PeptideFragmenter(peptide: peptide)
         let fragments = fragmenter.fragments
-
+        
         let aIonsMinusWater = fragments.filter { $0.fragmentType == .aIonMinusWater }
         XCTAssert(aIonsMinusWater.count == 14)
-
+        
         let aIonsMinusAmmonia = fragments.filter { $0.fragmentType == .aIonMinusAmmonia }
         XCTAssert(aIonsMinusAmmonia.count == 3)
-
+        
         let bIons = fragments.filter { $0.fragmentType == .bIon }
         XCTAssertNil(bIons.filter { $0.index == 1 }.first)
-
+        
         let yIons = fragments.filter { $0.fragmentType == .yIonMinusWater }
         XCTAssertNil(yIons.filter { $0.index == 1 }.first)
         XCTAssertNil(yIons.filter { $0.index == 2 }.first)
-
+        
         if let b8 = fragmenter.fragment(at: 8, for: .bIon) {
             XCTAssert(b8.massOverCharge().monoisotopicMass.roundTo(places: 4) == 799.4019) // b8 M-ox
         }
-
+        
         if let y9 = fragmenter.fragment(at: 9, for: .yIon) {
             XCTAssert(y9.massOverCharge().monoisotopicMass.roundTo(places: 4) == 958.4523) // y9 M-ox
         }
-
+        
         if let x9 = fragmenter.fragment(at: 9, for: .xIon) {
             XCTAssert(x9.massOverCharge().monoisotopicMass.roundTo(places: 4) == 984.4316) // x9 M-ox
         }
-
+        
         let zIons = fragments.filter { $0.fragmentType == .zIon }
         XCTAssertNil(zIons.filter { $0.index == 13 }.first)
-
+        
         if let z12 = fragmenter.fragment(at: 12, for: .zIon) {
             XCTAssert(z12.massOverCharge().monoisotopicMass.roundTo(places: 4) == 1283.6287) // z12 M-ox
         }
+    }
     }
 
     func testFragmentMass4() {
