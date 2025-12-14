@@ -8,17 +8,18 @@
 
 import Foundation
 
+public let hydrogen = FunctionalGroup(name: "hydrogen", formula: "H")
+public let oxygen = FunctionalGroup(name: "oxygen", formula: "O")
+
 public let hydroxyl = FunctionalGroup(name: "hydroxyl", formula: "OH")
 public let ammonia = FunctionalGroup(name: "ammonia", formula: "NH3")
 public let carbonyl = FunctionalGroup(name: "carbonyl", formula: "CO")
 public let water = FunctionalGroup(name: "water", formula: "H2O")
-public let hydrogen = FunctionalGroup(name: "hydrogen", formula: "H")
-public let oxygen = FunctionalGroup(name: "oxygen", formula: "O")
 public let methyl = FunctionalGroup(name: "methyl", formula: "CH3")
 
-public let proton = FunctionalGroup(name: "proton", formula: "H")
-public let sodium = FunctionalGroup(name: "sodium", formula: "Na")
 public let ammonium = FunctionalGroup(name: "ammonium", formula: "NH4")
+public let sodium = FunctionalGroup(name: "sodium", formula: "Na")
+public let potassium = FunctionalGroup(name: "potassium", formula: "K")
 
 public struct FunctionalGroup: Structure, Codable {
     public let name: String

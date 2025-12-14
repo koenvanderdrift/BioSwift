@@ -81,12 +81,13 @@ public struct Adduct: Codable {
     var charge: Int
 }
 
-public let protonAdduct = Adduct(group: proton, charge: 1)
+public let protonAdduct = Adduct(group: hydrogen, charge: 1)
 public let sodiumAdduct = Adduct(group: sodium, charge: 1)
 public let ammoniumAdduct = Adduct(group: ammonium, charge: 1)
+public let potassiumAdduct = Adduct(group: potassium, charge: 1)
 
 public let zeroMass = MassContainer(monoisotopicMass: 0.0, averageMass: 0.0, nominalMass: 0)
-public let electron = MassContainer(monoisotopicMass: Dalton(0.00054858026), averageMass: Dalton(0.00054858026), nominalMass: 0)
+public let electronMass = MassContainer(monoisotopicMass: Dalton(0.000549), averageMass: Dalton(0.000549), nominalMass: 0)
 
 public protocol Mass {
     var masses: MassContainer { get }
@@ -132,7 +133,7 @@ public extension Chargeable {
 
         if charge > 0 {
             let moverz = (
-                masses + adducts.map { $0.group.masses - ($0.charge * electron) }
+                masses + adducts.map { $0.group.masses - ($0.charge * electronMass) }
                     .reduce(zeroMass) { $0 + $1 }
             ) / charge
 
