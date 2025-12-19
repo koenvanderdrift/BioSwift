@@ -69,7 +69,7 @@ extension ChemicalElement: Mass {
     }
 
     public func calculateMasses() -> MassContainer {
-        var currentAbundance = Dalton(0.0)
+        var currentAbundance = Double(0.0)
 
         var monoisotopicMass = Dalton(0.0)
         var averageMass = Dalton(0.0)

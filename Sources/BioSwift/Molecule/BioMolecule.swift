@@ -35,11 +35,11 @@ public extension BioMolecule {
         return zeroMass
     }
 
-    func monoIsotopicMass() -> Double {
+    func monoIsotopicMass() -> Dalton {
         return pseudomolecularIon().monoisotopicMass
     }
 
-    func averageMass() -> Double {
+    func averageMass() -> Dalton {
         return pseudomolecularIon().averageMass
     }
 
@@ -47,11 +47,11 @@ public extension BioMolecule {
         return Hydropathy(residues: chains[index].residues).isoElectricPoint()
     }
 
-    func selectedMonoIsotopicMass(chainIndex _: Int = 0, _ range: ChainRange) -> Double {
+    func selectedMonoIsotopicMass(chainIndex _: Int = 0, _ range: ChainRange) -> Dalton {
         return selectionMass(range).monoisotopicMass
     }
 
-    func selectedAverageMass(chainIndex _: Int = 0, _ range: ChainRange) -> Double {
+    func selectedAverageMass(chainIndex _: Int = 0, _ range: ChainRange) -> Dalton {
         return selectionMass(range).averageMass
     }
 
