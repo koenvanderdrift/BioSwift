@@ -24,19 +24,16 @@ public let potassium = FunctionalGroup(name: "potassium", formula: "K")
 public struct FunctionalGroup: Structure, Codable {
     public let name: String
     public let formula: Formula
-    public var adducts: [Adduct]
 
     public init(name: String, formula: String) {
         self.name = name
         self.formula = Formula(formula)
-        adducts = []
     }
 
     public init(name: String, formula: [String: Int]) {
         // TODO: switch to [ChemicalElement: Int] ?
         self.name = name
         self.formula = Formula(formula)
-        adducts = []
     }
 
     public var masses: MassContainer {

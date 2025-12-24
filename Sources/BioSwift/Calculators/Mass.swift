@@ -129,18 +129,15 @@ public extension Chargeable {
     }
 
     func massOverCharge() -> MassContainer {
-        let masses = calculateMasses()
+        let masses = calculateMasses() + adductMasses()
+        let charge = charge > 0 ? charge : 1
+        
+        return masses / charge
+    }
 
-        if charge > 0 {
-            let moverz = (
-                masses + adducts.map { $0.group.masses - ($0.charge * electronMass) }
-                    .reduce(zeroMass) { $0 + $1 }
-            ) / charge
-
-            return moverz
-        }
-
-        return masses
+    func adductMasses() -> MassContainer {
+        return adducts.map { $0.group.masses - ($0.charge * electronMass) }
+            .reduce(zeroMass) { $0 + $1 }
     }
 }
 
