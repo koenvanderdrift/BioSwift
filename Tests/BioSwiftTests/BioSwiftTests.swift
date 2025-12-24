@@ -1,7 +1,10 @@
-@testable import BioSwift
 import XCTest
 
+@testable import BioSwift
+
 final class BioSwiftTests: XCTestCase {
+    nonisolated(unsafe) static var task: Task<Void, Never>?
+
     lazy var testProtein = Protein(sequence: "MPSSVSWGILLLAGLCCLVPVSLAEDPQGDAAQKTDTSHHDQDHPTFNKITPNLAEFAFSLYRQLAHQSNSTNIFFSPIVSIATAFAMLSLGTKADTHDEILEGLNFNLTEIPEAQIHEGFQELLRTLNQPDSQLQLTTGNGLFLSEGLKLVDKFLEDVKKLYHSEAFTVNFGDTEEAKKQINDYVEKGTQGKIVDLVKELDRDTVFALVNYIFFKGKWERPFEVKDTEEEDFHVDQVTTVKVPMMKRLGMFNIQHCKKLSSWVLLMKYLGNATAIFFLPDEGKLQHLENELTHDIITKFLENEDRRSASLHLPKLSITGTYDLKSVLGQLGITKVFSNGADLSGVTEEAPLKLSKAVHKAVLTIDEKGTEAAGAMFLEAIPMSIPPEVKFNKPFVFMIEQNTKSPLFMGKVVNPTQK")
 
     lazy var testPeptide = Peptide(sequence: "DWSSD")
@@ -11,11 +14,18 @@ final class BioSwiftTests: XCTestCase {
     lazy var serine = AminoAcid(name: "Serine", oneLetterCode: "S", threeLetterCode: "Ser", formula: Formula("C3H5NO2"))
 
     override class func setUp() {
-        super.setUp()
-
-        Task {
-            try await dataLibrary.loadUnimod()
+        task = Task {
+            do {
+                try await dataLibrary.loadUnimod()
+            }
+            catch {
+                print(error)
+            }
         }
+    }
+
+    override func setUp() async throws {
+        await BioSwiftTests.task?.value
     }
 
     func testSequenceLength() {
@@ -71,6 +81,27 @@ final class BioSwiftTests: XCTestCase {
      bioswift (+el)      609.5641    609.2162
      */
 
+    func testFormulaAverageMass() { // C4H5NO3 + C11H10N2O + C3H5NO2 + C3H5NO2 + C4H5NO3 + H2O
+        //        let formula = Formula("C2112H3313N539O629S13H")
+        //        let masses = mass(of: formula.elements)
+        //        debugPrint(masses)
+        let group = FunctionalGroup(name: "", formula: "C4H5NO3" + "C11H10N2O" + "C3H5NO2" + "C3H5NO2" + "C4H5NO3" + "H2O")
+
+        XCTAssertEqual(group.averageMass.roundedDecimalAsString(to: 4), "608.5557")
+    } // 608.5556
+
+    func testWaterAverageMass() { // H2O
+        XCTAssertEqual(water.averageMass.roundedDecimalAsString(to: 4), "18.0153")
+    }
+
+    func testAmmoniaAverageMass() { // NH3
+        XCTAssertEqual(ammonia.averageMass.roundedDecimalAsString(to: 4), "17.0305")
+    }
+
+    func testMethylAverageMass() { // CH3
+        XCTAssertEqual(methyl.averageMass.roundedDecimalAsString(to: 4), "15.0346") // 15.0345
+    }
+
     func testAminoAcidMasses() {
         XCTAssertEqual(serine.monoisotopicMass.roundedDecimalAsString(to: 5), "87.03203")
         XCTAssertEqual(serine.averageMass.roundedDecimalAsString(to: 4), "87.0773")
@@ -86,10 +117,10 @@ final class BioSwiftTests: XCTestCase {
 
     func testPeptideAverageMass() {
         testPeptide.setAdducts(type: protonAdduct, count: 1)
-        XCTAssertEqual(testPeptide.pseudomolecularIon().averageMass.roundedDecimalAsString(to: 4), "609.5731") // 609.563
+        XCTAssertEqual(testPeptide.pseudomolecularIon().averageMass.roundedDecimalAsString(to: 4), "609.5731") // 609.5620
 
         testPeptide.setAdducts(type: protonAdduct, count: 2)
-        XCTAssertEqual(testPeptide.pseudomolecularIon().averageMass.roundedDecimalAsString(to: 4), "305.2903") // 305.2852
+        XCTAssertEqual(testPeptide.pseudomolecularIon().averageMass.roundedDecimalAsString(to: 4), "305.2903") // 305.2847
     }
 
     func testPeptideSerinePhosphorylationMonoisotopicMass() {
@@ -111,7 +142,7 @@ final class BioSwiftTests: XCTestCase {
     func testProteinMonoisotopicMass() {
         testProtein.setAdducts(type: protonAdduct, count: 1)
         XCTAssertEqual(testProtein.pseudomolecularIon().monoisotopicMass.roundedDecimalAsString(to: 4), "46708.0267")
-    }
+    } // 46707.0194
 
     func testProteinAverageMass() {
         testProtein.setAdducts(type: protonAdduct, count: 1)
@@ -135,14 +166,14 @@ final class BioSwiftTests: XCTestCase {
             testProtein.setAdducts(type: protonAdduct, count: 1)
 
             XCTAssertEqual(phos.fullName, "Phosphorylation")
-            XCTAssertEqual(testProtein.pseudomolecularIon().monoisotopicMass.roundedDecimalAsString(to: 4), "46788.0230")
+            XCTAssertEqual(testProtein.pseudomolecularIon().monoisotopicMass.roundedDecimalAsString(to: 4), "46788.0230") // 46786.9858
 
             testProtein.setAdducts(type: protonAdduct, count: 2)
 
-            XCTAssertEqual(testProtein.pseudomolecularIon().monoisotopicMass.roundedDecimalAsString(to: 4), "46708.0267")
+            XCTAssertEqual(testProtein.pseudomolecularIon().monoisotopicMass.roundedDecimalAsString(to: 4), "46708.0267") // 46786.9858
         }
     }
-    
+
     func testModificationFullName() {
         if let pnTAG = modificationLibrary.first(where: { $0.name == "PnTAG" }) {
             XCTAssertEqual(pnTAG.fullName, "6-Phosphonohexanoylation")
@@ -218,27 +249,6 @@ final class BioSwiftTests: XCTestCase {
         }
 
         XCTAssertEqual(testPeptide.sequenceString, "DWGPPSSD")
-    }
-
-    func testFormulaAverageMass() { // C4H5NO3 + C11H10N2O + C3H5NO2 + C3H5NO2 + C4H5NO3 + H2O
-        //        let formula = Formula("C2112H3313N539O629S13H")
-        //        let masses = mass(of: formula.elements)
-        //        debugPrint(masses)
-        let group = FunctionalGroup(name: "", formula: "C4H5NO3" + "C11H10N2O" + "C3H5NO2" + "C3H5NO2" + "C4H5NO3" + "H2O")
-
-        XCTAssertEqual(group.averageMass.roundedDecimalAsString(to: 4), "608.5557")
-    } // 608.5556
-
-    func testWaterAverageMass() { // H2O
-        XCTAssertEqual(water.averageMass.roundedDecimalAsString(to: 4), "18.0153")
-    }
-
-    func testAmmoniaAverageMass() { // NH3
-        XCTAssertEqual(ammonia.averageMass.roundedDecimalAsString(to: 4), "17.0305")
-    }
-
-    func testMethylAverageMass() { // CH3
-        XCTAssertEqual(methyl.averageMass.roundedDecimalAsString(to: 4), "15.0346")
     }
 
     func testLoadFasta() {
@@ -347,7 +357,8 @@ final class BioSwiftTests: XCTestCase {
 
     func testMassSearchWithModification() {
         if var chain = testProtein.chains.first,
-           let phos = modificationLibrary.first(where:{ $0.name == "Phospho" }) {
+           let phos = modificationLibrary.first(where: { $0.name == "Phospho" })
+        {
             chain.addModification(LocalizedModification(phos, at: 76)) // zero-based
 
             let searchParameters = MassSearchParameters(searchValue: 689,
@@ -478,48 +489,47 @@ final class BioSwiftTests: XCTestCase {
     func testFragmentMass3() {
         var peptide = Peptide(sequence: "SAMPLEVAMAAGQTHR")
         peptide.setAdducts(type: protonAdduct, count: 1)
-        
+
         if let ox = modificationLibrary.first(where: { $0.name == "Oxidation" }) {
-        
-        XCTAssertEqual(ox.fullName, "Oxidation or Hydroxylation")
-        peptide.addModification(LocalizedModification(ox, at: 8))
-        XCTAssert(peptide.massOverCharge().monoisotopicMass.roundTo(places: 4) == 1685.8098)
-        
-        let fragmenter = PeptideFragmenter(peptide: peptide)
-        let fragments = fragmenter.fragments
-        
-        let aIonsMinusWater = fragments.filter { $0.fragmentType == .aIonMinusWater }
-        XCTAssert(aIonsMinusWater.count == 14)
-        
-        let aIonsMinusAmmonia = fragments.filter { $0.fragmentType == .aIonMinusAmmonia }
-        XCTAssert(aIonsMinusAmmonia.count == 3)
-        
-        let bIons = fragments.filter { $0.fragmentType == .bIon }
-        XCTAssertNil(bIons.filter { $0.index == 1 }.first)
-        
-        let yIons = fragments.filter { $0.fragmentType == .yIonMinusWater }
-        XCTAssertNil(yIons.filter { $0.index == 1 }.first)
-        XCTAssertNil(yIons.filter { $0.index == 2 }.first)
-        
-        if let b8 = fragmenter.fragment(at: 8, for: .bIon) {
-            XCTAssert(b8.massOverCharge().monoisotopicMass.roundTo(places: 4) == 799.4019) // b8 M-ox
+            XCTAssertEqual(ox.fullName, "Oxidation or Hydroxylation")
+            peptide.addModification(LocalizedModification(ox, at: 8))
+            XCTAssert(peptide.massOverCharge().monoisotopicMass.roundTo(places: 4) == 1685.8098)
+
+            let fragmenter = PeptideFragmenter(peptide: peptide)
+            let fragments = fragmenter.fragments
+
+            let aIonsMinusWater = fragments.filter { $0.fragmentType == .aIonMinusWater }
+            XCTAssert(aIonsMinusWater.count == 14)
+
+            let aIonsMinusAmmonia = fragments.filter { $0.fragmentType == .aIonMinusAmmonia }
+            XCTAssert(aIonsMinusAmmonia.count == 3)
+
+            let bIons = fragments.filter { $0.fragmentType == .bIon }
+            XCTAssertNil(bIons.filter { $0.index == 1 }.first)
+
+            let yIons = fragments.filter { $0.fragmentType == .yIonMinusWater }
+            XCTAssertNil(yIons.filter { $0.index == 1 }.first)
+            XCTAssertNil(yIons.filter { $0.index == 2 }.first)
+
+            if let b8 = fragmenter.fragment(at: 8, for: .bIon) {
+                XCTAssert(b8.massOverCharge().monoisotopicMass.roundTo(places: 4) == 799.4019) // b8 M-ox
+            }
+
+            if let y9 = fragmenter.fragment(at: 9, for: .yIon) {
+                XCTAssert(y9.massOverCharge().monoisotopicMass.roundTo(places: 4) == 958.4523) // y9 M-ox
+            }
+
+            if let x9 = fragmenter.fragment(at: 9, for: .xIon) {
+                XCTAssert(x9.massOverCharge().monoisotopicMass.roundTo(places: 4) == 984.4316) // x9 M-ox
+            }
+
+            let zIons = fragments.filter { $0.fragmentType == .zIon }
+            XCTAssertNil(zIons.filter { $0.index == 13 }.first)
+
+            if let z12 = fragmenter.fragment(at: 12, for: .zIon) {
+                XCTAssert(z12.massOverCharge().monoisotopicMass.roundTo(places: 4) == 1283.6287) // z12 M-ox
+            }
         }
-        
-        if let y9 = fragmenter.fragment(at: 9, for: .yIon) {
-            XCTAssert(y9.massOverCharge().monoisotopicMass.roundTo(places: 4) == 958.4523) // y9 M-ox
-        }
-        
-        if let x9 = fragmenter.fragment(at: 9, for: .xIon) {
-            XCTAssert(x9.massOverCharge().monoisotopicMass.roundTo(places: 4) == 984.4316) // x9 M-ox
-        }
-        
-        let zIons = fragments.filter { $0.fragmentType == .zIon }
-        XCTAssertNil(zIons.filter { $0.index == 13 }.first)
-        
-        if let z12 = fragmenter.fragment(at: 12, for: .zIon) {
-            XCTAssert(z12.massOverCharge().monoisotopicMass.roundTo(places: 4) == 1283.6287) // z12 M-ox
-        }
-    }
     }
 
     func testFragmentMass4() {
@@ -592,7 +602,7 @@ final class BioSwiftTests: XCTestCase {
         XCTAssert(numOfCharges == 5)
     }
 
-    func testallFragmentCases() {
+    func testAllFragmentCases() {
         let allCases = PeptideFragmentType.allCases
         XCTAssert(allCases.count == 17)
     }
