@@ -52,8 +52,8 @@ public struct DataLibrary {
             case .modifications:
                 return [] // populated in loadUnimod
             case .elements:
-//                return [] // populated in loadUnimod
-                return try parseJSONDataFromBundle(from: "elements")
+                return [] // populated in loadUnimod
+//                return try parseJSONDataFromBundle(from: "elements")
             case .enzymes:
                 return try parseJSONDataFromBundle(from: "enzymes")
             case .hydropathy:
@@ -67,10 +67,9 @@ public struct DataLibrary {
     }
 
     public func loadUnimod() async throws {
-        do  {
+        do {
             try await UnimodController().loadUnimod()
-        }
-        catch {
+        } catch {
             debugPrint(error)
         }
     }

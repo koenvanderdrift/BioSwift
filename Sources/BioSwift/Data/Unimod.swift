@@ -11,12 +11,8 @@ import Foundation
 public struct UnimodController {
     public func loadUnimod() async throws {
         do {
-            debugPrint("Start parsing unimod.xml")
-
             let unimodParser = UnimodParser()
-            try unimodParser.parseXML()
-
-            debugPrint("Finished parsing unimod.xml")
+            try await unimodParser.parseXML()
         } catch {
             debugPrint("Failed parsing unimod.xml")
 
@@ -69,18 +65,19 @@ public class UnimodParser: NSObject {
     var aminoAcidThreeLetterCode = ""
     var aminoAcidElements = [String: Int]()
 
-    var isElements = false
+    var isElement = false
     var isAminoAcid = false
     var isModification = false
     var isNeutralLoss = false
 
     let rightArrow = "\u{2192}"
 
-    @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
     public func parseXML() async throws {
-//        skipTitleStrings = [cation, unknown, xlink, atypeion, "2H", "13C", "15N"]
+        //        skipTitleStrings = [cation, unknown, xlink, atypeion, "2H", "13C", "15N"]
 
         do {
+            debugPrint("Started parsing unimod.xml")
+
             let data = try loadDataFromBundle(from: "unimod", withExtension: "xml")
             let parser = XMLParser(data: data)
             parser.delegate = self
@@ -92,6 +89,8 @@ public class UnimodParser: NSObject {
                     throw LoadError.fileParsingFailed(name: "unimod")
                 }
             }
+
+            debugPrint("Finished parsing unimod.xml")
         }
     }
 
@@ -119,7 +118,7 @@ public class UnimodParser: NSObject {
 extension UnimodParser: XMLParserDelegate {
     public func parser(_: XMLParser, didStartElement xmlElementName: String, namespaceURI _: String?, qualifiedName _: String?, attributes attributeDict: [String: String] = [:]) {
         if xmlElementName == elements {
-            isElements = true
+            isElement = true
         } else if xmlElementName == modification {
             isModification = true
 
@@ -129,7 +128,8 @@ extension UnimodParser: XMLParserDelegate {
                 modificationTitle = title.replacingOccurrences(of: "->", with: " " + rightArrow + " ")
             }
             if let fullName = attributeDict[fullNameAttributeKey],
-               skipTitleStrings.contains(where: fullName.contains) == false {
+               skipTitleStrings.contains(where: fullName.contains) == false
+            {
                 modificationFullName = fullName
             }
 
@@ -153,18 +153,18 @@ extension UnimodParser: XMLParserDelegate {
                 }
             }
         } else if xmlElementName == elem {
-//            if isElements == true {
-            if let symbol = attributeDict[titleAttributeKey],
-               let name = attributeDict[fullNameAttributeKey],
-               let monoisotopicMass = attributeDict[monoisotopicMassAttributeKey],
-               let averageMass = attributeDict[averageMassAttributeKey]
-            {
-                elementSymbol = symbol
-                elementFullName = name
-                elementMonoisotopicMass = monoisotopicMass
-                elementAverageMass = averageMass
+            if isElement == true {
+                if let symbol = attributeDict[titleAttributeKey],
+                   let name = attributeDict[fullNameAttributeKey],
+                   let monoisotopicMass = attributeDict[monoisotopicMassAttributeKey],
+                   let averageMass = attributeDict[averageMassAttributeKey]
+                {
+                    elementSymbol = symbol
+                    elementFullName = name
+                    elementMonoisotopicMass = monoisotopicMass
+                    elementAverageMass = averageMass
+                }
             }
-//            }
         } else if xmlElementName == aminoAcid {
             isAminoAcid = true
 
@@ -192,7 +192,7 @@ extension UnimodParser: XMLParserDelegate {
                 elementAverageMass.removeAll()
             }
         } else if xmlElementName == elements {
-            isElements = false
+            isElement = false
         } else if xmlElementName == neutralLoss {
             isNeutralLoss = false
         } else if xmlElementName == modification {
