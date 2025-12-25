@@ -3,7 +3,7 @@
 //  BioSwift
 //
 //  Created by Koen van der Drift on 5/22/17.
-//  Copyright © 2017 - 2024 Koen van der Drift. All rights reserved.
+//  Copyright © 2017 - 2025 Koen van der Drift. All rights reserved.
 //
 
 import Foundation
