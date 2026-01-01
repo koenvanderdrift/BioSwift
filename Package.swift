@@ -25,7 +25,8 @@ let package = Package(
         ),
         .testTarget(
             name: "BioSwiftTests",
-            dependencies: ["BioSwift"]
+            dependencies: ["BioSwift"],
+            path: "Tests"
         ),
     ]
 )
