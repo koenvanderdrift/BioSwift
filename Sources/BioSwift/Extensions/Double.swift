@@ -37,7 +37,7 @@ public extension Double {
 }
 
 public extension Decimal {
-    func roundedString(_ round: Int) -> String {
+    func roundedString(to round: Int) -> String {
         var rounded = Decimal()
         var selfCopy = self
 

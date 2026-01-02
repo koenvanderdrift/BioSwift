@@ -8,7 +8,7 @@
 
 import Foundation
 
-public typealias Dalton = Double
+public typealias Dalton = Decimal
 public typealias MassRange = ClosedRange<Dalton>
 
 extension MassRange {

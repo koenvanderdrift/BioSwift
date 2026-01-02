@@ -86,6 +86,6 @@ extension ChemicalElement: Mass {
 //            }
 //        }
 
-        return MassContainer(monoisotopicMass: monoisotopicMass, averageMass: averageMass, nominalMass: Int(round(monoisotopicMass)))
+        return MassContainer(monoisotopicMass: monoisotopicMass, averageMass: averageMass, nominalMass: Int(monoisotopicMass.doubleValue()))
     }
 }
