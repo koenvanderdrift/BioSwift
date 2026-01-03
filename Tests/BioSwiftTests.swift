@@ -473,11 +473,11 @@ struct BioSwiftTests {
             #expect(aIonsMinusAmmonia.count == 3)
      
             let bIons = fragments.filter { $0.fragmentType == .bIon }
-            #expect(bIons.first(where: { $0.index == 1 }) != nil)
-//
-//            let yIons = fragments.filter { $0.fragmentType == .yIonMinusWater }
-//            #expect(yIons.filter { $0.index == 1 }.first != nil)
-//            #expect(yIons.filter { $0.index == 2 }.first != nil)
+            #expect(bIons.first(where: { $0.index == 1 }) == nil)
+
+            let yIons = fragments.filter { $0.fragmentType == .yIonMinusWater }
+            #expect(yIons.filter { $0.index == 1 }.first == nil)
+            #expect(yIons.filter { $0.index == 2 }.first == nil)
      
             if let b8 = fragmenter.fragment(at: 8, for: .bIon) {
                 #expect(b8.massOverCharge().monoisotopicMass.roundedDouble(to: 4) == 799.4019) // b8 M-ox
@@ -491,8 +491,8 @@ struct BioSwiftTests {
                 #expect(x9.massOverCharge().monoisotopicMass.roundedDouble(to: 4) == 984.4316) // x9 M-ox
             }
      
-//            let zIons = fragments.filter { $0.fragmentType == .zIon }
-//            #expect(zIons.filter { $0.index == 13 }.first != nil)
+            let zIons = fragments.filter { $0.fragmentType == .zIon }
+            #expect(zIons.filter { $0.index == 13 }.first == nil)
      
             if let z12 = fragmenter.fragment(at: 12, for: .zIon) {
                 #expect(z12.massOverCharge().monoisotopicMass.roundedDouble(to: 4) == 1283.6287) // z12 M-ox
@@ -505,17 +505,18 @@ struct BioSwiftTests {
         peptide.setAdducts(type: protonAdduct, count: 1)
      
         let fragmenter = PeptideFragmenter(peptide: peptide)
-//        let fragments = fragmenter.fragments
-//
-//        let bIonsMinusWater = fragments.filter { $0.fragmentType == .bIonMinusWater }
-//        #expect(bIonsMinusWater.filter { $0.index == 1 }.first != nil)
-//        #expect(bIonsMinusWater.filter { $0.index == 2 }.first != nil)
-//        #expect(bIonsMinusWater.filter { $0.index == 3 }.first != nil)
-//        #expect(bIonsMinusWater.filter { $0.index == 4 }.first != nil)
-//        #expect(bIonsMinusWater.filter { $0.index == 5 }.first != nil)
-//        #expect(bIonsMinusWater.filter { $0.index == 6 }.first != nil)
-//        #expect(bIonsMinusWater.filter { $0.index == 7 }.first != nil)
-     
+        let fragments = fragmenter.fragments
+
+        let bIonsMinusWater = fragments.filter { $0.fragmentType == .bIonMinusWater }
+        #expect(bIonsMinusWater.filter { $0.index == 1 }.first == nil)
+        #expect(bIonsMinusWater.filter { $0.index == 2 }.first == nil)
+        #expect(bIonsMinusWater.filter { $0.index == 3 }.first == nil)
+        #expect(bIonsMinusWater.filter { $0.index == 4 }.first == nil)
+        #expect(bIonsMinusWater.filter { $0.index == 5 }.first == nil)
+        #expect(bIonsMinusWater.filter { $0.index == 6 }.first == nil)
+        #expect(bIonsMinusWater.filter { $0.index == 7 }.first == nil)
+        #expect(bIonsMinusWater.filter { $0.index == 8 }.first != nil)
+
         if let b8MinusWater = fragmenter.fragment(at: 8, for: .bIonMinusWater) {
             #expect(b8MinusWater.massOverCharge().monoisotopicMass.roundedDouble(to: 4) == 1039.5221) // b8-H20
         }
