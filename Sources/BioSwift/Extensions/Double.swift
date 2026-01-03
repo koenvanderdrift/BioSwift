@@ -37,13 +37,17 @@ public extension Double {
 }
 
 public extension Decimal {
-    func roundedString(to round: Int) -> String {
+    func roundedString(to places: Int) -> String {
         var rounded = Decimal()
         var selfCopy = self
 
-        NSDecimalRound(&rounded, &selfCopy, round, .plain)
+        NSDecimalRound(&rounded, &selfCopy, places, .plain)
 
         return "\(rounded)"
+    }
+    
+    func roundedDouble(to places: Int) -> Double {
+        return doubleValue().roundTo(places: places)
     }
 
     func doubleValue() -> Double {

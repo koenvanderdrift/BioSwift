@@ -100,7 +100,7 @@ public extension BioMolecule {
     mutating func setAdducts(type: Adduct, count: Int, for chainIndex: Int = 0) {
         if var chain = chains[chainIndex] as? Chargeable {
             chain.setAdducts(type: type, count: count)
-//            adducts = [Adduct](repeating: type, count: count)
+            adducts = [Adduct](repeating: type, count: count)
         }
     }
 
