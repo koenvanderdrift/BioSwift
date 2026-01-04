@@ -29,7 +29,7 @@ public extension BioMolecule {
 
     func calculateMasses() -> MassContainer {
         if let chargeableChains = chains as? [Chargeable] {
-            return chargeableChains.reduce(zeroMass) { $0 + $1.masses }
+            return chargeableChains.reduce(zeroMass) { $0 + $1.massOverCharge() }
         }
 
         return zeroMass

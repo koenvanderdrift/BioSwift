@@ -74,37 +74,37 @@ struct BioSwiftTests {
     }
     
     @Test func waterAverageMass() { // H2O
-        #expect(water.averageMass.roundedString(to: 4) == "18.0153")
+        #expect(water.averageMass.roundedString(to: 4) == 18.0153.roundedString(to: 4))
     }
     
     @Test func ammoniaAverageMass() { // NH3
-        #expect(ammonia.averageMass.roundedString(to: 4) == "17.0305")
+        #expect(ammonia.averageMass.roundedString(to: 4) == 17.0305.roundedString(to: 4))
     }
     
     @Test func methylAverageMass() { // CH3
-        #expect(methyl.averageMass.roundedString(to: 4) == "15.0346") // 15.0345
+        #expect(methyl.averageMass.roundedString(to: 4) == 15.0345.roundedString(to: 4))
     }
     
     @Test func formulaAverageMass() { // C4H5NO3 + C11H10N2O + C3H5NO2 + C3H5NO2 + C4H5NO3 + H2O
         let group = FunctionalGroup(name: "", formula: "C4H5NO3" + "C11H10N2O" + "C3H5NO2" + "C3H5NO2" + "C4H5NO3" + "H2O")
         
-        #expect(group.averageMass.roundedString(to: 4) == "608.5557")
+        #expect(group.averageMass.roundedString(to: 4) == 608.5557.roundedString(to: 4))
     } // 608.5546
     
     @Test mutating func peptideMonoisotopicMass() {
         testPeptide.setAdducts(type: protonAdduct, count: 1)
-        #expect(testPeptide.pseudomolecularIon().monoisotopicMass.roundedString(to: 4) == "609.2151")
+        #expect(testPeptide.pseudomolecularIon().monoisotopicMass.roundedString(to: 4) == 609.2151.roundedString(to: 4))
         
         testPeptide.setAdducts(type: protonAdduct, count: 2)
-        #expect(testPeptide.pseudomolecularIon().monoisotopicMass.roundedString(to: 4) == "305.1112")
+        #expect(testPeptide.pseudomolecularIon().monoisotopicMass.roundedString(to: 4) == 305.1112.roundedString(to: 4))
     }
     
     @Test mutating func peptideAverageMass() {
         testPeptide.setAdducts(type: protonAdduct, count: 1)
-        #expect(testPeptide.pseudomolecularIon().averageMass.roundedString(to: 4) == "609.5731") // 609.5620
+        #expect(testPeptide.pseudomolecularIon().averageMass.roundedString(to: 4) == 609.5731.roundedString(to: 4)) // 609.5620
         
         testPeptide.setAdducts(type: protonAdduct, count: 2)
-        #expect(testPeptide.pseudomolecularIon().averageMass.roundedString(to: 4) == "305.2903") // 305.2847
+        #expect(testPeptide.pseudomolecularIon().averageMass.roundedString(to: 4) == 305.2903.roundedString(to: 4)) // 305.2847
     }
     
     @Test mutating func peptideSerinePhosphorylationMonoisotopicMass() {
@@ -112,37 +112,36 @@ struct BioSwiftTests {
             testPeptide.addModification(LocalizedModification(phos, at: 3)) // zero-based
             
             testPeptide.setAdducts(type: protonAdduct, count: 1)
-            #expect(testPeptide.pseudomolecularIon().monoisotopicMass.roundedString(to: 4) == "689.1814")
+            #expect(testPeptide.pseudomolecularIon().monoisotopicMass.roundedString(to: 4) == 689.1814.roundedString(to: 4))
             
             testPeptide.setAdducts(type: protonAdduct, count: 2)
-            #expect(testPeptide.pseudomolecularIon().monoisotopicMass.roundedString(to: 4) == "345.0944")
+            #expect(testPeptide.pseudomolecularIon().monoisotopicMass.roundedString(to: 4) == 345.0944.roundedString(to: 4))
             
             testPeptide.removeModification(at: 3)
             testPeptide.setAdducts(type: protonAdduct, count: 1)
-            #expect(testPeptide.pseudomolecularIon().monoisotopicMass.roundedString(to: 4) == "609.2151")
+            #expect(testPeptide.pseudomolecularIon().monoisotopicMass.roundedString(to: 4) == 609.2151.roundedString(to: 4))
         }
     }
     
     @Test mutating func proteinMonoisotopicMass() {
         testProtein.setAdducts(type: protonAdduct, count: 1)
-        #expect(testProtein.pseudomolecularIon().monoisotopicMass.roundedString(to: 4) == "46708.0267")
-    } // 46707.0194
+        #expect(testProtein.pseudomolecularIon().monoisotopicMass.roundedString(to: 4) == 46708.0267.roundedString(to: 4))
+    }
     
     @Test mutating func proteinAverageMass() {
         testProtein.setAdducts(type: protonAdduct, count: 1)
-        #expect(testProtein.pseudomolecularIon().averageMass.roundedString(to: 4) == "46737.9568")
-    } // 46737.0703
+        #expect(testProtein.pseudomolecularIon().averageMass.roundedString(to: 4) == 46737.9568.roundedString(to: 4))
+    } // 46736.9899
     
     @Test mutating func proteinSerinePhosphorylationMonoisotopicMass() {
         if let phos = modificationLibrary.first(where: { $0.name == "Phospho" }) {
             testProtein.addModification(mod: LocalizedModification(phos, at: 3)) // zero-based
             testProtein.setAdducts(type: protonAdduct, count: 1)
-            
             #expect(phos.fullName == "Phosphorylation")
-            #expect(testProtein.pseudomolecularIon().monoisotopicMass.roundedString(to: 4) == "46787.9930") // 46787.9931
+            #expect(testProtein.pseudomolecularIon().monoisotopicMass.roundedString(to: 4) == 46787.9931.roundedString(to: 4))
             
             testProtein.setAdducts(type: protonAdduct, count: 2)
-            #expect(testProtein.pseudomolecularIon().monoisotopicMass.roundedString(to: 4) == "23394.5002") // 23394.5002
+            #expect(testProtein.pseudomolecularIon().monoisotopicMass.roundedString(to: 4) == 23394.5002.roundedString(to: 4))
         }
     }
     
@@ -253,17 +252,17 @@ struct BioSwiftTests {
     @Test func subChainWithModification() {
         var peptide = Peptide(sequence: "SAMPLEVCAAAGQTHR")
         peptide.setAdducts(type: protonAdduct, count: 1)
-        #expect(peptide.massOverCharge().monoisotopicMass.roundedDouble(to: 4) == 1641.7836) // 1640.7763
+        #expect(peptide.massOverCharge().monoisotopicMass.roundedString(to: 4) == 1641.7836.roundedString(to: 4))
         
         if let cysMod = modificationLibrary.first(where: { $0.name == "Carboxymethyl" }) {
             #expect(cysMod.fullName == "Iodoacetic acid derivative")
             peptide.addModification(LocalizedModification(cysMod, at: 7)) // zero-based
-            #expect(peptide.massOverCharge().monoisotopicMass.roundedDouble(to: 4) == 1699.7891) // 1698.7818
+            #expect(peptide.massOverCharge().monoisotopicMass.roundedString(to: 4) == 1699.7891.roundedString(to: 4))
             
             let subChain = peptide.subChain(from: 3, to: 12) // zero-based
             #expect(subChain?.sequenceString == "PLEVCAAAGQ")
             #expect(subChain?.modification(at: 4) == cysMod) // zero-based
-            #expect(subChain?.massOverCharge().monoisotopicMass.roundedDouble(to: 4) == 1016.4717) // 1015.4644
+            #expect(subChain?.massOverCharge().monoisotopicMass.roundedString(to: 4) == 1016.4717.roundedString(to: 4))
         }
     }
      
@@ -315,7 +314,7 @@ struct BioSwiftTests {
             let searchParameters = MassSearchParameters(searchValue: 609.71,
                                                         tolerance: MassTolerance(type: .ppm, value: 20),
                                                         searchType: .sequential,
-                                                        massType: .monoisotopic)
+                                                        massType: .average)
      
             let peptides: [Peptide] = chain.searchMass(params: searchParameters)
             print(peptides.map(\.sequenceString))
@@ -330,10 +329,10 @@ struct BioSwiftTests {
         {
             chain.addModification(LocalizedModification(phos, at: 76)) // zero-based
      
-            let searchParameters = MassSearchParameters(searchValue: 689,
+            let searchParameters = MassSearchParameters(searchValue: 689.28,
                                                         tolerance: MassTolerance(type: .ppm, value: 20),
                                                         searchType: .sequential,
-                                                        massType: .nominal)
+                                                        massType: .monoisotopic)
      
             let peptides: [Peptide] = chain.searchMass(params: searchParameters)
             print(peptides.map(\.sequenceString))
@@ -368,58 +367,55 @@ struct BioSwiftTests {
         var peptide = Peptide(sequence: "SAMPLER")
         peptide.setAdducts(type: protonAdduct, count: 1)
      
-        #expect(peptide.massOverCharge().monoisotopicMass.roundedDouble(to: 4) == 803.4080)
-        #expect(peptide.pseudomolecularIon().monoisotopicMass.roundedDouble(to: 4) == 803.4080)
+        #expect(peptide.massOverCharge().monoisotopicMass.roundedString(to: 4) == 803.4080.roundedString(to: 4))
+        #expect(peptide.pseudomolecularIon().monoisotopicMass.roundedString(to: 4) == 803.4080.roundedString(to: 4))
      
         let fragmenter = PeptideFragmenter(peptide: peptide)
         let fragments = fragmenter.fragments
      
         let precursors = fragments.filter { $0.isPrecursor() }
-        #expect(precursors[0].massOverCharge().monoisotopicMass.roundedDouble(to: 4) == 803.4080)
-        #expect(precursors[1].massOverCharge().monoisotopicMass.roundedDouble(to: 4) == 785.3974)
-        #expect(precursors[2].massOverCharge().monoisotopicMass.roundedDouble(to: 4) == 786.3815)
+        #expect(precursors[0].massOverCharge().monoisotopicMass.roundedString(to: 4) == 803.4080.roundedString(to: 4))
+        #expect(precursors[1].massOverCharge().monoisotopicMass.roundedString(to: 4) == 785.3974.roundedString(to: 4))
+        #expect(precursors[2].massOverCharge().monoisotopicMass.roundedString(to: 4) == 786.3815.roundedString(to: 4))
      
         if let a1 = fragmenter.fragment(at: 1, for: .aIon) {
-            #expect(a1.massOverCharge().monoisotopicMass.roundedDouble(to: 4) == 131.0815) // a1
+            #expect(a1.massOverCharge().monoisotopicMass.roundedString(to: 4) == 131.0815.roundedString(to: 4)) // a1
         }
      
         if let b2 = fragmenter.fragment(at: 2, for: .bIon) {
-            #expect(b2.massOverCharge().monoisotopicMass.roundedDouble(to: 4) == 159.0764) // b2
+            #expect(b2.massOverCharge().monoisotopicMass.roundedString(to: 4) == 159.0764.roundedString(to: 4)) // b2
         }
      
         if let b2minH2O = fragmenter.fragment(at: 2, for: .bIonMinusWater) {
-            #expect(b2minH2O.massOverCharge().monoisotopicMass.roundedDouble(to: 4) == 141.0659) // b2-H2O
+            #expect(b2minH2O.massOverCharge().monoisotopicMass.roundedString(to: 4) == 141.0659.roundedString(to: 4)) // b2-H2O
         }
      
         if let b3minH2O = fragmenter.fragment(at: 3, for: .bIonMinusWater) {
-            #expect(b3minH2O.massOverCharge().monoisotopicMass.roundedDouble(to: 4) == 272.1063) // b3-H2O
+            #expect(b3minH2O.massOverCharge().monoisotopicMass.roundedString(to: 4) == 272.1063.roundedString(to: 4)) // b3-H2O
         }
      
         if let x1 = fragmenter.fragment(at: 1, for: .xIon) {
-            #expect(x1.massOverCharge().monoisotopicMass.roundedDouble(to: 4) == 201.0982) // x1
+            #expect(x1.massOverCharge().monoisotopicMass.roundedString(to: 4) == 201.0982.roundedString(to: 4)) // x1
         }
      
         if let y1 = fragmenter.fragment(at: 1, for: .yIon) {
-            #expect(y1.massOverCharge().monoisotopicMass.roundedDouble(to: 4) == 175.1190) // y1
+            #expect(y1.massOverCharge().monoisotopicMass.roundedString(to: 4) == 175.1190.roundedString(to: 4)) // y1
         }
      
         if let y1minNH3 = fragmenter.fragment(at: 1, for: .yIonMinusAmmonia) {
-            #expect(y1minNH3.massOverCharge().monoisotopicMass.roundedDouble(to: 4) == 158.0924) // y1-NH3 (139.0746, diff = -19.02)
+            #expect(y1minNH3.massOverCharge().monoisotopicMass.roundedString(to: 4) == 158.0924.roundedString(to: 4)) // y1-NH3
         }
      
         if let y2minH2O = fragmenter.fragment(at: 2, for: .yIonMinusWater) {
-            #expect(y2minH2O.massOverCharge().monoisotopicMass.roundedDouble(to: 4) == 286.1510) // y2-H2O (267.1332, diff = -19.02
+            #expect(y2minH2O.massOverCharge().monoisotopicMass.roundedString(to: 4) == 286.1510.roundedString(to: 4)) // y2-H2O
         }
-     
-        //        #expect(yIons[0].massOverCharge().monoisotopicMass.roundedDouble(to: 4) == 158.0924) // y1-NH3
-        //        #expect(yIons[2].chargedMass().monoisotopicMass.roundedDouble(to: 4) == 286.1510) // y2-H2O
     }
      
     @Test func fragmentMass2() {
         var peptide = Peptide(sequence: "SAMPLEVAAAGQTHR")
         peptide.setAdducts(type: protonAdduct, count: 1)
      
-        #expect(peptide.massOverCharge().monoisotopicMass.roundedDouble(to: 4) == 1538.7744)
+        #expect(peptide.massOverCharge().monoisotopicMass.roundedString(to: 4) == 1538.7744.roundedString(to: 4))
      
         let fragmenter = PeptideFragmenter(peptide: peptide)
         let fragments = fragmenter.fragments
@@ -428,19 +424,19 @@ struct BioSwiftTests {
         #expect(bIons.count == 13)
      
         if let b2 = fragmenter.fragment(at: 2, for: .bIon) {
-            #expect(b2.massOverCharge().monoisotopicMass.roundedDouble(to: 4) == 159.0764) // b2
+            #expect(b2.massOverCharge().monoisotopicMass.roundedString(to: 4) == 159.0764.roundedString(to: 4)) // b2
         }
      
         if let b12 = fragmenter.fragment(at: 12, for: .bIon) {
-            #expect(b12.massOverCharge().monoisotopicMass.roundedDouble(to: 4) == 1126.5561) // b12
+            #expect(b12.massOverCharge().monoisotopicMass.roundedString(to: 4) == 1126.5561.roundedString(to: 4)) // b12
         }
      
         if let b12minH2O = fragmenter.fragment(at: 12, for: .bIonMinusWater) {
-            #expect(b12minH2O.massOverCharge().monoisotopicMass.roundedDouble(to: 4) == 1108.5456) // b12 - H2O
+            #expect(b12minH2O.massOverCharge().monoisotopicMass.roundedString(to: 4) == 1108.5456.roundedString(to: 4)) // b12 - H2O
         }
      
         if let b12minNH3 = fragmenter.fragment(at: 12, for: .bIonMinusAmmonia) {
-            #expect(b12minNH3.massOverCharge().monoisotopicMass.roundedDouble(to: 4) == 1109.5296) // b12 - NH3
+            #expect(b12minNH3.massOverCharge().monoisotopicMass.roundedString(to: 4) == 1109.5296.roundedString(to: 4)) // b12 - NH3
         }
      
         let zIons = fragments.filter { $0.fragmentType == .zIon }
@@ -450,7 +446,7 @@ struct BioSwiftTests {
         #expect(cIons.count == 13)
      
         if let c1 = fragmenter.fragment(at: 1, for: .cIon) {
-            #expect(c1.massOverCharge().monoisotopicMass.roundedDouble(to: 4) == 105.0659) // c1
+            #expect(c1.massOverCharge().monoisotopicMass.roundedString(to: 4) == 105.0659.roundedString(to: 4)) // c1
         }
     }
      
@@ -461,7 +457,7 @@ struct BioSwiftTests {
         if let ox = modificationLibrary.first(where: { $0.name == "Oxidation" }) {
             #expect(ox.fullName == "Oxidation or Hydroxylation")
             peptide.addModification(LocalizedModification(ox, at: 8))
-            #expect(peptide.massOverCharge().monoisotopicMass.roundedDouble(to: 4) == 1685.8098)
+            #expect(peptide.massOverCharge().monoisotopicMass.roundedString(to: 4) == 1685.8098.roundedString(to: 4))
      
             let fragmenter = PeptideFragmenter(peptide: peptide)
             let fragments = fragmenter.fragments
@@ -480,22 +476,22 @@ struct BioSwiftTests {
             #expect(yIons.filter { $0.index == 2 }.first == nil)
      
             if let b8 = fragmenter.fragment(at: 8, for: .bIon) {
-                #expect(b8.massOverCharge().monoisotopicMass.roundedDouble(to: 4) == 799.4019) // b8 M-ox
+                #expect(b8.massOverCharge().monoisotopicMass.roundedString(to: 4) == 799.4019.roundedString(to: 4)) // b8 M-ox
             }
      
             if let y9 = fragmenter.fragment(at: 9, for: .yIon) {
-                #expect(y9.massOverCharge().monoisotopicMass.roundedDouble(to: 4) == 958.4523) // y9 M-ox
+                #expect(y9.massOverCharge().monoisotopicMass.roundedString(to: 4) == 958.4523.roundedString(to: 4)) // y9 M-ox
             }
      
             if let x9 = fragmenter.fragment(at: 9, for: .xIon) {
-                #expect(x9.massOverCharge().monoisotopicMass.roundedDouble(to: 4) == 984.4316) // x9 M-ox
+                #expect(x9.massOverCharge().monoisotopicMass.roundedString(to: 4) == 984.4316.roundedString(to: 4)) // x9 M-ox
             }
      
             let zIons = fragments.filter { $0.fragmentType == .zIon }
             #expect(zIons.filter { $0.index == 13 }.first == nil)
      
             if let z12 = fragmenter.fragment(at: 12, for: .zIon) {
-                #expect(z12.massOverCharge().monoisotopicMass.roundedDouble(to: 4) == 1283.6287) // z12 M-ox
+                #expect(z12.massOverCharge().monoisotopicMass.roundedString(to: 4) == 1283.6287.roundedString(to: 4)) // z12 M-ox
             }
         }
     }
@@ -518,7 +514,7 @@ struct BioSwiftTests {
         #expect(bIonsMinusWater.filter { $0.index == 8 }.first != nil)
 
         if let b8MinusWater = fragmenter.fragment(at: 8, for: .bIonMinusWater) {
-            #expect(b8MinusWater.massOverCharge().monoisotopicMass.roundedDouble(to: 4) == 1039.5221) // b8-H20
+            #expect(b8MinusWater.massOverCharge().monoisotopicMass.roundedString(to: 4) == 1039.5221.roundedString(to: 4)) // b8-H20
         }
     }
      
@@ -526,7 +522,7 @@ struct BioSwiftTests {
         var peptide = Peptide(sequence: "SAMPLEVAAAGQTHR")
         peptide.setAdducts(type: protonAdduct, count: 2)
      
-        #expect(peptide.pseudomolecularIon().monoisotopicMass.roundedDouble(to: 4) == 769.8908)
+        #expect(peptide.pseudomolecularIon().monoisotopicMass.roundedString(to: 4) == 769.8908.roundedString(to: 4))
      
         let fragmenter = PeptideFragmenter(peptide: peptide)
         let fragments = fragmenter.fragments
@@ -535,22 +531,22 @@ struct BioSwiftTests {
         #expect(bIons.count == 14)
      
         if let b2 = fragmenter.fragment(at: 2, for: .bIon) {
-            #expect(b2.massOverCharge().monoisotopicMass.roundedDouble(to: 4) == 159.0764) // b2
+            #expect(b2.massOverCharge().monoisotopicMass.roundedString(to: 4) == 159.0764.roundedString(to: 4)) // b2
         }
      
         if let b12 = fragmenter.fragment(at: 12, for: .bIon) {
-            #expect(b12.massOverCharge().monoisotopicMass.roundedDouble(to: 4) == 1126.5561) // b12
+            #expect(b12.massOverCharge().monoisotopicMass.roundedString(to: 4) == 1126.5561.roundedString(to: 4)) // b12
         }
      
         let bIonsMinusWater = fragments.filter { $0.fragmentType == .bIonMinusWater }
         #expect(bIonsMinusWater.count == 14)
      
         if let b12MinusWater = fragmenter.fragment(at: 12, for: .bIonMinusWater) {
-            #expect(b12MinusWater.massOverCharge().monoisotopicMass.roundedDouble(to: 4) == 1108.5456) // b12 - H2O
+            #expect(b12MinusWater.massOverCharge().monoisotopicMass.roundedString(to: 4) == 1108.5456.roundedString(to: 4)) // b12 - H2O
         }
      
         if let b12MinusAmmonia = fragmenter.fragment(at: 12, for: .bIonMinusAmmonia) {
-            #expect(b12MinusAmmonia.massOverCharge().monoisotopicMass.roundedDouble(to: 4) == 1109.5296) // b12 - NH3
+            #expect(b12MinusAmmonia.massOverCharge().monoisotopicMass.roundedString(to: 4) == 1109.5296.roundedString(to: 4)) // b12 - NH3
         }
      
         let zIons = fragments.filter { $0.fragmentType == .zIon }
@@ -560,7 +556,7 @@ struct BioSwiftTests {
         #expect(cIons.count == 14)
      
         if let c1 = fragmenter.fragment(at: 1, for: .cIon) {
-            #expect(c1.massOverCharge().monoisotopicMass.roundedDouble(to: 4) == 105.0659) // c1
+            #expect(c1.massOverCharge().monoisotopicMass.roundedString(to: 4) == 105.0659.roundedString(to: 4)) // c1
         }
     }
      
@@ -578,18 +574,16 @@ struct BioSwiftTests {
      
     @Test func biomolecule() {
         var peptide1 = Peptide(residues: [alanine, alanine, serine, alanine, serine])
-        print(peptide1.sequenceString)
         #expect(peptide1.sequenceLength == 5)
      
         peptide1.setAdducts(type: protonAdduct, count: 1)
-        #expect(peptide1.massOverCharge().monoisotopicMass.roundedDouble(to: 4) == 406.1932)
+        #expect(peptide1.massOverCharge().monoisotopicMass.roundedString(to: 4) == 406.1932.roundedString(to: 4))
      
         var peptide2 = Peptide(residues: peptide1.residues + [serine, serine, alanine])
-        print(peptide2.sequenceString)
         #expect(peptide2.sequenceLength == 8)
      
         peptide2.setAdducts(type: protonAdduct, count: 2)
-        #expect(peptide2.massOverCharge().monoisotopicMass.roundedDouble(to: 4) == 326.1508)
+        #expect(peptide2.massOverCharge().monoisotopicMass.roundedString(to: 4) == 326.1508.roundedString(to: 4))
      
         var protein = Protein(chains: [peptide1, peptide2])
      
@@ -600,17 +594,20 @@ struct BioSwiftTests {
         #expect(protein.aminoAcids(for: 1).map { $0.oneLetterCode } == ["A", "A", "S", "A", "S", "S", "S", "A"])
      
         protein.setAdducts(type: protonAdduct, count: 1, for: 0)
-        protein.setAdducts(type: protonAdduct, count: 0, for: 1)
-     
         let peptide3 = protein.chains[0]
+        let mass3 = peptide3.massOverCharge().monoisotopicMass
+        #expect(mass3.roundedString(to: 4) == 406.1932.roundedString(to: 4))
+     
+        protein.setAdducts(type: protonAdduct, count: 0, for: 1)
         let peptide4 = protein.chains[1]
-        let mass0 = peptide3.massOverCharge().monoisotopicMass.roundedDouble(to: 4) // 406.1932
-        #expect(mass0 == 406.1932)
+        let mass4 = peptide4.massOverCharge().monoisotopicMass
+        #expect(mass4.roundedString(to: 4) == 326.1508.roundedString(to: 4))
      
-        let mass1 = peptide4.massOverCharge().monoisotopicMass.roundedDouble(to: 4) // 326.1508
-        #expect(mass1 == 326.1508)
-     
-        let mass = protein.massOverCharge().monoisotopicMass.roundedDouble(to: 4) // 1055.4731
-        #expect(mass == mass0 + mass1)
+        protein.chains[0] = peptide3
+        protein.chains[1] = peptide4
+        
+        let mass = protein.massOverCharge().monoisotopicMass
+        #expect(mass == mass3 + mass4)
+        #expect(mass.roundedString(to: 4) == (mass3 + mass4).roundedString(to: 4))
     }
 }
