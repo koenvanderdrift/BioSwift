@@ -11,7 +11,7 @@ import Foundation
 public let zeroFormula = Formula("")
 
 public class Formula: Codable {
- // TODO: make Formula a struct
+    // TODO: make Formula a struct
 
     public var countedElements: [ChemicalElement: Int] = [:]
 
@@ -271,7 +271,11 @@ extension Formula: Mass {
         var result = zeroMass
 
         for (element, count) in countedElements {
-            result += count * element.masses
+            if element.masses.monoisotopicMass == 0, let e = elementLibrary.first(where: { $0.identifier == element.name }) {
+                result += count * MassContainer(monoisotopicMass: e.monoisotopicMass, averageMass: e.averageMass, nominalMass: 0)
+            } else {
+                result += count * element.masses
+            }
         }
 
         return result
