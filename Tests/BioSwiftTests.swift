@@ -294,6 +294,21 @@ struct BioSwiftTests {
             #expect(peptides[1].sequenceString == "DPQG")
         }
     }
+    
+    @Test func digestMasses() {
+        let digester = ProteinDigester(protein: testProtein)
+        
+        let missedCleavages = 1
+        
+        let trypsin = enzymeLibrary.first(where: { $0.name == "Trypsin" })
+        
+        if let regex = trypsin?.regex() {
+            let peptides: [Peptide] = digester.peptides(using: regex, with: missedCleavages)
+
+            #expect(peptides[0].massOverCharge().monoisotopicMass.roundedString(to: 4) == 3468.7575.roundedString(to: 4))
+            #expect(peptides[1].massOverCharge().monoisotopicMass.roundedString(to: 4) == 1779.7681.roundedString(to: 4))
+        }
+    }
      
     @Test func lowMassSearch() {
         if let chain = testProtein.chains.first {

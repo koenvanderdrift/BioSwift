@@ -87,6 +87,6 @@ extension ChemicalElement: Mass {
 //        }
 
         // TODO: fix nominal mass
-        return MassContainer(monoisotopicMass: monoisotopicMass, averageMass: averageMass, nominalMass: monoisotopicMass.IntValue())
+        return MassContainer(monoisotopicMass: monoisotopicMass, averageMass: averageMass, nominalMass: monoisotopicMass.intValue())
     }
 }

@@ -58,7 +58,7 @@ public extension Decimal {
         return doubleValue().roundTo(places: places)
     }
 
-    func IntValue() -> Int {
+    func intValue() -> Int {
         Int(truncating: self as NSNumber)
     }
     
