@@ -88,9 +88,9 @@ extension ChemicalElement: Mass {
 
         // TODO: fix nominal mass
         
-        if monoisotopicMass == 0, let element = elementLibrary.first(where: { $0.identifier == self.name }) {
-            return MassContainer(monoisotopicMass: element.monoisotopicMass, averageMass: element.averageMass, nominalMass: 0)
-        }
+//        if monoisotopicMass == Dalton(0), let e = elementLibrary.first(where: { $0.identifier == self.name }) {
+//            return MassContainer(monoisotopicMass: e.monoisotopicMass, averageMass: e.averageMass, nominalMass: 0)
+//        }
         
         return MassContainer(monoisotopicMass: monoisotopicMass, averageMass: averageMass, nominalMass: monoisotopicMass.intValue())
     }
