@@ -271,7 +271,7 @@ extension Formula: Mass {
         var result = zeroMass
 
         for (element, count) in countedElements {
-            if element.masses.monoisotopicMass == Dalton(0), let e = elementLibrary.first(where: { $0.identifier == element.name }) {
+            if element.masses.monoisotopicMass == Dalton(0), let e = elementLibrary.first(where: { $0.identifier == element.symbol }) {
                 result += count * MassContainer(monoisotopicMass: e.monoisotopicMass, averageMass: e.averageMass, nominalMass: 0)
             } else {
                 result += count * element.masses
