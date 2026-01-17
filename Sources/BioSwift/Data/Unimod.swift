@@ -184,14 +184,14 @@ extension UnimodParser: XMLParserDelegate {
             if elementFullName.isEmpty == false {
                 if loadElementsFromUnimod == true {
                     let chemicalElement = ChemicalElement(name: elementFullName, symbol: elementSymbol, monoisotopicMass: Dalton(string: elementMonoisotopicMass) ?? 0.0, averageMass: Dalton(string: elementAverageMass) ?? 0.0)
-                    
-                    elementLibrary.append(chemicalElement)
-                }
 
-                elementSymbol.removeAll()
-                elementFullName.removeAll()
-                elementMonoisotopicMass.removeAll()
-                elementAverageMass.removeAll()
+                    elementLibrary.append(chemicalElement)
+
+                    elementSymbol.removeAll()
+                    elementFullName.removeAll()
+                    elementMonoisotopicMass.removeAll()
+                    elementAverageMass.removeAll()
+                }
             }
         } else if xmlElementName == elements {
             isElement = false

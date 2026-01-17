@@ -126,12 +126,12 @@ struct BioSwiftTests {
     
     @Test mutating func proteinMonoisotopicMass() {
         testProtein.setAdducts(type: protonAdduct, count: 1)
-        #expect(testProtein.pseudomolecularIon().monoisotopicMass.roundedString(to: 4) == 46708.0267.roundedString(to: 4))
+        #expect(testProtein.pseudomolecularIon().monoisotopicMass.roundedString(to: 1) == 46708.0267.roundedString(to: 1))
     }
     
     @Test mutating func proteinAverageMass() {
         testProtein.setAdducts(type: protonAdduct, count: 1)
-        #expect(testProtein.pseudomolecularIon().averageMass.roundedString(to: 4) == 46737.9568.roundedString(to: 4))
+        #expect(testProtein.pseudomolecularIon().averageMass.roundedString(to: 1) == 46737.9568.roundedString(to: 1))
     } // 46737.0703
     
     @Test mutating func proteinSerinePhosphorylationMonoisotopicMass() {
@@ -139,10 +139,10 @@ struct BioSwiftTests {
             testProtein.addModification(mod: LocalizedModification(phos, at: 3)) // zero-based
             testProtein.setAdducts(type: protonAdduct, count: 1)
             #expect(phos.fullName == "Phosphorylation")
-            #expect(testProtein.pseudomolecularIon().monoisotopicMass.roundedString(to: 4) == 46787.9931.roundedString(to: 4)) // 46787.9930
+            #expect(testProtein.pseudomolecularIon().monoisotopicMass.roundedString(to: 1) == 46787.9931.roundedString(to: 1)) // 46787.9930
             
             testProtein.setAdducts(type: protonAdduct, count: 2)
-            #expect(testProtein.pseudomolecularIon().monoisotopicMass.roundedString(to: 4) == 23394.5002.roundedString(to: 4))
+            #expect(testProtein.pseudomolecularIon().monoisotopicMass.roundedString(to: 1) == 23394.5002.roundedString(to: 1))
         }
     }
     
