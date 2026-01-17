@@ -69,29 +69,25 @@ extension ChemicalElement: Mass {
     }
 
     public func calculateMasses() -> MassContainer {
-//        var currentAbundance = Double(0.0)
-//
-//        var monoisotopicMass = Dalton(0.0)
-//        var averageMass = Dalton(0.0)
-//
-//        // The nominal mass for an element is the mass number of its most abundant naturally occurring stable isotope
-//        for i in isotopes {
-//            if let abundance = Double(i.abundance), let mass = Double(i.mass) {
-//                if abundance > currentAbundance {
-//                    monoisotopicMass = mass
-//                    currentAbundance = abundance
-//                }
-//
-//                averageMass += abundance * mass
-//            }
-//        }
+        var currentAbundance = Decimal(0.0)
+
+        var monoisotopicMass = Dalton(0.0)
+        var averageMass = Dalton(0.0)
+
+        // The nominal mass for an element is the mass number of its most abundant naturally occurring stable isotope
+        for i in isotopes {
+            if let abundance = Decimal(string: i.abundance), let mass = Decimal(string: i.mass) {
+                if abundance > currentAbundance {
+                    monoisotopicMass = mass
+                    currentAbundance = abundance
+                }
+
+                averageMass += abundance * mass
+            }
+        }
 
         // TODO: fix nominal mass
         
-//        if monoisotopicMass == Dalton(0), let e = elementLibrary.first(where: { $0.identifier == self.name }) {
-//            return MassContainer(monoisotopicMass: e.monoisotopicMass, averageMass: e.averageMass, nominalMass: 0)
-//        }
-        
-        return MassContainer(monoisotopicMass: monoisotopicMass, averageMass: averageMass, nominalMass: monoisotopicMass.intValue())
+        return MassContainer(monoisotopicMass: monoisotopicMass, averageMass: averageMass / Decimal(100), nominalMass: monoisotopicMass.intValue())
     }
 }

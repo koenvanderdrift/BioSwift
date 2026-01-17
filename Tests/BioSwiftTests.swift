@@ -82,14 +82,14 @@ struct BioSwiftTests {
     }
     
     @Test func methylAverageMass() { // CH3
-        #expect(methyl.averageMass.roundedString(to: 4) == 15.0345.roundedString(to: 4))
+        #expect(methyl.averageMass.roundedString(to: 4) == 15.0345.roundedString(to: 4)) // 15.0346
     }
     
     @Test func formulaAverageMass() { // C4H5NO3 + C11H10N2O + C3H5NO2 + C3H5NO2 + C4H5NO3 + H2O
         let group = FunctionalGroup(name: "", formula: "C4H5NO3" + "C11H10N2O" + "C3H5NO2" + "C3H5NO2" + "C4H5NO3" + "H2O")
         
         #expect(group.averageMass.roundedString(to: 4) == 608.5557.roundedString(to: 4))
-    } // 608.5546
+    } // 608.5556
     
     @Test mutating func peptideMonoisotopicMass() {
         testPeptide.setAdducts(type: protonAdduct, count: 1)
@@ -101,10 +101,10 @@ struct BioSwiftTests {
     
     @Test mutating func peptideAverageMass() {
         testPeptide.setAdducts(type: protonAdduct, count: 1)
-        #expect(testPeptide.pseudomolecularIon().averageMass.roundedString(to: 4) == 609.5731.roundedString(to: 4)) // 609.5620
+        #expect(testPeptide.pseudomolecularIon().averageMass.roundedString(to: 4) == 609.5731.roundedString(to: 4)) // 609.5630
         
         testPeptide.setAdducts(type: protonAdduct, count: 2)
-        #expect(testPeptide.pseudomolecularIon().averageMass.roundedString(to: 4) == 305.2903.roundedString(to: 4)) // 305.2847
+        #expect(testPeptide.pseudomolecularIon().averageMass.roundedString(to: 4) == 305.2903.roundedString(to: 4)) // 305.2852
     }
     
     @Test mutating func peptideSerinePhosphorylationMonoisotopicMass() {
@@ -131,14 +131,14 @@ struct BioSwiftTests {
     @Test mutating func proteinAverageMass() {
         testProtein.setAdducts(type: protonAdduct, count: 1)
         #expect(testProtein.pseudomolecularIon().averageMass.roundedString(to: 4) == 46737.9568.roundedString(to: 4))
-    } // 46736.9899
+    } // 46737.0703
     
     @Test mutating func proteinSerinePhosphorylationMonoisotopicMass() {
         if let phos = modificationLibrary.first(where: { $0.name == "Phospho" }) {
             testProtein.addModification(mod: LocalizedModification(phos, at: 3)) // zero-based
             testProtein.setAdducts(type: protonAdduct, count: 1)
             #expect(phos.fullName == "Phosphorylation")
-            #expect(testProtein.pseudomolecularIon().monoisotopicMass.roundedString(to: 4) == 46787.9931.roundedString(to: 4))
+            #expect(testProtein.pseudomolecularIon().monoisotopicMass.roundedString(to: 4) == 46787.9931.roundedString(to: 4)) // 46787.9930
             
             testProtein.setAdducts(type: protonAdduct, count: 2)
             #expect(testProtein.pseudomolecularIon().monoisotopicMass.roundedString(to: 4) == 23394.5002.roundedString(to: 4))
@@ -305,8 +305,8 @@ struct BioSwiftTests {
         if let regex = trypsin?.regex() {
             let peptides: [Peptide] = digester.peptides(using: regex, with: missedCleavages)
 
-            #expect(peptides[0].massOverCharge().monoisotopicMass.roundedString(to: 4) == 3468.7575.roundedString(to: 4))
-            #expect(peptides[1].massOverCharge().monoisotopicMass.roundedString(to: 4) == 1779.7681.roundedString(to: 4))
+            #expect(peptides[0].massOverCharge().monoisotopicMass.roundedString(to: 4) == 3468.7575.roundedString(to: 4)) // 3467.7503
+            #expect(peptides[1].massOverCharge().monoisotopicMass.roundedString(to: 4) == 1779.7681.roundedString(to: 4)) // 1778.7608
         }
     }
      
