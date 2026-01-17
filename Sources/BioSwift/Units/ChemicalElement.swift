@@ -102,6 +102,6 @@ extension ChemicalElement: Mass {
         
         // TODO: fix nominal mass
         
-        return MassContainer(monoisotopicMass: monoisotopicMass, averageMass: averageMass / Decimal(100), nominalMass: monoisotopicMass.intValue())
+        return MassContainer(monoisotopicMass: monoisotopicMass, averageMass: averageMass, nominalMass: monoisotopicMass.intValue())
     }
 }

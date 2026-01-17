@@ -15,6 +15,8 @@ public var enzymeLibrary: [Enzyme] = dataLibrary.enzymes
 public var hydropathyLibrary: [Hydro] = dataLibrary.hydropathy
 public var modificationLibrary: [Modification] = dataLibrary.modifications
 
+public var loadElementsFromUnimod = false
+
 public struct DataLibrary {
     private enum LibraryType {
         case aminoAcids
@@ -42,6 +44,10 @@ public struct DataLibrary {
 
     public var modifications: [Modification] {
         library(.modifications)
+    }
+    
+    public func setLoadElementsFromUnimod(_ load: Bool) {
+        loadElementsFromUnimod = load
     }
 
     private func library<T: Decodable>(_ type: LibraryType) -> [T] {

@@ -8,8 +8,6 @@
 
 import Foundation
 
-var loadElementsFromUnimod = false
-
 public struct UnimodController {
     public func loadUnimod() async throws {
         do {
@@ -20,10 +18,6 @@ public struct UnimodController {
 
             throw (error)
         }
-    }
-    
-    public func setLoadElementsFromUnimod(_ load: Bool) {
-        loadElementsFromUnimod = load
     }
 }
 
