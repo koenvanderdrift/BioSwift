@@ -20,6 +20,7 @@ public struct ChemicalElement: Codable, Symbol {
     public let isotopes: [Isotope]
     public var monoisotopicMass: Dalton = 0.0
     public var averageMass: Dalton = 0.0
+    public var elementMasses: MassContainer = zeroMass
 
     public init(name: String, symbol: String, isotopes: [Isotope]) {
         self.name = name
@@ -34,6 +35,8 @@ public struct ChemicalElement: Codable, Symbol {
 
         self.monoisotopicMass = monoisotopicMass
         self.averageMass = averageMass
+
+        setUp()
     }
 
     public init(from decoder: Decoder) throws {
@@ -42,6 +45,12 @@ public struct ChemicalElement: Codable, Symbol {
         name = try container.decode(String.self, forKey: .name)
         symbol = try container.decode(String.self, forKey: .symbol)
         isotopes = try container.decode([Isotope].self, forKey: .isotopes)
+        
+        setUp()
+    }
+    
+    private mutating func setUp() {
+        elementMasses = calculateMasses()
     }
 
     public var identifier: String {
@@ -65,27 +74,32 @@ extension ChemicalElement: Equatable, Hashable {
 
 extension ChemicalElement: Mass {
     public var masses: MassContainer {
-        calculateMasses()
+        elementMasses
     }
 
     public func calculateMasses() -> MassContainer {
-        var currentAbundance = Decimal(0.0)
-
-        var monoisotopicMass = Dalton(0.0)
-        var averageMass = Dalton(0.0)
-
-        // The nominal mass for an element is the mass number of its most abundant naturally occurring stable isotope
-        for i in isotopes {
-            if let abundance = Decimal(string: i.abundance), let mass = Decimal(string: i.mass) {
-                if abundance > currentAbundance {
-                    monoisotopicMass = mass
-                    currentAbundance = abundance
+        print("calculate element masses")
+        if loadElementsFromUnimod == false {
+            var currentAbundance = Decimal(0.0)
+            
+            var monoisotopicMass = Dalton(0.0)
+            var averageMass = Dalton(0.0)
+            
+            // The nominal mass for an element is the mass number of its most abundant naturally occurring stable isotope
+            for i in isotopes {
+                if let abundance = Decimal(string: i.abundance), let mass = Decimal(string: i.mass) {
+                    if abundance > currentAbundance {
+                        monoisotopicMass = mass
+                        currentAbundance = abundance
+                    }
+                    
+                    averageMass += abundance * mass
                 }
-
-                averageMass += abundance * mass
             }
-        }
 
+            return MassContainer(monoisotopicMass: monoisotopicMass, averageMass: averageMass / Decimal(100), nominalMass: monoisotopicMass.intValue())
+        }
+        
         // TODO: fix nominal mass
         
         return MassContainer(monoisotopicMass: monoisotopicMass, averageMass: averageMass / Decimal(100), nominalMass: monoisotopicMass.intValue())

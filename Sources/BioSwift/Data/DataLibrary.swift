@@ -52,7 +52,11 @@ public struct DataLibrary {
             case .modifications:
                 return [] // populated in loadUnimod
             case .elements:
-                return try parseJSONDataFromBundle(from: "elements")
+                if loadElementsFromUnimod {
+                    return []
+                } else {
+                    return try parseJSONDataFromBundle(from: "elements")
+                }
             case .enzymes:
                 return try parseJSONDataFromBundle(from: "enzymes")
             case .hydropathy:

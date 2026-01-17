@@ -38,7 +38,7 @@ public enum MassType: String, CaseIterable {
     case nominal
 }
 
-public struct MassContainer {
+public struct MassContainer: Codable {
     public var monoisotopicMass = Dalton(0.0)
     public var averageMass = Dalton(0.0)
     public var nominalMass = 0

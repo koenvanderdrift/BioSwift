@@ -8,6 +8,8 @@
 
 import Foundation
 
+var loadElementsFromUnimod = false
+
 public struct UnimodController {
     public func loadUnimod() async throws {
         do {
@@ -18,6 +20,10 @@ public struct UnimodController {
 
             throw (error)
         }
+    }
+    
+    public func setLoadElementsFromUnimod(_ load: Bool) {
+        loadElementsFromUnimod = load
     }
 }
 
@@ -182,9 +188,11 @@ extension UnimodParser: XMLParserDelegate {
     public func parser(_: XMLParser, didEndElement xmlElementName: String, namespaceURI _: String?, qualifiedName _: String?) {
         if xmlElementName == elem {
             if elementFullName.isEmpty == false {
-                let chemicalElement = ChemicalElement(name: elementFullName, symbol: elementSymbol, monoisotopicMass: Dalton(string: elementMonoisotopicMass) ?? 0.0, averageMass: Dalton(string: elementAverageMass) ?? 0.0)
-
-                elementLibrary.append(chemicalElement)
+                if loadElementsFromUnimod == true {
+                    let chemicalElement = ChemicalElement(name: elementFullName, symbol: elementSymbol, monoisotopicMass: Dalton(string: elementMonoisotopicMass) ?? 0.0, averageMass: Dalton(string: elementAverageMass) ?? 0.0)
+                    
+                    elementLibrary.append(chemicalElement)
+                }
 
                 elementSymbol.removeAll()
                 elementFullName.removeAll()
