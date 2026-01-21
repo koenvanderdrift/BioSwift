@@ -15,8 +15,6 @@ public var enzymeLibrary: [Enzyme] = dataLibrary.enzymes
 public var hydropathyLibrary: [Hydro] = dataLibrary.hydropathy
 public var modificationLibrary: [Modification] = dataLibrary.modifications
 
-public var loadElementsFromUnimod = false
-
 public struct DataLibrary {
     private enum LibraryType {
         case aminoAcids
@@ -46,10 +44,6 @@ public struct DataLibrary {
         library(.modifications)
     }
     
-    public func setLoadElementsFromUnimod(_ load: Bool) {
-        loadElementsFromUnimod = load
-    }
-
     private func library<T: Decodable>(_ type: LibraryType) -> [T] {
         do {
             switch type {
@@ -58,7 +52,7 @@ public struct DataLibrary {
             case .modifications:
                 return [] // populated in loadUnimod
             case .elements:
-                if loadElementsFromUnimod {
+                if UnimodController().loadElementsFromUnimod {
                     return []
                 } else {
                     return try parseJSONDataFromBundle(from: "elements")
@@ -73,13 +67,5 @@ public struct DataLibrary {
         }
 
         return []
-    }
-
-    public func loadUnimod() async throws {
-        do {
-            try await UnimodController().loadUnimod()
-        } catch {
-            debugPrint(error)
-        }
     }
 }

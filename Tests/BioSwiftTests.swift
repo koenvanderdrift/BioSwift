@@ -13,8 +13,7 @@ import Testing
 struct DataLibraryTrait: SuiteTrait, TestScoping {
     func provideScope(for test: Test, testCase: Test.Case?, performing function: @Sendable () async throws -> Void) async throws {
         print("start set up")
-        dataLibrary.setLoadElementsFromUnimod(false)
-        try await dataLibrary.loadUnimod()
+        try await UnimodController().loadUnimod()
         try await function()
         print("tests completed")
     }

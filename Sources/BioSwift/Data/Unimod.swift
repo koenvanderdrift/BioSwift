@@ -9,10 +9,11 @@
 import Foundation
 
 public struct UnimodController {
+    public var loadElementsFromUnimod = false
+
     public func loadUnimod() async throws {
         do {
-            let unimodParser = UnimodParser()
-            try await unimodParser.parseXML()
+            try await UnimodParser().parseXML()
         } catch {
             debugPrint("Failed parsing unimod.xml")
 
@@ -181,8 +182,8 @@ extension UnimodParser: XMLParserDelegate {
 
     public func parser(_: XMLParser, didEndElement xmlElementName: String, namespaceURI _: String?, qualifiedName _: String?) {
         if xmlElementName == elem {
-            if elementFullName.isEmpty == false {
-                if loadElementsFromUnimod == true {
+            if UnimodController().loadElementsFromUnimod == true {
+                if elementFullName.isEmpty == false {
                     let chemicalElement = ChemicalElement(name: elementFullName, symbol: elementSymbol, monoisotopicMass: Dalton(string: elementMonoisotopicMass) ?? 0.0, averageMass: Dalton(string: elementAverageMass) ?? 0.0)
 
                     elementLibrary.append(chemicalElement)
