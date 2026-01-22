@@ -11,6 +11,8 @@ import Foundation
 public struct UnimodController {
     public var loadElementsFromUnimod = false
 
+    public init() {}
+    
     public func loadUnimod() async throws {
         do {
             try await UnimodParser().parseXML()
