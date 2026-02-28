@@ -28,6 +28,58 @@ public struct Protein: BioMolecule, Codable {
         chains = [Peptide(residues: residues)]
     }
 
+    public func truncate(by range: ChainRange) -> Protein {
+        if let subChain = chains.first?.subChain(removing: range.fromOneBased) {
+            return Protein(chains: [subChain])
+        }
+
+        return self
+    }
+
+    public func nTermModifications() -> [Modification] {
+        if let nTermAA = residues().first {
+            var nTermGroups = modificationLibrary.filter { mod in
+                mod.specificities.contains { spec in
+                    spec.position.contains("Protein N-term") && spec.site == nTermAA.oneLetterCode
+                }
+            }
+
+            nTermGroups.append(hydrogenModification)
+
+            return nTermGroups
+        }
+
+        return []
+    }
+
+    public func cTermModifications() -> [Modification] {
+        if let cTermAA = residues().last {
+            var cTermGroups = modificationLibrary.filter { mod in
+                mod.specificities.contains { spec in
+                    spec.position.contains("Protein C-term") && spec.site == cTermAA.oneLetterCode
+                }
+            }
+
+            cTermGroups.append(hydroxylModification)
+
+            return cTermGroups
+        }
+
+        return []
+    }
+
+    public func nTermLocation(for chainIndex: Int = 0) -> Int {
+        0
+    }
+
+    public func cTermLocation(for chainIndex: Int = 0) -> Int {
+        chains[chainIndex].sequenceLength - 1
+    }
+
+    public func aminoAcid(at loc: Int, for chainIndex: Int = 0) -> AminoAcid {
+        aminoAcids(for: chainIndex)[loc]
+    }
+
     public func aminoAcids(for chainIndex: Int = 0) -> [AminoAcid] {
         residues(for: chainIndex) as? [AminoAcid] ?? []
     }
@@ -42,5 +94,11 @@ public struct Protein: BioMolecule, Codable {
         }
 
         return 0.0
+    }
+
+    public func hydropathyValues(chainIndex index: Int = 0, for hydropathyType: String) -> [Double] {
+        let values = Hydropathy(residues: chains[index].residues).hydrophathyValues(for: hydropathyType)
+
+        return chains[index].residues.compactMap { values[$0.oneLetterCode] }
     }
 }

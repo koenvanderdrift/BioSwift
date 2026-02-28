@@ -123,11 +123,53 @@ struct BioSwiftTests {
         }
     }
     
+    @Test mutating func peptideReplaceModificationMonoisotopicMass() {
+        if let phos = modificationLibrary.first(where: { $0.name == "Phospho" }),
+           let methylmalonylation = modificationLibrary.first(where: { $0.name == "Methylmalonylation" })
+        {
+            testPeptide.addModification(LocalizedModification(phos, at: 3)) // zero-based
+            
+            testPeptide.setAdducts(type: protonAdduct, count: 1)
+            #expect(testPeptide.pseudomolecularIon().monoisotopicMass.roundedString(to: 4) == 689.1814.roundedString(to: 4))
+            
+            testPeptide.setAdducts(type: protonAdduct, count: 2)
+            #expect(testPeptide.pseudomolecularIon().monoisotopicMass.roundedString(to: 4) == 345.0944.roundedString(to: 4))
+            
+            testPeptide.addModification(LocalizedModification(methylmalonylation, at: 3)) // zero-based
+            testPeptide.setAdducts(type: protonAdduct, count: 1)
+            #expect(testPeptide.pseudomolecularIon().monoisotopicMass.roundedString(to: 4) == 709.2311.roundedString(to: 4))
+        }
+    }
+    
     @Test mutating func proteinMonoisotopicMass() {
         testProtein.setAdducts(type: protonAdduct, count: 1)
         #expect(testProtein.pseudomolecularIon().monoisotopicMass.roundedString(to: 1) == 46708.0267.roundedString(to: 1))
     }
     
+    @Test mutating func proteinNTermMetLossMonoisotopicMass() {
+        if let metLoss = testProtein.nTermModifications().first(where: { $0.name == "Met-loss" }) {
+            testProtein.setAdducts(type: protonAdduct, count: 1)
+            
+            testProtein.addModification(mod: metLoss, at: testProtein.nTermLocation())
+            #expect(testProtein.pseudomolecularIon().monoisotopicMass.roundedString(to: 1) == (46708.0267 - 131.040485).roundedString(to: 1))
+            
+            testProtein.removeModification(at: testProtein.nTermLocation())
+            #expect(testProtein.pseudomolecularIon().monoisotopicMass.roundedString(to: 1) == 46708.0267.roundedString(to: 1))
+        }
+    }
+    
+    @Test mutating func proteinCTermLysLossMonoisotopicMass() {
+        if let lysLoss = testProtein.cTermModifications().first(where: { $0.name == "Lys-loss" }) {
+            testProtein.setAdducts(type: protonAdduct, count: 1)
+
+            testProtein.addModification(mod: lysLoss, at: testProtein.cTermLocation())
+            #expect(testProtein.pseudomolecularIon().monoisotopicMass.roundedString(to: 1) == (46708.0267 - 128.094963).roundedString(to: 1))
+            
+            testProtein.removeModification(at: testProtein.cTermLocation())
+            #expect(testProtein.pseudomolecularIon().monoisotopicMass.roundedString(to: 1) == 46708.0267.roundedString(to: 1))
+        }
+    }
+
     @Test mutating func proteinAverageMass() {
         testProtein.setAdducts(type: protonAdduct, count: 1)
         #expect(testProtein.pseudomolecularIon().averageMass.roundedString(to: 1) == 46737.9568.roundedString(to: 1))
@@ -135,7 +177,7 @@ struct BioSwiftTests {
     
     @Test mutating func proteinSerinePhosphorylationMonoisotopicMass() {
         if let phos = modificationLibrary.first(where: { $0.name == "Phospho" }) {
-            testProtein.addModification(mod: LocalizedModification(phos, at: 3)) // zero-based
+            testProtein.addModification(mod: phos, at: 3) // zero-based
             testProtein.setAdducts(type: protonAdduct, count: 1)
             #expect(phos.fullName == "Phosphorylation")
             #expect(testProtein.pseudomolecularIon().monoisotopicMass.roundedString(to: 1) == 46787.9931.roundedString(to: 1)) // 46787.9930

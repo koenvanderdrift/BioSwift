@@ -30,10 +30,10 @@ public struct FunctionalGroup: Structure, Codable {
         self.formula = Formula(formula)
     }
 
-    public init(name: String, formula: [String: Int]) {
+    public init(name: String, elements: [String: Int]) {
         // TODO: switch to [ChemicalElement: Int] ?
         self.name = name
-        self.formula = Formula(formula)
+        self.formula = Formula(elements)
     }
 
     public var masses: MassContainer {

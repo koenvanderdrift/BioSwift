@@ -118,7 +118,7 @@ public extension Chain {
     }
 
     mutating func removeResidues(at location: Int) {
-        // TODO
+        // TODO:
     }
 
     mutating func replaceResidue(at location: Int, with residue: any Residue) {
@@ -277,6 +277,13 @@ public extension Chain {
         if var r = residue(at: location) {
             r.removeModification()
             residues[location] = r
+        }
+    }
+
+    mutating func removeModification(mod: LocalizedModification) {
+        if var r = residue(at: mod.location) {
+            r.removeModification()
+            residues[mod.location] = r
         }
     }
 

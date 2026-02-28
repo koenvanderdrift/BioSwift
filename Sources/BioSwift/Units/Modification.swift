@@ -134,13 +134,13 @@ public struct Modification: Codable {
 
         let negativeElements = elements.filter { $0.value < 0 }
         if negativeElements.count > 0 {
-            let group = FunctionalGroup(name: name, formula: negativeElements)
+            let group = FunctionalGroup(name: name, elements: negativeElements)
             reactions.append(Reaction.remove(group))
         }
 
         let postiveElements = elements.filter { $0.value > 0 }
         if postiveElements.count > 0 {
-            let group = FunctionalGroup(name: name, formula: postiveElements)
+            let group = FunctionalGroup(name: name, elements: postiveElements)
             reactions.append(Reaction.add(group))
         }
 

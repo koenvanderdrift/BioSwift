@@ -36,10 +36,11 @@ public class Formula: Codable {
         var string = ""
 
         for (element, count) in dict {
-            if count > 0 {
+            let absCount = abs(count)
+            if absCount > 0 {
                 string += element
-                if count > 1 {
-                    string += String(count)
+                if absCount > 1 {
+                    string += String(absCount)
                 }
             }
         }

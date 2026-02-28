@@ -8,6 +8,8 @@
 
 import Foundation
 
+// https://pnnl-comp-mass-spec.github.io/Molecular-Weight-Calculator-VB6/
+
 public typealias Dalton = Decimal
 public typealias MassRange = ClosedRange<Dalton>
 
@@ -131,7 +133,7 @@ public extension Chargeable {
     func massOverCharge() -> MassContainer {
         let masses = calculateMasses() + adductMasses()
         let charge = charge > 0 ? charge : 1
-        
+
         return masses / charge
     }
 
