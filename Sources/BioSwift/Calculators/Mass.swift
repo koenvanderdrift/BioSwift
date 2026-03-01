@@ -78,7 +78,7 @@ extension MassContainer: Comparable {
     }
 }
 
-public struct Adduct: Codable {
+public struct Adduct: Codable, Equatable {
     var group: FunctionalGroup
     var charge: Int
 }

@@ -8,7 +8,7 @@
 
 import Foundation
 
-public struct Peptide: Chain, Codable {
+public struct Peptide: Chain, Codable, Equatable {
     public var name: String = ""
     public var residues: [AminoAcid] = []
     public var nTerminal: Modification = hydrogenModification
