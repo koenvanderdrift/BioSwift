@@ -204,7 +204,7 @@ public final class FastaDecoder: TopLevelDecoder {
         return records as! T
     }
 
-    func decodeRecord(from fastaLine: String) -> FastaRecord {
+    public func decodeRecord(from fastaLine: String) -> FastaRecord {
         let decoder = _FastaDecoder(fastaLine)
 
         do {
@@ -219,7 +219,7 @@ public final class FastaDecoder: TopLevelDecoder {
 
 @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
 extension FastaDecoder {
-    func decodeRecords(with fastaData: Data) async -> [FastaRecord] {
+    public func decodeRecords(with fastaData: Data) async -> [FastaRecord] {
         if let fastaArray = String(data: fastaData, encoding: .ascii)?.components(separatedBy: "\n>") {
             return await withTaskGroup(of: FastaRecord.self) { taskGroup in
                 var records = [FastaRecord]()
@@ -241,7 +241,7 @@ extension FastaDecoder {
         return []
     }
 
-    func decodeRecord(from fastaLine: String) async -> FastaRecord {
+    public func decodeRecord(from fastaLine: String) async -> FastaRecord {
         let decoder = _FastaDecoder(fastaLine)
 
         do {
