@@ -9,7 +9,6 @@
 import Foundation
 
 public extension Double {
-    @available(macOS 12.0, *)
     func roundedString(to places: Int) -> String {
         return self.formatted(.number.precision(.fractionLength(places)))
     }
@@ -42,7 +41,6 @@ public extension Double {
 }
 
 public extension Decimal {
-    @available(macOS 12.0, *)
     func roundedString(to places: Int) -> String {
         return self.formatted(.number.precision(.fractionLength(places)))
     }

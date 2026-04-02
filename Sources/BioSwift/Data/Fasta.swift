@@ -28,7 +28,6 @@ public func parseFastaDataFromBundle(from fileName: String) throws -> [FastaReco
     }
 }
 
-@available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
 public func parseFastaData(from fileName: String) async throws -> [FastaRecord] {
     do {
         let fastaData = try loadData(from: fileName, withExtension: "fasta")
@@ -38,7 +37,6 @@ public func parseFastaData(from fileName: String) async throws -> [FastaRecord] 
     }
 }
 
-@available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
 public func parseFastaDataFromBundle(from fileName: String) async throws -> [FastaRecord] {
     do {
         let fastaData = try loadDataFromBundle(from: fileName, withExtension: "fasta")
@@ -217,7 +215,6 @@ public final class FastaDecoder: TopLevelDecoder {
     }
 }
 
-@available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
 extension FastaDecoder {
     public func decodeRecords(with fastaData: Data) async -> [FastaRecord] {
         if let fastaArray = String(data: fastaData, encoding: .ascii)?.components(separatedBy: "\n>") {
