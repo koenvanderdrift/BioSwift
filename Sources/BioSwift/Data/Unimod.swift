@@ -8,11 +8,13 @@
 
 import Foundation
 
+public let xmlParsingDidFinishNotification = Notification.Name("XMLParsingDidFinish")
+
 public struct UnimodController {
     public var loadElementsFromUnimod = false
 
     public init() {}
-    
+
     public func loadUnimod() async throws {
         do {
             try await UnimodParser().parseXML()
@@ -79,28 +81,6 @@ public class UnimodParser: NSObject {
         //        skipTitleStrings = [cation, unknown, xlink, atypeion, "2H", "13C", "15N"]
 
         do {
-            debugPrint("Started parsing unimod.xml")
-
-            let data = try loadDataFromBundle(from: "unimod", withExtension: "xml")
-            let parser = XMLParser(data: data)
-            parser.delegate = self
-
-            if parser.parse() == false {
-                if let error = parser.parserError {
-                    throw (error)
-                } else {
-                    throw LoadError.fileParsingFailed(name: "unimod")
-                }
-            }
-
-            debugPrint("Finished parsing unimod.xml")
-        }
-    }
-
-    public func parseXML() throws {
-//        skipTitleStrings = [cation, unknown, xlink, atypeion, "2H", "13C", "15N"]
-
-        do {
             let data = try loadDataFromBundle(from: "unimod", withExtension: "xml")
             let parser = XMLParser(data: data)
             parser.delegate = self
@@ -119,6 +99,10 @@ public class UnimodParser: NSObject {
 // MARK: XML Parser Delegate
 
 extension UnimodParser: XMLParserDelegate {
+    public func parserDidStartDocument(_: XMLParser) {
+        debugPrint("Started parsing unimod.xml")
+    }
+
     public func parser(_: XMLParser, didStartElement xmlElementName: String, namespaceURI _: String?, qualifiedName _: String?, attributes attributeDict: [String: String] = [:]) {
         if xmlElementName == elements {
             isElement = true
@@ -227,5 +211,13 @@ extension UnimodParser: XMLParserDelegate {
                 isAminoAcid = false
             }
         }
+    }
+
+    public func parserDidEndDocument(_: XMLParser) {
+        debugPrint("Finished parsing unimod.xml")
+        NotificationCenter.default.post(
+            name: xmlParsingDidFinishNotification,
+            object: nil
+        )
     }
 }
