@@ -215,9 +215,11 @@ extension UnimodParser: XMLParserDelegate {
 
     public func parserDidEndDocument(_: XMLParser) {
         debugPrint("Finished parsing unimod.xml")
-        NotificationCenter.default.post(
-            name: xmlParsingDidFinishNotification,
-            object: nil
-        )
+        DispatchQueue.main.async {
+            NotificationCenter.default.post(
+                name: xmlParsingDidFinishNotification,
+                object: nil
+            )
+        }
     }
 }
