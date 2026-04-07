@@ -11,7 +11,7 @@ import Foundation
 public let zeroFormula = Formula("")
 
 public class Formula: Codable {
-    // TODO: make Formula a struct
+    // TODO: make Formula a struct ?
 
     public var countedElements: [ChemicalElement: Int] = [:]
 

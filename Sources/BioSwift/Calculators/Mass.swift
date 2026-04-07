@@ -12,6 +12,7 @@ import Foundation
 
 public typealias Dalton = Decimal
 public typealias MassRange = ClosedRange<Dalton>
+public typealias Charge = Int
 
 extension MassRange {
     func contains(_ masses: MassContainer, for type: MassType) -> Bool {
@@ -80,7 +81,7 @@ extension MassContainer: Comparable {
 
 public struct Adduct: Codable, Equatable {
     var group: FunctionalGroup
-    var charge: Int
+    var charge: Charge
 }
 
 public let protonAdduct = Adduct(group: hydrogen, charge: 1)
@@ -118,7 +119,7 @@ public protocol Chargeable: Mass {
 }
 
 public extension Chargeable {
-    var charge: Int {
+    var charge: Charge {
         adducts.reduce(0) { $0 + $1.charge }
     }
 
@@ -144,7 +145,7 @@ public extension Chargeable {
 }
 
 public extension Collection where Element: Chargeable {
-    func charge(minCharge: Int, maxCharge: Int) -> [Element] {
+    func charge(minCharge: Charge, maxCharge: Charge) -> [Element] {
         flatMap { sequence in
             (minCharge ... maxCharge).map { charge in
                 var chargedSequence = sequence

@@ -191,7 +191,7 @@ public class PeptideFragmenter {
         return result.reversed()
     }
 
-    public func fragment(at index: Int, for type: PeptideFragmentType, with charge: Int = 1) -> PeptideFragment? {
+    public func fragment(at index: Int, for type: PeptideFragmentType, with charge: Charge = 1) -> PeptideFragment? {
         guard precursorIons().isEmpty == false else { return nil }
 
         let ions = fragments.filter { $0.fragmentType == type }

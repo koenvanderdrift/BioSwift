@@ -19,7 +19,7 @@ public extension BioMolecule {
         calculateMasses()
     }
 
-    var charge: Int {
+    var charge: Charge {
         if let chargeableChains = chains as? [Chargeable] {
             return chargeableChains.reduce(0) { $0 + $1.charge }
         }
