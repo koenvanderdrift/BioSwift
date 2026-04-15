@@ -351,7 +351,7 @@ struct BioSwiftTests {
             #expect(peptides[1].massOverCharge().monoisotopicMass.roundedString(to: 4) == 1779.7681.roundedString(to: 4)) // 1778.7608
         }
     }
-     
+        
     @Test func lowMassSearch() {
         if let chain = testProtein.chains.first {
             let searchParameters = MassSearchParameters(searchValue: 1,
