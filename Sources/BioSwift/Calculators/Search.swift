@@ -51,12 +51,12 @@ public struct MassTolerance {
 }
 
 public struct MassSearchParameters {
-    public var searchValue: Dalton
+    public var searchValue: Double
     public var tolerance: MassTolerance
     public let searchType: SearchType
     public var massType: MassType
 
-    public init(searchValue: Dalton, tolerance: MassTolerance, searchType: SearchType, massType: MassType) {
+    public init(searchValue: Double, tolerance: MassTolerance, searchType: SearchType, massType: MassType) {
         self.searchValue = searchValue
         self.tolerance = tolerance
         self.searchType = searchType
@@ -64,13 +64,13 @@ public struct MassSearchParameters {
     }
 
     public var massRange: MassRange {
-        var minMass = Dalton(0.0)
-        var maxMass = Dalton(0.0)
-        let toleranceValue = Dalton(tolerance.value)
+        var minMass = 0.0
+        var maxMass = 0.0
+        let toleranceValue = Double(tolerance.value)
 
         switch tolerance.type {
         case .ppm:
-            let delta = toleranceValue / 1000000
+            let delta = toleranceValue / 1_000_000
             minMass = (1 - delta) * searchValue
             maxMass = (1 + delta) * searchValue
 
@@ -87,7 +87,7 @@ public struct MassSearchParameters {
             maxMass = searchValue + toleranceValue / 1000
         }
 
-        return minMass ... maxMass
+        return Dalton(minMass) ... Dalton(maxMass)
     }
 }
 
