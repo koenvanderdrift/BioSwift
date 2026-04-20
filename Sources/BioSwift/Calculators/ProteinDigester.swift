@@ -15,11 +15,11 @@ public class ProteinDigester {
         self.protein = protein
     }
 
-    public func peptides(using regex: String, with missedCleavages: Int) -> [Peptide] {
+    public func peptides(using enzyme: Enzyme, with missedCleavages: Int) -> [Peptide] {
         var peptides: [Peptide] = []
 
         for chain in protein.chains {
-            peptides += chain.digest(using: regex, with: missedCleavages)
+            peptides += chain.digest(using: enzyme, with: missedCleavages)
         }
 
         return peptides
@@ -34,8 +34,8 @@ extension Chain {
     // TODO: this is Protein only
     // TODO: recreate residues
 
-    public func digest(using regex: String, with missedCleavages: Int) -> [Peptide] {
-        let sites = cleavageSites(for: regex)
+    public func digest(using enzyme: Enzyme, with missedCleavages: Int) -> [Peptide] {
+        let sites = cleavageSites(for: enzyme.regex())
 
         var subSequences = [Peptide]()
 
