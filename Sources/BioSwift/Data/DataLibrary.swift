@@ -13,7 +13,7 @@ public var aminoAcidLibrary: [AminoAcid] = dataLibrary.aminoAcids
 public var elementLibrary: [ChemicalElement] = dataLibrary.elements
 public var enzymeLibrary: [Enzyme] = dataLibrary.enzymes
 public var hydropathyLibrary: [Hydro] = dataLibrary.hydropathy
-public var modificationLibrary: [Modification] = dataLibrary.modifications
+public var modificationLibrary: [Modification] = [zeroModification] + dataLibrary.modifications
 
 public struct DataLibrary {
     private enum LibraryType {
