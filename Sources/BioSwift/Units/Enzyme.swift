@@ -39,3 +39,14 @@ public extension Enzyme {
         return regex
     }
 }
+
+extension Enzyme: Equatable, Hashable {
+    public static func == (lhs: Enzyme, rhs: Enzyme) -> Bool {
+        lhs.name == rhs.name
+    }
+    
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(name)
+    }
+}
+
