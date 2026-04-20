@@ -71,8 +71,17 @@ struct BioSwiftTests {
     @Test func peptideFormula() {
         let peptide = Peptide(sequence: "DWSSD")
         #expect(peptide.formula.countFor(element: "C") == 25)
+        #expect(peptide.formula.countFor(element: "P") == 0)
     }
     
+    @Test func modifiedPeptideFormula() {
+        var peptide = Peptide(sequence: "DWSSD")
+        if let ser = modificationLibrary.first(where: { $0.name == "Phospho" }) {
+            peptide.addModification(LocalizedModification(ser, at: 3))
+            #expect(peptide.formula.countFor(element: "P") == 1)
+        }
+    }
+
     @Test func waterAverageMass() { // H2O
         #expect(water.averageMass.roundedString(to: 4) == 18.0153.roundedString(to: 4))
     }
@@ -320,8 +329,8 @@ struct BioSwiftTests {
      
         let trypsin = enzymeLibrary.first(where: { $0.name == "Trypsin" })
      
-        if let regex = trypsin?.regex() {
-            let peptides: [Peptide] = digester.peptides(using: regex, with: missedCleavages)
+        if let enzyme = trypsin {
+            let peptides: [Peptide] = digester.peptides(using: enzyme, with: missedCleavages)
      
             #expect(peptides[0].sequenceString == "MPSSVSWGILLLAGLCCLVPVSLAEDPQGDAAQK")
             #expect(peptides[1].sequenceString == "TDTSHHDQDHPTFNK")
@@ -329,8 +338,8 @@ struct BioSwiftTests {
      
         let aspN = enzymeLibrary.first(where: { $0.name == "Asp-N" })
      
-        if let regex = aspN?.regex() {
-            let peptides: [Peptide] = digester.peptides(using: regex, with: missedCleavages)
+        if let enzyme = aspN {
+            let peptides: [Peptide] = digester.peptides(using: enzyme, with: missedCleavages)
      
             #expect(peptides[0].sequenceString == "MPSSVSWGILLLAGLCCLVPVSLAE")
             #expect(peptides[1].sequenceString == "DPQG")
@@ -344,8 +353,8 @@ struct BioSwiftTests {
         
         let trypsin = enzymeLibrary.first(where: { $0.name == "Trypsin" })
         
-        if let regex = trypsin?.regex() {
-            let peptides: [Peptide] = digester.peptides(using: regex, with: missedCleavages)
+        if let enzyme = trypsin {
+            let peptides: [Peptide] = digester.peptides(using: enzyme, with: missedCleavages)
 
             #expect(peptides[0].massOverCharge().monoisotopicMass.roundedString(to: 4) == 3468.7575.roundedString(to: 4)) // 3467.7503
             #expect(peptides[1].massOverCharge().monoisotopicMass.roundedString(to: 4) == 1779.7681.roundedString(to: 4)) // 1778.7608

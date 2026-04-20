@@ -60,8 +60,16 @@ public extension Chain {
     }
 
     var formula: Formula {
-        var f = Formula(residues.reduce("") { $0 + $1.formula.formulaString })
-
+        var f = zeroFormula
+        
+        for residue in self.residues {
+            f += residue.formula
+            
+            if let mod = residue.modification {
+                f += mod.formula
+            }
+        }
+        
         f += nTerminal.formula + cTerminal.formula
 
         return f
