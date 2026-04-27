@@ -1,4 +1,12 @@
 [{
+        "name": "Unknown",
+        "dontCleaveBefore": [""],
+        "alternativeName": "",
+        "fullName": "",
+        "cleaveDirection": "",
+        "cleaveAt": [""]
+    },
+    {
         "name": "Trypsin",
         "dontCleaveBefore": ["P"],
         "alternativeName": "",

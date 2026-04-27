@@ -33,7 +33,7 @@ public struct DataLibrary {
     }
 
     public var enzymes: [Enzyme] {
-        library(.enzymes)
+        library(.enzymes) + [unspecifiedEnzyme]
     }
 
     public var hydropathy: [Hydro] {

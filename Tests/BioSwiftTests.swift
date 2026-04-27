@@ -346,6 +346,11 @@ struct BioSwiftTests {
         }
     }
     
+    @Test func digestUnspecified() {
+        let unspecified = enzymeLibrary.first(where: { $0.name == "Unspecified" })
+        #expect(unspecified?.name == "Unspecified")
+    }
+    
     @Test func digestMasses() {
         let digester = ProteinDigester(protein: testProtein)
         
