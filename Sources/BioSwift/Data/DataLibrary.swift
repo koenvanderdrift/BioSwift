@@ -11,7 +11,7 @@ public var dataLibrary = DataLibrary()
 
 public var aminoAcidLibrary: [AminoAcid] = dataLibrary.aminoAcids
 public var elementLibrary: [ChemicalElement] = dataLibrary.elements
-public var enzymeLibrary: [Enzyme] = dataLibrary.enzymes
+public var enzymeLibrary: [Enzyme] = [unspecifiedEnzyme] + dataLibrary.enzymes
 public var hydropathyLibrary: [Hydro] = dataLibrary.hydropathy
 public var modificationLibrary: [Modification] = [zeroModification] + dataLibrary.modifications
 
@@ -33,7 +33,7 @@ public struct DataLibrary {
     }
 
     public var enzymes: [Enzyme] {
-        library(.enzymes) + [unspecifiedEnzyme]
+        library(.enzymes)
     }
 
     public var hydropathy: [Hydro] {

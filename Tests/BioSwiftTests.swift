@@ -360,7 +360,8 @@ struct BioSwiftTests {
         
         if let enzyme = trypsin {
             let peptides: [Peptide] = digester.peptides(using: enzyme, with: missedCleavages)
-
+                .charge(minCharge: 1, maxCharge: 1)
+            
             #expect(peptides[0].massOverCharge().monoisotopicMass.roundedString(to: 4) == 3468.7575.roundedString(to: 4)) // 3467.7503
             #expect(peptides[1].massOverCharge().monoisotopicMass.roundedString(to: 4) == 1779.7681.roundedString(to: 4)) // 1778.7608
         }
@@ -437,7 +438,7 @@ struct BioSwiftTests {
      
         var peptide = Peptide(sequence: "SAMPLER")
         peptide.setAdducts(type: protonAdduct, count: 1)
-     
+
         #expect(peptide.massOverCharge().monoisotopicMass.roundedString(to: 4) == 803.4080.roundedString(to: 4))
         #expect(peptide.pseudomolecularIon().monoisotopicMass.roundedString(to: 4) == 803.4080.roundedString(to: 4))
      
