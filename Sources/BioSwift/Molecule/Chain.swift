@@ -20,6 +20,10 @@ public extension ChainRange {
     var toOneBased: ChainRange {
         lowerBound + 1 ... upperBound + 1
     }
+    
+    var length: Int {
+        upperBound - lowerBound + 1
+    }
 }
 
 public extension NSRange {
