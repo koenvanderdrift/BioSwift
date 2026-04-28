@@ -219,7 +219,7 @@ extension Formula {
             throw ParseError.missingOpeningBracket
         }
 
-        if countedElements.count == 0 {
+        if countedElements.isEmpty {
             throw ParseError.invalidFormula
         }
     }

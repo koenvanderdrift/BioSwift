@@ -377,7 +377,7 @@ struct BioSwiftTests {
             let peptides: [Peptide] = chain.searchMass(params: searchParameters)
             print(peptides.map(\.sequenceString))
      
-            #expect(peptides.count == 0)
+            #expect(peptides.isEmpty)
         }
     }
      

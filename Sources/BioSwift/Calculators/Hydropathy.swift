@@ -24,7 +24,7 @@ public class Hydropathy {
         // http://isoelectric.org/www_old/files/practise-isoelectric-point.html
         // https://stackoverflow.com/questions/30545518/how-to-count-occurrences-of-an-element-in-a-swift-array
 
-        if residues.count == 0 {
+        if residues.isEmpty {
             return 0.0
         }
 
