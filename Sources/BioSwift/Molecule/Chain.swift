@@ -9,7 +9,7 @@
 import Foundation
 
 public typealias ChainRange = ClosedRange<Int>
-public let zeroChainRange: ChainRange = -1 ... 0
+public let zeroChainRange: ChainRange = 0 ... 0
 public let zeroNSRange = NSMakeRange(NSNotFound, 0)
 
 public extension ChainRange {
