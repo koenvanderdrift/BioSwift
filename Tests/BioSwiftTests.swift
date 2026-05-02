@@ -319,7 +319,11 @@ struct BioSwiftTests {
      
     @Test func emptySequence() {
         let peptide = Peptide(sequence: "")
-        #expect(peptide.pseudomolecularIon().monoisotopicMass == zeroMass.monoisotopicMass)
+        #expect(peptide.pseudomolecularIon() == zeroMass)
+    }
+    
+    @Test func emptySelection() {
+        #expect(testProtein.selectionMass(zeroChainRange) == zeroMass)
     }
     
     @Test func digest() {
