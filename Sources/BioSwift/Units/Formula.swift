@@ -10,7 +10,7 @@ import Foundation
 
 public let zeroFormula = Formula("")
 
-public class Formula: Codable {
+public struct Formula: Codable {
     public var formulaString: String
     public var countedElements: [ChemicalElement: Int]
 
@@ -29,7 +29,7 @@ public class Formula: Codable {
         }
     }
 
-    private func setUp(from string: String, or elementsDictionary: [String: Int]) {
+    private mutating func setUp(from string: String, or elementsDictionary: [String: Int]) {
         var elementsString = string
 
         if elementsString.isEmpty && elementsDictionary.isEmpty == false {
@@ -118,7 +118,7 @@ extension Formula {
         return result
     }
 
-    private func parseElements(from string: String) throws {
+    private mutating func parseElements(from string: String) throws {
         // https://github.com/cgohlke/molmass/blob/master/molmass/molmass.py
         // https://github.com/cgohlke/molmass/blob/master/molmass/elements.py
 

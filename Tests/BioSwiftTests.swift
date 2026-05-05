@@ -58,7 +58,7 @@ struct BioSwiftTests {
     }
     
     @Test func formulaChemicalString() {
-        let formula = Formula("{AgCuRu4(H)2[CO]12}2")
+        var formula = Formula("{AgCuRu4(H)2[CO]12}2")
         
         #expect(formula.chemicalString == "{AgCuRu₄(H)₂[CO]₁₂}₂")
         #expect(formula.countFor(element: "C") == 24)
