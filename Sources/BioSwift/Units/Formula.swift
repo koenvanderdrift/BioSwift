@@ -11,21 +11,33 @@ import Foundation
 public let zeroFormula = Formula("")
 
 public struct Formula: Codable {
-    public var formulaString: String
+    public var string: String
     public var countedElements: [ChemicalElement: Int]
+    
+    public var chemicalString: String {
+        var result = ""
 
-    public lazy var chemicalString: String = getChemicalString()
+        for c in string {
+            if c.isNumber {
+                result.append(String(c).subScript())
+            } else {
+                result.append(c)
+            }
+        }
+
+        return result
+    }
 
     public init(_ string: String = "", with countedElements: [ChemicalElement: Int] = [:], from elementsDictionary: [String: Int] = [:]) {
-        self.formulaString = string
+        self.string = string
         self.countedElements = countedElements
 
         if self.countedElements.isEmpty {
             setUp(from: string, or: elementsDictionary)
         }
         
-        if self.formulaString.isEmpty {
-            self.formulaString = getFormulaString()
+        if self.string.isEmpty {
+            self.string = formulaString()
         }
     }
 
@@ -50,8 +62,8 @@ public struct Formula: Codable {
             debugPrint(error)
         }
 
-        if self.formulaString.isEmpty {
-            self.formulaString = getFormulaString()
+        if self.string.isEmpty {
+            self.string = formulaString()
         }
     }
 
@@ -89,7 +101,7 @@ extension Formula {
         case invalidFormula
     }
 
-    public func getFormulaString() -> String {
+    public func formulaString() -> String {
         var result = ""
 
         // TODO: put elements in C H O N order
@@ -98,20 +110,6 @@ extension Formula {
             result += element.symbol
             if count > 1 {
                 result += String(count)
-            }
-        }
-
-        return result
-    }
-
-    public func getChemicalString() -> String {
-        var result = ""
-
-        for c in formulaString {
-            if c.isNumber {
-                result.append(String(c).subScript())
-            } else {
-                result.append(c)
             }
         }
 
