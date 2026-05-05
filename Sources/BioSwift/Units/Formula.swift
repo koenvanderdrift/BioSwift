@@ -11,46 +11,47 @@ import Foundation
 public let zeroFormula = Formula("")
 
 public class Formula: Codable {
-    // TODO: make Formula a struct ?
+    public var formulaString: String
+    public var countedElements: [ChemicalElement: Int]
 
-    public var countedElements: [ChemicalElement: Int] = [:]
-
-    public lazy var formulaString: String = getFormulaString()
     public lazy var chemicalString: String = getChemicalString()
 
-    public init(_ string: String) {
-        formulaString = string
+    public init(_ string: String = "", with countedElements: [ChemicalElement: Int] = [:], from elementsDictionary: [String: Int] = [:]) {
+        self.formulaString = string
+        self.countedElements = countedElements
 
-        do {
-            try parseElements()
-        } catch {
-            debugPrint(error)
+        if self.countedElements.isEmpty {
+            setUp(from: string, or: elementsDictionary)
+        }
+        
+        if self.formulaString.isEmpty {
+            self.formulaString = getFormulaString()
         }
     }
 
-    public init(_ dict: [ChemicalElement: Int]) {
-        countedElements = dict
-    }
+    private func setUp(from string: String, or elementsDictionary: [String: Int]) {
+        var elementsString = string
 
-    public init(_ dict: [String: Int]) {
-        var string = ""
-
-        for (element, count) in dict {
-            let absCount = abs(count)
-            if absCount > 0 {
-                string += element
-                if absCount > 1 {
-                    string += String(absCount)
+        if elementsString.isEmpty && elementsDictionary.isEmpty == false {
+            for (element, count) in elementsDictionary {
+                let absCount = abs(count)
+                if absCount > 0 {
+                    elementsString += element
+                    if absCount > 1 {
+                        elementsString += String(absCount)
+                    }
                 }
             }
         }
 
-        formulaString = string
-
         do {
-            try parseElements()
+            try parseElements(from: elementsString) // elementsString -> countedElements
         } catch {
             debugPrint(error)
+        }
+
+        if self.formulaString.isEmpty {
+            self.formulaString = getFormulaString()
         }
     }
 
@@ -91,6 +92,8 @@ extension Formula {
     public func getFormulaString() -> String {
         var result = ""
 
+        // TODO: put elements in C H O N order
+
         for (element, count) in countedElements {
             result += element.symbol
             if count > 1 {
@@ -115,11 +118,11 @@ extension Formula {
         return result
     }
 
-    private func parseElements() throws {
+    private func parseElements(from string: String) throws {
         // https://github.com/cgohlke/molmass/blob/master/molmass/molmass.py
         // https://github.com/cgohlke/molmass/blob/master/molmass/elements.py
 
-        let characters = Array(formulaString)
+        let characters = Array(string)
         var i = characters.count
 
         var parenthesisLevel = 0
@@ -164,7 +167,7 @@ extension Formula {
                     i -= 1
                 }
 
-                elementCount = Int(formulaString[i ..< j + 1])!
+                elementCount = Int(string[i ..< j + 1])!
 
                 if elementCount == 0 {
                     throw ParseError.zeroCount
@@ -243,7 +246,7 @@ extension Formula: Equatable {
             left + right
         })
 
-        return Formula(result)
+        return Formula(with: result)
     }
 
     static func += (lhs: inout Formula, rhs: Formula) {
@@ -255,7 +258,7 @@ extension Formula: Equatable {
             abs(left - right)
         })
 
-        return Formula(result)
+        return Formula(with: result)
     }
 
     static func -= (lhs: inout Formula, rhs: Formula) {

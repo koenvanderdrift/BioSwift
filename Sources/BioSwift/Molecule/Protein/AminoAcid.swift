@@ -55,7 +55,7 @@ public struct AminoAcid: Residue, Codable {
     }
 
     public init(name: String, oneLetterCode: String, threeLetterCode: String = "", elements: [String: Int]) {
-        self.init(name: name, oneLetterCode: oneLetterCode, threeLetterCode: threeLetterCode, formula: Formula(elements))
+        self.init(name: name, oneLetterCode: oneLetterCode, threeLetterCode: threeLetterCode, formula: Formula(from: elements))
 
         setProperties()
     }

@@ -31,9 +31,8 @@ public struct FunctionalGroup: Structure, Codable {
     }
 
     public init(name: String, elements: [String: Int]) {
-        // TODO: switch to [ChemicalElement: Int] ?
         self.name = name
-        self.formula = Formula(elements)
+        self.formula = Formula(from: elements)
     }
 
     public var masses: MassContainer {
