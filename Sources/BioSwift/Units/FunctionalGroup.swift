@@ -39,8 +39,12 @@ public struct FunctionalGroup: Structure, Codable {
         calculateMasses()
     }
 
-    var description: String {
+    public var description: String {
         name
+    }
+    
+    public var chemicalString: String {
+        formula.chemicalString
     }
 }
 
