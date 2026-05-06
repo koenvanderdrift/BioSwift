@@ -8,7 +8,7 @@
 
 import Foundation
 
-public protocol BioMolecule: Chargeable {
+public protocol BioMolecule: Chargeable, Codable {
     associatedtype T: Chain
 
     var chains: [T] { get set }

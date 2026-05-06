@@ -92,7 +92,7 @@ public let potassiumAdduct = Adduct(group: potassium, charge: 1)
 public let zeroMass = MassContainer(monoisotopicMass: 0.0, averageMass: 0.0, nominalMass: 0)
 public let electronMass = MassContainer(monoisotopicMass: Dalton(0.000549), averageMass: Dalton(0.000549), nominalMass: 0)
 
-public protocol Mass {
+public protocol Mass: Codable {
     var masses: MassContainer { get }
 
     func calculateMasses() -> MassContainer
@@ -114,7 +114,7 @@ public extension Mass {
     }
 }
 
-public protocol Chargeable: Mass {
+public protocol Chargeable: Mass, Codable {
     var adducts: [Adduct] { get set }
 }
 

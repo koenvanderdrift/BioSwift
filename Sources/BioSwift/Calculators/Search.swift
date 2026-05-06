@@ -40,7 +40,7 @@ public extension MassToleranceType {
     }
 }
 
-public struct MassTolerance {
+public struct MassTolerance: Codable {
     public var type: MassToleranceType
     public var value: Double
 
@@ -50,7 +50,7 @@ public struct MassTolerance {
     }
 }
 
-public struct MassSearchParameters {
+public struct MassSearchParameters: Codable {
     public var searchValue: Dalton
     public var tolerance: MassTolerance
     public let searchType: SearchType

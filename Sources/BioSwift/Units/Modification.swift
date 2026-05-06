@@ -70,7 +70,7 @@ extension Reaction: Mass {
     }
 }
 
-public protocol Modifiable {
+public protocol Modifiable: Codable {
     var modification: Modification? { get set }
 
     func allowedModifications() -> [Modification]
@@ -191,7 +191,7 @@ public struct LocalizedModification: Codable, Hashable {
     }
 }
 
-public struct Link: Hashable {
+public struct Link: Hashable, Codable {
     public var mods: [LocalizedModification]
 
     public init(mods: [LocalizedModification]) {
