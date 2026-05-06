@@ -8,13 +8,13 @@
 
 import Foundation
 
-public enum SearchType: Int {
+public enum SearchType: Int, Codable {
     case sequential
     case unique
     case exhaustive
 }
 
-public enum MassToleranceType: String, CaseIterable {
+public enum MassToleranceType: String, CaseIterable, Codable {
     case ppm
     case dalton = "Da"
     case percent = "%"

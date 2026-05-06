@@ -35,7 +35,7 @@ extension MassRange {
     }
 }
 
-public enum MassType: String, CaseIterable {
+public enum MassType: String, CaseIterable, Codable {
     case average
     case monoisotopic
     case nominal

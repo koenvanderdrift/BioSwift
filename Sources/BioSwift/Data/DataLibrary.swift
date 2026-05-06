@@ -15,8 +15,8 @@ public var enzymeLibrary: [Enzyme] = [unspecifiedEnzyme] + dataLibrary.enzymes
 public var hydropathyLibrary: [Hydro] = dataLibrary.hydropathy
 public var modificationLibrary: [Modification] = [zeroModification] + dataLibrary.modifications
 
-public struct DataLibrary {
-    private enum LibraryType {
+public struct DataLibrary: Codable {
+    private enum LibraryType: Codable {
         case aminoAcids
         case elements
         case enzymes
