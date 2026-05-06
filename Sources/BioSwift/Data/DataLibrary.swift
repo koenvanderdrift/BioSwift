@@ -16,12 +16,15 @@ public var hydropathyLibrary: [Hydro] = dataLibrary.hydropathy
 public var modificationLibrary: [Modification] = [zeroModification] + dataLibrary.modifications
 
 public struct DataLibrary: Codable {
-    private enum LibraryType: Codable {
+    private enum LibraryType: Codable, Identifiable {
         case aminoAcids
         case elements
         case enzymes
         case hydropathy
         case modifications
+        
+        var id: LibraryType { self }
+
     }
 
     public var aminoAcids: [AminoAcid] {

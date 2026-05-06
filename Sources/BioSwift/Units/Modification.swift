@@ -206,10 +206,12 @@ public struct Link: Hashable, Codable {
 public extension Link {
     // https://codereview.stackexchange.com/questions/237295/comparing-two-structs-in-swift#
 
-    enum CompareResult {
+    enum CompareResult: Identifiable {
         case equal
         case intersect
         case disjoint
+        
+        public var id: CompareResult { self }
     }
 
     func compareLocations(with other: Link) -> CompareResult {

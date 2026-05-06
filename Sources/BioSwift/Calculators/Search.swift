@@ -8,17 +8,21 @@
 
 import Foundation
 
-public enum SearchType: Int, Codable {
+public enum SearchType: Int, Codable, Identifiable {
     case sequential
     case unique
     case exhaustive
+    
+    public var id: SearchType { self }
 }
 
-public enum MassToleranceType: String, CaseIterable, Codable {
+public enum MassToleranceType: String, CaseIterable, Codable, Identifiable {
     case ppm
     case dalton = "Da"
     case percent = "%"
     case mmu
+    
+    public var id: MassToleranceType { self }
 }
 
 public extension MassToleranceType {

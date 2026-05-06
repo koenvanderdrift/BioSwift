@@ -8,7 +8,7 @@
 
 import Foundation
 
-public enum PeptideFragmentType: CaseIterable, Codable {
+public enum PeptideFragmentType: CaseIterable, Codable, Identifiable {
     case precursorIon
     case precursorIonMinusWater
     case precursorIonMinusAmmonia
@@ -26,6 +26,8 @@ public enum PeptideFragmentType: CaseIterable, Codable {
     case xIon
     case zIon
     case undefined
+    
+    public var id: PeptideFragmentType { self }
 
     public var isPrecursor: Bool { [.precursorIon, .precursorIonMinusWater, .precursorIonMinusAmmonia].contains(self) }
     public var isImmonium: Bool { [.immoniumIon].contains(self) }

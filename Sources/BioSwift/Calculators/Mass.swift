@@ -35,10 +35,12 @@ extension MassRange {
     }
 }
 
-public enum MassType: String, CaseIterable, Codable {
+public enum MassType: String, CaseIterable, Codable, Identifiable {
     case average
     case monoisotopic
     case nominal
+    
+    public var id: MassType { self }
 }
 
 public struct MassContainer: Codable {
