@@ -16,7 +16,7 @@ public enum CleaveDirection: String, CaseIterable, Codable {
     case unspecified
 }
 
-public class Enzyme: Codable {
+public struct Enzyme: Codable {
     public let name: String
     public let cleaveAt: [String]
     public let dontCleaveBefore: [String]
