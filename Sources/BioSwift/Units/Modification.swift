@@ -211,7 +211,7 @@ public extension Link {
         case intersect
         case disjoint
         
-        public var id: CompareResult { self }
+        public var id: Self { self }
     }
 
     func compareLocations(with other: Link) -> CompareResult {

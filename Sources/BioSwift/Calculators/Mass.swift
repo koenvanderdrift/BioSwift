@@ -40,7 +40,7 @@ public enum MassType: String, CaseIterable, Codable, Identifiable {
     case monoisotopic
     case nominal
     
-    public var id: MassType { self }
+    public var id: Self { self }
 }
 
 public struct MassContainer: Codable {

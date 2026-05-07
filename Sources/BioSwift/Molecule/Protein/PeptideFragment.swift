@@ -27,7 +27,7 @@ public enum PeptideFragmentType: CaseIterable, Codable, Identifiable {
     case zIon
     case undefined
     
-    public var id: PeptideFragmentType { self }
+    public var id: Self { self }
 
     public var isPrecursor: Bool { [.precursorIon, .precursorIonMinusWater, .precursorIonMinusAmmonia].contains(self) }
     public var isImmonium: Bool { [.immoniumIon].contains(self) }

@@ -13,7 +13,7 @@ public enum SearchType: Int, Codable, Identifiable {
     case unique
     case exhaustive
     
-    public var id: SearchType { self }
+    public var id: Self { self }
 }
 
 public enum MassToleranceType: String, CaseIterable, Codable, Identifiable {
@@ -22,7 +22,7 @@ public enum MassToleranceType: String, CaseIterable, Codable, Identifiable {
     case percent = "%"
     case mmu
     
-    public var id: MassToleranceType { self }
+    public var id: Self { self }
 }
 
 public extension MassToleranceType {

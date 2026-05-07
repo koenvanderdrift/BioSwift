@@ -23,8 +23,7 @@ public struct DataLibrary: Codable {
         case hydropathy
         case modifications
         
-        var id: LibraryType { self }
-
+        var id: Self { self }
     }
 
     public var aminoAcids: [AminoAcid] {
