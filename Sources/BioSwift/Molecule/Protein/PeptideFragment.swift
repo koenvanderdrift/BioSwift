@@ -26,13 +26,26 @@ public enum PeptideFragmentType: CaseIterable, Codable, Identifiable {
     case xIon
     case zIon
     case undefined
-    
-    public var id: Self { self }
 
-    public var isPrecursor: Bool { [.precursorIon, .precursorIonMinusWater, .precursorIonMinusAmmonia].contains(self) }
-    public var isImmonium: Bool { [.immoniumIon].contains(self) }
-    public var isNTerminal: Bool { [.aIon, .aIonMinusWater, .aIonMinusAmmonia, .bIon, .bIonMinusWater, .bIonMinusAmmonia, .cIon].contains(self) }
-    public var isCTerminal: Bool { [.yIon, .yIonMinusWater, .yIonMinusAmmonia, .xIon, .zIon].contains(self) }
+    public var id: Self {
+        self
+    }
+
+    public var isPrecursor: Bool {
+        [.precursorIon, .precursorIonMinusWater, .precursorIonMinusAmmonia].contains(self)
+    }
+
+    public var isImmonium: Bool {
+        [.immoniumIon].contains(self)
+    }
+
+    public var isNTerminal: Bool {
+        [.aIon, .aIonMinusWater, .aIonMinusAmmonia, .bIon, .bIonMinusWater, .bIonMinusAmmonia, .cIon].contains(self)
+    }
+
+    public var isCTerminal: Bool {
+        [.yIon, .yIonMinusWater, .yIonMinusAmmonia, .xIon, .zIon].contains(self)
+    }
 
     public var masses: MassContainer {
         switch self {
@@ -104,7 +117,7 @@ public struct PeptideFragment: Chain, Codable, Fragmenting {
 
     public init(sequence: String) {
         self.sequence = sequence
-        self.residues = createResidues(from: sequence)
+        residues = createResidues(from: sequence)
     }
 
     public init(residues: [AminoAcid]) {
@@ -113,12 +126,12 @@ public struct PeptideFragment: Chain, Codable, Fragmenting {
 
     public init(residues: [AminoAcid], type: PeptideFragmentType, index: Int = -1, adducts: [Adduct], modifications: [LocalizedModification] = [], nTerm: Modification = zeroModification, cTerm: Modification = zeroModification) {
         self.residues = residues
-        self.fragmentType = type
+        fragmentType = type
         self.index = index
         self.adducts = adducts
         self.modifications = modifications
-        self.nTerminal = nTerm
-        self.cTerminal = cTerm
+        nTerminal = nTerm
+        cTerminal = cTerm
     }
 
     public func createResidues(from string: String) -> [AminoAcid] {

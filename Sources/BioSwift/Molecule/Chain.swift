@@ -20,7 +20,7 @@ public extension ChainRange {
     var toOneBased: ChainRange {
         lowerBound + 1 ... upperBound + 1
     }
-    
+
     var length: Int {
         upperBound - lowerBound + 1
     }
@@ -65,15 +65,15 @@ public extension Chain {
 
     var formula: Formula {
         var f = zeroFormula
-        
-        for residue in self.residues {
+
+        for residue in residues {
             f += residue.formula
-            
+
             if let mod = residue.modification {
                 f += mod.formula
             }
         }
-        
+
         f += nTerminal.formula + cTerminal.formula
 
         return f
@@ -129,7 +129,7 @@ public extension Chain {
         residues.remove(at: location)
     }
 
-    mutating func removeResidues(at location: Int) {
+    mutating func removeResidues(at _: Int) {
         // TODO:
     }
 

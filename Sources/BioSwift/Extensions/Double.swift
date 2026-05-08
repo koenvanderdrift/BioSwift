@@ -10,7 +10,7 @@ import Foundation
 
 public extension Double {
     func roundedString(to places: Int) -> String {
-        return self.formatted(.number.precision(.fractionLength(places)))
+        return formatted(.number.precision(.fractionLength(places)))
     }
 
     func roundTo(places: Int) -> Double {
@@ -42,9 +42,9 @@ public extension Double {
 
 public extension Decimal {
     func roundedString(to places: Int) -> String {
-        return self.formatted(.number.precision(.fractionLength(places)))
+        return formatted(.number.precision(.fractionLength(places)))
     }
-    
+
     func roundedDecimal(to scale: Int = 0, mode: NSDecimalNumber.RoundingMode = .plain) -> Decimal {
         var decimalValue = self
         var result = Decimal()
@@ -59,7 +59,7 @@ public extension Decimal {
     func intValue() -> Int {
         Int(truncating: self as NSNumber)
     }
-    
+
     func doubleValue() -> Double {
         Double(truncating: self as NSNumber)
     }

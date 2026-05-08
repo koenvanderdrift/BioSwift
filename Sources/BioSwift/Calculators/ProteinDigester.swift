@@ -75,11 +75,11 @@ extension Chain {
                     new.rangeInParent = subSequences[index].rangeInParent.lowerBound ... subSequences[newIndex].rangeInParent.upperBound
 
                     if index == 0 {
-                        new.nTerminal = self.nTerminal
+                        new.nTerminal = nTerminal
                     }
 
                     if newIndex == subSequences.count - 1 {
-                        new.cTerminal = self.cTerminal
+                        new.cTerminal = cTerminal
                     }
 
                     joinedSubSequences.append(new)

@@ -22,8 +22,10 @@ public struct DataLibrary: Codable {
         case enzymes
         case hydropathy
         case modifications
-        
-        var id: Self { self }
+
+        var id: Self {
+            self
+        }
     }
 
     public var aminoAcids: [AminoAcid] {
@@ -45,7 +47,7 @@ public struct DataLibrary: Codable {
     public var modifications: [Modification] {
         library(.modifications)
     }
-    
+
     private func library<T: Decodable>(_ type: LibraryType) -> [T] {
         do {
             switch type {

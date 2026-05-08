@@ -13,7 +13,7 @@ public let zeroFormula = Formula("")
 public struct Formula: Codable {
     public var string: String
     public var countedElements: [ChemicalElement: Int]
-    
+
     public var chemicalString: String {
         var result = ""
 
@@ -35,7 +35,7 @@ public struct Formula: Codable {
         if self.countedElements.isEmpty {
             setUp(from: string, or: elementsDictionary)
         }
-        
+
         if self.string.isEmpty {
             self.string = formulaString()
         }
@@ -44,7 +44,7 @@ public struct Formula: Codable {
     private mutating func setUp(from string: String, or elementsDictionary: [String: Int]) {
         var elementsString = string
 
-        if elementsString.isEmpty && elementsDictionary.isEmpty == false {
+        if elementsString.isEmpty, elementsDictionary.isEmpty == false {
             for (element, count) in elementsDictionary {
                 let absCount = abs(count)
                 if absCount > 0 {

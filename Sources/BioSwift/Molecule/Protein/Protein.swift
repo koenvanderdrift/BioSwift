@@ -68,7 +68,7 @@ public struct Protein: BioMolecule, Codable, Equatable {
         return []
     }
 
-    public func nTermLocation(for chainIndex: Int = 0) -> Int {
+    public func nTermLocation(for _: Int = 0) -> Int {
         0
     }
 

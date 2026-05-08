@@ -41,9 +41,7 @@ public extension String {
 
         do {
             let regex = try NSRegularExpression(pattern: regex, options: [])
-            let results = regex.matches(in: self, range: NSMakeRange(0, string.length))
-
-            return results
+            return regex.matches(in: self, range: NSMakeRange(0, string.length))
 
         } catch let error as NSError {
             debugPrint("invalid regex: \(error.localizedDescription)")
@@ -187,8 +185,8 @@ extension StringProtocol {
 //        return subString
 //    }
 
-/// Returns a range equivalent to the given `NSRange`,
-/// or `nil` if the range can't be converted.
+// Returns a range equivalent to the given `NSRange`,
+// or `nil` if the range can't be converted.
 //    func range(from nsrange: NSRange) -> Range<Index>? {
 //        guard let range = Range.init(nsrange) else { return nil }
 //        let utf16Start = UTF16Index(range.lowerBound)

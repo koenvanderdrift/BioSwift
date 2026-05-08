@@ -41,11 +41,9 @@ public class PeptideFragmenter {
     func immoniumIons() -> [PeptideFragment] {
         guard let symbols = peptide.symbolSet as? Set<AminoAcid> else { return [] }
 
-        let result = symbols.map { symbol -> PeptideFragment in
+        return symbols.map { symbol -> PeptideFragment in
             PeptideFragment(residues: [symbol], type: .immoniumIon, adducts: peptide.adducts)
         }
-
-        return result
     }
 
     func nTerminalIons() -> [PeptideFragment] {

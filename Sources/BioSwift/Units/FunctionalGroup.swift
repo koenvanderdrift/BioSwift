@@ -32,7 +32,7 @@ public struct FunctionalGroup: Structure, Codable {
 
     public init(name: String, elements: [String: Int]) {
         self.name = name
-        self.formula = Formula(from: elements)
+        formula = Formula(from: elements)
     }
 
     public var masses: MassContainer {
@@ -42,7 +42,7 @@ public struct FunctionalGroup: Structure, Codable {
     public var description: String {
         name
     }
-    
+
     public var chemicalString: String {
         formula.chemicalString
     }

@@ -148,10 +148,10 @@ public struct Modification: Codable {
     }
 
     public init(_ modification: Modification) {
-        self.name = modification.name
-        self.fullName = modification.fullName
-        self.specificities = modification.specificities
-        self.reactions = modification.reactions
+        name = modification.name
+        fullName = modification.fullName
+        specificities = modification.specificities
+        reactions = modification.reactions
     }
 }
 
@@ -210,8 +210,10 @@ public extension Link {
         case equal
         case intersect
         case disjoint
-        
-        public var id: Self { self }
+
+        public var id: Self {
+            self
+        }
     }
 
     func compareLocations(with other: Link) -> CompareResult {

@@ -12,8 +12,10 @@ public enum SearchType: Int, Codable, Identifiable {
     case sequential
     case unique
     case exhaustive
-    
-    public var id: Self { self }
+
+    public var id: Self {
+        self
+    }
 }
 
 public enum MassToleranceType: String, CaseIterable, Codable, Identifiable {
@@ -21,8 +23,10 @@ public enum MassToleranceType: String, CaseIterable, Codable, Identifiable {
     case dalton = "Da"
     case percent = "%"
     case mmu
-    
-    public var id: Self { self }
+
+    public var id: Self {
+        self
+    }
 }
 
 public extension MassToleranceType {
@@ -74,7 +78,7 @@ public struct MassSearchParameters: Codable {
 
         switch tolerance.type {
         case .ppm:
-            let delta = toleranceValue / 1000000
+            let delta = toleranceValue / 1_000_000
             minMass = (1 - delta) * searchValue
             maxMass = (1 + delta) * searchValue
 

@@ -39,7 +39,7 @@ public struct ChemicalElement: Codable, Symbol {
     }
 
     public init(name: String, symbol: String, monoisotopicMass: Dalton, averageMass: Dalton) {
-     // only called when loadElementsFromUnimod == true
+        // only called when loadElementsFromUnimod == true
         self.name = name
         self.symbol = symbol
         isotopes = []

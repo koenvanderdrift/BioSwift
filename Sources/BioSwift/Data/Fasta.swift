@@ -215,8 +215,8 @@ public final class FastaDecoder: TopLevelDecoder {
     }
 }
 
-extension FastaDecoder {
-    public func decodeRecords(with fastaData: Data) async -> [FastaRecord] {
+public extension FastaDecoder {
+    func decodeRecords(with fastaData: Data) async -> [FastaRecord] {
         if let fastaArray = String(data: fastaData, encoding: .ascii)?.components(separatedBy: "\n>") {
             return await withTaskGroup(of: FastaRecord.self) { taskGroup in
                 var records = [FastaRecord]()
@@ -238,7 +238,7 @@ extension FastaDecoder {
         return []
     }
 
-    public func decodeRecord(from fastaLine: String) async -> FastaRecord {
+    func decodeRecord(from fastaLine: String) async -> FastaRecord {
         let decoder = _FastaDecoder(fastaLine)
 
         do {
@@ -264,7 +264,7 @@ private final class _FastaDecoder {
 }
 
 extension _FastaDecoder: Decoder {
-    func container<Key>(keyedBy _: Key.Type) throws -> KeyedDecodingContainer<Key> where Key: CodingKey {
+    func container<Key: CodingKey>(keyedBy _: Key.Type) throws -> KeyedDecodingContainer<Key> {
         KeyedDecodingContainer(KDC(input))
     }
 
@@ -368,11 +368,11 @@ extension _FastaDecoder: Decoder {
             throw DecodingError.typeMismatch(UInt64.self, .init(codingPath: [], debugDescription: "type mismatch", underlyingError: nil))
         }
 
-        func decode<T>(_: T.Type, forKey _: Key) throws -> T where T: Decodable {
+        func decode<T: Decodable>(_: T.Type, forKey _: Key) throws -> T {
             UUID() as! T
         }
 
-        func nestedContainer<NestedKey>(keyedBy _: NestedKey.Type, forKey _: Key) throws -> KeyedDecodingContainer<NestedKey> where NestedKey: CodingKey {
+        func nestedContainer<NestedKey: CodingKey>(keyedBy _: NestedKey.Type, forKey _: Key) throws -> KeyedDecodingContainer<NestedKey> {
             throw DecodingError.valueNotFound(KeyedDecodingContainer<NestedKey>.self, .init(codingPath: [], debugDescription: "no nested container", underlyingError: nil))
         }
 

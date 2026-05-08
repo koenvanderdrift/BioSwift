@@ -14,8 +14,10 @@ public enum CleaveDirection: String, CaseIterable, Codable, Identifiable {
     case C
     case N
     case unspecified
-    
-    public var id: Self { self }
+
+    public var id: Self {
+        self
+    }
 }
 
 public struct Enzyme: Codable {

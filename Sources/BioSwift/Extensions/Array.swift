@@ -27,9 +27,9 @@ final class ThreadSafe<A> {
     }
 }
 
-extension Array {
+public extension Array {
     // via: https://talk.objc.io/episodes/S01E90-concurrent-map
-    public func concurrentMap<B>(_ transform: @escaping (Element) -> B) -> [B] {
+    func concurrentMap<B>(_ transform: @escaping (Element) -> B) -> [B] {
         let result = ThreadSafe([B?](repeating: nil, count: count))
 
         DispatchQueue.concurrentPerform(iterations: count) { idx in
@@ -52,7 +52,7 @@ extension Array {
     ///
     /// - Returns: A collection of resulting combinations.
 
-    public func combinations(size: Int, allowDuplicates: Bool = false) -> [[Element]] {
+    func combinations(size: Int, allowDuplicates: Bool = false) -> [[Element]] {
         let n = count
 
         if n == 0 || (size > n && !allowDuplicates) { return [] }
@@ -91,9 +91,7 @@ extension Array {
 extension Array where Element: StringProtocol {
     func uniqueElements() -> [Element] {
         let elementSet = Set(self)
-        let elementArray = Array(elementSet)
-
-        return elementArray
+        return Array(elementSet)
     }
 }
 

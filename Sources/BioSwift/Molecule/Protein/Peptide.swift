@@ -19,7 +19,7 @@ public struct Peptide: Chain, Codable, Equatable {
     public var library: [AminoAcid] = aminoAcidLibrary
 
     public init(sequence: String) {
-        self.residues = createResidues(from: sequence)
+        residues = createResidues(from: sequence)
     }
 
     public init(residues: [AminoAcid]) {
