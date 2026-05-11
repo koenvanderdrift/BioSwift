@@ -49,7 +49,7 @@ public protocol Chain: Codable {
     var nTerminal: Modification { get set }
     var cTerminal: Modification { get set }
     var adducts: [Adduct] { get set }
-    var rangeInParent: ChainRange { get set }
+    var range: ChainRange { get set }
     var library: [T] { get set }
 
     init(sequence: String)
@@ -208,7 +208,7 @@ public extension Chain {
 //            }
 //        }
 
-        sub.rangeInParent = range
+        sub.range = range
 
         return sub
     }

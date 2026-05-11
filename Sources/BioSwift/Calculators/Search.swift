@@ -104,7 +104,7 @@ public extension Chain {
         var result: [Self] = []
         for range in sequenceString.sequenceRanges(of: searchString) {
             if var sub = subChain(with: range) {
-                sub.rangeInParent = range
+                sub.range = range
 
                 result.append(sub)
             }
@@ -165,7 +165,7 @@ public extension Chain {
 
     private func subChain(with chainRange: ChainRange, for masses: MassContainer, in massRange: MassRange, and type: MassType) -> Self? where Self: Chargeable {
         if massRange.contains(masses, for: type), var sub = subChain(with: chainRange) {
-            sub.rangeInParent = chainRange
+            sub.range = chainRange
 
             return sub
         }

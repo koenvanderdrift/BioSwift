@@ -15,7 +15,7 @@ public struct Peptide: Chain, Codable, Equatable {
     public var cTerminal: Modification = hydroxylModification
     public var modifications: [LocalizedModification] = []
     public var adducts: [Adduct] = []
-    public var rangeInParent: ChainRange = zeroChainRange
+    public var range: ChainRange = zeroChainRange
     public var library: [AminoAcid] = aminoAcidLibrary
 
     public init(sequence: String) {
