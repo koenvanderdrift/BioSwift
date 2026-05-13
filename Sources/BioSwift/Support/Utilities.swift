@@ -39,6 +39,18 @@ public func loadDataFromBundle(from fileName: String, withExtension fileExtensio
     return data
 }
 
+public func loadTextFromBundle(from fileName: String, withExtension fileExtension: String) throws -> String? {
+    guard let path = Bundle.main.path(forResource: fileName, ofType: fileExtension) else {
+        throw LoadError.fileNotFound(name: fileName)
+    }
+
+    do {
+        return try String(contentsOfFile: path)
+    } catch {
+        throw LoadError.fileDecodingFailed(name: fileName)
+    }
+}
+
 // via:  http://stackoverflow.com/questions/41402770/swift-parse-string-with-different-formats/41402868#41402868
 //
 // This type alias is just here to make the next line a bit more readable.
