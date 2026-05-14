@@ -8,7 +8,7 @@
 
 import Foundation
 
-public struct Peptide: Chain, Codable, Equatable {
+public struct Peptide: Chain, Codable, Equatable, Identifiable {
     public var name: String = ""
     public var residues: [AminoAcid] = []
     public var nTerminal: Modification = hydrogenModification
@@ -17,12 +17,15 @@ public struct Peptide: Chain, Codable, Equatable {
     public var adducts: [Adduct] = []
     public var range: ChainRange = zeroChainRange
     public var parentLength: Int = 0
+    public let id: UUID
     
     public init(sequence: String) {
+        self.id = UUID()
         residues = createResidues(from: sequence)
     }
 
     public init(residues: [AminoAcid]) {
+        self.id = UUID()
         self.residues = residues
     }
 
