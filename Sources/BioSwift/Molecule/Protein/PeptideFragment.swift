@@ -111,7 +111,6 @@ public struct PeptideFragment: Chain, Codable, Fragmenting {
     public var modifications: [LocalizedModification] = []
     public var adducts: [Adduct] = []
     public var range: ChainRange = zeroChainRange
-    public var library: [AminoAcid] = aminoAcidLibrary
     public var fragmentType: PeptideFragmentType = .undefined
     public var index = -1
 

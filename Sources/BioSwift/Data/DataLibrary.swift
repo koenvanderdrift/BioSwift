@@ -15,19 +15,19 @@ public var enzymeLibrary: [Enzyme] = [unspecifiedEnzyme] + dataLibrary.enzymes
 public var hydropathyLibrary: [Hydro] = dataLibrary.hydropathy
 public var modificationLibrary: [Modification] = [zeroModification] + dataLibrary.modifications
 
-public struct DataLibrary: Codable {
-    private enum LibraryType: Codable, Identifiable {
-        case aminoAcids
-        case elements
-        case enzymes
-        case hydropathy
-        case modifications
+public enum LibraryType: Codable, Identifiable {
+    case aminoAcids
+    case elements
+    case enzymes
+    case hydropathy
+    case modifications
 
-        var id: Self {
-            self
-        }
+    public var id: Self {
+        self
     }
+}
 
+public struct DataLibrary: Codable {
     public var aminoAcids: [AminoAcid] {
         library(.aminoAcids)
     }

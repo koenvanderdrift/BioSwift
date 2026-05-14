@@ -125,15 +125,7 @@ public extension BioMolecule {
     }
 
     func countOneResidue(with identifier: String, for chainIndex: Int = 0) -> Int {
-        let countedResidues = countAllResidues(for: chainIndex)
-
-        if let res = chains[chainIndex].library
-            .first(where: { $0.identifier == identifier })
-        {
-            return countedResidues.count(for: res)
-        }
-
-        return 0
+        chains[chainIndex].countOneResidue(with: identifier)
     }
 
     func residueLocations(for chainIndex: Int = 0, with identifiers: [String]) -> [Int] {

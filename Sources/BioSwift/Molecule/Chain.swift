@@ -50,7 +50,6 @@ public protocol Chain: Codable {
     var cTerminal: Modification { get set }
     var adducts: [Adduct] { get set }
     var range: ChainRange { get set }
-    var library: [T] { get set }
 
     init(sequence: String)
     init(residues: [T])
@@ -111,6 +110,12 @@ public extension Chain {
 public extension Chain {
     func countAllResidues() -> NSCountedSet {
         NSCountedSet(array: residues)
+    }
+
+    func countOneResidue(with identifier: String) -> Int {
+        return residues
+            .map { $0.oneLetterCode }
+            .reduce(0) { $1 == identifier ? $0 + 1 : $0 }
     }
 
     mutating func insertResidue(_ residue: any Residue, at location: Int) {
