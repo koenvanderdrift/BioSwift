@@ -47,6 +47,8 @@ extension Chain {
 
             if var new: Peptide = subChain(from: start, to: end - 1) as? Peptide {
                 new.range = start ... end - 1
+                new.parentLength = self.sequenceLength
+
                 subSequences.append(new)
 
                 start = end
@@ -55,6 +57,8 @@ extension Chain {
 
         if var final: Peptide = subChain(from: start, to: residues.endIndex - 1) as? Peptide {
             final.range = start ... residues.endIndex - 1
+            final.parentLength = self.sequenceLength
+
             subSequences.append(final)
         }
 
@@ -73,6 +77,7 @@ extension Chain {
                     var new = Peptide(residues: res)
 
                     new.range = subSequences[index].range.lowerBound ... subSequences[newIndex].range.upperBound
+                    new.parentLength = self.sequenceLength
 
                     if index == 0 {
                         new.nTerminal = nTerminal
