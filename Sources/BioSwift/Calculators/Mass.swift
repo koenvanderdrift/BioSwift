@@ -154,7 +154,7 @@ public extension Collection where Element: Chargeable {
             (minCharge ... maxCharge).map { charge in
                 var chargedSequence = sequence
                 chargedSequence.adducts.append(contentsOf: repeatElement(protonAdduct, count: charge))
-
+                
                 return chargedSequence
             }
         }
