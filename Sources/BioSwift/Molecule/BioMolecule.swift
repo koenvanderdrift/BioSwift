@@ -119,6 +119,14 @@ public extension BioMolecule {
     mutating func removeModification(mod: LocalizedModification, for chainIndex: Int = 0) {
         removeModification(at: mod.location, for: chainIndex)
     }
+    
+    mutating func modifyAllResidues(for identifier: String, with mod: Modification, for chainIndex: Int = 0) {
+        let locations = residueLocations(with: [identifier])
+        
+        for loc in locations {
+            addModification(mod: mod, at: loc)
+        }
+    }
 
     func countAllResidues(for chainIndex: Int = 0) -> NSCountedSet {
         chains[chainIndex].countAllResidues()
