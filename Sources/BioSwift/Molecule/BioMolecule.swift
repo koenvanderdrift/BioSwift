@@ -120,7 +120,7 @@ public extension BioMolecule {
         removeModification(at: mod.location, for: chainIndex)
     }
 
-    mutating func modifyAllResidues(for identifier: String, with modification: Modification, for chainIndex: Int = 0) {
+    mutating func modifyResidues(for identifier: String, with modification: Modification, for chainIndex: Int = 0) {
         guard chains.indices.contains(chainIndex) else {
             return
         }

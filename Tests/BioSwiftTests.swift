@@ -208,9 +208,9 @@ struct BioSwiftTests {
         }
     }
     
-    @Test mutating func modifyAllResidues() {
+    @Test mutating func modifyResidues() {
         if let cam = modificationLibrary.first(where: { $0.name == "Carbamidomethyl" }) {
-            testProtein.modifyAllResidues(for: "C", with: cam)
+            testProtein.modifyResidues(for: "C", with: cam)
         }
     }
 
