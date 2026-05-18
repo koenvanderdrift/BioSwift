@@ -86,9 +86,9 @@ public extension BioMolecule {
     }
 
     func residues(for chainIndex: Int = 0) -> [any Residue] {
-//        if let residues = chains[chainIndex].residues {
-//            return residues
-//        }
+        //        if let residues = chains[chainIndex].residues {
+        //            return residues
+        //        }
 
         return chains[chainIndex].residues
     }
@@ -134,6 +134,14 @@ public extension BioMolecule {
         }
 
         chains[chainIndex].removeModifications(for: identifier)
+    }
+
+    func residueLocations(for chainIndex: Int = 0, with identifiers: [String]) -> [Int] {
+        guard chains.indices.contains(chainIndex) else {
+            return []
+        }
+
+        return chains[chainIndex].residueLocations(with: Set(identifiers))
     }
 
     func countResidues(for chainIndex: Int = 0) -> NSCountedSet {

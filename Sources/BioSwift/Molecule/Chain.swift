@@ -243,13 +243,18 @@ public extension Chain {
 
         return residueChain(with: from ... to)
     }
-
-    func residueLocations(with identifiers: [String]) -> [Int] {
-        let result = identifiers.map { i in
-            residues.indices.filter { (residues[$0].identifier) == i }
+    
+    func residueLocations(with identifiers: Set<String>) -> [Int] {
+        var locations: [Int] = []
+        locations.reserveCapacity(residues.count)
+        
+        for index in residues.indices {
+            if identifiers.contains(residues[index].identifier) {
+                locations.append(index)
+            }
         }
-
-        return result.flatMap { $0 }
+        
+        return locations
     }
 
     mutating func setTermini(nTerm: Modification, cTerm: Modification) {
@@ -323,4 +328,6 @@ public extension Chain {
             }
         }
     }
+    
+    
 }
