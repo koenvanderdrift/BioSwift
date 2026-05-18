@@ -105,65 +105,116 @@ public extension Chain {
     var numberOfResidues: Int {
         residues.count
     }
-}
 
-public extension Chain {
     func countAllResidues() -> NSCountedSet {
         NSCountedSet(array: residues)
     }
 
     func countOneResidue(with identifier: String) -> Int {
-        return residues
-            .map { $0.oneLetterCode }
-            .reduce(0) { $1 == identifier ? $0 + 1 : $0 }
-    }
+        var count = 0
 
-    mutating func insertResidue(_ residue: any Residue, at location: Int) {
-        if let r = residue as? Self.ResidueType {
-            residues.insert(r, at: location)
+        for residue in residues where residue.oneLetterCode == identifier {
+            count += 1
         }
-    }
 
-    mutating func insertResidues(_ newResidues: [any Residue], at location: Int) {
-        if let r = newResidues as? [Self.ResidueType] {
-            residues.insert(contentsOf: r, at: location)
-        }
+        return count
     }
+}
 
-    mutating func removeResidue(at location: Int) {
-        residues.remove(at: location)
-    }
-
-    mutating func removeResidues(at _: Int) {
-        // TODO:
-    }
-
-    mutating func replaceResidue(at location: Int, with residue: any Residue) {
-        if let r = residue as? Self.ResidueType {
-            residues[location] = r
-        }
-    }
-
-    mutating func update(with sequence: String, in range: NSRange, changeInLength: Int) {
-        if sequence == sequenceString {
+public extension Chain {
+    mutating func insertResidue(_ residue: ResidueType, at location: Int) {
+        guard residues.indices.contains(location) || location == residues.endIndex else {
             return
         }
 
-        switch changeInLength {
-        case Int.min ..< 0:
-            let subRange = range.location ..< range.location - changeInLength
-            residues.removeSubrange(subRange)
+        residues.insert(residue, at: location)
+    }
 
-        case 0 ..< Int.max:
-            let subRange = range.location ..< range.location + changeInLength
-            let s = String(sequence[subRange])
-
-            let newResidues = createResidues(from: s)
-            residues.insert(contentsOf: newResidues, at: range.location)
-
-        default:
-            fatalError("TODO")
+    mutating func insertResidue(_ residue: any Residue, at location: Int) {
+        guard let residue = residue as? ResidueType else {
+            return
         }
+
+        insertResidue(residue, at: location)
+    }
+
+    mutating func insertResidues(_ newResidues: [ResidueType], at location: Int) {
+        guard location >= residues.startIndex,
+              location <= residues.endIndex
+        else {
+            return
+        }
+
+        residues.insert(contentsOf: newResidues, at: location)
+    }
+
+    mutating func insertResidues(_ newResidues: [any Residue], at location: Int) {
+        let typedResidues = newResidues.compactMap { $0 as? ResidueType }
+
+        guard typedResidues.count == newResidues.count else {
+            return
+        }
+
+        insertResidues(typedResidues, at: location)
+    }
+
+    mutating func removeResidue(at location: Int) {
+        guard residues.indices.contains(location) else {
+            return
+        }
+
+        residues.remove(at: location)
+    }
+
+    mutating func removeResidues(in range: Range<Int>) {
+        guard range.lowerBound >= residues.startIndex,
+              range.upperBound <= residues.endIndex
+        else {
+            return
+        }
+
+        residues.removeSubrange(range)
+    }
+
+    mutating func replaceResidue(at location: Int, with residue: ResidueType) {
+        guard residues.indices.contains(location) else {
+            return
+        }
+
+        residues[location] = residue
+    }
+
+    mutating func replaceResidue(at location: Int, with residue: any Residue) {
+        guard let residue = residue as? ResidueType else {
+            return
+        }
+
+        replaceResidue(at: location, with: residue)
+    }
+}
+
+extension Chain {
+    mutating func update(with sequence: String, in range: NSRange, changeInLength: Int) {
+        guard range.location >= 0, range.length >= 0 else { return }
+
+        let newCount = range.length
+        let oldCount = newCount - changeInLength
+
+        guard oldCount >= 0 else { return }
+
+        let oldStart = range.location
+        let oldEnd = oldStart + oldCount
+
+        guard oldStart >= residues.startIndex, oldEnd <= residues.endIndex else { return }
+
+        guard let swiftRange = Range(range, in: sequence) else {
+            return
+        }
+
+        let newSequencePart = String(sequence[swiftRange])
+        let newResidues = createResidues(from: newSequencePart)
+
+        residues.replaceSubrange(oldStart ..< oldEnd, with: newResidues)
     }
 
     func subChain(removing range: ChainRange) -> Self? {
@@ -171,47 +222,63 @@ public extension Chain {
         // ++ - xxxx - +++++++
         // ++++++++++++ - xxxx
 
-        let subResidues = residues.indices.compactMap { range ~= $0 ? nil : residues[$0] }
+        guard range != zeroChainRange else { return nil }
+
+        guard range.lowerBound >= residues.startIndex, range.upperBound < residues.endIndex else { return nil }
+
+        var subResidues: [ResidueType] = []
+        subResidues.reserveCapacity(residues.count - range.count)
+
+        subResidues.append(contentsOf: residues[..<range.lowerBound])
+
+        let afterRemovedRange = range.upperBound + 1
+
+        if afterRemovedRange < residues.endIndex {
+            subResidues.append(contentsOf: residues[afterRemovedRange...])
+        }
 
         var sub = Self(residues: subResidues)
         sub.nTerminal = nTerminal
         sub.cTerminal = cTerminal
         sub.adducts = adducts
 
-//        if range.lowerBound == 0 {
-//            if let mod = termini?.first {
-//                sub.termini?.first = mod
-//            }
-//        }
-//
-//        if range.upperBound == numberOfResidues {
-//            if let mod = termini?.last {
-//                sub.termini?.last = mod
-//            }
-//        }
+        //        if range.lowerBound == 0 {
+        //            if let mod = termini?.first {
+        //                sub.termini?.first = mod
+        //            }
+        //        }
+        //
+        //        if range.upperBound == numberOfResidues {
+        //            if let mod = termini?.last {
+        //                sub.termini?.last = mod
+        //            }
+        //        }
 
         return sub
     }
 
     func subChain(with range: ChainRange) -> Self? {
-        guard let subResidues = residueChain(with: range) else { return nil }
+        guard let subResidues = residueChainSlice(with: range) else {
+            return nil
+        }
 
-        var sub = Self(residues: subResidues)
+        var sub = Self(residues: Array(subResidues))
+
         sub.nTerminal = nTerminal
         sub.cTerminal = cTerminal
         sub.adducts = adducts
 
-//        if range.lowerBound == 0 {
-//            if let mod = termini?.first {
-//                sub.termini?.first = mod
-//            }
-//        }
-//
-//        if range.upperBound == numberOfResidues {
-//            if let mod = termini?.last {
-//                sub.termini?.last = mod
-//            }
-//        }
+        //        if range.lowerBound == 0 {
+        //            if let mod = termini?.first {
+        //                sub.termini?.first = mod
+        //            }
+        //        }
+        //
+        //        if range.upperBound == numberOfResidues {
+        //            if let mod = termini?.last {
+        //                sub.termini?.last = mod
+        //            }
+        //        }
 
         sub.range = range
 
@@ -223,40 +290,52 @@ public extension Chain {
     }
 
     func subChain(from: Int, to: Int) -> Self? {
-        guard from < numberOfResidues, to >= from else { return nil }
+        guard from >= residues.startIndex, to < residues.endIndex, to >= from else { return nil }
 
         return subChain(with: from ... to)
     }
 
-    func residueChain(with range: ChainRange) -> [ResidueType]? {
+    func residueChainSlice(with range: ChainRange) -> ArraySlice<ResidueType>? {
         guard range != zeroChainRange else { return nil }
 
-        return Array(residues[range])
+        guard range.lowerBound >= residues.startIndex, range.upperBound < residues.endIndex else { return nil }
+
+        return residues[range]
     }
 
-    func residueChain(with range: NSRange) -> [ResidueType]? {
+    func residueChain(with range: ChainRange) -> ArraySlice<ResidueType>? {
+        guard range != zeroChainRange else { return nil }
+
+        guard range.lowerBound >= residues.startIndex, range.upperBound < residues.endIndex else { return nil }
+
+        return residues[range]
+    }
+
+    func residueChain(with range: NSRange) -> ArraySlice<ResidueType>? {
         residueChain(with: range.chainRange())
     }
 
-    func residueChain(from: Int, to: Int) -> [ResidueType]? {
-        guard from < numberOfResidues, to >= from else { return nil }
+    func residueChain(from: Int, to: Int) -> ArraySlice<ResidueType>? {
+        guard from <= to else { return nil }
 
         return residueChain(with: from ... to)
     }
-    
+
     func residueLocations(with identifiers: Set<String>) -> [Int] {
         var locations: [Int] = []
         locations.reserveCapacity(residues.count)
-        
+
         for index in residues.indices {
             if identifiers.contains(residues[index].identifier) {
                 locations.append(index)
             }
         }
-        
+
         return locations
     }
+}
 
+extension Chain {
     mutating func setTermini(nTerm: Modification, cTerm: Modification) {
         nTerminal = nTerm
         cTerminal = cTerm
@@ -314,12 +393,12 @@ public extension Chain {
     }
 
     mutating func modifyResidues(for identifier: String, with modification: Modification) {
-            for index in residues.indices {
-                if residues[index].identifier == identifier {
-                    residues[index].setModification(modification)
-                }
+        for index in residues.indices {
+            if residues[index].identifier == identifier {
+                residues[index].setModification(modification)
             }
         }
+    }
 
     mutating func removeModifications(for identifier: String) {
         for index in residues.indices {
@@ -328,6 +407,4 @@ public extension Chain {
             }
         }
     }
-    
-    
 }

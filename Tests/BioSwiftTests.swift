@@ -207,10 +207,12 @@ struct BioSwiftTests {
             #expect(TMTpro.fullName == "TMTpro Tandem Mass Tag 13C(6) 15N(2) Silac label")
         }
     }
-    
+
     @Test mutating func modifyResidues() {
         if let cam = modificationLibrary.first(where: { $0.name == "Carbamidomethyl" }) {
             testProtein.modifyResidues(for: "C", with: cam)
+
+            #expect(testProtein.countOneResidue(with: "C") == 3)
         }
     }
 

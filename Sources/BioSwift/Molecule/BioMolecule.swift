@@ -86,10 +86,6 @@ public extension BioMolecule {
     }
 
     func residues(for chainIndex: Int = 0) -> [any Residue] {
-        //        if let residues = chains[chainIndex].residues {
-        //            return residues
-        //        }
-
         return chains[chainIndex].residues
     }
 
