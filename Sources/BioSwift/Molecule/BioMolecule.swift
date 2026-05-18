@@ -9,9 +9,9 @@
 import Foundation
 
 public protocol BioMolecule: Chargeable, Codable {
-    associatedtype T: Chain
+    associatedtype ChainType: Chain
 
-    var chains: [T] { get set }
+    var chains: [ChainType] { get set }
 }
 
 public extension BioMolecule {
@@ -119,28 +119,28 @@ public extension BioMolecule {
     mutating func removeModification(mod: LocalizedModification, for chainIndex: Int = 0) {
         removeModification(at: mod.location, for: chainIndex)
     }
-    
-    mutating func modifyAllResidues(for identifier: String, with mod: Modification, for chainIndex: Int = 0) {
-        let locations = residueLocations(with: [identifier])
-        
-        for loc in locations {
-            addModification(mod: mod, at: loc)
+
+    mutating func modifyAllResidues(for identifier: String, with modification: Modification, for chainIndex: Int = 0) {
+        guard chains.indices.contains(chainIndex) else {
+            return
         }
+
+        chains[chainIndex].modifyResidues(for: identifier, with: modification)
     }
 
-    func countAllResidues(for chainIndex: Int = 0) -> NSCountedSet {
+    mutating func removeModifications(for identifier: String, for chainIndex: Int = 0) {
+        guard chains.indices.contains(chainIndex) else {
+            return
+        }
+
+        chains[chainIndex].removeModifications(for: identifier)
+    }
+
+    func countResidues(for chainIndex: Int = 0) -> NSCountedSet {
         chains[chainIndex].countAllResidues()
     }
 
     func countOneResidue(with identifier: String, for chainIndex: Int = 0) -> Int {
         chains[chainIndex].countOneResidue(with: identifier)
-    }
-
-    func residueLocations(for chainIndex: Int = 0, with identifiers: [String]) -> [Int] {
-        let result = identifiers.map { i in
-            chains[chainIndex].sequenceString.indicesOf(string: i)
-        }
-
-        return result.flatMap { $0 }
     }
 }

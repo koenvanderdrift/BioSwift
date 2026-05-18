@@ -41,10 +41,10 @@ public extension NSRange {
 // https://medium.com/swift2go/mastering-generics-with-protocols-the-specification-pattern-5e2e303af4ca
 
 public protocol Chain: Codable {
-    associatedtype T: Residue
+    associatedtype ResidueType: Residue
 
     var name: String { get set }
-    var residues: [T] { get set }
+    var residues: [ResidueType] { get set }
     var modifications: [LocalizedModification] { get set }
     var nTerminal: Modification { get set }
     var cTerminal: Modification { get set }
@@ -52,9 +52,9 @@ public protocol Chain: Codable {
     var range: ChainRange { get set }
 
     init(sequence: String)
-    init(residues: [T])
+    init(residues: [ResidueType])
 
-    func createResidues(from string: String) -> [T]
+    func createResidues(from string: String) -> [ResidueType]
 }
 
 public extension Chain {
@@ -87,7 +87,7 @@ public extension Chain {
     }
 
     var symbolSequence: [Symbol] {
-        residues as? [any Symbol] ?? [] // TODO: Fix me
+        residues
     }
 
     var symbolSet: SymbolSet? {
@@ -98,7 +98,7 @@ public extension Chain {
         symbolSequence[index]
     }
 
-    func residue(at index: Int) -> T? {
+    func residue(at index: Int) -> ResidueType? {
         residues[index]
     }
 
@@ -119,13 +119,13 @@ public extension Chain {
     }
 
     mutating func insertResidue(_ residue: any Residue, at location: Int) {
-        if let r = residue as? Self.T {
+        if let r = residue as? Self.ResidueType {
             residues.insert(r, at: location)
         }
     }
 
     mutating func insertResidues(_ newResidues: [any Residue], at location: Int) {
-        if let r = newResidues as? [Self.T] {
+        if let r = newResidues as? [Self.ResidueType] {
             residues.insert(contentsOf: r, at: location)
         }
     }
@@ -139,7 +139,7 @@ public extension Chain {
     }
 
     mutating func replaceResidue(at location: Int, with residue: any Residue) {
-        if let r = residue as? Self.T {
+        if let r = residue as? Self.ResidueType {
             residues[location] = r
         }
     }
@@ -228,17 +228,17 @@ public extension Chain {
         return subChain(with: from ... to)
     }
 
-    func residueChain(with range: ChainRange) -> [T]? {
+    func residueChain(with range: ChainRange) -> [ResidueType]? {
         guard range != zeroChainRange else { return nil }
 
         return Array(residues[range])
     }
 
-    func residueChain(with range: NSRange) -> [T]? {
+    func residueChain(with range: NSRange) -> [ResidueType]? {
         residueChain(with: range.chainRange())
     }
 
-    func residueChain(from: Int, to: Int) -> [T]? {
+    func residueChain(from: Int, to: Int) -> [ResidueType]? {
         guard from < numberOfResidues, to >= from else { return nil }
 
         return residueChain(with: from ... to)
@@ -306,5 +306,21 @@ public extension Chain {
 
     func modification(at location: Int) -> Modification? {
         residue(at: location)?.modification
+    }
+
+    mutating func modifyResidues(for identifier: String, with modification: Modification) {
+            for index in residues.indices {
+                if residues[index].identifier == identifier {
+                    residues[index].setModification(modification)
+                }
+            }
+        }
+
+    mutating func removeModifications(for identifier: String) {
+        for index in residues.indices {
+            if residues[index].identifier == identifier {
+                residues[index].removeModification()
+            }
+        }
     }
 }

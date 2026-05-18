@@ -12,6 +12,9 @@ public protocol Residue: Symbol, Structure, Modifiable, Hashable, Codable {
     var oneLetterCode: String { get }
     var threeLetterCode: String { get }
     var modification: Modification? { get set }
+    
+    mutating func setModification(_ modification: Modification)
+    mutating func removeModification()
 }
 
 public extension Residue {
@@ -25,6 +28,14 @@ public extension Residue {
 
     var masses: MassContainer {
         formula.masses + modificationMasses()
+    }
+    
+    mutating func setModification(_ modification: Modification) {
+        self.modification = modification
+    }
+    
+    mutating func removeModification() {
+        self.modification = nil
     }
 }
 
