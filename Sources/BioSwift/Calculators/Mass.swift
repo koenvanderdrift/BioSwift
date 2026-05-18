@@ -148,10 +148,10 @@ public extension Chargeable {
     }
 }
 
-public extension Collection where Element: Chargeable {
-    func charge(minCharge: Charge, maxCharge: Charge) -> [Element] {
+public extension Array where Element: Chain & Chargeable {
+    func charge(with range: ClosedRange<Charge>) -> [Element] {
         flatMap { sequence in
-            (minCharge ... maxCharge).map { charge in
+            range.map { charge in
                 var chargedSequence = sequence
                 chargedSequence.adducts.append(contentsOf: repeatElement(protonAdduct, count: charge))
                 
@@ -160,3 +160,4 @@ public extension Collection where Element: Chargeable {
         }
     }
 }
+

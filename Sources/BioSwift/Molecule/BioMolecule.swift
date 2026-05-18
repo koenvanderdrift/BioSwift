@@ -93,6 +93,22 @@ public extension BioMolecule {
         chains[chainIndex].sequenceString
     }
 
+    func residueLocations(for chainIndex: Int = 0, with identifiers: [String]) -> [Int] {
+        guard chains.indices.contains(chainIndex) else {
+            return []
+        }
+
+        return chains[chainIndex].residueLocations(with: Set(identifiers))
+    }
+
+    func countResidues(for chainIndex: Int = 0) -> NSCountedSet {
+        chains[chainIndex].countAllResidues()
+    }
+
+    func countOneResidue(with identifier: String, for chainIndex: Int = 0) -> Int {
+        chains[chainIndex].countOneResidue(with: identifier)
+    }
+
     mutating func setAdducts(type: Adduct, count: Int, for chainIndex: Int = 0) {
         if var chain = chains[chainIndex] as? Chargeable {
             chain.setAdducts(type: type, count: count)
@@ -130,21 +146,5 @@ public extension BioMolecule {
         }
 
         chains[chainIndex].removeModifications(for: identifier)
-    }
-
-    func residueLocations(for chainIndex: Int = 0, with identifiers: [String]) -> [Int] {
-        guard chains.indices.contains(chainIndex) else {
-            return []
-        }
-
-        return chains[chainIndex].residueLocations(with: Set(identifiers))
-    }
-
-    func countResidues(for chainIndex: Int = 0) -> NSCountedSet {
-        chains[chainIndex].countAllResidues()
-    }
-
-    func countOneResidue(with identifier: String, for chainIndex: Int = 0) -> Int {
-        chains[chainIndex].countOneResidue(with: identifier)
     }
 }

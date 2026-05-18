@@ -193,7 +193,7 @@ public extension Chain {
     }
 }
 
-extension Chain {
+public extension Chain {
     mutating func update(with sequence: String, in range: NSRange, changeInLength: Int) {
         guard range.location >= 0, range.length >= 0 else { return }
 
@@ -335,7 +335,7 @@ extension Chain {
     }
 }
 
-extension Chain {
+public extension Chain {
     mutating func setTermini(nTerm: Modification, cTerm: Modification) {
         nTerminal = nTerm
         cTerminal = cTerm
@@ -359,6 +359,10 @@ extension Chain {
         }
 
         return result
+    }
+
+    func modification(at location: Int) -> Modification? {
+        residue(at: location)?.modification
     }
 
     mutating func setModifcations(_ mods: [LocalizedModification]) {
@@ -386,10 +390,6 @@ extension Chain {
             r.removeModification()
             residues[mod.location] = r
         }
-    }
-
-    func modification(at location: Int) -> Modification? {
-        residue(at: location)?.modification
     }
 
     mutating func modifyResidues(for identifier: String, with modification: Modification) {
