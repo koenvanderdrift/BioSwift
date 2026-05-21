@@ -24,6 +24,28 @@ public extension ChainRange {
     var length: Int {
         upperBound - lowerBound + 1
     }
+    
+    var isValidTextRange: Bool {
+        lowerBound > 0 && upperBound >= lowerBound
+    }
+
+    func toNSRange(clampedToTextLength textLength: Int) -> NSRange? {
+        guard isValidTextRange, textLength > 0 else {
+            return nil
+        }
+
+        let clampedLower = Swift.max(1, Swift.min(lowerBound, textLength))
+        let clampedUpper = Swift.max(1, Swift.min(upperBound, textLength))
+
+        guard clampedUpper >= clampedLower else {
+            return nil
+        }
+
+        return NSRange(
+            location: clampedLower - 1,
+            length: clampedUpper - clampedLower + 1
+        )
+    }
 }
 
 public extension NSRange {
@@ -35,6 +57,17 @@ public extension NSRange {
         guard location != NSNotFound, length > 0 else { return zeroChainRange }
 
         return lowerBound ... upperBound - 1
+    }
+    
+    var oneBasedChainRange: ChainRange? {
+        guard location != NSNotFound, length > 0 else {
+            return nil
+        }
+
+        let lower = location + 1
+        let upper = location + length
+
+        return lower...upper
     }
 }
 
