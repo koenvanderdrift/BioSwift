@@ -56,7 +56,7 @@ public extension BioMolecule {
     }
 
     func selectionMass(chainIndex index: Int = 0, _ range: ChainRange) -> MassContainer {
-        guard var sub = chains[index].subChain(with: range) as? Chargeable else { return zeroMass }
+        guard var sub = chains[index].subChain(chainRange: range) as? Chargeable else { return zeroMass }
 
         sub.setAdducts(type: protonAdduct, count: charge)
 
@@ -64,13 +64,14 @@ public extension BioMolecule {
     }
 
     func selectedIsoelectricPoint(chainIndex index: Int = 0, _ range: ChainRange) -> Double {
-        guard let sub = chains[index].subChain(with: range) else { return 0.0 }
-
+        let sub = chains[index].subChain(chainRange: range)
+        guard sub.numberOfResidues > 0  else { return 0.0 }
+        
         return Hydropathy(residues: sub.residues).isoElectricPoint()
     }
 
     func selectionLength(chainIndex index: Int = 0, _ range: ChainRange) -> Int {
-        guard let sub = chains[index].subChain(with: range) else { return 0 }
+        let sub = chains[index].subChain(chainRange: range)
 
         return sub.numberOfResidues
     }

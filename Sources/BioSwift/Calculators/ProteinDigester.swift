@@ -35,67 +35,49 @@ extension Chain {
     // TODO: recreate residues
 
     public func digest(using enzyme: Enzyme, with missedCleavages: Int) -> [Peptide] {
-        let sites = cleavageSites(for: enzyme.regex())
+        let sites = cleavageSites(for: enzyme.regex()) // site is first residue of new peptide 0-based
 
-        var subSequences = [Peptide]()
+        var peptides = [Peptide]()
 
-        var start = residues.startIndex
+        var start = 1
         var end = start
-
+        
         for site in sites {
-            end = residues.index(residues.startIndex, offsetBy: site)
+            end = site
 
-            if var new: Peptide = subChain(from: start, to: end - 1) as? Peptide {
-                new.range = start ... end - 1
+            let newRange: ChainRange = start ... end
+            
+            if var new: Peptide = subChain(chainRange: newRange) as? Peptide {
+                new.rangeInParent = start ... end
                 new.parentLength = self.sequenceLength
 
-                subSequences.append(new)
+                peptides.append(new)
 
-                start = end
+                start = site + 1
             }
         }
 
-        if var final: Peptide = subChain(from: start, to: residues.endIndex - 1) as? Peptide {
-            final.range = start ... residues.endIndex - 1
+        let finalRange: ChainRange = start ... numberOfResidues
+
+        if var final: Peptide = subChain(chainRange: finalRange) as? Peptide {
+            final.rangeInParent = finalRange
             final.parentLength = self.sequenceLength
 
-            subSequences.append(final)
+            peptides.append(final)
         }
 
         guard missedCleavages > 0 else {
-            return subSequences
+            return peptides
         }
 
-        var joinedSubSequences = [Peptide]()
-
-        for mc in 0 ... missedCleavages {
-            for (index, _) in subSequences.enumerated() {
-                let newIndex = index + mc
-                if subSequences.indices.contains(newIndex) {
-                    let res = subSequences[index ... newIndex]
-                        .reduce([]) { $0 + $1.residues }
-                    var new = Peptide(residues: res)
-
-                    new.range = subSequences[index].range.lowerBound ... subSequences[newIndex].range.upperBound
-                    new.parentLength = self.sequenceLength
-
-                    if index == 0 {
-                        new.nTerminal = nTerminal
-                    }
-
-                    if newIndex == subSequences.count - 1 {
-                        new.cTerminal = cTerminal
-                    }
-
-                    joinedSubSequences.append(new)
-                }
-            }
-        }
-
-        return joinedSubSequences
+        let joinedPeptides: [Peptide] = peptides
+            .combinedConsecutiveChains(ofSize: missedCleavages)
+        
+        return joinedPeptides
     }
 
     func cleavageSites(for regex: String) -> [Int] {
         sequenceString.matches(for: regex).map(\.range.location)
     }
 }
+

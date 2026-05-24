@@ -35,14 +35,18 @@ public class PeptideFragmenter {
             result.append(precursorIonLossOfAmmonia)
         }
 
-        return result
+        return result.map { fragment in
+            var updatedFragment = fragment
+            updatedFragment.parentLength = peptide.numberOfResidues
+            return updatedFragment
+        }
     }
 
     func immoniumIons() -> [PeptideFragment] {
         guard let symbols = peptide.symbolSet as? Set<AminoAcid> else { return [] }
 
         return symbols.map { symbol -> PeptideFragment in
-            PeptideFragment(residues: [symbol], type: .immoniumIon, adducts: peptide.adducts)
+            PeptideFragment(residues: [symbol], type: .immoniumIon, adducts: peptide.adducts, parentLength: peptide.parentLength)
         }
     }
 
@@ -148,7 +152,11 @@ public class PeptideFragmenter {
             }
         }
 
-        return result
+        return result.map { fragment in
+            var updatedFragment = fragment
+            updatedFragment.parentLength = peptide.numberOfResidues
+            return updatedFragment
+        }
     }
 
     func cTerminalIons() -> [PeptideFragment] {
@@ -186,7 +194,11 @@ public class PeptideFragmenter {
             }
         }
 
-        return result.reversed()
+        return result.reversed().map { fragment in
+            var updatedFragment = fragment
+            updatedFragment.parentLength = peptide.numberOfResidues
+            return updatedFragment
+        }
     }
 
     public func fragment(at index: Int, for type: PeptideFragmentType, with charge: Charge = 1) -> PeptideFragment? {
