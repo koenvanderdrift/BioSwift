@@ -154,10 +154,9 @@ public extension Array where Element: Chain & Chargeable {
             range.map { charge in
                 var chargedSequence = sequence
                 chargedSequence.adducts.append(contentsOf: repeatElement(protonAdduct, count: charge))
-                
+
                 return chargedSequence
             }
         }
     }
 }
-

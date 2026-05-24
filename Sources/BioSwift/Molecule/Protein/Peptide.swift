@@ -17,7 +17,7 @@ public struct Peptide: Chain, Codable, Equatable {
     public var adducts: [Adduct] = []
     public var rangeInParent: ChainRange = zeroChainRange
     public var parentLength: Int = 0
-    
+
     public init(sequence: String) {
         residues = createResidues(from: sequence)
     }

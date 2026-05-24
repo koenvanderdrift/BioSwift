@@ -374,7 +374,7 @@ struct BioSwiftTests {
 
         if let enzyme = trypsin {
             let peptides: [Peptide] = digester.peptides(using: enzyme, with: missedCleavages)
-                .charge(with: 1...1)
+                .charge(with: 1 ... 1)
 
             #expect(peptides[0].massOverCharge().monoisotopicMass.roundedString(to: 4) == 3468.7575.roundedString(to: 4)) // 3467.7503
             #expect(peptides[1].massOverCharge().monoisotopicMass.roundedString(to: 4) == 1779.7681.roundedString(to: 4)) // 1778.7608

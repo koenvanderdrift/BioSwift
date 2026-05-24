@@ -126,12 +126,12 @@ public struct PeptideFragment: Chain, Codable, Fragmenting {
 
     public init(residues: [AminoAcid], type: PeptideFragmentType, index: Int = -1, adducts: [Adduct], modifications: [LocalizedModification] = [], nTerm: Modification = zeroModification, cTerm: Modification = zeroModification, parentLength: Int = 0) {
         self.residues = residues
-        self.fragmentType = type
+        fragmentType = type
         self.index = index
         self.adducts = adducts
         self.modifications = modifications
-        self.nTerminal = nTerm
-        self.cTerminal = cTerm
+        nTerminal = nTerm
+        cTerminal = cTerm
         self.parentLength = parentLength
     }
 

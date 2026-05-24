@@ -65,8 +65,8 @@ public extension BioMolecule {
 
     func selectedIsoelectricPoint(chainIndex index: Int = 0, _ range: ChainRange) -> Double {
         let sub = chains[index].subChain(chainRange: range)
-        guard sub.numberOfResidues > 0  else { return 0.0 }
-        
+        guard sub.numberOfResidues > 0 else { return 0.0 }
+
         return Hydropathy(residues: sub.residues).isoElectricPoint()
     }
 

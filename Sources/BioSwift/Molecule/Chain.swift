@@ -165,12 +165,11 @@ public extension Chain {
 }
 
 public extension Chain {
-    func subChain(chainRange: ChainRange
-    ) -> Self {
+    func subChain(chainRange: ChainRange) -> Self {
         let validRange = chainRange.clamped(
             toSequenceLength: residues.count
         )
-        
+
         guard
             validRange.isValidChainRange,
             let arrayRange = validRange.zeroBasedArrayRange
@@ -179,21 +178,21 @@ public extension Chain {
                 residues: []
             )
         }
-        
+
         let newResidues = Array(
             residues[arrayRange]
         )
-        
+
         return Self(
             residues: newResidues
         )
     }
-    
+
     func removing(_ chainRange: ChainRange) -> Self {
         let validRange = chainRange.clamped(
             toSequenceLength: residues.count
         )
-        
+
         guard
             validRange.isValidChainRange,
             let arrayRange = validRange.zeroBasedArrayRange
@@ -202,10 +201,10 @@ public extension Chain {
                 residues: residues
             )
         }
-        
+
         var newResidues = residues
         newResidues.removeSubrange(arrayRange)
-        
+
         return Self(
             residues: newResidues
         )

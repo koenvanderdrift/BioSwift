@@ -11,7 +11,7 @@ import Foundation
 public let zeroStringRange: Range<String.Index> = String().startIndex ..< String().endIndex
 
 public extension String {
-     func matches(for regex: String) -> [NSTextCheckingResult] {
+    func matches(for regex: String) -> [NSTextCheckingResult] {
         // https://www.raywenderlich.com/86205/nsregularexpression-swift-tutorial
 
         let string = self as NSString
@@ -111,7 +111,7 @@ public extension String {
             offsetBy: validRange.length
         )
 
-        return String(self[start..<end])
+        return String(self[start ..< end])
     }
 
     func removing(
@@ -137,7 +137,7 @@ public extension String {
             offsetBy: validRange.length
         )
 
-        result.removeSubrange(start..<end)
+        result.removeSubrange(start ..< end)
 
         return result
     }

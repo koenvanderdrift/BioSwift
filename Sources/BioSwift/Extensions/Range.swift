@@ -11,7 +11,7 @@ import Foundation
 
 public typealias ChainRange = ClosedRange<Int>
 
-/*
+/**
  ChainRange values are 1-based and inclusive.
 
  Examples:
@@ -20,9 +20,9 @@ public typealias ChainRange = ClosedRange<Int>
 
  The zero range represents "no valid range".
  */
-public let zeroChainRange: ChainRange = 0...0
+public let zeroChainRange: ChainRange = 0 ... 0
 
-/*
+/**
  NSRange is zero-based.
 
  This value represents "no valid NSRange".
@@ -46,28 +46,27 @@ public extension ChainRange {
 
         return upperBound - lowerBound + 1
     }
-    
+
     func clamped(toSequenceLength sequenceLength: Int) -> ChainRange {
-            guard isValidChainRange,
-                  sequenceLength > 0,
-                  upperBound >= 1,
-                  lowerBound <= sequenceLength
-            else {
-                return zeroChainRange
-            }
+        guard isValidChainRange,
+              sequenceLength > 0,
+              upperBound >= 1,
+              lowerBound <= sequenceLength
+        else {
+            return zeroChainRange
+        }
 
         let lower = Swift.max(1, lowerBound)
         let upper = Swift.min(sequenceLength, upperBound)
 
-            guard upper >= lower else {
-                return zeroChainRange
-            }
-
-            return lower...upper
+        guard upper >= lower else {
+            return zeroChainRange
         }
 
+        return lower ... upper
+    }
 
-    /*
+    /**
      Converts a 1-based inclusive ChainRange into a zero-based NSRange.
 
      The range is clamped only when it intersects the current text.
@@ -104,7 +103,7 @@ public extension ChainRange {
         )
     }
 
-    /*
+    /**
      Converts a valid ChainRange into an NSRange without clamping.
 
      Use this only when you do not need to validate against the current
@@ -126,12 +125,12 @@ public extension ChainRange {
             return nil
         }
 
-        return (lowerBound - 1)..<upperBound
+        return (lowerBound - 1) ..< upperBound
     }
 }
 
 public extension NSRange {
-    /*
+    /**
      Converts a zero-based NSRange into a 1-based inclusive ChainRange.
 
      Examples:
@@ -148,10 +147,10 @@ public extension NSRange {
         let lower = location + 1
         let upper = location + length
 
-        return lower...upper
+        return lower ... upper
     }
 
-    /*
+    /**
      Creates a zero-based NSRange from a 1-based inclusive ChainRange.
      */
     init(oneBased range: ChainRange) {

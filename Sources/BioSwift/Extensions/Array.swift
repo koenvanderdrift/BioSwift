@@ -92,8 +92,8 @@ public extension Array {
             return []
         }
 
-        return (0...(count - size)).map { startIndex in
-            Array(self[startIndex..<(startIndex + size)])
+        return (0 ... (count - size)).map { startIndex in
+            Array(self[startIndex ..< (startIndex + size)])
         }
     }
 }
@@ -110,7 +110,7 @@ extension Array where Element: Chain {
             var newChain = Element(residues: combinedAminoAcids)
             newChain.rangeInParent = combinedRange
             newChain.parentLength = chainGroup.first!.parentLength
-            
+
             return newChain
         }
     }

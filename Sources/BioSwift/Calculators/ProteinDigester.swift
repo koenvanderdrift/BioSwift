@@ -41,15 +41,15 @@ extension Chain {
 
         var start = 1
         var end = start
-        
+
         for site in sites {
             end = site
 
             let newRange: ChainRange = start ... end
-            
+
             if var new: Peptide = subChain(chainRange: newRange) as? Peptide {
                 new.rangeInParent = start ... end
-                new.parentLength = self.sequenceLength
+                new.parentLength = sequenceLength
 
                 peptides.append(new)
 
@@ -61,7 +61,7 @@ extension Chain {
 
         if var final: Peptide = subChain(chainRange: finalRange) as? Peptide {
             final.rangeInParent = finalRange
-            final.parentLength = self.sequenceLength
+            final.parentLength = sequenceLength
 
             peptides.append(final)
         }
@@ -70,14 +70,11 @@ extension Chain {
             return peptides
         }
 
-        let joinedPeptides: [Peptide] = peptides
+        return peptides
             .combinedConsecutiveChains(ofSize: missedCleavages)
-        
-        return joinedPeptides
     }
 
     func cleavageSites(for regex: String) -> [Int] {
         sequenceString.matches(for: regex).map(\.range.location)
     }
 }
-

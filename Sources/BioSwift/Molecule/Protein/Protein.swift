@@ -90,7 +90,7 @@ public struct Protein: BioMolecule, Codable, Equatable {
 
     public func isoelectricPoint(for chainIndex: Int = 0, with range: ChainRange) -> Double {
         let peptide = chains[chainIndex].subChain(chainRange: range)
-        
+
         if peptide.numberOfResidues > 0 {
             return peptide.isoelectricPoint()
         }
