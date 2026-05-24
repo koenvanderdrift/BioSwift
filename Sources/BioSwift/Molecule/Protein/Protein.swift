@@ -29,7 +29,7 @@ public struct Protein: BioMolecule, Codable, Equatable {
     }
 
     public func truncate(by range: ChainRange) -> Protein {
-        if let subChain = chains.first?.subChain(removing: range.fromOneBased) {
+        if let subChain = chains.first?.removing(range) {
             return Protein(chains: [subChain])
         }
 
@@ -89,7 +89,9 @@ public struct Protein: BioMolecule, Codable, Equatable {
     }
 
     public func isoelectricPoint(for chainIndex: Int = 0, with range: ChainRange) -> Double {
-        if let peptide = chains[chainIndex].subChain(with: range) {
+        let peptide = chains[chainIndex].subChain(chainRange: range)
+        
+        if peptide.numberOfResidues > 0 {
             return peptide.isoelectricPoint()
         }
 

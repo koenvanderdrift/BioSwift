@@ -110,8 +110,9 @@ public struct PeptideFragment: Chain, Codable, Fragmenting {
     public var cTerminal: Modification = zeroModification
     public var modifications: [LocalizedModification] = []
     public var adducts: [Adduct] = []
-    public var range: ChainRange = zeroChainRange
+    public var rangeInParent: ChainRange = zeroChainRange
     public var fragmentType: PeptideFragmentType = .undefined
+    public var parentLength: Int = 0
     public var index = -1
 
     public init(sequence: String) {
@@ -123,14 +124,15 @@ public struct PeptideFragment: Chain, Codable, Fragmenting {
         self.residues = residues
     }
 
-    public init(residues: [AminoAcid], type: PeptideFragmentType, index: Int = -1, adducts: [Adduct], modifications: [LocalizedModification] = [], nTerm: Modification = zeroModification, cTerm: Modification = zeroModification) {
+    public init(residues: [AminoAcid], type: PeptideFragmentType, index: Int = -1, adducts: [Adduct], modifications: [LocalizedModification] = [], nTerm: Modification = zeroModification, cTerm: Modification = zeroModification, parentLength: Int = 0) {
         self.residues = residues
-        fragmentType = type
+        self.fragmentType = type
         self.index = index
         self.adducts = adducts
         self.modifications = modifications
-        nTerminal = nTerm
-        cTerminal = cTerm
+        self.nTerminal = nTerm
+        self.cTerminal = cTerm
+        self.parentLength = parentLength
     }
 
     public func createResidues(from string: String) -> [AminoAcid] {

@@ -103,11 +103,10 @@ public extension Chain {
     func searchSequence(searchString: String) -> [Self] {
         var result: [Self] = []
         for range in sequenceString.sequenceRanges(of: searchString) {
-            if var sub = subChain(with: range) {
-                sub.range = range
+            var sub = subChain(chainRange: range)
+            sub.rangeInParent = range
 
-                result.append(sub)
-            }
+            result.append(sub)
         }
 
         return result
@@ -164,8 +163,10 @@ public extension Chain {
     }
 
     private func subChain(with chainRange: ChainRange, for masses: MassContainer, in massRange: MassRange, and type: MassType) -> Self? where Self: Chargeable {
-        if massRange.contains(masses, for: type), var sub = subChain(with: chainRange) {
-            sub.range = chainRange
+        if massRange.contains(masses, for: type) {
+            var sub = subChain(chainRange: chainRange)
+
+            sub.rangeInParent = chainRange
 
             return sub
         }

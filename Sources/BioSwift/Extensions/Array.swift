@@ -52,38 +52,66 @@ public extension Array {
     ///
     /// - Returns: A collection of resulting combinations.
 
-    func combinations(size: Int, allowDuplicates: Bool = false) -> [[Element]] {
-        let n = count
+//    func combinations(size: Int, allowDuplicates: Bool = false) -> [[Element]] {
+//        let n = count
+//
+//        if n == 0 || (size > n && !allowDuplicates) { return [] }
+//
+//        var combinations: [[Element]] = []
+//
+//        var i = startIndex
+//        var indices = [startIndex]
+//
+//        while true {
+//            // build out array of indices (if not complete)
+//
+//            while indices.count < size {
+//                i = indices.last! + (allowDuplicates ? 0 : 1)
+//                if i < n {
+//                    indices.append(i)
+//                }
+//            }
+//
+//            // add combination associated with this particular array of indices
+//
+//            combinations.append(indices.map { self[$0] })
+//
+//            // prepare next one (incrementing the last component and/or deleting as needed
+//
+//            repeat {
+//                if indices.isEmpty { return combinations }
+//                i = indices.last! + 1
+//                indices.removeLast()
+//            } while i > n - (allowDuplicates ? 1 : (size - indices.count))
+//            indices.append(i)
+//        }
+//    }
 
-        if n == 0 || (size > n && !allowDuplicates) { return [] }
+    func consecutiveGroups(ofSize size: Int) -> [[Element]] {
+        guard size > 0, size <= count else {
+            return []
+        }
 
-        var combinations: [[Element]] = []
+        return (0...(count - size)).map { startIndex in
+            Array(self[startIndex..<(startIndex + size)])
+        }
+    }
+}
 
-        var i = startIndex
-        var indices = [startIndex]
+extension Array where Element: Chain {
+    func combinedConsecutiveChains(ofSize size: Int) -> [Element] {
+        consecutiveGroups(ofSize: size).map { chainGroup in
+            let combinedAminoAcids = chainGroup.flatMap { $0.residues }
 
-        while true {
-            // build out array of indices (if not complete)
+            let combinedRange: ChainRange =
+                chainGroup.first!.rangeInParent.lowerBound ...
+                chainGroup.last!.rangeInParent.upperBound
 
-            while indices.count < size {
-                i = indices.last! + (allowDuplicates ? 0 : 1)
-                if i < n {
-                    indices.append(i)
-                }
-            }
-
-            // add combination associated with this particular array of indices
-
-            combinations.append(indices.map { self[$0] })
-
-            // prepare next one (incrementing the last component and/or deleting as needed
-
-            repeat {
-                if indices.isEmpty { return combinations }
-                i = indices.last! + 1
-                indices.removeLast()
-            } while i > n - (allowDuplicates ? 1 : (size - indices.count))
-            indices.append(i)
+            var newChain = Element(residues: combinedAminoAcids)
+            newChain.rangeInParent = combinedRange
+            newChain.parentLength = chainGroup.first!.parentLength
+            
+            return newChain
         }
     }
 }
@@ -92,12 +120,6 @@ extension Array where Element: StringProtocol {
     func uniqueElements() -> [Element] {
         let elementSet = Set(self)
         return Array(elementSet)
-    }
-}
-
-extension Collection {
-    func count(where test: (Element) throws -> Bool) rethrows -> Int {
-        try filter(test).count
     }
 }
 
