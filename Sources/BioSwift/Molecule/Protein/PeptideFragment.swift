@@ -144,11 +144,15 @@ public struct PeptideFragment: Chain, Codable, Fragmenting {
 
 extension PeptideFragment: Chargeable {
     public var masses: MassContainer {
-        calculateMasses()
+        massOverCharge()
     }
 
     public func calculateMasses() -> MassContainer {
-        residueMasses() + modificationMasses() + terminalMasses() + fragmentType.masses
+        if residues.isEmpty {
+            return zeroMass
+        }
+
+        return residueMasses() + modificationMasses() + terminalMasses() + fragmentType.masses
     }
 
     func residueMasses() -> MassContainer {
@@ -160,7 +164,7 @@ extension PeptideFragment: Chargeable {
     }
 
     func terminalMasses() -> MassContainer {
-        return nTerminal.masses + cTerminal.masses
+        nTerminal.masses + cTerminal.masses
     }
 }
 

@@ -47,7 +47,7 @@ public extension Peptide {
 
 extension Peptide: Chargeable {
     public var masses: MassContainer {
-        calculateMasses()
+        massOverCharge()
     }
 
     public func calculateMasses() -> MassContainer {

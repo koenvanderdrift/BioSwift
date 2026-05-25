@@ -15,8 +15,8 @@ public typealias ChainRange = ClosedRange<Int>
  ChainRange values are 1-based and inclusive.
 
  Examples:
-     1...10    = characters 1 through 10
-     81...115  = characters 81 through 115
+ 1...10    = characters 1 through 10
+ 81...115  = characters 81 through 115
 
  The zero range represents "no valid range".
  */
@@ -74,10 +74,10 @@ public extension ChainRange {
 
      Examples for a text length of 100:
 
-         1...10      -> NSRange(location: 0, length: 10)
-         95...110    -> NSRange(location: 94, length: 6)
-         120...130   -> zeroNSRange
-         0...0       -> zeroNSRange
+     1...10      -> NSRange(location: 0, length: 10)
+     95...110    -> NSRange(location: 94, length: 6)
+     120...130   -> zeroNSRange
+     0...0       -> zeroNSRange
      */
     func toNSRange(
         clampedToTextLength textLength: Int
@@ -134,8 +134,8 @@ public extension NSRange {
      Converts a zero-based NSRange into a 1-based inclusive ChainRange.
 
      Examples:
-         NSRange(location: 0, length: 10)  -> 1...10
-         NSRange(location: 80, length: 35) -> 81...115
+     NSRange(location: 0, length: 10)  -> 1...10
+     NSRange(location: 80, length: 35) -> 81...115
      */
     func toChainRange() -> ChainRange {
         guard location != NSNotFound,

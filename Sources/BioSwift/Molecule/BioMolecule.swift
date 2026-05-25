@@ -16,7 +16,7 @@ public protocol BioMolecule: Chargeable, Codable {
 
 public extension BioMolecule {
     var masses: MassContainer {
-        calculateMasses()
+        massOverCharge()
     }
 
     var charge: Charge {

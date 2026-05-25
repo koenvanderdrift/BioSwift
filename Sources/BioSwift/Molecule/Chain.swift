@@ -183,9 +183,13 @@ public extension Chain {
             residues[arrayRange]
         )
 
-        return Self(
+        var subChain = Self(
             residues: newResidues
         )
+
+        subChain.adducts = adducts
+
+        return subChain
     }
 
     func removing(_ chainRange: ChainRange) -> Self {
@@ -205,9 +209,13 @@ public extension Chain {
         var newResidues = residues
         newResidues.removeSubrange(arrayRange)
 
-        return Self(
+        var subChain = Self(
             residues: newResidues
         )
+
+        subChain.adducts = adducts
+
+        return subChain
     }
 
     func residueLocations(with identifiers: Set<String>) -> [Int] {
