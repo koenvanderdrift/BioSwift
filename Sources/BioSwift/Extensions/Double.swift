@@ -9,58 +9,71 @@
 import Foundation
 
 public extension Double {
-    func roundedString(to places: Int) -> String {
-        return formatted(.number.precision(.fractionLength(places)))
+    /// Returns a localized display string with a fixed number of fractional digits.
+    func formatted(
+        fractionDigits: Int,
+        locale: Locale = .current
+    ) -> String {
+        precondition(fractionDigits >= 0, "fractionDigits must be non-negative")
+
+        return self.formatted(
+            .number
+                .precision(.fractionLength(fractionDigits))
+                .locale(locale)
+        )
     }
 
-    func roundTo(places: Int) -> Double {
-        let divisor = pow(10.0, Double(places))
-        return (self * divisor).rounded() / divisor
+    /// Rounds the Double numerically to the requested number of fractional digits.
+    ///
+    /// Appropriate for approximate floating-point calculations and UI geometry.
+    /// For exact base-10 rounding, use Decimal instead.
+    func rounded(
+        fractionDigits: Int,
+        rule: FloatingPointRoundingRule = .toNearestOrAwayFromZero
+    ) -> Double {
+        precondition(fractionDigits >= 0, "fractionDigits must be non-negative")
+
+        guard isFinite else {
+            return self
+        }
+
+        let multiplier = pow(10.0, Double(fractionDigits))
+        let scaledValue = self * multiplier
+
+        guard multiplier.isFinite, scaledValue.isFinite else {
+            return self
+        }
+
+        return scaledValue.rounded(rule) / multiplier
     }
 
-    // via: https://stackoverflow.com/questions/27338573/rounding-a-double-value-to-x-number-of-decimal-places-in-swift
+    /// Converts the Double to Decimal and then applies decimal rounding.
+    ///
+    /// This controls the rounding step, but cannot restore precision already
+    /// lost when the original value was represented as a Double.
+    func roundedDecimal(
+        scale: Int = 0,
+        mode: NSDecimalNumber.RoundingMode = .plain
+    ) -> Decimal {
+        precondition(scale >= 0, "scale must be non-negative")
 
-    func roundedDecimal(to scale: Int = 0, mode: NSDecimalNumber.RoundingMode = .plain) -> Decimal {
-        var decimalValue = Decimal(self)
-        var result = Decimal()
-        NSDecimalRound(&result, &decimalValue, scale, mode)
-
-        return result
+        return Decimal(self).rounded(scale: scale, mode: mode)
     }
 
-    func roundedDecimalAsString(to scale: Int = 0, mode: NSDecimalNumber.RoundingMode = .plain) -> String {
-        var decimalValue = roundedDecimal(to: scale, mode: mode)
+    /// Converts the Double to Decimal, applies decimal rounding,
+    /// and formats the result for display.
+    func formattedDecimal(
+        scale: Int = 0,
+        mode: NSDecimalNumber.RoundingMode = .plain,
+        locale: Locale = .current
+    ) -> String {
+        precondition(scale >= 0, "scale must be non-negative")
 
-        return NSDecimalString(&decimalValue, nil)
-    }
-
-    func roundToDecimal(_ fractionDigits: Int) -> Double {
-        let multiplier = pow(10, Double(fractionDigits))
-        return Darwin.round(self * multiplier) / multiplier
-    }
-}
-
-public extension Decimal {
-    func roundedString(to places: Int) -> String {
-        return formatted(.number.precision(.fractionLength(places)))
-    }
-
-    func roundedDecimal(to scale: Int = 0, mode: NSDecimalNumber.RoundingMode = .plain) -> Decimal {
-        var decimalValue = self
-        var result = Decimal()
-        NSDecimalRound(&result, &decimalValue, scale, mode)
-        return result
-    }
-
-    func roundedDouble(to places: Int) -> Double {
-        return doubleValue().roundTo(places: places)
-    }
-
-    func intValue() -> Int {
-        Int(truncating: self as NSNumber)
-    }
-
-    func doubleValue() -> Double {
-        Double(truncating: self as NSNumber)
+        return roundedDecimal(scale: scale, mode: mode)
+            .formatted(
+                .number
+                    .precision(.fractionLength(scale))
+                    .locale(locale)
+            )
     }
 }

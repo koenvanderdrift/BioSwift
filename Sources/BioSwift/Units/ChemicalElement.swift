@@ -44,7 +44,9 @@ public struct ChemicalElement: Codable, Symbol {
         self.symbol = symbol
         isotopes = []
 
-        elementMasses = MassContainer(monoisotopicMass: monoisotopicMass, averageMass: averageMass, nominalMass: monoisotopicMass.roundedDecimal().intValue())
+        let nominalMass = monoisotopicMass.roundedInt()
+
+        elementMasses = MassContainer(monoisotopicMass: monoisotopicMass, averageMass: averageMass, nominalMass: nominalMass ?? 0)
     }
 
     private mutating func setUp() {
@@ -91,7 +93,9 @@ extension ChemicalElement: Mass {
                 averageMass += abundance * mass
             }
         }
+        
+        let nominalMass = monoisotopicMass.roundedInt()
 
-        return MassContainer(monoisotopicMass: monoisotopicMass, averageMass: averageMass / Decimal(100), nominalMass: monoisotopicMass.roundedDecimal().intValue())
+        return MassContainer(monoisotopicMass: monoisotopicMass, averageMass: averageMass / Decimal(100), nominalMass: nominalMass ?? 0)
     }
 }

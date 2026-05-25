@@ -43,50 +43,6 @@ public extension Array {
         return result.value.map { $0! }
     }
 
-    // via: https://gist.github.com/robertmryan/1ca0deab3e3e53d54dccf421a5c64144
-    /// Return combinations of the elements of the array (ignoring the order of items in those combinations).
-    ///
-    /// - Parameters:
-    ///   - size: The size of the combinations to be returned.
-    ///   - allowDuplicates: Boolean indicating whether an item in the array can be repeated in the combinations (e.g. is the sampled item returned to the original set or not).
-    ///
-    /// - Returns: A collection of resulting combinations.
-
-//    func combinations(size: Int, allowDuplicates: Bool = false) -> [[Element]] {
-//        let n = count
-//
-//        if n == 0 || (size > n && !allowDuplicates) { return [] }
-//
-//        var combinations: [[Element]] = []
-//
-//        var i = startIndex
-//        var indices = [startIndex]
-//
-//        while true {
-//            // build out array of indices (if not complete)
-//
-//            while indices.count < size {
-//                i = indices.last! + (allowDuplicates ? 0 : 1)
-//                if i < n {
-//                    indices.append(i)
-//                }
-//            }
-//
-//            // add combination associated with this particular array of indices
-//
-//            combinations.append(indices.map { self[$0] })
-//
-//            // prepare next one (incrementing the last component and/or deleting as needed
-//
-//            repeat {
-//                if indices.isEmpty { return combinations }
-//                i = indices.last! + 1
-//                indices.removeLast()
-//            } while i > n - (allowDuplicates ? 1 : (size - indices.count))
-//            indices.append(i)
-//        }
-//    }
-
     func consecutiveGroups(ofSize size: Int) -> [[Element]] {
         guard size > 0, size <= count else {
             return []
