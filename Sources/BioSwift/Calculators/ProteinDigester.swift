@@ -48,7 +48,7 @@ extension Chain {
             let newRange: ChainRange = start ... end
 
             if var new: Peptide = subChain(chainRange: newRange) as? Peptide {
-                new.rangeInParent = start ... end
+                new.chainRange = start ... end
                 new.parentLength = sequenceLength
 
                 peptides.append(new)
@@ -60,7 +60,7 @@ extension Chain {
         let finalRange: ChainRange = start ... numberOfResidues
 
         if var final: Peptide = subChain(chainRange: finalRange) as? Peptide {
-            final.rangeInParent = finalRange
+            final.chainRange = finalRange
             final.parentLength = sequenceLength
 
             peptides.append(final)

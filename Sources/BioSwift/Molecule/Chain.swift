@@ -19,7 +19,7 @@ public protocol Chain: Codable {
     var nTerminal: Modification { get set }
     var cTerminal: Modification { get set }
     var adducts: [Adduct] { get set }
-    var rangeInParent: ChainRange { get set }
+    var chainRange: ChainRange { get set }
     var parentLength: Int { get set }
 
     init(sequence: String)

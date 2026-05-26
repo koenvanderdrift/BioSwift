@@ -60,11 +60,11 @@ extension Array where Element: Chain {
             let combinedAminoAcids = chainGroup.flatMap { $0.residues }
 
             let combinedRange: ChainRange =
-                chainGroup.first!.rangeInParent.lowerBound ...
-                chainGroup.last!.rangeInParent.upperBound
+                chainGroup.first!.chainRange.lowerBound ...
+                chainGroup.last!.chainRange.upperBound
 
             var newChain = Element(residues: combinedAminoAcids)
-            newChain.rangeInParent = combinedRange
+            newChain.chainRange = combinedRange
             newChain.parentLength = chainGroup.first!.parentLength
 
             return newChain
