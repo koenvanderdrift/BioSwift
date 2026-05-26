@@ -165,6 +165,37 @@ public extension Chain {
 }
 
 public extension Chain {
+    // Sequence domain logic: one-based residue positions
+
+    /// Returns the sequence contained within a one-based, inclusive residue range.
+    ///
+    /// Example:
+    /// `sequenceString == "MKWVTFISLL"` and `chainRange == 4...6`
+    /// returns `"VTF"`.
+    func subSequence(chainRange: ChainRange) -> String {
+        precondition(
+            chainRange.lowerBound >= 1,
+            "ChainRange is one-based; the lower bound must be at least 1."
+        )
+
+        precondition(
+            chainRange.upperBound <= sequenceString.count,
+            "ChainRange exceeds the sequence length."
+        )
+
+        let lowerIndex = sequenceString.index(
+            sequenceString.startIndex,
+            offsetBy: chainRange.lowerBound - 1
+        )
+
+        let upperIndex = sequenceString.index(
+            sequenceString.startIndex,
+            offsetBy: chainRange.upperBound
+        )
+
+        return String(sequenceString[lowerIndex ..< upperIndex])
+    }
+
     func subChain(chainRange: ChainRange) -> Self {
         let validRange = chainRange.clamped(
             toSequenceLength: residues.count

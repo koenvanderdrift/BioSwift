@@ -10,82 +10,188 @@ import Foundation
 
 public let zeroStringRange: Range<String.Index> = String().startIndex ..< String().endIndex
 
+import Foundation
+
 public extension String {
-    func matches(for regex: String) -> [NSTextCheckingResult] {
-        // https://www.raywenderlich.com/86205/nsregularexpression-swift-tutorial
+    // MARK: - Regular expressions
 
-        let string = self as NSString
+    /// Returns all matches for a regular expression pattern.
+    ///
+    /// Throws when the supplied pattern is invalid.
+    func matches(for pattern: String) throws -> [NSTextCheckingResult] {
+        let expression = try NSRegularExpression(pattern: pattern)
 
-        do {
-            let regex = try NSRegularExpression(pattern: regex, options: [])
-            return regex.matches(in: self, range: NSMakeRange(0, string.length))
+        return expression.matches(
+            in: self,
+            range: NSRange(startIndex ..< endIndex, in: self)
+        )
+    }
 
-        } catch let error as NSError {
-            debugPrint("invalid regex: \(error.localizedDescription)")
+    /// Returns all matches for an already compiled regular expression.
+    ///
+    /// Prefer this overload when the same expression is used repeatedly.
+    func matches(
+        for expression: NSRegularExpression,
+        options: NSRegularExpression.MatchingOptions = []
+    ) -> [NSTextCheckingResult] {
+        expression.matches(
+            in: self,
+            options: options,
+            range: NSRange(startIndex ..< endIndex, in: self)
+        )
+    }
+
+    /// Returns the substring between the first occurrence of `startMarker`
+    /// and the subsequent occurrence of `endMarker`.
+    func substring(
+        between startMarker: String,
+        and endMarker: String,
+        startingAt searchStart: Index? = nil
+    ) -> Substring? {
+        guard !startMarker.isEmpty, !endMarker.isEmpty else {
+            return nil
+        }
+
+        let startIndex = searchStart ?? self.startIndex
+
+        guard let openingRange = range(
+            of: startMarker,
+            range: startIndex ..< endIndex
+        ) else {
+            return nil
+        }
+
+        guard let closingRange = range(
+            of: endMarker,
+            range: openingRange.upperBound ..< endIndex
+        ) else {
+            return nil
+        }
+
+        return self[openingRange.upperBound ..< closingRange.lowerBound]
+    }
+
+    /// Returns all non-overlapping substrings located between matching markers.
+    func substrings(
+        between startMarker: String,
+        and endMarker: String
+    ) -> [Substring] {
+        guard !startMarker.isEmpty, !endMarker.isEmpty else {
             return []
         }
-    }
 
-    func ranges(of substring: String, options: CompareOptions = [], locale: Locale? = nil) -> [Range<Index>] {
-        var ranges: [Range<Index>] = []
-        while let range = range(of: substring, options: options, range: (ranges.last?.upperBound ?? startIndex) ..< endIndex, locale: locale) {
-            ranges.append(range)
-        }
-        return ranges
-    }
+        var results: [Substring] = []
+        var searchStart = startIndex
 
-    func nsRanges(of substring: String, options: CompareOptions = [], locale: Locale? = nil) -> [NSRange] {
-        var nsRanges: [NSRange] = []
-
-        for range in ranges(of: substring, options: options, locale: locale) {
-            nsRanges.append(NSRange(range, in: self))
-        }
-
-        return nsRanges
-    }
-
-    func sequenceRanges(of substring: String, options: CompareOptions = [], locale: Locale? = nil) -> [ChainRange] {
-        var sequenceRanges: [ChainRange] = []
-
-        for range in nsRanges(of: substring, options: options, locale: locale) {
-            sequenceRanges.append(range.toChainRange())
+        while let openingRange = range(
+            of: startMarker,
+            range: searchStart ..< endIndex
+        ),
+            let closingRange = range(
+                of: endMarker,
+                range: openingRange.upperBound ..< endIndex
+            )
+        {
+            results.append(self[openingRange.upperBound ..< closingRange.lowerBound])
+            searchStart = closingRange.upperBound
         }
 
-        return sequenceRanges
+        return results
     }
 
-    internal func containsCharactersFrom(substring: String) -> Bool {
-        let set = CharacterSet(charactersIn: substring)
+    // MARK: - Substring ranges
 
-        return rangeOfCharacter(from: set) != nil
+    /// Returns all ranges of `substring` in the string.
+    ///
+    /// - Parameters:
+    ///   - substring: Text to locate. An empty substring returns an empty array.
+    ///   - options: String comparison options.
+    ///   - locale: Locale used for comparison, when applicable.
+    ///   - allowingOverlaps: When true, matches may overlap.
+    func ranges(
+        of substring: String,
+        options: CompareOptions = [],
+        locale: Locale? = nil,
+        allowingOverlaps: Bool = false
+    ) -> [Range<Index>] {
+        guard !substring.isEmpty else {
+            return []
+        }
+
+        precondition(
+            !options.contains(.backwards),
+            "ranges(of:) searches forward and does not support .backwards."
+        )
+
+        var results: [Range<Index>] = []
+        var searchRange = startIndex ..< endIndex
+
+        while let foundRange = range(
+            of: substring,
+            options: options,
+            range: searchRange,
+            locale: locale
+        ) {
+            results.append(foundRange)
+
+            let nextStart: Index
+
+            if allowingOverlaps {
+                nextStart = index(after: foundRange.lowerBound)
+            } else {
+                nextStart = foundRange.upperBound
+            }
+
+            guard nextStart < endIndex else {
+                break
+            }
+
+            searchRange = nextStart ..< endIndex
+        }
+
+        return results
     }
-}
 
-extension StringProtocol {
-    subscript(offset: Int) -> Element {
-        self[index(startIndex, offsetBy: offset)]
+    /// Returns matching substring ranges using one-based residue coordinates.
+    ///
+    /// Intended for canonical protein sequence strings, where each Character
+    /// corresponds to exactly one residue.
+    func sequenceRanges(
+        of substring: String,
+        options: CompareOptions = [],
+        locale: Locale? = nil,
+        allowingOverlaps: Bool = false
+    ) -> [ChainRange] {
+        ranges(
+            of: substring,
+            options: options,
+            locale: locale,
+            allowingOverlaps: allowingOverlaps
+        )
+        .map { range in
+            let lowerBound = distance(from: startIndex, to: range.lowerBound) + 1
+            let upperBound = distance(from: startIndex, to: range.upperBound)
+
+            return lowerBound ... upperBound
+        }
     }
 
-    subscript(_ range: Range<Int>) -> SubSequence {
-        prefix(range.lowerBound + range.count)
-            .suffix(range.count)
+    // MARK: - Character membership
+
+    /// Returns true when the string contains at least one character
+    /// belonging to the supplied character set.
+    func containsAnyCharacter(in characterSet: CharacterSet) -> Bool {
+        rangeOfCharacter(from: characterSet) != nil
     }
 
-    subscript(range: ChainRange) -> SubSequence {
-        prefix(range.lowerBound + range.count)
-            .suffix(range.count)
+    /// Returns true when the string contains at least one character
+    /// appearing in `characters`.
+    func containsAnyCharacter(in characters: String) -> Bool {
+        containsAnyCharacter(in: CharacterSet(charactersIn: characters))
     }
 
-    subscript(range: PartialRangeThrough<Int>) -> SubSequence {
-        prefix(range.upperBound.advanced(by: 1))
-    }
-
-    subscript(range: PartialRangeUpTo<Int>) -> SubSequence {
-        prefix(range.upperBound)
-    }
-
-    subscript(range: PartialRangeFrom<Int>) -> SubSequence {
-        suffix(Swift.max(0, count - range.lowerBound))
+    func containsCharacterOutside(_ allowedCharacters: CharacterSet) -> Bool {
+        rangeOfCharacter(from: allowedCharacters.inverted) != nil
     }
 }
 
@@ -138,6 +244,91 @@ public extension String {
         )
 
         result.removeSubrange(start ..< end)
+
+        return result
+    }
+}
+
+public extension StringProtocol {
+    /*
+     // Text-file parsing only: zero-based character offsets
+     extension StringProtocol {
+         subscript(_ offset: Int) -> Element { ... }
+         subscript(_ range: Range<Int>) -> SubSequence { ... }
+         subscript(_ range: ClosedRange<Int>) -> SubSequence { ... }
+         subscript(_ range: PartialRangeThrough<Int>) -> SubSequence { ... }
+         subscript(_ range: PartialRangeUpTo<Int>) -> SubSequence { ... }
+         subscript(_ range: PartialRangeFrom<Int>) -> SubSequence { ... }
+     }
+     */
+
+    /// Returns the character at a zero-based character offset.
+    subscript(_ offset: Int) -> Element {
+        self[index(at: offset, allowingEndIndex: false)]
+    }
+
+    /// Returns a substring using zero-based, upper-bound-exclusive
+    /// character offsets.
+    subscript(_ range: Range<Int>) -> SubSequence {
+        let lower = index(at: range.lowerBound)
+        let upper = index(at: range.upperBound)
+
+        return self[lower ..< upper]
+    }
+
+    /// Returns a substring using zero-based, upper-bound-inclusive
+    /// character offsets.
+    subscript(_ range: ClosedRange<Int>) -> SubSequence {
+        precondition(
+            range.upperBound < Int.max,
+            "Upper bound is too large."
+        )
+
+        return self[range.lowerBound ..< (range.upperBound + 1)]
+    }
+
+    /// Returns a substring through a zero-based character offset, inclusively.
+    subscript(_ range: PartialRangeThrough<Int>) -> SubSequence {
+        precondition(
+            range.upperBound < Int.max,
+            "Upper bound is too large."
+        )
+
+        return self[0 ..< (range.upperBound + 1)]
+    }
+
+    /// Returns a substring up to, but excluding, a zero-based character offset.
+    subscript(_ range: PartialRangeUpTo<Int>) -> SubSequence {
+        self[0 ..< range.upperBound]
+    }
+
+    /// Returns a substring beginning at a zero-based character offset.
+    subscript(_ range: PartialRangeFrom<Int>) -> SubSequence {
+        let lower = index(at: range.lowerBound)
+
+        return self[lower ..< endIndex]
+    }
+
+    private func index(
+        at offset: Int,
+        allowingEndIndex: Bool = true
+    ) -> Index {
+        precondition(
+            offset >= 0,
+            "String offset cannot be negative."
+        )
+
+        guard let result = index(
+            startIndex,
+            offsetBy: offset,
+            limitedBy: endIndex
+        ),
+            allowingEndIndex || result != endIndex
+        else {
+            preconditionFailure(
+                "String offset \(offset) is outside the valid bounds."
+            )
+        }
 
         return result
     }

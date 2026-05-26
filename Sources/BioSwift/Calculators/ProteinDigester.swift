@@ -75,6 +75,12 @@ extension Chain {
     }
 
     func cleavageSites(for regex: String) -> [Int] {
-        sequenceString.matches(for: regex).map(\.range.location)
+        do {
+            return try sequenceString.matches(for: regex).map(\.range.location)
+        } catch {
+            debugPrint(error.localizedDescription)
+        }
+
+        return []
     }
 }

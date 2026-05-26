@@ -99,6 +99,7 @@ extension Formula {
         case elementNotFound
         case numberPrecedingFormula
         case invalidFormula
+        case invalidCount
     }
 
     public func formulaString() -> String {
@@ -165,7 +166,11 @@ extension Formula {
                     i -= 1
                 }
 
-                elementCount = Int(string[i ..< j + 1])!
+                guard let count = Int(string[i ..< (j + 1)]) else {
+                    throw ParseError.invalidCount
+                }
+
+                elementCount = count
 
                 if elementCount == 0 {
                     throw ParseError.zeroCount

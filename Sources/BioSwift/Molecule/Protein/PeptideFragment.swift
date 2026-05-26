@@ -170,7 +170,7 @@ extension PeptideFragment: Chargeable {
 
 public extension PeptideFragment {
     func canLoseWater() -> Bool {
-        return sequenceString.containsCharactersFrom(substring: "STED")
+        return sequenceString.containsAnyCharacter(in: "STED")
 
 //        if fragmentType == .bIon, let last = sequenceString.last {
 //            if "RQNKW".contains(last) {
@@ -182,7 +182,7 @@ public extension PeptideFragment {
     }
 
     func canLoseAmmonia() -> Bool {
-        return sequenceString.containsCharactersFrom(substring: "RQNK")
+        return sequenceString.containsAnyCharacter(in: "RQNK")
     }
 
     func isPrecursor() -> Bool {

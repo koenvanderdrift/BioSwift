@@ -697,4 +697,91 @@ struct BioSwiftTests {
         #expect(mass == mass3 + mass4)
         #expect(mass.rounded(scale: 4) == (mass3 + mass4).rounded(scale: 4))
     }
+
+    @Test func checkRegex() {
+        let data = """
+        BEGIN PEPTIDE
+        ABCDEF
+        END PEPTIDE
+        BEGIN PEPTIDE
+        GHIJKL
+        END PEPTIDE
+        """
+
+        let beginRanges = data.ranges(of: "BEGIN PEPTIDE")
+        let endRanges = data.ranges(of: "END PEPTIDE")
+
+        #expect(beginRanges.count == 2)
+        #expect(endRanges.count == 2)
+
+        let text = """
+        BEGIN SEQUENCE
+        MKWVTFISLL
+        END SEQUENCE
+        """
+
+        let sequence = text.substring(
+            between: "BEGIN SEQUENCE",
+            and: "END SEQUENCE"
+        )?
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+
+        #expect(sequence == "MKWVTFISLL")
+    }
+
+    @Test func findSubStrings() {
+        let text = """
+        BEGIN PEPTIDE
+        PEPTIDEK
+        END PEPTIDE
+        BEGIN PEPTIDE
+        MKWVTF
+        END PEPTIDE
+        """
+
+        let peptides = text
+            .substrings(between: "BEGIN PEPTIDE", and: "END PEPTIDE")
+            .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
+
+        #expect(peptides == ["PEPTIDEK", "MKWVTF"])
+    }
+
+    @Test
+    func findsNonOverlappingSequenceRanges() {
+        let sequence = "AAAA"
+
+        #expect(sequence.sequenceRanges(of: "AA") == [1 ... 2, 3 ... 4])
+    }
+
+    @Test
+    func findsOverlappingSequenceRanges() {
+        let sequence = "AAAA"
+
+        #expect(
+            sequence.sequenceRanges(of: "AA", allowingOverlaps: true)
+                == [1 ... 2, 2 ... 3, 3 ... 4]
+        )
+    }
+
+    @Test
+    func convertsSequenceCoordinatesToOneBasedRanges() {
+        let sequence = "MKWVTFISLL"
+
+        #expect(sequence.sequenceRanges(of: "VTF") == [4 ... 6])
+    }
+
+    @Test
+    func emptySubstringProducesNoRanges() {
+        let sequence = "PEPTIDE"
+
+        #expect(sequence.sequenceRanges(of: "").isEmpty)
+    }
+
+    @Test
+    func identifiesAnyProhibitedCharacter() {
+        let allowedCharacters = CharacterSet(charactersIn: "ACDEFGHIKLMNPQRSTVWY")
+
+        #expect(!"PEPTIDE".containsCharacterOutside(allowedCharacters))
+        #expect("PEPT1DE".containsCharacterOutside(allowedCharacters))
+    }
 }
