@@ -18,10 +18,6 @@ public struct UnimodController {
     public func loadUnimod() async throws {
         do {
             try await UnimodParser().parseXML()
-        } catch {
-            debugPrint("Failed parsing unimod.xml")
-
-            throw (error)
         }
     }
 }
