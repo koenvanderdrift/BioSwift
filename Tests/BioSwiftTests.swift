@@ -14,7 +14,7 @@ import Testing
 struct DataLibraryTrait: SuiteTrait, TestScoping {
     func provideScope(for _: Test, testCase _: Test.Case?, performing function: @Sendable () async throws -> Void) async throws {
         print("start set up")
-        try await UnimodController().loadUnimod()
+        try await UnimodXMLParser().parseXML()
         try await function()
         print("tests completed")
     }
@@ -783,5 +783,87 @@ struct BioSwiftTests {
 
         #expect(!"PEPTIDE".containsCharacterOutside(allowedCharacters))
         #expect("PEPT1DE".containsCharacterOutside(allowedCharacters))
+    }
+
+    @Test
+    func malformedXMLThrowsParseError() async throws {
+        let malformedXML = """
+        <root>
+            <item>Broken</root>
+        """
+
+        let data = Data(malformedXML.utf8)
+
+        await #expect(throws: Error.self) {
+            try await UnimodXMLParser().parseXML(
+                data: data
+            )
+        }
+    }
+
+    @Test
+    func malformedXMLThrowsParseError2() throws {
+        let malformedXML = """
+        <root>
+            <item>Broken</root>
+        """
+
+        let data = Data(malformedXML.utf8)
+
+        let error = try #require(
+            #expect(throws: Error.self) {
+                try UnimodXMLParser().parseXML(data: data)
+            }
+        )
+
+        let nsError = error as NSError
+
+        #expect(nsError.domain == XMLParser.errorDomain)
+        #expect(!nsError.localizedDescription.isEmpty)
+    }
+
+    @Test
+    func malformedXMLThrowsXMLParserError() throws {
+        let malformedXML = Data(
+            "<root><broken></root>".utf8
+        )
+
+        let parser = UnimodXMLParser()
+
+        let error = try #require(
+            #expect(throws: Error.self) {
+                try parser.parseXML(data: malformedXML)
+            }
+        )
+
+        let nsError = error as NSError
+
+        #expect(nsError.domain == XMLParser.errorDomain)
+        #expect(!nsError.localizedDescription.isEmpty)
+
+        #if DEBUG
+            debugPrint(
+                "Received expected XML parse error:",
+                nsError.localizedDescription
+            )
+        #endif
+    }
+
+    @Test
+    func malformedXMLThrowsXMLParserError2() async throws {
+        let malformedXML = Data(
+            "<root><broken></root>".utf8
+        )
+
+        let parser = UnimodXMLParser()
+
+        let error = await #expect(throws: Error.self) {
+            try await parser.parseXML(data: malformedXML)
+        }
+
+        let nsError = try #require(error as NSError?)
+
+        #expect(nsError.domain == XMLParser.errorDomain)
+        #expect(!nsError.localizedDescription.isEmpty)
     }
 }

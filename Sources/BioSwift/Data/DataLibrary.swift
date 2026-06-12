@@ -7,6 +7,8 @@
 
 import Foundation
 
+public var loadElementsFromUnimod: Bool = true
+
 public var dataLibrary = DataLibrary()
 
 public var aminoAcidLibrary: [AminoAcid] = dataLibrary.aminoAcids
@@ -56,8 +58,8 @@ public struct DataLibrary: Codable {
             case .modifications:
                 return [] // populated in loadUnimod
             case .elements:
-                if UnimodController().loadElementsFromUnimod {
-                    return []
+               if loadElementsFromUnimod {
+                    return []  // populated in loadUnimod
                 } else {
                     return try parseJSONDataFromBundle(from: "elements")
                 }

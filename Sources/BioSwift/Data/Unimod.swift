@@ -1,5 +1,5 @@
 //
-//  Unimod.swift
+//  UnimodXMLParser.swift
 //  BioSwift
 //
 //  Created by Koen van der Drift on 3/14/20.
@@ -8,21 +8,9 @@
 
 import Foundation
 
-public let xmlParsingDidFinishNotification = Notification.Name("XMLParsingDidFinish")
+public final class UnimodXMLParser: NSObject {
+    private var parseError: Error?
 
-public struct UnimodController {
-    public var loadElementsFromUnimod = false
-
-    public init() {}
-
-    public func loadUnimod() async throws {
-        do {
-            try await UnimodParser().parseXML()
-        }
-    }
-}
-
-public class UnimodParser: NSObject {
     private let modification = "umod:mod"
     private let specificity = "umod:specificity"
     private let neutralLoss = "umod:NeutralLoss"
@@ -74,29 +62,40 @@ public class UnimodParser: NSObject {
     let rightArrow = "\u{2192}"
 
     public func parseXML() async throws {
-        //        skipTitleStrings = [cation, unknown, xlink, atypeion, "2H", "13C", "15N"]
+        skipTitleStrings = [cation, unknown, xlink, atypeion, "2H", "13C", "15N"]
 
-        do {
-            let data = try loadDataFromBundle(from: "unimod", withExtension: "xml")
-            let parser = XMLParser(data: data)
-            parser.delegate = self
+        let data = try loadDataFromBundle(from: "unimod", withExtension: "xml")
 
-            if parser.parse() == false {
-                if let error = parser.parserError {
-                    throw (error)
-                } else {
-                    throw LoadError.fileParsingFailed(name: "unimod")
-                }
-            }
+        try await Task.detached(priority: .userInitiated) {
+            let xmlParser = UnimodXMLParser()
+
+            try xmlParser.parseXML(data: data)
+        }.value
+    }
+
+    public func parseXML(
+        data: Data
+    ) throws {
+        parseError = nil
+
+        let parser = XMLParser(data: data)
+        parser.delegate = self
+
+        guard parser.parse() else {
+            throw parseError
+                ?? parser.parserError
+                ?? LoadError.fileParsingFailed(name: "unimod.xml")
         }
     }
 }
 
 // MARK: XML Parser Delegate
 
-extension UnimodParser: XMLParserDelegate {
+extension UnimodXMLParser: XMLParserDelegate {
     public func parserDidStartDocument(_: XMLParser) {
-        debugPrint("Started parsing unimod.xml")
+        #if DEBUG
+            debugPrint("Started parsing unimod.xml")
+        #endif
     }
 
     public func parser(_: XMLParser, didStartElement xmlElementName: String, namespaceURI _: String?, qualifiedName _: String?, attributes attributeDict: [String: String] = [:]) {
@@ -164,17 +163,15 @@ extension UnimodParser: XMLParserDelegate {
 
     public func parser(_: XMLParser, didEndElement xmlElementName: String, namespaceURI _: String?, qualifiedName _: String?) {
         if xmlElementName == elem {
-            if UnimodController().loadElementsFromUnimod == true {
-                if elementFullName.isEmpty == false {
-                    let chemicalElement = ChemicalElement(name: elementFullName, symbol: elementSymbol, monoisotopicMass: Dalton(string: elementMonoisotopicMass) ?? 0.0, averageMass: Dalton(string: elementAverageMass) ?? 0.0)
+            if elementFullName.isEmpty == false {
+                let chemicalElement = ChemicalElement(name: elementFullName, symbol: elementSymbol, monoisotopicMass: Dalton(string: elementMonoisotopicMass) ?? 0.0, averageMass: Dalton(string: elementAverageMass) ?? 0.0)
 
-                    elementLibrary.append(chemicalElement)
+                elementLibrary.append(chemicalElement)
 
-                    elementSymbol.removeAll()
-                    elementFullName.removeAll()
-                    elementMonoisotopicMass.removeAll()
-                    elementAverageMass.removeAll()
-                }
+                elementSymbol.removeAll()
+                elementFullName.removeAll()
+                elementMonoisotopicMass.removeAll()
+                elementAverageMass.removeAll()
             }
         } else if xmlElementName == elements {
             isElement = false
@@ -210,12 +207,12 @@ extension UnimodParser: XMLParserDelegate {
     }
 
     public func parserDidEndDocument(_: XMLParser) {
-        debugPrint("Finished parsing unimod.xml")
-        DispatchQueue.main.async {
-            NotificationCenter.default.post(
-                name: xmlParsingDidFinishNotification,
-                object: nil
-            )
-        }
+        #if DEBUG
+            debugPrint("Finished parsing unimod.xml")
+        #endif
+    }
+
+    public func parser(_: XMLParser, parseErrorOccurred parseError: Error) {
+        self.parseError = parseError
     }
 }
