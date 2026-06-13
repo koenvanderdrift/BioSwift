@@ -235,7 +235,7 @@ public final class FastaDecoder: TopLevelDecoder {
 
         let records = try recordTexts.map { recordText in
             let cleanedRecordText = recordText.trimmingCharacters(
-                in: .newlines
+                in: .whitespacesAndNewlines
             )
 
             return try decodeRecord(from: cleanedRecordText)
@@ -270,7 +270,7 @@ public extension FastaDecoder {
 
         return try recordTexts.concurrentMap { recordText in
             let cleanedRecordText = recordText.trimmingCharacters(
-                in: .newlines
+                in: .whitespacesAndNewlines
             )
 
             return try self.decodeRecord(from: cleanedRecordText)
