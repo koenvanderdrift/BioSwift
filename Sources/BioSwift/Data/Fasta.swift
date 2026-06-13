@@ -234,7 +234,11 @@ public final class FastaDecoder: TopLevelDecoder {
         )
 
         let records = try recordTexts.map { recordText in
-            try decodeRecord(from: recordText)
+            let cleanedRecordText = recordText.trimmingCharacters(
+                in: .newlines
+            )
+
+            return try decodeRecord(from: cleanedRecordText)
         }
 
         guard let typedRecords = records as? T else {
@@ -265,7 +269,11 @@ public extension FastaDecoder {
         )
 
         return try recordTexts.concurrentMap { recordText in
-            try self.decodeRecord(from: recordText)
+            let cleanedRecordText = recordText.trimmingCharacters(
+                in: .newlines
+            )
+
+            return try self.decodeRecord(from: cleanedRecordText)
         }
     }
 }
