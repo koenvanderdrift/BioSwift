@@ -10,39 +10,60 @@ import Foundation
 
 public let zeroFastaRecord = FastaRecord(accession: "", entryName: "", proteinName: "", organism: "", sequence: "")
 
-public func parseFastaData(from fileName: String) throws -> [FastaRecord] {
+public enum FastaDecoderError: LocalizedError {
+    case unsupportedType
+
+    public var errorDescription: String? {
+        switch self {
+        case .unsupportedType:
+            return "This decoder only supports decoding Fastarecord arrays."
+        }
+    }
+}
+
+public func parseData(
+    from fileName: String
+) throws -> [FastaRecord] {
+    let fullName = "\(fileName).data"
+
+    let fastaData = try loadData(from: fileName, withExtension: "fasta")
+
     do {
-        let fastaData = try loadData(from: fileName, withExtension: "fasta")
         return try FastaDecoder().decode([FastaRecord].self, from: fastaData)
+
     } catch {
-        throw LoadError.fileDecodingFailed(name: fileName)
+        throw LoadError.fileDecodingFailed(
+            name: fullName,
+            underlyingError: error
+        )
     }
 }
 
 public func parseFastaDataFromBundle(from fileName: String) throws -> [FastaRecord] {
+    let fullName = "\(fileName).data"
+    let fastaData = try loadDataFromBundle(from: fileName, withExtension: "fasta")
+
     do {
-        let fastaData = try loadDataFromBundle(from: fileName, withExtension: "fasta")
         return try FastaDecoder().decode([FastaRecord].self, from: fastaData)
     } catch {
-        throw LoadError.fileDecodingFailed(name: fileName)
+        throw LoadError.fileDecodingFailed(
+            name: fullName,
+            underlyingError: error
+        )
     }
 }
 
-public func parseFastaData(from fileName: String) async throws -> [FastaRecord] {
-    do {
-        let fastaData = try loadData(from: fileName, withExtension: "fasta")
-        return await FastaDecoder().decodeRecords(with: fastaData)
-    } catch {
-        throw LoadError.fileDecodingFailed(name: fileName)
-    }
-}
+public func parseFastaData(from fileName: String) throws -> [FastaRecord] {
+    let fullName = "\(fileName).data"
+    let fastaData = try loadData(from: fileName, withExtension: "fasta")
 
-public func parseFastaDataFromBundle(from fileName: String) async throws -> [FastaRecord] {
     do {
-        let fastaData = try loadDataFromBundle(from: fileName, withExtension: "fasta")
-        return await FastaDecoder().decodeRecords(with: fastaData)
+        return try FastaDecoder().decodeRecords(with: fastaData)
     } catch {
-        throw LoadError.fileDecodingFailed(name: fileName)
+        throw LoadError.fileDecodingFailed(
+            name: fullName,
+            underlyingError: error
+        )
     }
 }
 
@@ -190,64 +211,62 @@ private final class FastaParser {
 public final class FastaDecoder: TopLevelDecoder {
     public init() {}
 
-    public func decode<T: Decodable>(_: T.Type, from data: Data) throws -> T {
-        var records = [FastaRecord]()
-
-        if let fastaArray = String(data: data, encoding: .ascii)?.components(separatedBy: "\n>") {
-            records = fastaArray.concurrentMap { fastaLine in
-                self.decodeRecord(from: fastaLine)
-            }
+    public func decode<T: Decodable>(
+        _ type: T.Type,
+        from data: Data
+    ) throws -> T {
+        guard type == [FastaRecord].self else {
+            throw LoadError.fileDecodingFailed(
+                name: "records",
+                underlyingError: FastaDecoderError.unsupportedType
+            )
         }
 
-        return records as! T
+        guard let text = String(data: data, encoding: .ascii) else {
+            throw LoadError.fileConversionFailed(
+                name: "records",
+                underlyingError: nil
+            )
+        }
+
+        let recordTexts = text.components(
+            separatedBy: "\n>"
+        )
+
+        let records = try recordTexts.map { recordText in
+            try decodeRecord(from: recordText)
+        }
+
+        guard let typedRecords = records as? T else {
+            throw LoadError.fileDecodingFailed(
+                name: "records",
+                underlyingError: FastaDecoderError.unsupportedType
+            )
+        }
+
+        return typedRecords
     }
 
-    public func decodeRecord(from fastaLine: String) -> FastaRecord {
+    public func decodeRecord(from fastaLine: String) throws -> FastaRecord {
         let decoder = _FastaDecoder(fastaLine)
 
-        do {
-            return try FastaRecord(from: decoder)
-        } catch {
-            debugPrint(error)
-        }
-
-        return zeroFastaRecord
+        return try FastaRecord(from: decoder)
     }
 }
 
 public extension FastaDecoder {
-    func decodeRecords(with fastaData: Data) async -> [FastaRecord] {
-        if let fastaArray = String(data: fastaData, encoding: .ascii)?.components(separatedBy: "\n>") {
-            return await withTaskGroup(of: FastaRecord.self) { taskGroup in
-                var records = [FastaRecord]()
-
-                for fastaLine in fastaArray {
-                    taskGroup.addTask {
-                        await self.decodeRecord(from: fastaLine)
-                    }
-                }
-
-                for await record in taskGroup {
-                    records.append(record)
-                }
-
-                return records
-            }
+    func decodeRecords(with fastaData: Data) throws -> [FastaRecord] {
+        guard let text = String(data: fastaData, encoding: .utf8) else {
+            throw LoadError.fileConversionFailed(name: "records", underlyingError: nil)
         }
 
-        return []
-    }
+        let recordTexts = text.components(
+            separatedBy: "\n>"
+        )
 
-    func decodeRecord(from fastaLine: String) async -> FastaRecord {
-        let decoder = _FastaDecoder(fastaLine)
-
-        do {
-            return try FastaRecord(from: decoder)
-        } catch {
-            debugPrint(error)
+        return try recordTexts.map { recordText in
+            try decodeRecord(from: recordText)
         }
-
-        return zeroFastaRecord
     }
 }
 

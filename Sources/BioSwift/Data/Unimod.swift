@@ -84,7 +84,7 @@ public final class UnimodXMLParser: NSObject {
         guard parser.parse() else {
             throw parseError
                 ?? parser.parserError
-                ?? LoadError.fileParsingFailed(name: "unimod.xml")
+            ?? LoadError.fileParsingFailed(name: "unimod.xml", underlyingError: parseError)
         }
     }
 }

@@ -10,36 +10,52 @@ import Foundation
 
 public enum LoadError: Error {
     case fileNotFound(name: String)
-    case fileConversionFailed(name: String)
-    case fileDecodingFailed(name: String)
-    case fileParsingFailed(name: String)
+    case fileReadFailed(name: String, underlyingError: Error)
+    case fileConversionFailed(name: String, underlyingError: Error?)
+    case fileDecodingFailed(name: String, underlyingError: Error)
+    case fileParsingFailed(name: String, underlyingError: Error?)
 }
 
-public func loadData(from fileName: String, withExtension fileExtension: String) throws -> Data {
+public func loadData(
+    from fileName: String,
+    withExtension fileExtension: String
+) throws -> Data {
+    let fullName = "\(fileName).\(fileExtension)"
+
     guard let url = Bundle.main.url(forResource: fileName, withExtension: fileExtension) else {
-        throw LoadError.fileNotFound(name: fileName)
+        throw LoadError.fileNotFound(name: fullName)
     }
 
-    guard let data = try? Data(contentsOf: url) else {
-        throw LoadError.fileConversionFailed(name: fileName)
+    do {
+        return try Data(contentsOf: url)
+    } catch {
+        throw LoadError.fileReadFailed(
+            name: fullName,
+            underlyingError: error
+        )
     }
-
-    return data
 }
 
 public func loadDataFromBundle(from fileName: String, withExtension fileExtension: String) throws -> Data {
+    let fullName = "\(fileName).\(fileExtension)"
+
     guard let url = Bundle.module.url(forResource: fileName, withExtension: fileExtension) else {
         throw LoadError.fileNotFound(name: fileName)
     }
 
-    guard let data = try? Data(contentsOf: url) else {
-        throw LoadError.fileConversionFailed(name: fileName)
+    do {
+        return try Data(contentsOf: url)
+    } catch {
+        throw LoadError.fileReadFailed(
+            name: fullName,
+            underlyingError: error
+        )
     }
-
-    return data
 }
 
 public func loadTextFromBundle(from fileName: String, withExtension fileExtension: String) throws -> String? {
+    let fullName = "\(fileName).\(fileExtension)"
+
     guard let path = Bundle.main.path(forResource: fileName, ofType: fileExtension) else {
         throw LoadError.fileNotFound(name: fileName)
     }
@@ -47,7 +63,10 @@ public func loadTextFromBundle(from fileName: String, withExtension fileExtensio
     do {
         return try String(contentsOfFile: path)
     } catch {
-        throw LoadError.fileDecodingFailed(name: fileName)
+        throw LoadError.fileReadFailed(
+            name: fullName,
+            underlyingError: error
+        )
     }
 }
 
