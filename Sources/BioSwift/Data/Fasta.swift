@@ -264,8 +264,8 @@ public extension FastaDecoder {
             separatedBy: "\n>"
         )
 
-        return try recordTexts.map { recordText in
-            try decodeRecord(from: recordText)
+        return try recordTexts.concurrentMap { recordText in
+            try self.decodeRecord(from: recordText)
         }
     }
 }

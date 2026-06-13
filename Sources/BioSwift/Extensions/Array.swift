@@ -29,18 +29,51 @@ final class ThreadSafe<A> {
 
 public extension Array {
     // via: https://talk.objc.io/episodes/S01E90-concurrent-map
-    func concurrentMap<B>(_ transform: @escaping (Element) -> B) -> [B] {
-        let result = ThreadSafe([B?](repeating: nil, count: count))
+    func concurrentMap<B>(
+        _ transform: @escaping (Element) throws -> B
+    ) throws -> [B] {
+        let lock = NSLock()
 
-        DispatchQueue.concurrentPerform(iterations: count) { idx in
-            let element = self[idx]
-            let transformed = transform(element)
-            result.atomically {
-                $0[idx] = transformed
+        var results = [B?](
+            repeating: nil,
+            count: count
+        )
+
+        var firstError: Error?
+
+        DispatchQueue.concurrentPerform(
+            iterations: count
+        ) { index in
+            lock.lock()
+            let shouldSkip = firstError != nil
+            lock.unlock()
+
+            guard !shouldSkip else {
+                return
+            }
+
+            do {
+                let value = try transform(self[index])
+
+                lock.lock()
+                results[index] = value
+                lock.unlock()
+            } catch {
+                lock.lock()
+
+                if firstError == nil {
+                    firstError = error
+                }
+
+                lock.unlock()
             }
         }
 
-        return result.value.map { $0! }
+        if let firstError {
+            throw firstError
+        }
+
+        return results.map { $0! }
     }
 
     func consecutiveGroups(ofSize size: Int) -> [[Element]] {
