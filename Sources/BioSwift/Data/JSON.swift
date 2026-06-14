@@ -8,42 +8,25 @@
 
 import Foundation
 
-public func parseJSONData<A: Decodable>(
-    from fileName: String
-) throws -> [A] {
+public func parseJSONData<A: Decodable>(from fileName: String) throws -> [A] {
     let fullName = "\(fileName).json"
 
-    let data = try loadData(
-        from: fileName,
-        withExtension: "json"
-    )
+    let data = try loadData(from: fileName, withExtension: "json")
 
     do {
-        return try JSONDecoder().decode(
-            [A].self,
-            from: data
-        )
+        return try JSONDecoder().decode([A].self, from: data)
     } catch {
-        throw LoadError.fileDecodingFailed(
-            name: fullName,
-            underlyingError: error
-        )
+        throw LoadError.fileDecodingFailed(name: fullName, underlyingError: error)
     }
 }
 
 public func parseJSONDataFromBundle<A: Decodable>(from fileName: String) throws -> [A] {
     let fullName = "\(fileName).json"
 
-    let data = try loadDataFromBundle(
-        from: fileName,
-        withExtension: "json"
-    )
+    let data = try loadData(from: fileName, withExtension: "json", in: .module)
 
     do {
-        return try JSONDecoder().decode(
-            [A].self,
-            from: data
-        )
+        return try JSONDecoder().decode([A].self, from: data)
     } catch {
         throw LoadError.fileDecodingFailed(
             name: fullName,

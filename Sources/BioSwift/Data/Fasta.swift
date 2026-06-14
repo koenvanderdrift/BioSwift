@@ -10,63 +10,6 @@ import Foundation
 
 public let zeroFastaRecord = FastaRecord(accession: "", entryName: "", proteinName: "", organism: "", sequence: "")
 
-public enum FastaDecoderError: LocalizedError {
-    case unsupportedType
-
-    public var errorDescription: String? {
-        switch self {
-        case .unsupportedType:
-            return "This decoder only supports decoding Fastarecord arrays."
-        }
-    }
-}
-
-public func parseData(
-    from fileName: String
-) throws -> [FastaRecord] {
-    let fullName = "\(fileName).data"
-
-    let fastaData = try loadData(from: fileName, withExtension: "fasta")
-
-    do {
-        return try FastaDecoder().decode([FastaRecord].self, from: fastaData)
-
-    } catch {
-        throw LoadError.fileDecodingFailed(
-            name: fullName,
-            underlyingError: error
-        )
-    }
-}
-
-public func parseFastaDataFromBundle(from fileName: String) throws -> [FastaRecord] {
-    let fullName = "\(fileName).data"
-    let fastaData = try loadDataFromBundle(from: fileName, withExtension: "fasta")
-
-    do {
-        return try FastaDecoder().decode([FastaRecord].self, from: fastaData)
-    } catch {
-        throw LoadError.fileDecodingFailed(
-            name: fullName,
-            underlyingError: error
-        )
-    }
-}
-
-public func parseFastaData(from fileName: String) throws -> [FastaRecord] {
-    let fullName = "\(fileName).data"
-    let fastaData = try loadData(from: fileName, withExtension: "fasta")
-
-    do {
-        return try FastaDecoder().decodeRecords(with: fastaData)
-    } catch {
-        throw LoadError.fileDecodingFailed(
-            name: fullName,
-            underlyingError: error
-        )
-    }
-}
-
 public struct FastaRecord: Codable, Hashable, Identifiable {
     // TODO: add DNA/RNA fasta parsing
     public let id: UUID
@@ -74,7 +17,7 @@ public struct FastaRecord: Codable, Hashable, Identifiable {
     public let entryName: String
     public let proteinName: String
     public let organism: String
-    public let sequence: String
+    public var sequence: String
 
     public init(accession: String, entryName: String, proteinName: String, organism: String, sequence: String) {
         id = UUID()
@@ -86,7 +29,134 @@ public struct FastaRecord: Codable, Hashable, Identifiable {
     }
 }
 
-private final class FastaParser {
+public final class FastaParser {
+    private struct RawRecord {
+        let info: String
+        let sequence: String
+    }
+
+    var fileName: String = ""
+
+    init(fileName: String) {
+        self.fileName = fileName
+    }
+
+    public func parseFastaFile() throws -> [FastaRecord] {
+        let fullName = "\(fileName).fasta"
+
+        let fastaText = try loadText(from: fileName, withExtension: "fasta")
+        let rawRecords = try splitRawRecords(from: fastaText)
+
+        do {
+            return try rawRecords.concurrentMap { rawRecord in
+                try self.decodeRecord(rawRecord)
+            }
+
+        } catch {
+            throw LoadError.fileDecodingFailed(name: fullName, underlyingError: error)
+        }
+    }
+
+    public func parseFastaFileFromBundle() throws -> [FastaRecord] {
+        let fullName = "\(fileName).fasta"
+
+        let fastaText = try loadText(from: fileName, withExtension: "fasta", in: .module)
+        let rawRecords = try splitRawRecords(from: fastaText)
+
+        do {
+            return try rawRecords.concurrentMap { rawRecord in
+                try self.decodeRecord(rawRecord)
+            }
+
+        } catch {
+            throw LoadError.fileDecodingFailed(name: fullName, underlyingError: error)
+        }
+    }
+
+    private func decodeRecord(_ record: RawRecord) throws -> FastaRecord {
+        let input = record.info[...]
+
+        var result: FastaRecord = zeroFastaRecord
+
+        if input.contains("ups|") {
+            result = parseUPS(input)
+        } else if input.hasPrefix("sp") || input.hasPrefix("swiss") || input.hasPrefix("tr") {
+            result = parseSwissProt(input)
+        } else if input.hasPrefix("IPI") {
+            result = parseIPI(input)
+        } else if input.hasPrefix("ENS") {
+            result = parseEnsemble(input)
+        } else {
+            result = parseUnspecified(input)
+        }
+
+        result.sequence = record.sequence
+
+        return result
+    }
+
+    private func splitRawRecords(
+        from text: String
+    ) throws -> [RawRecord] {
+        let normalizedText = text
+            .replacingOccurrences(of: "\r\n", with: "\n")
+            .replacingOccurrences(of: "\r", with: "\n")
+
+        return try normalizedText
+            .components(separatedBy: "\n>")
+            .map { recordText in
+                try parseRawRecord(from: recordText)
+            }
+            .filter { !$0.info.isEmpty || !$0.sequence.isEmpty }
+    }
+
+    private func parseRawRecord(
+        from recordText: String
+    ) throws -> RawRecord {
+        var cleanedRecordText = recordText
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+
+        if cleanedRecordText.first == ">" {
+            cleanedRecordText.removeFirst()
+        }
+
+        let parts = cleanedRecordText.split(
+            separator: "\n",
+            maxSplits: 1,
+            omittingEmptySubsequences: false
+        )
+
+        guard let infoPart = parts.first else {
+            throw LoadError.fileParsingFailed(
+                name: "records",
+                underlyingError: nil
+            )
+        }
+
+        let info = String(infoPart)
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+
+        let rawData = parts.count > 1
+            ? String(parts[1])
+            : ""
+
+        let data = rawData.filter {
+            !$0.isWhitespace
+        }
+
+        guard !info.isEmpty, !data.isEmpty else {
+            throw LoadError.fileParsingFailed(
+                name: "records",
+                underlyingError: nil
+            )
+        }
+
+        return RawRecord(
+            info: info,
+            sequence: data
+        )
+    }
+
     func parse(_ input: String) -> FastaRecord {
         // https://www.uniprot.org/help/fasta-headers
 
@@ -115,29 +185,28 @@ private final class FastaParser {
         var proteinName: Substring = ""
         var org: Substring = ""
 
-        let acc = entry.scan(until: { $0 == "|" })?.dropLast(3)
-        let _ = entry.scan(count: 1)
-        let entryName = entry.scan(until: { $0 == " " })
+        let acc = entry.scanUntil("|")?.dropLast(3)
+        entry.skip(1)
+        
+        let entryName = entry.scanUntil(" ")
 
         if let nameRange = entry.range(of: " - ") {
             let nsRange = NSRange(nameRange, in: entry)
-            proteinName = entry.scan(count: nsRange.location) ?? ""
+            proteinName = entry.skip(nsRange.location) ?? ""
         }
 
-        let _ = entry.scan(count: 3)
+        entry.skip(3)
 
         if let organismRange = entry.range(of: " ", options: .backwards) {
             let nsRange = NSRange(organismRange, in: entry)
-            org = entry.scan(count: nsRange.location) ?? ""
+            org = entry.skip(nsRange.location) ?? ""
         }
-
-        let seq = entry
 
         return FastaRecord(accession: String(acc ?? ""),
                            entryName: String(entryName ?? ""),
                            proteinName: String(proteinName),
                            organism: String(org),
-                           sequence: String(seq))
+                           sequence: "")
     }
 
     func parseSwissProt(_ input: Substring) -> FastaRecord {
@@ -156,30 +225,25 @@ private final class FastaParser {
          * SequenceVersion is the version number of the sequence.
          */
 
-        var entry = input[...]
+        var input = input[...]
+        input.skipThrough("|")
 
-        entry.scan(until: { $0 == "|" })
-        entry.scan(count: 1)
+        let acc = input.scanUntil("|")
+        input.skip(1)
 
-        let acc = entry.scan(until: { $0 == "|" })
-        entry.scan(count: 1)
+        let entryName = input.scanUntil(" ")
+        input.skip(1)
 
-        let entryName = entry.scan(until: { $0 == " " })
-        entry.scan(count: 1)
+        let proteinName = input.scanUntil("=")?.dropLast(3)
+        input.skip(1)
 
-        let proteinName = entry.scan(until: { $0 == "=" })?.dropLast(3)
-        entry.scan(count: 1)
-
-        let org = entry.scan(until: { $0 == "=" })?.dropLast(3)
-        let _ = entry.scan(until: { $0 == "\n" })
-
-        let seq = entry
+        let org = input.scanUntil("=")?.dropLast(3)
 
         return FastaRecord(accession: String(acc ?? ""),
                            entryName: String(entryName ?? ""),
                            proteinName: String(proteinName ?? ""),
                            organism: String(org ?? ""),
-                           sequence: String(seq))
+                           sequence: "")
     }
 
     func parseIPI(_ input: Substring) -> FastaRecord {
@@ -188,6 +252,8 @@ private final class FastaParser {
         let acc = info[1]
         let proteinName = info.last ?? ""
 
+        // TODO: implement
+        
         return FastaRecord(accession: acc, entryName: "", proteinName: proteinName, organism: "", sequence: "")
     }
 
@@ -195,6 +261,8 @@ private final class FastaParser {
         // ENSP00000391493 pep:known chromosome:GRCh37:2:160609001:160624471:1 gene:ENSG00000136536 transcript:ENST00000420397
         let info = input.components(separatedBy: " ")
         let proteinName = info[0]
+
+        // TODO: implement
 
         return FastaRecord(accession: "", entryName: "", proteinName: proteinName, organism: "", sequence: "")
     }
@@ -204,11 +272,66 @@ private final class FastaParser {
         // DECOY_IPI00339224 Decoy sequence
         let proteinName = input.replacingOccurrences(of: "_", with: " ")
 
+        // TODO: implement
+
         return FastaRecord(accession: "", entryName: "", proteinName: proteinName, organism: "", sequence: "")
     }
 }
 
-public final class FastaDecoder: TopLevelDecoder {
+/*
+ public enum FastaDecoderError: LocalizedError {
+    case unsupportedType
+
+    public var errorDescription: String? {
+        switch self {
+        case .unsupportedType:
+            return "This decoder only supports decoding Fastarecord arrays."
+        }
+    }
+ }
+
+ public func parseFastaFile(_ fileName: String) throws -> [FastaRecord] {
+    let fullName = "\(fileName).fasta"
+    let fastaData = try loadData(from: fileName, withExtension: "fasta")
+
+    do {
+        return try FastaDecoder().decode([FastaRecord].self, from: fastaData)
+
+    } catch {
+        throw LoadError.fileDecodingFailed(name: fullName, underlyingError: error)
+    }
+ }
+
+ public func parseFastaFileFromBundle(_ fileName: String) throws -> [FastaRecord] {
+    let fullName = "\(fileName).fasta"
+    let fastaData = try loadDataFromBundle(from: fileName, withExtension: "fasta")
+
+    do {
+        return try FastaDecoder().decode([FastaRecord].self, from: fastaData)
+    } catch {
+        throw LoadError.fileDecodingFailed(name: fullName, underlyingError: error)
+    }
+ }
+
+ public func fastaRecords(from _: Data) throws -> [FastaRecord] {
+    []
+ }
+
+ public func parseFastaData(from fileName: String) throws -> [FastaRecord] {
+    let fullName = "\(fileName).fasta"
+    let fastaData = try loadData(from: fileName, withExtension: "fasta")
+
+    do {
+        return try FastaDecoder().decodeRecords(with: fastaData)
+    } catch {
+        throw LoadError.fileDecodingFailed(
+            name: fullName,
+            underlyingError: error
+        )
+    }
+ }
+
+ public final class FastaDecoder: TopLevelDecoder {
     public init() {}
 
     public func decode<T: Decodable>(
@@ -216,10 +339,7 @@ public final class FastaDecoder: TopLevelDecoder {
         from data: Data
     ) throws -> T {
         guard type == [FastaRecord].self else {
-            throw LoadError.fileDecodingFailed(
-                name: "records",
-                underlyingError: FastaDecoderError.unsupportedType
-            )
+            throw LoadError.fileDecodingFailed(name: "records", underlyingError: FastaDecoderError.unsupportedType)
         }
 
         guard let text = String(data: data, encoding: .ascii) else {
@@ -256,9 +376,9 @@ public final class FastaDecoder: TopLevelDecoder {
 
         return try FastaRecord(from: decoder)
     }
-}
+ }
 
-public extension FastaDecoder {
+ public extension FastaDecoder {
     func decodeRecords(with fastaData: Data) throws -> [FastaRecord] {
         guard let text = String(data: fastaData, encoding: .utf8) else {
             throw LoadError.fileConversionFailed(name: "records", underlyingError: nil)
@@ -276,9 +396,9 @@ public extension FastaDecoder {
             return try self.decodeRecord(from: cleanedRecordText)
         }
     }
-}
+ }
 
-private final class _FastaDecoder {
+ private final class _FastaDecoder {
     // via: https://talk.objc.io/episodes/S01E115-building-a-custom-xml-decoder
 
     let codingPath: [CodingKey] = []
@@ -288,9 +408,9 @@ private final class _FastaDecoder {
     init(_ input: String) {
         self.input = input
     }
-}
+ }
 
-extension _FastaDecoder: Decoder {
+ extension _FastaDecoder: Decoder {
     func container<Key: CodingKey>(keyedBy _: Key.Type) throws -> KeyedDecodingContainer<Key> {
         KeyedDecodingContainer(KDC(input))
     }
@@ -308,7 +428,7 @@ extension _FastaDecoder: Decoder {
         let allKeys: [Key] = []
 
         let record: FastaRecord
-        let parser = FastaParser()
+        let parser = FastaParser(fileName: "")
 
         init(_ input: String) {
             record = parser.parse(input)
@@ -415,4 +535,5 @@ extension _FastaDecoder: Decoder {
             throw DecodingError.valueNotFound(Decoder.self, .init(codingPath: [], debugDescription: "no super decoder", underlyingError: nil))
         }
     }
-}
+ }
+ */

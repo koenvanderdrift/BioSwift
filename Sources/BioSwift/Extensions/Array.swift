@@ -112,6 +112,53 @@ extension Array where Element: StringProtocol {
     }
 }
 
+extension Substring {
+    @discardableResult
+    mutating func scanUntil(_ character: Character) -> Substring? {
+        guard let index = firstIndex(of: character) else {
+            return nil
+        }
+
+        let result = self[..<index]
+        self = self[index...]
+
+        return result
+    }
+
+    @discardableResult
+    mutating func scanThrough(_ character: Character) -> Character? {
+        guard first == character else {
+            return nil
+        }
+
+        return removeFirst()
+    }
+
+    @discardableResult
+    mutating func skip(_ count: Int) -> Substring? {
+        guard self.count >= count else {
+            return nil
+        }
+
+        let skipped = prefix(count)
+        removeFirst(count)
+
+        return skipped
+    }
+
+    @discardableResult
+    mutating func skipThrough(_ delimiter: Character) -> Bool {
+        guard let index = firstIndex(of: delimiter) else {
+            return false
+        }
+
+        self = self[self.index(after: index)...]
+
+        return true
+    }
+}
+
+/*
 extension Collection where SubSequence == Self {
     // via: https://www.objc.io/blog/2019/02/05/a-scanner-alternative/
 
@@ -145,3 +192,4 @@ extension Collection where SubSequence == Self {
         return result
     }
 }
+*/

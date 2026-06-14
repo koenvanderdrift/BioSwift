@@ -16,59 +16,62 @@ public enum LoadError: Error {
     case fileParsingFailed(name: String, underlyingError: Error?)
 }
 
-public func loadData(
-    from fileName: String,
-    withExtension fileExtension: String
-) throws -> Data {
+public func loadData(from fileName: String, withExtension fileExtension: String, in bundle: Bundle = .main) throws -> Data {
     let fullName = "\(fileName).\(fileExtension)"
 
-    guard let url = Bundle.main.url(forResource: fileName, withExtension: fileExtension) else {
+    guard let url = bundle.url(forResource: fileName, withExtension: fileExtension) else {
         throw LoadError.fileNotFound(name: fullName)
     }
 
     do {
         return try Data(contentsOf: url)
     } catch {
-        throw LoadError.fileReadFailed(
-            name: fullName,
-            underlyingError: error
-        )
+        throw LoadError.fileReadFailed(name: fullName, underlyingError: error)
     }
 }
 
-public func loadDataFromBundle(from fileName: String, withExtension fileExtension: String) throws -> Data {
+public func loadText(from fileName: String, withExtension fileExtension: String,
+                     in bundle: Bundle = .main, encoding: String.Encoding = .utf8) throws -> String {
     let fullName = "\(fileName).\(fileExtension)"
 
-    guard let url = Bundle.module.url(forResource: fileName, withExtension: fileExtension) else {
-        throw LoadError.fileNotFound(name: fileName)
+    guard let url = bundle.url(forResource: fileName, withExtension: fileExtension) else {
+        throw LoadError.fileNotFound(name: fullName)
     }
 
     do {
-        return try Data(contentsOf: url)
+        return try String(contentsOf: url, encoding: encoding)
     } catch {
-        throw LoadError.fileReadFailed(
-            name: fullName,
-            underlyingError: error
-        )
+        throw LoadError.fileReadFailed(name: fullName, underlyingError: error)
     }
 }
 
-public func loadTextFromBundle(from fileName: String, withExtension fileExtension: String) throws -> String? {
-    let fullName = "\(fileName).\(fileExtension)"
+// public func loadDataFromBundle(from fileName: String, withExtension fileExtension: String) throws -> Data {
+//    let fullName = "\(fileName).\(fileExtension)"
+//
+//    guard let url = Bundle.module.url(forResource: fileName, withExtension: fileExtension) else {
+//        throw LoadError.fileNotFound(name: fileName)
+//    }
+//
+//    do {
+//        return try Data(contentsOf: url)
+//    } catch {
+//        throw LoadError.fileReadFailed(name: fullName, underlyingError: error)
+//    }
+// }
 
-    guard let path = Bundle.main.path(forResource: fileName, ofType: fileExtension) else {
-        throw LoadError.fileNotFound(name: fileName)
-    }
-
-    do {
-        return try String(contentsOfFile: path)
-    } catch {
-        throw LoadError.fileReadFailed(
-            name: fullName,
-            underlyingError: error
-        )
-    }
-}
+// public func loadTextFromBundle(from fileName: String, withExtension fileExtension: String) throws -> String {
+//    let fullName = "\(fileName).\(fileExtension)"
+//
+//    guard let path = Bundle.module.path(forResource: fileName, ofType: fileExtension) else {
+//        throw LoadError.fileNotFound(name: fileName)
+//    }
+//
+//    do {
+//        return try String(contentsOfFile: path)
+//    } catch {
+//        throw LoadError.fileReadFailed(name: fullName, underlyingError: error)
+//    }
+// }
 
 // via:  http://stackoverflow.com/questions/41402770/swift-parse-string-with-different-formats/41402868#41402868
 //
