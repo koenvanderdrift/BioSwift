@@ -30,7 +30,7 @@ public struct FastaRecord: Codable, Hashable, Identifiable {
 }
 
 public final class FastaParser {
-    private struct RawRecord {
+    public struct RawRecord {
         let info: String
         let sequence: String
     }
@@ -73,7 +73,7 @@ public final class FastaParser {
         }
     }
 
-    private func decodeRecord(_ record: RawRecord) throws -> FastaRecord {
+    public func decodeRecord(_ record: RawRecord) throws -> FastaRecord {
         let input = record.info[...]
 
         var result: FastaRecord = zeroFastaRecord
@@ -95,7 +95,7 @@ public final class FastaParser {
         return result
     }
 
-    private func splitRawRecords(
+    public func splitRawRecords(
         from text: String
     ) throws -> [RawRecord] {
         let normalizedText = text
@@ -110,7 +110,7 @@ public final class FastaParser {
             .filter { !$0.info.isEmpty || !$0.sequence.isEmpty }
     }
 
-    private func parseRawRecord(
+    public func parseRawRecord(
         from recordText: String
     ) throws -> RawRecord {
         var cleanedRecordText = recordText
@@ -187,7 +187,7 @@ public final class FastaParser {
 
         let acc = entry.scanUntil("|")?.dropLast(3)
         entry.skip(1)
-        
+
         let entryName = entry.scanUntil(" ")
 
         if let nameRange = entry.range(of: " - ") {
@@ -253,7 +253,7 @@ public final class FastaParser {
         let proteinName = info.last ?? ""
 
         // TODO: implement
-        
+
         return FastaRecord(accession: acc, entryName: "", proteinName: proteinName, organism: "", sequence: "")
     }
 
