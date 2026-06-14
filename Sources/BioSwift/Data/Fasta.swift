@@ -7,22 +7,22 @@
 
 import Foundation
 
-public let zeroFastaRecord = FastaRecord(accession: "", entryName: "", proteinName: "", organism: "", sequence: "")
+public let zeroFastaRecord = FastaRecord(accession: "", shortName: "", fullName: "", organism: "", sequence: "")
 
 public struct FastaRecord: Codable, Hashable, Identifiable {
     // TODO: add DNA/RNA fasta parsing
     public let id: UUID
     public let accession: String
-    public let entryName: String
-    public let proteinName: String
+    public let shortName: String
+    public let fullName: String
     public let organism: String
     public var sequence: String
 
-    public init(accession: String, entryName: String, proteinName: String, organism: String, sequence: String) {
+    public init(accession: String, shortName: String, fullName: String, organism: String, sequence: String) {
         id = UUID()
         self.accession = accession
-        self.entryName = entryName
-        self.proteinName = proteinName
+        self.shortName = shortName
+        self.fullName = fullName
         self.organism = organism
         self.sequence = sequence
     }
@@ -33,19 +33,15 @@ public final class FastaDecoder {
         let info: String
         let sequence: String
     }
-    
+
     public init() {}
 
     public func parseFastaFile(_ fileName: String) throws -> [FastaRecord] {
+        let fastaText = try loadText(from: fileName, withExtension: "fasta")
         let fullName = "\(fileName).fasta"
 
-        let fastaText = try loadText(from: fileName, withExtension: "fasta")
-        let rawRecords = try splitRawRecords(from: fastaText)
-
         do {
-            return try rawRecords.concurrentMap { rawRecord in
-                try self.decodeRecord(rawRecord)
-            }
+            return try parseText(fastaText)
 
         } catch {
             throw LoadError.fileDecodingFailed(name: fullName, underlyingError: error)
@@ -53,15 +49,11 @@ public final class FastaDecoder {
     }
 
     public func parseFastaFileFromBundle(_ fileName: String) throws -> [FastaRecord] {
+        let fastaText = try loadText(from: fileName, withExtension: "fasta", in: .module)
         let fullName = "\(fileName).fasta"
 
-        let fastaText = try loadText(from: fileName, withExtension: "fasta", in: .module)
-        let rawRecords = try splitRawRecords(from: fastaText)
-
         do {
-            return try rawRecords.concurrentMap { rawRecord in
-                try self.decodeRecord(rawRecord)
-            }
+            return try parseText(fastaText)
 
         } catch {
             throw LoadError.fileDecodingFailed(name: fullName, underlyingError: error)
@@ -73,43 +65,18 @@ public final class FastaDecoder {
             throw LoadError.fileConversionFailed(name: "data", underlyingError: nil)
         }
 
+        return try parseText(fastaText)
+    }
+
+    func parseText(_ fastaText: String) throws -> [FastaRecord] {
         let rawRecords = try splitRawRecords(from: fastaText)
 
-        do {
-            return try rawRecords.concurrentMap { rawRecord in
-                try self.decodeRecord(rawRecord)
-            }
-
-        } catch {
-            throw LoadError.fileDecodingFailed(name: "unknown", underlyingError: error)
+        return try rawRecords.concurrentMap { rawRecord in
+            try self.parseRecord(rawRecord)
         }
     }
 
-    public func decodeRecord(_ record: RawRecord) throws -> FastaRecord {
-        let input = record.info[...]
-
-        var result: FastaRecord = zeroFastaRecord
-
-        if input.contains("ups|") {
-            result = parseUPS(input)
-        } else if input.hasPrefix("sp") || input.hasPrefix("swiss") || input.hasPrefix("tr") {
-            result = parseSwissProt(input)
-        } else if input.hasPrefix("IPI") {
-            result = parseIPI(input)
-        } else if input.hasPrefix("ENS") {
-            result = parseEnsemble(input)
-        } else {
-            result = parseUnspecified(input)
-        }
-
-        result.sequence = record.sequence
-
-        return result
-    }
-
-    public func splitRawRecords(
-        from text: String
-    ) throws -> [RawRecord] {
+    func splitRawRecords(from text: String) throws -> [RawRecord] {
         let normalizedText = text
             .replacingOccurrences(of: "\r\n", with: "\n")
             .replacingOccurrences(of: "\r", with: "\n")
@@ -117,14 +84,12 @@ public final class FastaDecoder {
         return try normalizedText
             .components(separatedBy: "\n>")
             .map { recordText in
-                try parseRawRecord(from: recordText)
+                try rawRecord(from: recordText)
             }
             .filter { !$0.info.isEmpty || !$0.sequence.isEmpty }
     }
 
-    public func parseRawRecord(
-        from recordText: String
-    ) throws -> RawRecord {
+    func rawRecord(from recordText: String) throws -> RawRecord {
         var cleanedRecordText = recordText
             .trimmingCharacters(in: .whitespacesAndNewlines)
 
@@ -168,6 +133,30 @@ public final class FastaDecoder {
             sequence: data
         )
     }
+}
+
+extension FastaDecoder {
+    func parseRecord(_ record: RawRecord) throws -> FastaRecord {
+        let input = record.info[...]
+
+        var result: FastaRecord = zeroFastaRecord
+
+        if input.contains("ups|") {
+            result = parseUPS(input)
+        } else if input.hasPrefix("sp") || input.hasPrefix("swiss") || input.hasPrefix("tr") {
+            result = parseSwissProt(input)
+        } else if input.hasPrefix("IPI") {
+            result = parseIPI(input)
+        } else if input.hasPrefix("ENS") {
+            result = parseEnsemble(input)
+        } else {
+            result = parseUnspecified(input)
+        }
+
+        result.sequence = record.sequence
+
+        return result
+    }
 
     func parse(_ input: String) -> FastaRecord {
         // https://www.uniprot.org/help/fasta-headers
@@ -194,17 +183,17 @@ public final class FastaDecoder {
     func parseUPS(_ input: Substring) -> FastaRecord {
         // >P02768ups|ALBU_HUMAN_UPS Serum albumin (Chain 26-609) - Homo sapiens (Human) AHKSEVAHRFKDLGEENF…
         var entry = input
-        var proteinName: Substring = ""
+        var fullName: Substring = ""
         var org: Substring = ""
 
         let acc = entry.scanUntil("|")?.dropLast(3)
         entry.skip(1)
 
-        let entryName = entry.scanUntil(" ")
+        let shortName = entry.scanUntil(" ")
 
         if let nameRange = entry.range(of: " - ") {
             let nsRange = NSRange(nameRange, in: entry)
-            proteinName = entry.skip(nsRange.location) ?? ""
+            fullName = entry.skip(nsRange.location) ?? ""
         }
 
         entry.skip(3)
@@ -215,8 +204,8 @@ public final class FastaDecoder {
         }
 
         return FastaRecord(accession: String(acc ?? ""),
-                           entryName: String(entryName ?? ""),
-                           proteinName: String(proteinName),
+                           shortName: String(shortName ?? ""),
+                           fullName: String(fullName),
                            organism: String(org),
                            sequence: "")
     }
@@ -243,17 +232,17 @@ public final class FastaDecoder {
         let acc = input.scanUntil("|")
         input.skip(1)
 
-        let entryName = input.scanUntil(" ")
+        let shortName = input.scanUntil(" ")
         input.skip(1)
 
-        let proteinName = input.scanUntil("=")?.dropLast(3)
+        let fullName = input.scanUntil("=")?.dropLast(3)
         input.skip(1)
 
         let org = input.scanUntil("=")?.dropLast(3)
 
         return FastaRecord(accession: String(acc ?? ""),
-                           entryName: String(entryName ?? ""),
-                           proteinName: String(proteinName ?? ""),
+                           shortName: String(shortName ?? ""),
+                           fullName: String(fullName ?? ""),
                            organism: String(org ?? ""),
                            sequence: "")
     }
@@ -262,31 +251,31 @@ public final class FastaDecoder {
         // IPI00300415 IPI:IPI00300415.9|SWISS-PROT:Q8N431-1|TREMBL:D3DWQ7|ENSEMBL:ENSP00000354963;ENSP00000377037|REFSEQ:NP_778232|H-INV:HIT000094619|VEGA:OTTHUMP00000161522;OTTHUMP00000161538 Tax_Id=9606 Gene_Symbol=RASGEF1C Isoform 1 of Ras-GEF domain-containing family member 1C
         let info = input.components(separatedBy: "|")
         let acc = info[1]
-        let proteinName = info.last ?? ""
+        let fullName = info.last ?? ""
 
         // TODO: implement
 
-        return FastaRecord(accession: acc, entryName: "", proteinName: proteinName, organism: "", sequence: "")
+        return FastaRecord(accession: acc, shortName: "", fullName: fullName, organism: "", sequence: "")
     }
 
     func parseEnsemble(_ input: Substring) -> FastaRecord {
         // ENSP00000391493 pep:known chromosome:GRCh37:2:160609001:160624471:1 gene:ENSG00000136536 transcript:ENST00000420397
         let info = input.components(separatedBy: " ")
-        let proteinName = info[0]
+        let fullName = info[0]
 
         // TODO: implement
 
-        return FastaRecord(accession: "", entryName: "", proteinName: proteinName, organism: "", sequence: "")
+        return FastaRecord(accession: "", shortName: "", fullName: fullName, organism: "", sequence: "")
     }
 
     func parseUnspecified(_ input: Substring) -> FastaRecord {
         // DROME_HH_Q02936
         // DECOY_IPI00339224 Decoy sequence
-        let proteinName = input.replacingOccurrences(of: "_", with: " ")
+        let fullName = input.replacingOccurrences(of: "_", with: " ")
 
         // TODO: implement
 
-        return FastaRecord(accession: "", entryName: "", proteinName: proteinName, organism: "", sequence: "")
+        return FastaRecord(accession: "", shortName: "", fullName: fullName, organism: "", sequence: "")
     }
 }
 

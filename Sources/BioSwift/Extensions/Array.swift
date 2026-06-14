@@ -8,27 +8,8 @@
 
 import Foundation
 
-final class ThreadSafe<A> {
-    // via: https://talk.objc.io/episodes/S01E90-concurrent-map
-    private var _value: A
-    private let queue = DispatchQueue(label: "ThreadSafe")
-    init(_ value: A) {
-        _value = value
-    }
-
-    var value: A {
-        queue.sync { _value }
-    }
-
-    func atomically(_ transform: (inout A) -> Void) {
-        queue.sync {
-            transform(&self._value)
-        }
-    }
-}
-
 public extension Array {
-    // via: https://talk.objc.io/episodes/S01E90-concurrent-map
+    // based on https://talk.objc.io/episodes/S01E90-concurrent-map
     func concurrentMap<B>(
         _ transform: @escaping (Element) throws -> B
     ) throws -> [B] {
@@ -112,84 +93,57 @@ extension Array where Element: StringProtocol {
     }
 }
 
-extension Substring {
-    @discardableResult
-    mutating func scanUntil(_ character: Character) -> Substring? {
-        guard let index = firstIndex(of: character) else {
-            return nil
-        }
-
-        let result = self[..<index]
-        self = self[index...]
-
-        return result
-    }
-
-    @discardableResult
-    mutating func scanThrough(_ character: Character) -> Character? {
-        guard first == character else {
-            return nil
-        }
-
-        return removeFirst()
-    }
-
-    @discardableResult
-    mutating func skip(_ count: Int) -> Substring? {
-        guard self.count >= count else {
-            return nil
-        }
-
-        let skipped = prefix(count)
-        removeFirst(count)
-
-        return skipped
-    }
-
-    @discardableResult
-    mutating func skipThrough(_ delimiter: Character) -> Bool {
-        guard let index = firstIndex(of: delimiter) else {
-            return false
-        }
-
-        self = self[self.index(after: index)...]
-
-        return true
-    }
-}
-
 /*
-extension Collection where SubSequence == Self {
-    // via: https://www.objc.io/blog/2019/02/05/a-scanner-alternative/
+ final class ThreadSafe<A> {
+     // via: https://talk.objc.io/episodes/S01E90-concurrent-map
+     private var _value: A
+     private let queue = DispatchQueue(label: "ThreadSafe")
+     init(_ value: A) {
+         _value = value
+     }
 
-    @discardableResult mutating func scan(_ condition: (Element) -> Bool) -> Element? {
-        guard let f = first, condition(f) else {
-            return nil
-        }
+     var value: A {
+         queue.sync { _value }
+     }
 
-        return removeFirst()
-    }
+     func atomically(_ transform: (inout A) -> Void) {
+         queue.sync {
+             transform(&self._value)
+         }
+     }
+ }
 
-    @discardableResult mutating func scan(count: Int) -> Self? {
-        let result = prefix(count)
-        guard result.count == count else {
-            return nil
-        }
+  extension Collection where SubSequence == Self {
+      // via: https://www.objc.io/blog/2019/02/05/a-scanner-alternative/
 
-        removeFirst(count)
+      @discardableResult mutating func scan(_ condition: (Element) -> Bool) -> Element? {
+          guard let f = first, condition(f) else {
+              return nil
+          }
 
-        return result
-    }
+          return removeFirst()
+      }
 
-    @discardableResult mutating func scan(until condition: (Element) -> Bool) -> Self? {
-        guard let index = firstIndex(where: condition) else {
-            return nil
-        }
+      @discardableResult mutating func scan(count: Int) -> Self? {
+          let result = prefix(count)
+          guard result.count == count else {
+              return nil
+          }
 
-        let result = self[..<index]
-        defer { self = self[index...] }
+          removeFirst(count)
 
-        return result
-    }
-}
-*/
+          return result
+      }
+
+      @discardableResult mutating func scan(until condition: (Element) -> Bool) -> Self? {
+          guard let index = firstIndex(where: condition) else {
+              return nil
+          }
+
+          let result = self[..<index]
+          defer { self = self[index...] }
+
+          return result
+      }
+  }
+ */
