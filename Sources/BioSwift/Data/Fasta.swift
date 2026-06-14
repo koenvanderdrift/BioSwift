@@ -28,19 +28,13 @@ public struct FastaRecord: Codable, Hashable, Identifiable {
     }
 }
 
-public final class FastaParser {
+public final class FastaDecoder {
     public struct RawRecord {
         let info: String
         let sequence: String
     }
 
-    var fileName: String = ""
-
-    public init(fileName: String) {
-        self.fileName = fileName
-    }
-
-    public func parseFastaFile() throws -> [FastaRecord] {
+    public func parseFastaFile(_ fileName: String) throws -> [FastaRecord] {
         let fullName = "\(fileName).fasta"
 
         let fastaText = try loadText(from: fileName, withExtension: "fasta")
@@ -56,7 +50,7 @@ public final class FastaParser {
         }
     }
 
-    public func parseFastaFileFromBundle() throws -> [FastaRecord] {
+    public func parseFastaFileFromBundle(_ fileName: String) throws -> [FastaRecord] {
         let fullName = "\(fileName).fasta"
 
         let fastaText = try loadText(from: fileName, withExtension: "fasta", in: .module)
@@ -69,6 +63,23 @@ public final class FastaParser {
 
         } catch {
             throw LoadError.fileDecodingFailed(name: fullName, underlyingError: error)
+        }
+    }
+
+    public func parseFastaData(_ data: Data) throws -> [FastaRecord] {
+        guard let fastaText = String(data: data, encoding: .utf8) else {
+            throw LoadError.fileConversionFailed(name: "data", underlyingError: nil)
+        }
+
+        let rawRecords = try splitRawRecords(from: fastaText)
+
+        do {
+            return try rawRecords.concurrentMap { rawRecord in
+                try self.decodeRecord(rawRecord)
+            }
+
+        } catch {
+            throw LoadError.fileDecodingFailed(name: "unknown", underlyingError: error)
         }
     }
 
