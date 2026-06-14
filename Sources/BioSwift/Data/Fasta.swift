@@ -33,6 +33,8 @@ public final class FastaDecoder {
         let info: String
         let sequence: String
     }
+    
+    public init() {}
 
     public func parseFastaFile(_ fileName: String) throws -> [FastaRecord] {
         let fullName = "\(fileName).fasta"
