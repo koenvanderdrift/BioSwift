@@ -5,7 +5,6 @@
 //  Created by Koen van der Drift on 8/18/20.
 //  Copyright © 2020 - 2025 Koen van der Drift. All rights reserved.
 
-import Combine
 import Foundation
 
 public let zeroFastaRecord = FastaRecord(accession: "", entryName: "", proteinName: "", organism: "", sequence: "")
@@ -37,7 +36,7 @@ public final class FastaParser {
 
     var fileName: String = ""
 
-    init(fileName: String) {
+    public init(fileName: String) {
         self.fileName = fileName
     }
 
