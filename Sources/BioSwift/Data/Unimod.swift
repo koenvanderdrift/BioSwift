@@ -66,25 +66,19 @@ public final class UnimodXMLParser: NSObject {
 
         let data = try loadData(from: "unimod", withExtension: "xml", in: .module)
 
-        try await Task.detached(priority: .userInitiated) {
-            let xmlParser = UnimodXMLParser()
-
-            try xmlParser.parseXML(data: data)
+        try await Task.detached(priority: .userInitiated) { [self] in
+            try parseXML(data: data)
         }.value
     }
 
-    public func parseXML(
-        data: Data
-    ) throws {
+    func parseXML(data: Data) throws {
         parseError = nil
 
         let parser = XMLParser(data: data)
         parser.delegate = self
 
         guard parser.parse() else {
-            throw parseError
-                ?? parser.parserError
-                ?? LoadError.fileParsingFailed(name: "unimod.xml", underlyingError: parseError)
+            throw parseError ?? parser.parserError ?? LoadError.fileParsingFailed(name: "unimod.xml", underlyingError: nil)
         }
     }
 }
