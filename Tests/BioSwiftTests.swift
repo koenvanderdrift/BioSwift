@@ -285,10 +285,8 @@ struct BioSwiftTests {
     }
 
     @Test func parseFasta() {
-        let parser = FastaDecoder()
-
         do {
-            let fastaRecords = try parser.parseFastaFileFromBundle("ecoli")
+            let fastaRecords = try FastaParser().parseBundleFile("ecoli")
             #expect(fastaRecords.count == 4392)
 
             if let record = fastaRecords.first(where: { $0.accession == "P02919" }) {

@@ -16,6 +16,14 @@ public enum LoadError: Error {
     case fileParsingFailed(name: String, underlyingError: Error?)
 }
 
+/*
+ API:
+
+ loadData(from:withExtension:in:)
+ loadText(from:withExtension:in:encoding:)
+
+ */
+
 public func loadData(from fileName: String, withExtension fileExtension: String, in bundle: Bundle = .main) throws -> Data {
     let fullName = "\(fileName).\(fileExtension)"
 
@@ -30,9 +38,7 @@ public func loadData(from fileName: String, withExtension fileExtension: String,
     }
 }
 
-public func loadText(from fileName: String, withExtension fileExtension: String,
-                     in bundle: Bundle = .main, encoding: String.Encoding = .utf8) throws -> String
-{
+public func loadText(from fileName: String, withExtension fileExtension: String, in bundle: Bundle = .main, encoding: String.Encoding = .utf8) throws -> String {
     let fullName = "\(fileName).\(fileExtension)"
 
     guard let url = bundle.url(forResource: fileName, withExtension: fileExtension) else {
@@ -41,34 +47,6 @@ public func loadText(from fileName: String, withExtension fileExtension: String,
 
     do {
         return try String(contentsOf: url, encoding: encoding)
-    } catch {
-        throw LoadError.fileReadFailed(name: fullName, underlyingError: error)
-    }
-}
-
-public func loadDataFromBundle(from fileName: String, withExtension fileExtension: String) throws -> Data {
-    let fullName = "\(fileName).\(fileExtension)"
-
-    guard let url = Bundle.module.url(forResource: fileName, withExtension: fileExtension) else {
-        throw LoadError.fileNotFound(name: fileName)
-    }
-
-    do {
-        return try Data(contentsOf: url)
-    } catch {
-        throw LoadError.fileReadFailed(name: fullName, underlyingError: error)
-    }
-}
-
-public func loadTextFromBundle(from fileName: String, withExtension fileExtension: String) throws -> String {
-    let fullName = "\(fileName).\(fileExtension)"
-
-    guard let path = Bundle.module.path(forResource: fileName, ofType: fileExtension) else {
-        throw LoadError.fileNotFound(name: fileName)
-    }
-
-    do {
-        return try String(contentsOfFile: path)
     } catch {
         throw LoadError.fileReadFailed(name: fullName, underlyingError: error)
     }

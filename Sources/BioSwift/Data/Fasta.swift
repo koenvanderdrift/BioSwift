@@ -28,49 +28,60 @@ public struct FastaRecord: Codable, Hashable, Identifiable {
     }
 }
 
-public final class FastaDecoder {
+/*
+ API:
+ 
+ let records = try FastaParser().parse(data: data)
+ let records = try FastaParser().parse(text: text)
+ let records = try FastaParser().parseBundleFile(named: "records")
+ 
+ */
+
+public final class FastaParser {
     public struct RawRecord {
         let info: String
         let sequence: String
     }
-
+    
     public init() {}
-
-    public func parseFastaFile(_ fileName: String) throws -> [FastaRecord] {
+    
+    public func parse(_ fileName: String) throws -> [FastaRecord] {
         let fastaText = try loadText(from: fileName, withExtension: "fasta")
         let fullName = "\(fileName).fasta"
-
+        
         do {
-            return try parseText(fastaText)
-
+            return try parseFasta(fastaText)
+            
         } catch {
             throw LoadError.fileDecodingFailed(name: fullName, underlyingError: error)
         }
     }
-
-    public func parseFastaFileFromBundle(_ fileName: String) throws -> [FastaRecord] {
-        let fastaText = try loadText(from: fileName, withExtension: "fasta", in: .module)
-        let fullName = "\(fileName).fasta"
-
-        do {
-            return try parseText(fastaText)
-
-        } catch {
-            throw LoadError.fileDecodingFailed(name: fullName, underlyingError: error)
-        }
-    }
-
-    public func parseFastaData(_ data: Data) throws -> [FastaRecord] {
+    
+    public func parse(_ data: Data) throws -> [FastaRecord] {
         guard let fastaText = String(data: data, encoding: .utf8) else {
             throw LoadError.fileConversionFailed(name: "data", underlyingError: nil)
         }
-
-        return try parseText(fastaText)
+        
+        return try parseFasta(fastaText)
     }
+    
+    public func parseBundleFile(_ fileName: String) throws -> [FastaRecord] {
+        let fastaText = try loadText(from: fileName, withExtension: "fasta", in: .module)
+        let fullName = "\(fileName).fasta"
+        
+        do {
+            return try parseFasta(fastaText)
+            
+        } catch {
+            throw LoadError.fileDecodingFailed(name: fullName, underlyingError: error)
+        }
+    }
+}
 
-    func parseText(_ fastaText: String) throws -> [FastaRecord] {
+extension FastaParser {
+    func parseFasta(_ fastaText: String) throws -> [FastaRecord] {
         let rawRecords = try splitRawRecords(from: fastaText)
-
+        
         return try rawRecords.concurrentMap { rawRecord in
             try self.parseRecord(rawRecord)
         }
@@ -135,7 +146,7 @@ public final class FastaDecoder {
     }
 }
 
-extension FastaDecoder {
+extension FastaParser {
     func parseRecord(_ record: RawRecord) throws -> FastaRecord {
         let input = record.info[...]
 
@@ -158,7 +169,7 @@ extension FastaDecoder {
         return result
     }
 
-    func parse(_ input: String) -> FastaRecord {
+    func parseString(_ input: String) -> FastaRecord {
         // https://www.uniprot.org/help/fasta-headers
 
         var input = input[...]
