@@ -7,7 +7,7 @@
 
 import Foundation
 
-public var loadElementsFromUnimod: Bool = true
+public var loadElementsFromUnimod: Bool = false
 
 public var dataLibrary = DataLibrary()
 
