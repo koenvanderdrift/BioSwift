@@ -52,6 +52,14 @@ public func loadText(from fileName: String, withExtension fileExtension: String,
     }
 }
 
+public func loadText(from url: URL, encoding: String.Encoding = .utf8) throws -> String {
+    do {
+        return try String(contentsOf: url, encoding: encoding)
+    } catch {
+        throw LoadError.fileReadFailed(name: url.lastPathComponent, underlyingError: error)
+    }
+}
+
 /*
  via:  http://stackoverflow.com/questions/41402770/swift-parse-string-with-different-formats/41402868#41402868
 
