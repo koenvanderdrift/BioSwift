@@ -10,7 +10,7 @@ import Foundation
 
 // https://medium.com/swift2go/mastering-generics-with-protocols-the-specification-pattern-5e2e303af4ca
 
-public protocol Chain: Codable {
+public protocol Chain {
     associatedtype ResidueType: Residue
 
     var name: String { get set }

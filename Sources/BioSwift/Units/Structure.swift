@@ -10,7 +10,7 @@ import Foundation
 
 // TODO: rethink Structure, Mass, ChargedMass
 
-public protocol Structure: Mass, Codable {
+public protocol Structure: Mass {
     var name: String { get }
     var formula: Formula { get }
 }

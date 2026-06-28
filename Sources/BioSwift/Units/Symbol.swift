@@ -8,7 +8,7 @@
 
 import Foundation
 
-public protocol Symbol: Codable {
+public protocol Symbol {
     var identifier: String { get }
 }
 

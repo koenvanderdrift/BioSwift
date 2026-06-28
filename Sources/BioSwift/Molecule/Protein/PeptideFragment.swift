@@ -97,7 +97,7 @@ public enum PeptideFragmentType: CaseIterable, Codable, Identifiable {
     }
 }
 
-public protocol Fragmenting: Codable {
+public protocol Fragmenting {
     var fragmentType: PeptideFragmentType { get set }
     var index: Int { get set }
 }

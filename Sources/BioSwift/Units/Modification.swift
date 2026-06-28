@@ -70,7 +70,7 @@ extension Reaction: Mass {
     }
 }
 
-public protocol Modifiable: Codable {
+public protocol Modifiable {
     var modification: Modification? { get set }
 
     func allowedModifications() -> [Modification]
