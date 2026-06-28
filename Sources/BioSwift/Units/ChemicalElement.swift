@@ -18,7 +18,7 @@ public struct ChemicalElement: Codable, Symbol {
     public let name: String
     public let symbol: String
     public let isotopes: [Isotope]
-    public var elementMasses: MassContainer = zeroMass
+    public var cachedMasses: MassContainer = zeroMass
 
     public init(name: String, symbol: String, isotopes: [Isotope]) {
         self.name = name
@@ -44,13 +44,11 @@ public struct ChemicalElement: Codable, Symbol {
         self.symbol = symbol
         isotopes = []
 
-        let nominalMass = monoisotopicMass.roundedInt()
-
-        elementMasses = MassContainer(monoisotopicMass: monoisotopicMass, averageMass: averageMass, nominalMass: nominalMass ?? 0)
+        setUp()
     }
 
     private mutating func setUp() {
-        elementMasses = calculateMasses()
+        cachedMasses = calculateMasses()
     }
 
     public var identifier: String {
@@ -74,7 +72,7 @@ extension ChemicalElement: Equatable, Hashable {
 
 extension ChemicalElement: Mass {
     public var masses: MassContainer {
-        elementMasses
+        cachedMasses
     }
 
     public func calculateMasses() -> MassContainer {
