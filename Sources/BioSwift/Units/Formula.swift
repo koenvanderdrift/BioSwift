@@ -13,7 +13,8 @@ public let zeroFormula = Formula("")
 public struct Formula: Codable {
     public var string: String
     public var countedElements: [ChemicalElement: Int]
-
+    public var cachedMasses: MassContainer = zeroMass
+    
     public var chemicalString: String {
         var result = ""
 
@@ -39,6 +40,8 @@ public struct Formula: Codable {
         if self.string.isEmpty {
             self.string = formulaString()
         }
+        
+        cachedMasses = calculateMasses()
     }
 
     private mutating func setUp(from string: String, or elementsDictionary: [String: Int]) {
@@ -271,7 +274,7 @@ extension Formula: Equatable {
 
 extension Formula: Mass {
     public var masses: MassContainer {
-        calculateMasses()
+       cachedMasses
     }
 
     public func calculateMasses() -> MassContainer {
