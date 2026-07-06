@@ -114,7 +114,7 @@ public struct ModificationSpecificity: Codable {
     }
 }
 
-public struct Modification: Codable {
+public struct Modification: Codable, @unchecked Sendable {
     public let name: String
     public let fullName: String
     public let reactions: [Reaction]

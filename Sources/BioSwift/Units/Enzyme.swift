@@ -20,7 +20,7 @@ public enum CleaveDirection: String, CaseIterable, Codable, Identifiable {
     }
 }
 
-public struct Enzyme: Codable {
+public struct Enzyme: Codable, @unchecked Sendable {
     public let name: String
     public let cleaveAt: [String]
     public let dontCleaveBefore: [String]
