@@ -11,30 +11,30 @@ import Testing
 
 // https://stackoverflow.com/questions/79856701/swift-testing-load-data-before-the-tests-start/
 
-struct DataLibraryTrait: SuiteTrait, TestScoping {
-    func provideScope(for _: Test, testCase _: Test.Case?, performing function: @Sendable () async throws -> Void) async throws {
-        print("start set up")
-        
-        let _ = DataLibraryDefaults.bundled
-        let data = try loadData(
-            from: "unimod",
-            withExtension: "xml",
-            in: .module
-        )
-
-        try _ = UnimodXMLParser().parse(data: data)
-        try await function()
-        print("tests completed")
-    }
-}
-
-extension SuiteTrait where Self == DataLibraryTrait {
-    static var bioSwiftDataLbrary: DataLibraryTrait {
-        .init()
-    }
-}
-
-@Suite(.bioSwiftDataLbrary)
+//struct DataLibraryTrait: SuiteTrait, TestScoping {
+//    func provideScope(for _: Test, testCase _: Test.Case?, performing function: @Sendable () async throws -> Void) async throws {
+//        print("start set up")
+//        
+//        let _ = DataLibraryDefaults.bundled
+//        let data = try loadData(
+//            from: "unimod",
+//            withExtension: "xml",
+//            in: .module
+//        )
+//
+//        try _ = UnimodXMLParser().parse(data: data)
+//        try await function()
+//        print("tests completed")
+//    }
+//}
+//
+//extension SuiteTrait where Self == DataLibraryTrait {
+//    static var bioSwiftDataLbrary: DataLibraryTrait {
+//        .init()
+//    }
+//}
+//
+//@Suite(.bioSwiftDataLbrary)
 struct BioSwiftTests {
     var testProtein = Protein(sequence: "MPSSVSWGILLLAGLCCLVPVSLAEDPQGDAAQKTDTSHHDQDHPTFNKITPNLAEFAFSLYRQLAHQSNSTNIFFSPIVSIATAFAMLSLGTKADTHDEILEGLNFNLTEIPEAQIHEGFQELLRTLNQPDSQLQLTTGNGLFLSEGLKLVDKFLEDVKKLYHSEAFTVNFGDTEEAKKQINDYVEKGTQGKIVDLVKELDRDTVFALVNYIFFKGKWERPFEVKDTEEEDFHVDQVTTVKVPMMKRLGMFNIQHCKKLSSWVLLMKYLGNATAIFFLPDEGKLQHLENELTHDIITKFLENEDRRSASLHLPKLSITGTYDLKSVLGQLGITKVFSNGADLSGVTEEAPLKLSKAVHKAVLTIDEKGTEAAGAMFLEAIPMSIPPEVKFNKPFVFMIEQNTKSPLFMGKVVNPTQK")
     var testPeptide = Peptide(sequence: "DWSSD")
@@ -45,18 +45,22 @@ struct BioSwiftTests {
     func bundledDataLibrariesLoadProperly() throws {
         let libraries = try DataLibraryDefaults.loadBundled()
 
+        #expect(!libraries.elements.isEmpty)
         #expect(!libraries.modifications.isEmpty)
         #expect(!libraries.aminoAcids.isEmpty)
         #expect(!libraries.enzymes.isEmpty)
+        #expect(!libraries.hydropathyValues.isEmpty)
     }
     
     @Test
     func bundledDefaultsAreAvailable() {
         let libraries = DataLibraryDefaults.bundled
 
+        #expect(!libraries.elements.isEmpty)
         #expect(!libraries.modifications.isEmpty)
         #expect(!libraries.aminoAcids.isEmpty)
         #expect(!libraries.enzymes.isEmpty)
+        #expect(!libraries.hydropathyValues.isEmpty)
     }
     
     @Test
@@ -76,6 +80,14 @@ struct BioSwiftTests {
 
         #expect(!xmlLibraries.aminoAcids.isEmpty)
         #expect(!xmlLibraries.modifications.isEmpty)
+    }
+    
+    @Test
+    func jsonDataLibrariesLoadProperly() throws {
+        let jsonLibraries = try JSONDataLibraryLoader.loadOtherLibraries()
+
+        #expect(!jsonLibraries.enzymes.isEmpty)
+        #expect(!jsonLibraries.hydropathyValues.isEmpty)
     }
     
     @Test
@@ -403,7 +415,7 @@ struct BioSwiftTests {
 
         let missedCleavages = 0
 
-        let trypsin = enzymeLibrary.first(where: { $0.name == "Trypsin" })
+        let trypsin = enzymesLibrary.first(where: { $0.name == "Trypsin" })
 
         if let enzyme = trypsin {
             let peptides: [Peptide] = digester.peptides(using: enzyme, with: missedCleavages)
@@ -412,7 +424,7 @@ struct BioSwiftTests {
             #expect(peptides[1].sequenceString == "TDTSHHDQDHPTFNK")
         }
 
-        let aspN = enzymeLibrary.first(where: { $0.name == "Asp-N" })
+        let aspN = enzymesLibrary.first(where: { $0.name == "Asp-N" })
 
         if let enzyme = aspN {
             let peptides: [Peptide] = digester.peptides(using: enzyme, with: missedCleavages)
@@ -423,7 +435,7 @@ struct BioSwiftTests {
     }
 
     @Test func digestUnspecified() {
-        let unspecified = enzymeLibrary.first(where: { $0.name == "Unspecified" })
+        let unspecified = enzymesLibrary.first(where: { $0.name == "Unspecified" })
         #expect(unspecified?.name == "Unspecified")
     }
 
@@ -432,7 +444,7 @@ struct BioSwiftTests {
 
         let missedCleavages = 1
 
-        let trypsin = enzymeLibrary.first(where: { $0.name == "Trypsin" })
+        let trypsin = enzymesLibrary.first(where: { $0.name == "Trypsin" })
 
         if let enzyme = trypsin {
             let peptides: [Peptide] = digester.peptides(using: enzyme, with: missedCleavages)

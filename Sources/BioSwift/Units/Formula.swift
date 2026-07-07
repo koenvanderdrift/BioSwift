@@ -201,7 +201,7 @@ extension Formula {
                     i = j
                 }
 
-                if let element = elementLibrary.first(where: { $0.identifier == elementName }) {
+                if let element = elementsLibrary.first(where: { $0.identifier == elementName }) {
                     for _ in 0 ..< (elementCount * multiplication[parenthesisLevel]) {
                         countedElements[element] = (countedElements[element] ?? 0) + 1
                     }

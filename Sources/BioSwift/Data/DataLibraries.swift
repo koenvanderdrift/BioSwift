@@ -1,5 +1,5 @@
 //
-//  DataLibrary.swift
+//  DataLibraries.swift
 //  BioSwift
 //
 //  Created by Koen van der Drift on 1/29/22.
@@ -8,75 +8,6 @@
 import Foundation
 
 public var loadElementsFromUnimod: Bool = false
-
-public var dataLibrary = DataLibrary()
-
-//public var aminoAcidLibrary: [AminoAcid] = dataLibrary.aminoAcids
-public var elementLibrary: [ChemicalElement] = dataLibrary.elements
-public var enzymeLibrary: [Enzyme] = [unspecifiedEnzyme] + dataLibrary.enzymes
-public var hydropathyLibrary: [Hydro] = dataLibrary.hydropathy
-//public var modificationLibrary: [Modification] = [zeroModification] + dataLibrary.modifications
-
-public enum LibraryType: Codable, Identifiable {
-    case aminoAcids
-    case elements
-    case enzymes
-    case hydropathy
-    case modifications
-
-    public var id: Self {
-        self
-    }
-}
-
-public struct DataLibrary: Codable {
-    public var aminoAcids: [AminoAcid] {
-        library(.aminoAcids)
-    }
-
-    public var elements: [ChemicalElement] {
-        library(.elements)
-    }
-
-    public var enzymes: [Enzyme] {
-        library(.enzymes)
-    }
-
-    public var hydropathy: [Hydro] {
-        library(.hydropathy)
-    }
-
-    public var modifications: [Modification] {
-        library(.modifications)
-    }
-
-    private func library<T: Decodable>(_ type: LibraryType) -> [T] {
-        do {
-            switch type {
-            case .aminoAcids:
-                return [] // populated in loadUnimod
-            case .modifications:
-                return [] // populated in loadUnimod
-            case .elements:
-                if loadElementsFromUnimod {
-                    return [] // populated in loadUnimod
-                } else {
-                    return try parseJSONDataFromBundle(from: "elements")
-                }
-
-            case .enzymes:
-                return try parseJSONDataFromBundle(from: "enzymes")
-
-            case .hydropathy:
-                return try parseJSONDataFromBundle(from: "hydropathy")
-            }
-        } catch {
-            print("Error occurred \(error)")
-        }
-
-        return []
-    }
-}
 
 // 1. Add Sendable to simple value structs.
 // 2. Introduce DataLibraries as the immutable bundled snapshot.
@@ -88,25 +19,30 @@ public struct DataLibrary: Codable {
 // MARK: - Final public bundled-data snapshot
 
 public struct DataLibraries: Sendable {
+    public let elements: [ChemicalElement]
     public let aminoAcids: [AminoAcid]
     public let modifications: [Modification]
     public let enzymes: [Enzyme]
+    public let hydropathyValues: [Hydro]
 
     public init(
+        elements: [ChemicalElement],
         aminoAcids: [AminoAcid],
         modifications: [Modification],
-        enzymes: [Enzyme])
+        enzymes: [Enzyme],
+        hydropathyValues: [Hydro])
     {
+        self.elements = elements
         self.aminoAcids = aminoAcids
         self.modifications = modifications
         self.enzymes = enzymes
+        self.hydropathyValues = hydropathyValues
     }
 }
 
 // MARK: - Public access point
 
 public enum DataLibraryDefaults {
-    /// Public immutable bundled defaults.
     public static let bundled: DataLibraries = {
         do {
             return try DataLibraryLoader.load()
@@ -115,9 +51,22 @@ public enum DataLibraryDefaults {
         }
     }()
 
-    /// Useful for tests/debugging because it throws instead of trapping.
     public static func loadBundled() throws -> DataLibraries {
         try DataLibraryLoader.load()
+    }
+
+    public enum ElementsLibraryDefaults {
+        public static let bundled: [ChemicalElement] = {
+            do {
+                return try JSONDataLibraryLoader.loadElements()
+            } catch {
+                fatalError("Failed to load bundled foo library: \(error)")
+            }
+        }()
+    }
+
+    public var elementsLibrary: [ChemicalElement] {
+        ElementsLibraryDefaults.bundled
     }
 }
 
@@ -128,33 +77,52 @@ public enum DataLibraryDefaults {
 //
 // They are computed, not stored mutable globals.
 
-//@available(*, deprecated, message: "Use DataLibraryDefaults.bundled.aminoAcids instead.")
+// @available(*, deprecated, message: "Use DataLibraryDefaults.bundled.aminoAcids instead.")
 public var aminoAcidsLibrary: [AminoAcid] {
     DataLibraryDefaults.bundled.aminoAcids
 }
 
-//@available(*, deprecated, message: "Use DataLibraryDefaults.bundled.modifications instead.")
+// @available(*, deprecated, message: "Use DataLibraryDefaults.bundled.modifications instead.")
 public var modificationsLibrary: [Modification] {
-    DataLibraryDefaults.bundled.modifications
+    DataLibraryDefaults.bundled.modifications + [zeroModification]
+}
+
+// @available(*, deprecated, message: "Use DataLibraryDefaults.bundled.modifications instead.")
+public var elementsLibrary: [ChemicalElement] {
+    ElementsLibraryDefaults.bundled
+}
+
+// @available(*, deprecated, message: "Use DataLibraryDefaults.bundled.modifications instead.")
+public var enzymesLibrary: [Enzyme] {
+    DataLibraryDefaults.bundled.enzymes + [unspecifiedEnzyme]
+}
+
+// @available(*, deprecated, message: "Use DataLibraryDefaults.bundled.modifications instead.")
+public var hydropathyLibrary: [Hydro] {
+    DataLibraryDefaults.bundled.hydropathyValues
 }
 
 // MARK: - Combined loader
 
 enum DataLibraryLoader {
     static func load() throws -> DataLibraries {
+        let elements = elementsLibrary
+        let jsonLibraries = try JSONDataLibraryLoader.loadOtherLibraries()
+
         let xmlLibraries = try XMLDataLibraryLoader.load()
-        let jsonLibraries = try JSONDataLibraryLoader.load()
 
         return DataLibraries(
+            elements: elements,
             aminoAcids: xmlLibraries.aminoAcids,
             modifications: xmlLibraries.modifications,
-            enzymes: jsonLibraries.enzymes)
+            enzymes: jsonLibraries.enzymes,
+            hydropathyValues: jsonLibraries.hydropathyValues)
     }
 }
 
 // MARK: - Partial XML result
 
-struct XMLDataLibraries {
+public struct XMLDataLibraries {
     let aminoAcids: [AminoAcid]
     let modifications: [Modification]
 }
@@ -183,30 +151,38 @@ enum XMLDataLibraryLoader {
 
 struct JSONDataLibraries {
     let enzymes: [Enzyme]
-    let elements: [ChemicalElement]
-    let hydropathyvalues: [Hydro]
+    let hydropathyValues: [Hydro]
 }
 
 // MARK: - JSON loader
 
+public enum ElementsLibraryDefaults {
+    public static let bundled: [ChemicalElement] = {
+        do {
+            return try JSONDataLibraryLoader.loadElements()
+        } catch {
+            fatalError("Failed to load bundled elements library: \(error)")
+        }
+    }()
+}
+
 enum JSONDataLibraryLoader {
-    static func load() throws -> JSONDataLibraries {
+    static func loadElements() throws -> [ChemicalElement] {
+        try parseJSONDataFromBundle(ChemicalElement.self, from: "elements")
+    }
+
+    static func loadOtherLibraries() throws -> JSONDataLibraries {
         let enzymes = try parseJSONDataFromBundle(
             Enzyme.self,
             from: "enzymes")
 
-        let elements = try parseJSONDataFromBundle(
-            ChemicalElement.self,
-            from: "elements")
-
-        let hydropathyvalues = try parseJSONDataFromBundle(
+        let hydropathyValues = try parseJSONDataFromBundle(
             Hydro.self,
             from: "hydropathy")
 
         return JSONDataLibraries(
             enzymes: enzymes,
-            elements: elements,
-            hydropathyvalues: hydropathyvalues)
+            hydropathyValues: hydropathyValues)
     }
 }
 
@@ -270,3 +246,72 @@ func parseJSONDataFromBundle<A: Decodable>(
 //
 //// App:
 // referenceLibraryStore.allAminoAcids
+
+// public var dataLibrary = DataLibrary()
+//
+// public var aminoAcidLibrary: [AminoAcid] = dataLibrary.aminoAcids
+// public var elementsLibrary: [ChemicalElement] = dataLibrary.elements
+// public var enzymeLibrary: [Enzyme] = [unspecifiedEnzyme] + dataLibrary.enzymes
+// public var hydropathyLibrary: [Hydro] = dataLibrary.hydropathy
+// public var modificationLibrary: [Modification] = [zeroModification] + dataLibrary.modifications
+//
+// public enum LibraryType: Codable, Identifiable {
+//    case aminoAcids
+//    case elements
+//    case enzymes
+//    case hydropathy
+//    case modifications
+//
+//    public var id: Self {
+//        self
+//    }
+// }
+//
+// public struct DataLibrary: Codable {
+//    public var aminoAcids: [AminoAcid] {
+//        library(.aminoAcids)
+//    }
+//
+//    public var elements: [ChemicalElement] {
+//        library(.elements)
+//    }
+//
+//    public var enzymes: [Enzyme] {
+//        library(.enzymes)
+//    }
+//
+//    public var hydropathy: [Hydro] {
+//        library(.hydropathy)
+//    }
+//
+//    public var modifications: [Modification] {
+//        library(.modifications)
+//    }
+//
+//    private func library<T: Decodable>(_ type: LibraryType) -> [T] {
+//        do {
+//            switch type {
+//            case .aminoAcids:
+//                return [] // populated in loadUnimod
+//            case .modifications:
+//                return [] // populated in loadUnimod
+//            case .elements:
+//                if loadElementsFromUnimod {
+//                    return [] // populated in loadUnimod
+//                } else {
+//                    return try parseJSONDataFromBundle(from: "elements")
+//                }
+//
+//            case .enzymes:
+//                return try parseJSONDataFromBundle(from: "enzymes")
+//
+//            case .hydropathy:
+//                return try parseJSONDataFromBundle(from: "hydropathy")
+//            }
+//        } catch {
+//            print("Error occurred \(error)")
+//        }
+//
+//        return []
+//    }
+// }
