@@ -14,7 +14,7 @@ public struct Isotope: Codable {
     public let abundance: String
 }
 
-public struct ChemicalElement: Codable, Symbol {
+public struct ChemicalElement: Codable, Symbol, @unchecked Sendable {
     public let name: String
     public let symbol: String
     public let isotopes: [Isotope]

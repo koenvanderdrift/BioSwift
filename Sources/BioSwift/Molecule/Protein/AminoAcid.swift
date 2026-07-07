@@ -29,7 +29,7 @@ public struct AminoAcidProperties: OptionSet, Codable {
     public static let chargedNeg = AminoAcidProperties(rawValue: 1 << 11)
 }
 
-public struct AminoAcid: Residue, Codable {
+public struct AminoAcid: Residue, Codable, @unchecked Sendable {
     public let formula: Formula
     public let name: String
     public let oneLetterCode: String
