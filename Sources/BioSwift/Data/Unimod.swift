@@ -39,6 +39,10 @@ public final class UnimodXMLParser: NSObject {
 
     private var skipTitleStrings: [String] = []
 
+    var parsedElements: [ChemicalElement] = []
+    var parsedAminoAcids: [AminoAcid] = []
+    var parsedModifications: [Modification] = []
+    
     var elementSymbol = ""
     var elementFullName = ""
     var elementMonoisotopicMass = ""
@@ -61,25 +65,41 @@ public final class UnimodXMLParser: NSObject {
 
     let rightArrow = "\u{2192}"
 
-    public func parseXML() async throws {
+    func parse(data: Data) throws -> XMLDataLibraries {
         skipTitleStrings = [cation, unknown, xlink, atypeion, "2H", "13C", "15N"]
 
-        let data = try loadData(from: "unimod", withExtension: "xml", in: .module)
-
-        try await Task.detached(priority: .userInitiated) { [self] in
-            try parseXML(data: data)
-        }.value
-    }
-
-    func parseXML(data: Data) throws {
         parseError = nil
+        parsedElements = []
+        parsedAminoAcids = []
+        parsedModifications = []
 
-        let parser = XMLParser(data: data)
-        parser.delegate = self
+        
+        
+        let xmlParser = XMLParser(data: data)
+        xmlParser.delegate = self
+        
+        let didParse = xmlParser.parse()
 
-        guard parser.parse() else {
-            throw parseError ?? parser.parserError ?? LoadError.fileParsingFailed(name: "unimod.xml", underlyingError: nil)
-        }
+            print("XML parser.parse() returned:", didParse)
+            print("XML parser error:", xmlParser.parserError as Any)
+            print("parseError:", parseError as Any)
+            print("parsedFoos count before return:", parsedAminoAcids.count)
+            print("parsedBars count before return:", parsedModifications.count)
+        
+
+        guard didParse else {
+                throw parseError
+                    ?? xmlParser.parserError
+                    ?? LoadError.fileParsingFailed(
+                        name: "datafile.xml",
+                        underlyingError: nil
+                    )
+            }
+        
+        return XMLDataLibraries(
+            aminoAcids: parsedAminoAcids,
+            modifications: parsedModifications
+        )
     }
 }
 
@@ -160,7 +180,7 @@ extension UnimodXMLParser: XMLParserDelegate {
             if elementFullName.isEmpty == false {
                 let chemicalElement = ChemicalElement(name: elementFullName, symbol: elementSymbol, monoisotopicMass: Dalton(string: elementMonoisotopicMass) ?? 0.0, averageMass: Dalton(string: elementAverageMass) ?? 0.0)
 
-                elementLibrary.append(chemicalElement)
+                parsedElements.append(chemicalElement)
 
                 elementSymbol.removeAll()
                 elementFullName.removeAll()
@@ -175,7 +195,7 @@ extension UnimodXMLParser: XMLParserDelegate {
             if modificationTitle.isEmpty == false {
                 let mod = Modification(name: modificationTitle, fullName: modificationFullName, elements: modificationElements, specificities: modificationSpecificities)
 
-                modificationLibrary.append(mod)
+                parsedModifications.append(mod)
 
                 modificationTitle.removeAll()
                 modificationFullName.removeAll()
@@ -188,7 +208,7 @@ extension UnimodXMLParser: XMLParserDelegate {
             if aminoAcidName.isEmpty == false {
                 let aa = AminoAcid(name: aminoAcidName, oneLetterCode: aminoAcidOneLetterCode, threeLetterCode: aminoAcidThreeLetterCode, elements: aminoAcidElements)
 
-                aminoAcidLibrary.append(aa)
+                parsedAminoAcids.append(aa)
 
                 aminoAcidName.removeAll()
                 aminoAcidOneLetterCode.removeAll()
