@@ -166,14 +166,4 @@ public func loadText(from url: URL, encoding: String.Encoding = .utf8) throws ->
 
     return text
  }
-
- @discardableResult public func time<Result>(name: StaticString = #function, line: Int = #line, _ f: () -> Result) -> Result {
-    // via: https://talk.objc.io/episodes/S01E90-concurrent-map
-    let startTime = DispatchTime.now()
-    let result = f()
-    let endTime = DispatchTime.now()
-    let diff = Double(endTime.uptimeNanoseconds - startTime.uptimeNanoseconds) / 1_000_000_000 as Double
-    debugPrint("\(name) (line \(line)): \(diff) sec")
-    return result
- }
- */
+*/

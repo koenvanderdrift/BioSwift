@@ -45,7 +45,7 @@ public enum MassType: String, CaseIterable, Codable, Identifiable {
     }
 }
 
-public struct MassContainer: Codable, @unchecked Sendable {
+public struct MassContainer: Codable, Sendable {
     public var monoisotopicMass = Dalton(0.0)
     public var averageMass = Dalton(0.0)
     public var nominalMass = 0
@@ -83,7 +83,7 @@ extension MassContainer: Comparable {
     }
 }
 
-public struct Adduct: Codable, Equatable {
+public struct Adduct: Codable, Equatable, Sendable {
     var group: FunctionalGroup
     var charge: Charge
 }

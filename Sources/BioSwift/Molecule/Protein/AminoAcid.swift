@@ -8,7 +8,7 @@
 
 import Foundation
 
-public struct AminoAcidProperties: OptionSet, Codable {
+public struct AminoAcidProperties: OptionSet, Codable, Sendable {
     public let rawValue: Int
 
     public init(rawValue: Int) {
@@ -29,7 +29,7 @@ public struct AminoAcidProperties: OptionSet, Codable {
     public static let chargedNeg = AminoAcidProperties(rawValue: 1 << 11)
 }
 
-public struct AminoAcid: Residue, Codable, @unchecked Sendable {
+public struct AminoAcid: Residue, Codable, Sendable {
     public let formula: Formula
     public let name: String
     public let oneLetterCode: String

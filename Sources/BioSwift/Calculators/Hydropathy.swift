@@ -8,7 +8,7 @@
 
 import Foundation
 
-public struct Hydro: Codable, @unchecked Sendable {
+public struct Hydro: Codable, Sendable {
     public let name: String
     public let values: [String: String]
 }

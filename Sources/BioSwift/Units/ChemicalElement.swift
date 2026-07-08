@@ -8,13 +8,13 @@
 
 import Foundation
 
-public struct Isotope: Codable {
+public struct Isotope: Codable, Sendable {
     public let mass: String
     public let ordinalNumber: String
     public let abundance: String
 }
 
-public struct ChemicalElement: Codable, Symbol, @unchecked Sendable {
+public struct ChemicalElement: Codable, Symbol, Sendable {
     public let name: String
     public let symbol: String
     public let isotopes: [Isotope]

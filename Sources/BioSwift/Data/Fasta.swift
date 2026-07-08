@@ -9,7 +9,7 @@ import Foundation
 
 public let zeroFastaRecord = FastaRecord(accession: "", shortName: "", fullName: "", organism: "", sequence: "")
 
-public struct FastaRecord: Codable, Hashable, Identifiable {
+public struct FastaRecord: Codable, Hashable, Identifiable, Sendable {
     // TODO: add DNA/RNA fasta parsing
     public let id: UUID
     public let accession: String
@@ -45,42 +45,42 @@ public final class FastaParser {
 
     public init() {}
 
-    public func parse(_ fileName: String) throws -> [FastaRecord] {
+    public func parse(_ fileName: String) async throws -> [FastaRecord] {
         let fastaText = try loadText(from: fileName, withExtension: "fasta")
         let fullName = "\(fileName).fasta"
 
         do {
-            return try parseFasta(fastaText)
+            return try await parseFasta(fastaText)
 
         } catch {
             throw LoadError.fileDecodingFailed(name: fullName, underlyingError: error)
         }
     }
 
-    public func parse(_ data: Data) throws -> [FastaRecord] {
+    public func parse(_ data: Data) async throws -> [FastaRecord] {
         guard let fastaText = String(data: data, encoding: .utf8) else {
             throw LoadError.fileConversionFailed(name: "data", underlyingError: nil)
         }
 
-        return try parseFasta(fastaText)
+        return try await parseFasta(fastaText)
     }
 
-    public func parseBundleFile(_ fileName: String) throws -> [FastaRecord] {
+    public func parseBundleFile(_ fileName: String) async throws -> [FastaRecord] {
         let fastaText = try loadText(from: fileName, withExtension: "fasta", in: .module)
         let fullName = "\(fileName).fasta"
 
         do {
-            return try parseFasta(fastaText)
+            return try await parseFasta(fastaText)
 
         } catch {
             throw LoadError.fileDecodingFailed(name: fullName, underlyingError: error)
         }
     }
 
-    public func parseFasta(_ fastaText: String) throws -> [FastaRecord] {
+    public func parseFasta(_ fastaText: String) async throws -> [FastaRecord] {
         let rawRecords = try splitRawRecords(from: fastaText)
 
-        return try rawRecords.concurrentMap { rawRecord in
+        return try await rawRecords.concurrentMap { rawRecord in
             try self.parseRecord(rawRecord)
         }
     }

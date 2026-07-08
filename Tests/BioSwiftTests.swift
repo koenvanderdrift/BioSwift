@@ -352,9 +352,9 @@ struct BioSwiftTests {
         #expect(testPeptide.sequenceString == "DWGPPSSD")
     }
 
-    @Test func parseFasta() {
+    @Test func parseFasta() async {
         do {
-            let fastaRecords = try FastaParser().parseBundleFile("ecoli")
+            let fastaRecords = try await FastaParser().parseBundleFile("ecoli")
             #expect(fastaRecords.count == 4392)
 
             if let record = fastaRecords.first(where: { $0.accession == "P02919" }) {

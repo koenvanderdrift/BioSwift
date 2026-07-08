@@ -28,7 +28,7 @@ public let lossOfAmmonia = Modification(name: "Loss of Ammonia", reactions: [.re
     ModificationSpecificity(site: "K"),
 ])
 
-public indirect enum Reaction: Codable {
+public indirect enum Reaction: Codable, Sendable {
     case add(FunctionalGroup)
     case remove(FunctionalGroup)
     case undefined
@@ -92,7 +92,7 @@ extension Modifiable {
     }
 }
 
-public struct ModificationSpecificity: Codable {
+public struct ModificationSpecificity: Codable, Sendable {
     /*
      via: https://www.unimod.org/fields.html
 
@@ -114,7 +114,7 @@ public struct ModificationSpecificity: Codable {
     }
 }
 
-public struct Modification: Codable, @unchecked Sendable {
+public struct Modification: Codable, Sendable {
     public let name: String
     public let fullName: String
     public let reactions: [Reaction]
@@ -179,7 +179,7 @@ extension Modification: Mass {
     }
 }
 
-public struct LocalizedModification: Codable, Hashable {
+public struct LocalizedModification: Codable, Hashable, Sendable {
     public let location: Int
     public let chain: Int
     public let modification: Modification

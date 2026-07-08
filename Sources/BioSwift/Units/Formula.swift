@@ -10,7 +10,7 @@ import Foundation
 
 public let zeroFormula = Formula("")
 
-public struct Formula: Codable {
+public struct Formula: Codable, Sendable {
     public var string: String
     public var countedElements: [ChemicalElement: Int]
     public var cachedMasses: MassContainer = zeroMass

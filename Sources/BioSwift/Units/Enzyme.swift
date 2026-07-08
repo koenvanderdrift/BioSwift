@@ -10,7 +10,7 @@ import Foundation
 
 public let unspecifiedEnzyme = Enzyme(name: "Unspecified", cleaveAt: [], dontCleaveBefore: [], cleaveDirection: .unspecified, fullName: "", alternativeName: "")
 
-public enum CleaveDirection: String, CaseIterable, Codable, Identifiable {
+public enum CleaveDirection: String, CaseIterable, Codable, Identifiable, Sendable {
     case C
     case N
     case unspecified
@@ -20,7 +20,7 @@ public enum CleaveDirection: String, CaseIterable, Codable, Identifiable {
     }
 }
 
-public struct Enzyme: Codable, @unchecked Sendable {
+public struct Enzyme: Codable, Sendable {
     public let name: String
     public let cleaveAt: [String]
     public let dontCleaveBefore: [String]

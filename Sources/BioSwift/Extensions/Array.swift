@@ -9,54 +9,6 @@
 import Foundation
 
 public extension Array {
-    // based on https://talk.objc.io/episodes/S01E90-concurrent-map
-    func concurrentMap<B>(
-        _ transform: @escaping (Element) throws -> B
-    ) throws -> [B] {
-        let lock = NSLock()
-
-        var results = [B?](
-            repeating: nil,
-            count: count
-        )
-
-        var firstError: Error?
-
-        DispatchQueue.concurrentPerform(
-            iterations: count
-        ) { index in
-            lock.lock()
-            let shouldSkip = firstError != nil
-            lock.unlock()
-
-            guard !shouldSkip else {
-                return
-            }
-
-            do {
-                let value = try transform(self[index])
-
-                lock.lock()
-                results[index] = value
-                lock.unlock()
-            } catch {
-                lock.lock()
-
-                if firstError == nil {
-                    firstError = error
-                }
-
-                lock.unlock()
-            }
-        }
-
-        if let firstError {
-            throw firstError
-        }
-
-        return results.map { $0! }
-    }
-
     func consecutiveGroups(ofSize size: Int) -> [[Element]] {
         guard size > 0, size <= count else {
             return []
@@ -64,6 +16,28 @@ public extension Array {
 
         return (0 ... (count - size)).map { startIndex in
             Array(self[startIndex ..< (startIndex + size)])
+        }
+    }
+}
+
+public extension Array where Element: Sendable {
+    func concurrentMap<B: Sendable>(
+        _ transform: @Sendable @escaping (Element) throws -> B) async throws -> [B]
+    {
+        try await withThrowingTaskGroup(of: (Int, B).self) { group in
+            for (index, element) in self.enumerated() {
+                group.addTask {
+                    try (index, transform(element))
+                }
+            }
+
+            var results = [B?](repeating: nil, count: count)
+
+            for try await (index, value) in group {
+                results[index] = value
+            }
+
+            return results.map { $0! }
         }
     }
 }

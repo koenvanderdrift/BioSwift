@@ -8,7 +8,7 @@
 
 import Foundation
 
-public enum PeptideFragmentType: CaseIterable, Codable, Identifiable {
+public enum PeptideFragmentType: CaseIterable, Codable, Identifiable, Sendable {
     case precursorIon
     case precursorIonMinusWater
     case precursorIonMinusAmmonia
@@ -102,7 +102,7 @@ public protocol Fragmenting {
     var index: Int { get set }
 }
 
-public struct PeptideFragment: Chain, Codable, Fragmenting {
+public struct PeptideFragment: Chain, Codable, Fragmenting, Sendable {
     public var name: String = ""
     public var sequence: String = ""
     public var residues: [AminoAcid] = []

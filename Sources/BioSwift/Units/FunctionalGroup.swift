@@ -21,7 +21,7 @@ public let ammonium = FunctionalGroup(name: "ammonium", formula: "NH4")
 public let sodium = FunctionalGroup(name: "sodium", formula: "Na")
 public let potassium = FunctionalGroup(name: "potassium", formula: "K")
 
-public struct FunctionalGroup: Structure, Codable {
+public struct FunctionalGroup: Structure, Codable, Sendable {
     public let name: String
     public let formula: Formula
 
