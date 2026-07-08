@@ -8,7 +8,7 @@
 
 import Foundation
 
-public func parseJSONData<A: Decodable>(from fileName: String) throws -> [A] {
+public func parseJSONData<A: Decodable>(_: A.Type, from fileName: String) throws -> [A] {
     let fullName = "\(fileName).json"
 
     let data = try loadData(from: fileName, withExtension: "json")
@@ -20,17 +20,19 @@ public func parseJSONData<A: Decodable>(from fileName: String) throws -> [A] {
     }
 }
 
-public func parseJSONDataFromBundle<A: Decodable>(from fileName: String) throws -> [A] {
+public func parseJSONDataFromBundle<A: Decodable>(_: A.Type, from fileName: String) throws -> [A] {
     let fullName = "\(fileName).json"
 
-    let data = try loadData(from: fileName, withExtension: "json", in: .module)
+    let data = try loadData(
+        from: fileName,
+        withExtension: "json",
+        in: .module)
 
     do {
         return try JSONDecoder().decode([A].self, from: data)
     } catch {
         throw LoadError.fileDecodingFailed(
             name: fullName,
-            underlyingError: error
-        )
+            underlyingError: error)
     }
 }

@@ -16,6 +16,29 @@ public var loadElementsFromUnimod: Bool = false
 // 5. Keep old names as computed aliases only if needed.
 // 6. Move user-editable additions into an app-side Store later.
 
+// MARK: - public globals
+
+public var aminoAcidLibrary: [AminoAcid] {
+    DataLibraryDefaults.bundled.aminoAcids
+}
+
+public var modificationLibrary: [Modification] {
+    DataLibraryDefaults.bundled.modifications + [zeroModification]
+}
+
+public var elementLibrary: [ChemicalElement] {
+    ElementsLibraryDefaults.bundled
+}
+
+public var enzymeLibrary: [Enzyme] {
+    DataLibraryDefaults.bundled.enzymes + [unspecifiedEnzyme]
+}
+
+// @available(*, deprecated, message: "Use DataLibraryDefaults.bundled.modifications instead.")
+public var hydropathyLibrary: [Hydro] {
+    DataLibraryDefaults.bundled.hydropathyValues
+}
+
 // MARK: - Final public bundled-data snapshot
 
 public struct DataLibraries: Sendable {
@@ -64,49 +87,25 @@ public enum DataLibraryDefaults {
             }
         }()
     }
-
-    public var elementsLibrary: [ChemicalElement] {
-        ElementsLibraryDefaults.bundled
-    }
 }
 
-// MARK: - Optional compatibility aliases
-
-// These replace old public globals like:
-// public var fooLibrary: [AminoAcid] = ...
-//
-// They are computed, not stored mutable globals.
-
-// @available(*, deprecated, message: "Use DataLibraryDefaults.bundled.aminoAcids instead.")
-public var aminoAcidsLibrary: [AminoAcid] {
-    DataLibraryDefaults.bundled.aminoAcids
+public enum ElementsLibraryDefaults {
+    public static let bundled: [ChemicalElement] = {
+        do {
+            return try JSONDataLibraryLoader.loadElements()
+        } catch {
+            fatalError("Failed to load bundled elements library: \(error)")
+        }
+    }()
 }
 
-// @available(*, deprecated, message: "Use DataLibraryDefaults.bundled.modifications instead.")
-public var modificationsLibrary: [Modification] {
-    DataLibraryDefaults.bundled.modifications + [zeroModification]
-}
 
-// @available(*, deprecated, message: "Use DataLibraryDefaults.bundled.modifications instead.")
-public var elementsLibrary: [ChemicalElement] {
-    ElementsLibraryDefaults.bundled
-}
-
-// @available(*, deprecated, message: "Use DataLibraryDefaults.bundled.modifications instead.")
-public var enzymesLibrary: [Enzyme] {
-    DataLibraryDefaults.bundled.enzymes + [unspecifiedEnzyme]
-}
-
-// @available(*, deprecated, message: "Use DataLibraryDefaults.bundled.modifications instead.")
-public var hydropathyLibrary: [Hydro] {
-    DataLibraryDefaults.bundled.hydropathyValues
-}
 
 // MARK: - Combined loader
 
 enum DataLibraryLoader {
     static func load() throws -> DataLibraries {
-        let elements = elementsLibrary
+        let elements = ElementsLibraryDefaults.bundled
         let jsonLibraries = try JSONDataLibraryLoader.loadOtherLibraries()
 
         let xmlLibraries = try XMLDataLibraryLoader.load()
@@ -122,7 +121,7 @@ enum DataLibraryLoader {
 
 // MARK: - Partial XML result
 
-public struct XMLDataLibraries {
+struct XMLDataLibraries {
     let aminoAcids: [AminoAcid]
     let modifications: [Modification]
 }
@@ -156,17 +155,9 @@ struct JSONDataLibraries {
 
 // MARK: - JSON loader
 
-public enum ElementsLibraryDefaults {
-    public static let bundled: [ChemicalElement] = {
-        do {
-            return try JSONDataLibraryLoader.loadElements()
-        } catch {
-            fatalError("Failed to load bundled elements library: \(error)")
-        }
-    }()
-}
-
 enum JSONDataLibraryLoader {
+    // parse elements first before anything else.
+    
     static func loadElements() throws -> [ChemicalElement] {
         try parseJSONDataFromBundle(ChemicalElement.self, from: "elements")
     }
@@ -183,28 +174,6 @@ enum JSONDataLibraryLoader {
         return JSONDataLibraries(
             enzymes: enzymes,
             hydropathyValues: hydropathyValues)
-    }
-}
-
-// MARK: - JSON helper
-
-func parseJSONDataFromBundle<A: Decodable>(
-    _: A.Type,
-    from fileName: String) throws -> [A]
-{
-    let fullName = "\(fileName).json"
-
-    let data = try loadData(
-        from: fileName,
-        withExtension: "json",
-        in: .module)
-
-    do {
-        return try JSONDecoder().decode([A].self, from: data)
-    } catch {
-        throw LoadError.fileDecodingFailed(
-            name: fullName,
-            underlyingError: error)
     }
 }
 

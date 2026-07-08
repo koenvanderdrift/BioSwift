@@ -28,7 +28,7 @@ public struct Peptide: Chain, Codable, Equatable {
 
     public func createResidues(from string: String) -> [AminoAcid] {
         string.compactMap { char in
-            aminoAcidsLibrary.first(where: { $0.identifier == String(char) })
+            aminoAcidLibrary.first(where: { $0.identifier == String(char) })
         }
     }
 }

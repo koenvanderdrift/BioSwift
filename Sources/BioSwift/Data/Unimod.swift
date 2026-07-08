@@ -78,17 +78,11 @@ public final class UnimodXMLParser: NSObject {
 
         let didParse = xmlParser.parse()
 
-        print("XML parser.parse() returned:", didParse)
-        print("XML parser error:", xmlParser.parserError as Any)
-        print("parseError:", parseError as Any)
-        print("parsedFoos count before return:", parsedAminoAcids.count)
-        print("parsedBars count before return:", parsedModifications.count)
-
         guard didParse else {
             throw parseError
                 ?? xmlParser.parserError
                 ?? LoadError.fileParsingFailed(
-                    name: "datafile.xml",
+                    name: "unimod.xml",
                     underlyingError: nil)
         }
 

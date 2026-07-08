@@ -82,7 +82,7 @@ public struct AminoAcid: Residue, Codable, @unchecked Sendable {
     }
 
     public func allowedModifications() -> [Modification] {
-        modificationsLibrary.filter { mod in
+        modificationLibrary.filter { mod in
             mod.specificities.contains { spec in
                 spec.site == identifier
             }

@@ -117,7 +117,7 @@ struct BioSwiftTests {
     @Test func peptideResidueCount() {
         let countedSet = testPeptide.countAllResidues()
 
-        if let ser = aminoAcidsLibrary.first(where: { $0.identifier == "S" }) {
+        if let ser = aminoAcidLibrary.first(where: { $0.identifier == "S" }) {
             let aaCount = countedSet.count(for: ser)
             #expect(aaCount == 2)
         }
@@ -147,7 +147,7 @@ struct BioSwiftTests {
 
     @Test func modifiedPeptideFormula() {
         var peptide = Peptide(sequence: "DWSSD")
-        if let ser = modificationsLibrary.first(where: { $0.name == "Phospho" }) {
+        if let ser = modificationLibrary.first(where: { $0.name == "Phospho" }) {
             peptide.addModification(LocalizedModification(ser, at: 3))
             #expect(peptide.formula.countFor(element: "P") == 1)
         }
@@ -188,7 +188,7 @@ struct BioSwiftTests {
     }
 
     @Test mutating func peptideSerinePhosphorylationMonoisotopicMass() {
-        if let phos = modificationsLibrary.first(where: { $0.name == "Phospho" }) {
+        if let phos = modificationLibrary.first(where: { $0.name == "Phospho" }) {
             testPeptide.addModification(LocalizedModification(phos, at: 3))
 
             testPeptide.setAdducts(type: protonAdduct, count: 1)
@@ -204,8 +204,8 @@ struct BioSwiftTests {
     }
 
     @Test mutating func peptideReplaceModificationMonoisotopicMass() {
-        if let phos = modificationsLibrary.first(where: { $0.name == "Phospho" }),
-           let methylmalonylation = modificationsLibrary.first(where: { $0.name == "Methylmalonylation" })
+        if let phos = modificationLibrary.first(where: { $0.name == "Phospho" }),
+           let methylmalonylation = modificationLibrary.first(where: { $0.name == "Methylmalonylation" })
         {
             testPeptide.addModification(LocalizedModification(phos, at: 3))
 
@@ -256,7 +256,7 @@ struct BioSwiftTests {
     } // 46737.0703
 
     @Test mutating func proteinSerinePhosphorylationMonoisotopicMass() {
-        if let phos = modificationsLibrary.first(where: { $0.name == "Phospho" }) {
+        if let phos = modificationLibrary.first(where: { $0.name == "Phospho" }) {
             testProtein.addModification(mod: phos, at: 3)
             testProtein.setAdducts(type: protonAdduct, count: 1)
             #expect(phos.fullName == "Phosphorylation")
@@ -268,17 +268,17 @@ struct BioSwiftTests {
     }
 
     @Test func modificationFullName() {
-        if let pnTAG = modificationsLibrary.first(where: { $0.name == "PnTAG" }) {
+        if let pnTAG = modificationLibrary.first(where: { $0.name == "PnTAG" }) {
             #expect(pnTAG.fullName == "6-Phosphonohexanoylation")
         }
 
-        if let TMTpro = modificationsLibrary.first(where: { $0.name == "Label:13C(6)15N(2)+TMTpro" }) {
+        if let TMTpro = modificationLibrary.first(where: { $0.name == "Label:13C(6)15N(2)+TMTpro" }) {
             #expect(TMTpro.fullName == "TMTpro Tandem Mass Tag 13C(6) 15N(2) Silac label")
         }
     }
 
     @Test mutating func modifyResidues() {
-        if let cam = modificationsLibrary.first(where: { $0.name == "Carbamidomethyl" }) {
+        if let cam = modificationLibrary.first(where: { $0.name == "Carbamidomethyl" }) {
             testProtein.modifyResidues(for: "C", with: cam)
 
             #expect(testProtein.countOneResidue(with: "C") == 3)
@@ -322,7 +322,7 @@ struct BioSwiftTests {
     @Test mutating func replaceAminoAcid() {
         #expect(testPeptide.sequenceString == "DWSSD")
 
-        if let gly = aminoAcidsLibrary.first(where: { $0.identifier == "G" }) {
+        if let gly = aminoAcidLibrary.first(where: { $0.identifier == "G" }) {
             testPeptide.replaceResidue(at: 0, with: gly)
             #expect(testPeptide.sequenceString == "GWSSD")
         }
@@ -336,7 +336,7 @@ struct BioSwiftTests {
 
     @Test mutating func insertAminoAcid() {
         #expect(testPeptide.sequenceString == "DWSSD")
-        if let gly = aminoAcidsLibrary.first(where: { $0.identifier == "G" }) {
+        if let gly = aminoAcidLibrary.first(where: { $0.identifier == "G" }) {
             testPeptide.insertResidue(gly, at: 2)
         }
 
@@ -345,7 +345,7 @@ struct BioSwiftTests {
 
     @Test mutating func insertAminoAcids() {
         #expect(testPeptide.sequenceString == "DWSSD")
-        if let gly = aminoAcidsLibrary.first(where: { $0.identifier == "G" }), let pro = aminoAcidsLibrary.first(where: { $0.identifier == "P" }) {
+        if let gly = aminoAcidLibrary.first(where: { $0.identifier == "G" }), let pro = aminoAcidLibrary.first(where: { $0.identifier == "P" }) {
             testPeptide.insertResidues([gly, pro, pro], at: 2)
         }
 
@@ -389,7 +389,7 @@ struct BioSwiftTests {
         peptide.setAdducts(type: protonAdduct, count: 1)
         #expect(peptide.monoisotopicMass.rounded(scale: 4) == decimal("1641.7836"))
 
-        if let cysMod = modificationsLibrary.first(where: { $0.name == "Carboxymethyl" }) {
+        if let cysMod = modificationLibrary.first(where: { $0.name == "Carboxymethyl" }) {
             #expect(cysMod.fullName == "Iodoacetic acid derivative")
             peptide.addModification(LocalizedModification(cysMod, at: 8))
             #expect(peptide.monoisotopicMass.rounded(scale: 4) == decimal("1699.7891"))
@@ -415,7 +415,7 @@ struct BioSwiftTests {
 
         let missedCleavages = 0
 
-        let trypsin = enzymesLibrary.first(where: { $0.name == "Trypsin" })
+        let trypsin = enzymeLibrary.first(where: { $0.name == "Trypsin" })
 
         if let enzyme = trypsin {
             let peptides: [Peptide] = digester.peptides(using: enzyme, with: missedCleavages)
@@ -424,7 +424,7 @@ struct BioSwiftTests {
             #expect(peptides[1].sequenceString == "TDTSHHDQDHPTFNK")
         }
 
-        let aspN = enzymesLibrary.first(where: { $0.name == "Asp-N" })
+        let aspN = enzymeLibrary.first(where: { $0.name == "Asp-N" })
 
         if let enzyme = aspN {
             let peptides: [Peptide] = digester.peptides(using: enzyme, with: missedCleavages)
@@ -435,7 +435,7 @@ struct BioSwiftTests {
     }
 
     @Test func digestUnspecified() {
-        let unspecified = enzymesLibrary.first(where: { $0.name == "Unspecified" })
+        let unspecified = enzymeLibrary.first(where: { $0.name == "Unspecified" })
         #expect(unspecified?.name == "Unspecified")
     }
 
@@ -444,7 +444,7 @@ struct BioSwiftTests {
 
         let missedCleavages = 1
 
-        let trypsin = enzymesLibrary.first(where: { $0.name == "Trypsin" })
+        let trypsin = enzymeLibrary.first(where: { $0.name == "Trypsin" })
 
         if let enzyme = trypsin {
             let peptides: [Peptide] = digester.peptides(using: enzyme, with: missedCleavages)
@@ -486,7 +486,7 @@ struct BioSwiftTests {
 
     @Test func massSearchWithModification() {
         if var chain = testProtein.chains.first,
-           let phos = modificationsLibrary.first(where: { $0.name == "Phospho" })
+           let phos = modificationLibrary.first(where: { $0.name == "Phospho" })
         {
             chain.addModification(LocalizedModification(phos, at: 76))
 
@@ -615,7 +615,7 @@ struct BioSwiftTests {
         var peptide = Peptide(sequence: "SAMPLEVAMAAGQTHR")
         peptide.setAdducts(type: protonAdduct, count: 1)
 
-        if let ox = modificationsLibrary.first(where: { $0.name == "Oxidation" }) {
+        if let ox = modificationLibrary.first(where: { $0.name == "Oxidation" }) {
             #expect(ox.fullName == "Oxidation or Hydroxylation")
             peptide.addModification(LocalizedModification(ox, at: 8))
             #expect(peptide.monoisotopicMass.rounded(scale: 4) == decimal("1685.8098"))
