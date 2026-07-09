@@ -461,7 +461,8 @@ struct BioSwiftTests {
             let searchParameters = MassSearchParameters(searchValue: 1,
                                                         tolerance: MassTolerance(type: .ppm, value: 20),
                                                         searchType: .sequential,
-                                                        massType: .monoisotopic)
+                                                        massType: .monoisotopic,
+                                                        charge: 0)
 
             let peptides: [Peptide] = chain.searchMass(params: searchParameters)
             print(peptides.map(\.sequenceString))
@@ -475,7 +476,8 @@ struct BioSwiftTests {
             let searchParameters = MassSearchParameters(searchValue: 609.71,
                                                         tolerance: MassTolerance(type: .ppm, value: 20),
                                                         searchType: .sequential,
-                                                        massType: .average)
+                                                        massType: .average,
+                                                        charge: 0)
 
             let peptides: [Peptide] = chain.searchMass(params: searchParameters)
             print(peptides.map(\.sequenceString))
@@ -493,7 +495,9 @@ struct BioSwiftTests {
             let searchParameters = MassSearchParameters(searchValue: 689.28,
                                                         tolerance: MassTolerance(type: .ppm, value: 20),
                                                         searchType: .sequential,
-                                                        massType: .monoisotopic)
+                                                        massType: .monoisotopic,
+                                                        charge: 0)
+            
 
             let peptides: [Peptide] = chain.searchMass(params: searchParameters)
             print(peptides.map(\.sequenceString))

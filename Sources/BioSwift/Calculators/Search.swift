@@ -58,17 +58,27 @@ public struct MassTolerance: Codable {
     }
 }
 
-public struct MassSearchParameters: Codable {
+public struct MassSearchParameters: Codable, Equatable {
+    public static func == (lhs: MassSearchParameters, rhs: MassSearchParameters) -> Bool {
+        lhs.massType == rhs.massType &&
+        lhs.searchValue == rhs.searchValue &&
+        lhs.massType == rhs.massType &&
+        lhs.searchType == rhs.searchType &&
+        lhs.charge == rhs.charge
+    }
+    
     public var searchValue: Dalton
     public var tolerance: MassTolerance
     public let searchType: SearchType
     public var massType: MassType
+    public var charge: Int
 
-    public init(searchValue: Dalton, tolerance: MassTolerance, searchType: SearchType, massType: MassType) {
+    public init(searchValue: Dalton, tolerance: MassTolerance, searchType: SearchType, massType: MassType, charge: Int) {
         self.searchValue = searchValue
         self.tolerance = tolerance
         self.searchType = searchType
         self.massType = massType
+        self.charge = charge
     }
 
     public var massRange: MassRange {
