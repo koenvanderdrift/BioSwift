@@ -15,7 +15,7 @@ public typealias MassRange = ClosedRange<Dalton>
 public typealias Charge = Int
 
 extension MassRange {
-    func contains(_ masses: MassContainer, for type: MassType) -> Bool {
+    public func contains(_ masses: MassContainer, for type: MassType) -> Bool {
         switch type {
         case .monoisotopic:
             return contains(masses.monoisotopicMass)
@@ -26,11 +26,11 @@ extension MassRange {
         }
     }
 
-    func lowerLimit(excludes masses: MassContainer) -> Bool {
+    public func lowerLimit(excludes masses: MassContainer) -> Bool {
         masses.monoisotopicMass < 0.95 * lowerBound
     }
 
-    func upperLimit(excludes masses: MassContainer) -> Bool {
+    public func upperLimit(excludes masses: MassContainer) -> Bool {
         masses.averageMass > 1.05 * upperBound
     }
 }
@@ -84,8 +84,8 @@ extension MassContainer: Comparable {
 }
 
 public struct Adduct: Codable, Equatable, Sendable {
-    var group: FunctionalGroup
-    var charge: Charge
+    public var group: FunctionalGroup
+    public var charge: Charge
 }
 
 public let protonAdduct = Adduct(group: hydrogen, charge: 1)
