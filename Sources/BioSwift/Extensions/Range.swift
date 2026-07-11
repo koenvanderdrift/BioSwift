@@ -46,6 +46,10 @@ public extension ChainRange {
 
         return upperBound - lowerBound + 1
     }
+    
+    func offset(by amount: Int) -> ChainRange {
+        (lowerBound + amount)...(upperBound + amount)
+    }
 
     func clamped(toSequenceLength sequenceLength: Int) -> ChainRange {
         guard isValidChainRange,

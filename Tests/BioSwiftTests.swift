@@ -479,10 +479,16 @@ struct BioSwiftTests {
                                                         massType: .average,
                                                         charge: 0)
 
-            let peptides: [Peptide] = chain.searchMass(params: searchParameters)
+            let peptides: [Peptide] = chain.searchMass(params: searchParameters) // this is negative one-off...
             print(peptides.map(\.sequenceString))
 
             #expect(peptides.contains(where: { $0.sequenceString == "IFFSP" }))
+            #expect(!peptides.contains(where: { $0.sequenceString == "NIFFS" }))
+
+            let ranges = chain.searchMass(using: searchParameters)
+            for range in ranges {
+                print(chain.sequenceString[range])
+            }
         }
     }
 

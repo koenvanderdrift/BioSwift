@@ -166,6 +166,35 @@ public extension Chain {
 
         return result
     }
+    
+    func searchMass(using params: MassSearchParameters) -> [ChainRange] {
+        var matchingRanges: [ChainRange] = []
+        let massRange = params.massRange
+        
+        for startIndex in residues.indices {
+            var summedMasses: MassContainer = water.masses
+
+            for endIndex in startIndex..<residues.count {
+                summedMasses += residues[endIndex].masses
+                
+                if massRange.upperLimit(excludes: summedMasses) {
+                    break
+                }
+                
+                if massRange.contains(summedMasses, for: params.massType) {
+                    matchingRanges.append(
+                        startIndex...endIndex
+                    )
+                }
+            }
+        }
+        
+        for range in matchingRanges {
+            let subchain = self.subChain(chainRange: range)
+        }
+        
+        return matchingRanges
+    }
 
     private func subChain(with chainRange: ChainRange, for masses: MassContainer, in massRange: MassRange, and type: MassType) -> Self? where Self: Chargeable {
         if massRange.contains(masses, for: type) {
