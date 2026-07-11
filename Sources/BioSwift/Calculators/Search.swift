@@ -8,7 +8,7 @@
 
 import Foundation
 
-public enum SearchType: Int, Codable, Identifiable, Equatable {
+public enum SearchType: Int, Codable, Identifiable, Equatable, Sendable {
     case sequential
     case unique
     case exhaustive
@@ -18,7 +18,7 @@ public enum SearchType: Int, Codable, Identifiable, Equatable {
     }
 }
 
-public enum MassToleranceType: String, CaseIterable, Codable, Identifiable, Equatable {
+public enum MassToleranceType: String, CaseIterable, Codable, Identifiable, Equatable, Sendable {
     case ppm
     case dalton = "Da"
     case percent = "%"
@@ -38,17 +38,20 @@ public extension MassToleranceType {
         switch self {
         case .ppm:
             return 10000.0
+
         case .dalton:
             return 10.0
+
         case .percent:
             return 1.0
+
         case .mmu:
             return 10000.0
         }
     }
 }
 
-public struct MassTolerance: Codable, Equatable {
+public struct MassTolerance: Codable, Equatable, Sendable {
     public var type: MassToleranceType
     public var value: Double
 
@@ -58,7 +61,7 @@ public struct MassTolerance: Codable, Equatable {
     }
 }
 
-public struct MassSearchParameters: Codable, Equatable {
+public struct MassSearchParameters: Codable, Equatable, Sendable {
     public var searchValue: Dalton
     public var tolerance: MassTolerance
     public let searchType: SearchType
