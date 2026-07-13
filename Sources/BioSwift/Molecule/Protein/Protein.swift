@@ -28,7 +28,7 @@ public struct Protein: BioMolecule, Codable, Equatable, Sendable {
         chains = [Peptide(residues: residues)]
     }
 
-    public func truncate(by range: ChainRange) -> Protein {
+    public func truncate(by range: Range<Int>) -> Protein {
         if let subChain = chains.first?.removing(range) {
             return Protein(chains: [subChain])
         }
@@ -88,8 +88,8 @@ public struct Protein: BioMolecule, Codable, Equatable, Sendable {
         chains[chainIndex].isoelectricPoint()
     }
 
-    public func isoelectricPoint(for chainIndex: Int = 0, with range: ChainRange) -> Double {
-        let peptide = chains[chainIndex].subChain(chainRange: range)
+    public func isoelectricPoint(for chainIndex: Int = 0, with range: Range<Int>) -> Double {
+        let peptide = chains[chainIndex].subChain(range: range)
 
         if peptide.numberOfResidues > 0 {
             return peptide.isoelectricPoint()

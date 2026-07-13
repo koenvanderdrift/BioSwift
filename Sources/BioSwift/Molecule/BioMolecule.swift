@@ -47,31 +47,31 @@ public extension BioMolecule {
         return Hydropathy(residues: chains[index].residues).isoElectricPoint()
     }
 
-    func selectedMonoIsotopicMass(chainIndex _: Int = 0, _ range: ChainRange) -> Dalton {
+    func selectedMonoIsotopicMass(chainIndex _: Int = 0, _ range: Range<Int>) -> Dalton {
         return selectionMass(range).monoisotopicMass
     }
 
-    func selectedAverageMass(chainIndex _: Int = 0, _ range: ChainRange) -> Dalton {
+    func selectedAverageMass(chainIndex _: Int = 0, _ range: Range<Int>) -> Dalton {
         return selectionMass(range).averageMass
     }
 
-    func selectionMass(chainIndex index: Int = 0, _ range: ChainRange) -> MassContainer {
-        guard var sub = chains[index].subChain(chainRange: range) as? Chargeable else { return zeroMass }
+    func selectionMass(chainIndex index: Int = 0, _ range: Range<Int>) -> MassContainer {
+        guard var sub = chains[index].subChain(range: range) as? Chargeable else { return zeroMass }
 
         sub.setAdducts(type: protonAdduct, count: charge)
 
         return sub.pseudomolecularIon()
     }
 
-    func selectedIsoelectricPoint(chainIndex index: Int = 0, _ range: ChainRange) -> Double {
-        let sub = chains[index].subChain(chainRange: range)
+    func selectedIsoelectricPoint(chainIndex index: Int = 0, _ range: Range<Int>) -> Double {
+        let sub = chains[index].subChain(range: range)
         guard sub.numberOfResidues > 0 else { return 0.0 }
 
         return Hydropathy(residues: sub.residues).isoElectricPoint()
     }
 
-    func selectionLength(chainIndex index: Int = 0, _ range: ChainRange) -> Int {
-        let sub = chains[index].subChain(chainRange: range)
+    func selectionLength(chainIndex index: Int = 0, _ range: Range<Int>) -> Int {
+        let sub = chains[index].subChain(range: range)
 
         return sub.numberOfResidues
     }

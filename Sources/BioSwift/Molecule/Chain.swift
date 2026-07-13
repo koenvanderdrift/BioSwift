@@ -19,7 +19,7 @@ public protocol Chain {
     var nTerminal: Modification { get set }
     var cTerminal: Modification { get set }
     var adducts: [Adduct] { get set }
-    var chainRange: ChainRange { get set }
+    var range: Range<Int> { get set }
     var parentLength: Int { get set }
 
     init(sequence: String)
@@ -170,40 +170,37 @@ public extension Chain {
     /// Returns the sequence contained within a one-based, inclusive residue range.
     ///
     /// Example:
-    /// `sequenceString == "MKWVTFISLL"` and `chainRange == 4...6`
+    /// `sequenceString == "MKWVTFISLL"` and `range == 4...6`
     /// returns `"VTF"`.
-    func subSequence(chainRange: ChainRange) -> String {
+    func subSequence(range: Range<Int>) -> String {
         precondition(
-            chainRange.lowerBound >= 1,
-            "ChainRange is one-based; the lower bound must be at least 1."
+            range.lowerBound >= 0,
         )
 
         precondition(
-            chainRange.upperBound <= sequenceString.count,
-            "ChainRange exceeds the sequence length."
+            range.upperBound < sequenceString.count,
         )
 
         let lowerIndex = sequenceString.index(
             sequenceString.startIndex,
-            offsetBy: chainRange.lowerBound - 1
+            offsetBy: range.lowerBound - 1
         )
 
         let upperIndex = sequenceString.index(
             sequenceString.startIndex,
-            offsetBy: chainRange.upperBound
+            offsetBy: range.upperBound
         )
 
         return String(sequenceString[lowerIndex ..< upperIndex])
     }
 
-    func subChain(chainRange: ChainRange) -> Self {
-        let validRange = chainRange.clamped(
+    func subChain(range: Range<Int>) -> Self {
+        let validRange = range.clamped(
             toSequenceLength: residues.count
         )
 
         guard
-            validRange.isValidChainRange,
-            let arrayRange = validRange.zeroBasedArrayRange
+            validRange.isValidRange
         else {
             return Self(
                 residues: []
@@ -211,7 +208,7 @@ public extension Chain {
         }
 
         let newResidues = Array(
-            residues[arrayRange]
+            residues[validRange]
         )
 
         var subChain = Self(
@@ -223,14 +220,13 @@ public extension Chain {
         return subChain
     }
 
-    func removing(_ chainRange: ChainRange) -> Self {
-        let validRange = chainRange.clamped(
+    func removing(_ range: Range<Int>) -> Self {
+        let validRange = range.clamped(
             toSequenceLength: residues.count
         )
 
         guard
-            validRange.isValidChainRange,
-            let arrayRange = validRange.zeroBasedArrayRange
+            validRange.isValidRange
         else {
             return Self(
                 residues: residues
@@ -238,7 +234,7 @@ public extension Chain {
         }
 
         var newResidues = residues
-        newResidues.removeSubrange(arrayRange)
+        newResidues.removeSubrange(validRange)
 
         var subChain = Self(
             residues: newResidues

@@ -37,41 +37,54 @@ extension Chain {
     public func digest(using enzyme: Enzyme, with missedCleavages: Int) -> [Peptide] {
         let sites = cleavageSites(for: enzyme.regex()) // site is first residue of new peptide 0-based
 
-        var peptides = [Peptide]()
+        var ranges: [Range<Int>] = []
 
-        var start = 1
-        var end = start
+        let validatedSites = Array(
+            Set(sites.filter { $0 > 0 && $0 < residues.count })).sorted()
 
-        for site in sites {
-            end = site
+        let boundaries = [0] + validatedSites + [residues.count]
 
-            let newRange: ChainRange = start ... end
+        let baseRanges: [Range<Int>] =
+            zip(boundaries, boundaries.dropFirst()).map { start, end in
+                start ..< end
+            }
 
-            if var new: Peptide = subChain(chainRange: newRange) as? Peptide {
-                new.chainRange = start ... end
-                new.parentLength = sequenceLength
+        ranges = baseRanges
 
-                peptides.append(new)
+        let chunksToCombine = missedCleavages + 1
 
-                start = site + 1
+        if missedCleavages > 0,
+           chunksToCombine <= baseRanges.count
+        {
+            for startIndex in 0 ... (baseRanges.count - chunksToCombine) {
+                let endIndex = startIndex + chunksToCombine - 1
+
+                ranges.append(
+                    baseRanges[startIndex].lowerBound ..<
+                        baseRanges[endIndex].upperBound)
             }
         }
 
-        let finalRange: ChainRange = start ... numberOfResidues
+        ranges.sort {
+            if $0.lowerBound == $1.lowerBound {
+                return $0.upperBound < $1.upperBound
+            }
 
-        if var final: Peptide = subChain(chainRange: finalRange) as? Peptide {
-            final.chainRange = finalRange
-            final.parentLength = sequenceLength
-
-            peptides.append(final)
+            return $0.lowerBound < $1.lowerBound
         }
 
-        guard missedCleavages > 0 else {
-            return peptides
+        var peptides = [Peptide]()
+
+        for range in ranges {
+            if var new: Peptide = subChain(range: range) as? Peptide {
+                new.range = range
+                new.parentLength = sequenceLength
+
+                peptides.append(new)
+            }
         }
 
         return peptides
-            .combinedConsecutiveChains(ofSize: missedCleavages)
     }
 
     func cleavageSites(for regex: String) -> [Int] {

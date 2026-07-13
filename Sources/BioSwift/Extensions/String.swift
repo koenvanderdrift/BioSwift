@@ -159,7 +159,7 @@ public extension String {
         options: CompareOptions = [],
         locale: Locale? = nil,
         allowingOverlaps: Bool = false
-    ) -> [ChainRange] {
+    ) -> [Range<Int>] {
         ranges(
             of: substring,
             options: options,
@@ -170,7 +170,7 @@ public extension String {
             let lowerBound = distance(from: startIndex, to: range.lowerBound) + 1
             let upperBound = distance(from: startIndex, to: range.upperBound)
 
-            return lowerBound ... upperBound
+            return lowerBound ..< upperBound
         }
     }
 
@@ -195,13 +195,13 @@ public extension String {
 
 public extension String {
     func substring(
-        in chainRange: ChainRange
+        in range: Range<Int>
     ) -> String {
-        let validRange = chainRange.clamped(
+        let validRange = range.clamped(
             toSequenceLength: count
         )
 
-        guard validRange.isValidChainRange else {
+        guard validRange.isValidRange else {
             return ""
         }
 
@@ -219,13 +219,13 @@ public extension String {
     }
 
     func removing(
-        chainRange: ChainRange
+        range: Range<Int>
     ) -> String {
-        let validRange = chainRange.clamped(
+        let validRange = range.clamped(
             toSequenceLength: count
         )
 
-        guard validRange.isValidChainRange else {
+        guard validRange.isValidRange else {
             return self
         }
 

@@ -108,8 +108,8 @@ public extension Chain {
     func searchSequence(searchString: String) -> [Self] {
         var result: [Self] = []
         for range in sequenceString.sequenceRanges(of: searchString) {
-            var sub = subChain(chainRange: range)
-            sub.chainRange = range
+            var sub = subChain(range: range)
+            sub.range = range
 
             result.append(sub)
         }
@@ -122,53 +122,18 @@ public extension Chain {
     func searchMass(params: MassSearchParameters) -> [Self] where Self: Chargeable {
         var result: [Self] = []
 
-        let count = numberOfResidues
-        let massRange = params.massRange
-
-        var start = 0
-        var end = 0
-
-        var masses: MassContainer = water.masses
-
-        while start < count {
-            while end < count {
-                guard let temp = residue(at: end)?.masses else { break }
-                end += 1
-
-                masses += temp
-
-                if massRange.upperLimit(excludes: masses) {
-                    break
-                }
-
-                if end > start, let sub = subChain(with: start ... (end - 1), for: masses, in: massRange, and: params.massType) {
-                    result.append(sub)
-                    break
-                }
-            }
-
-            while start < end {
-                guard let temp = residue(at: start)?.masses else { break }
-                start += 1
-
-                masses -= temp
-
-                if massRange.lowerLimit(excludes: masses) {
-                    break
-                }
-
-                if end > start, let sub = subChain(with: start ... (end - 1), for: masses, in: massRange, and: params.massType) {
-                    result.append(sub)
-                    break
-                }
-            }
+        let ranges = searchMass(using: params)
+        
+        for range in ranges {
+            let sub = subChain(range: range)
+            result.append(sub)
         }
-
+        
         return result
     }
     
-    func searchMass(using params: MassSearchParameters) -> [ChainRange] {
-        var matchingRanges: [ChainRange] = []
+    func searchMass(using params: MassSearchParameters) -> [Range<Int>] {
+        var matchingRanges: [Range<Int>] = []
         let massRange = params.massRange
         
         for startIndex in residues.indices {
@@ -182,25 +147,23 @@ public extension Chain {
                 }
                 
                 if massRange.contains(summedMasses, for: params.massType) {
-                    matchingRanges.append(
-                        startIndex...endIndex
-                    )
+                    let range = startIndex ..< (endIndex + 1)
+                    
+                    if range.isValidRange {
+                        matchingRanges.append(range)
+                    }
                 }
             }
-        }
-        
-        for range in matchingRanges {
-            let subchain = self.subChain(chainRange: range)
         }
         
         return matchingRanges
     }
 
-    private func subChain(with chainRange: ChainRange, for masses: MassContainer, in massRange: MassRange, and type: MassType) -> Self? where Self: Chargeable {
+    private func subChain(with range: Range<Int>, for masses: MassContainer, in massRange: MassRange, and type: MassType) -> Self? where Self: Chargeable {
         if massRange.contains(masses, for: type) {
-            var sub = subChain(chainRange: chainRange)
+            var sub = subChain(range: range)
 
-            sub.chainRange = chainRange
+            sub.range = range
 
             return sub
         }

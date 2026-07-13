@@ -9,163 +9,134 @@ import Foundation
 
 // MARK: - Range Types
 
-public typealias ChainRange = ClosedRange<Int>
-
-/**
- ChainRange values are 1-based and inclusive.
-
- Examples:
- 1...10    = characters 1 through 10
- 81...115  = characters 81 through 115
-
- The zero range represents "no valid range".
- */
-public let zeroChainRange: ChainRange = 0 ... 0
-
-/**
- NSRange is zero-based.
-
- This value represents "no valid NSRange".
- Do not pass it to TextKit without first checking its length.
- */
+public let zeroRange: Range<Int> = 0 ..< 0
 public let zeroNSRange = NSRange(location: NSNotFound, length: 0)
 
-public extension ChainRange {
-    var isZeroRange: Bool {
-        self == zeroChainRange
+// UIRange is 1-based to be used in views, etc
+
+public struct UIRange: Equatable {
+    public let value: ClosedRange<Int>
+
+    public init(_ value: ClosedRange<Int>) {
+        precondition(
+            value.lowerBound >= 1,
+            "UIRange must be one-based."
+        )
+
+        self.value = value
     }
 
-    var isValidChainRange: Bool {
-        lowerBound > 0 && upperBound >= lowerBound
+    public init?(validating value: ClosedRange<Int>) {
+        guard value.lowerBound >= 1 else {
+            return nil
+        }
+
+        self.value = value
+    }
+
+    public var zeroBasedRange: Range<Int> {
+        (value.lowerBound - 1) ..< value.upperBound
+    }
+}
+
+extension UIRange: CustomStringConvertible {
+     public var description: String {
+        "\(value.lowerBound) - \(value.upperBound)"
+    }
+}
+
+public extension Range<Int> {
+    var isZeroRange: Bool {
+        self == zeroRange
+    }
+
+    var isValidRange: Bool {
+        lowerBound >= 0 && upperBound >= lowerBound
     }
 
     var length: Int {
-        guard isValidChainRange else {
+        guard isValidRange else {
             return 0
         }
 
         return upperBound - lowerBound + 1
     }
-    
-    func offset(by amount: Int) -> ChainRange {
-        (lowerBound + amount)...(upperBound + amount)
+
+    func offset(by amount: Int) -> Range<Int> {
+        (lowerBound + amount) ..< (upperBound + amount)
     }
 
-    func clamped(toSequenceLength sequenceLength: Int) -> ChainRange {
-        guard isValidChainRange,
+    func clamped(toSequenceLength sequenceLength: Int) -> Range<Int> {
+        guard isValidRange,
               sequenceLength > 0,
-              upperBound >= 1,
-              lowerBound <= sequenceLength
+              lowerBound >= 0,
+              upperBound < sequenceLength
         else {
-            return zeroChainRange
+            return zeroRange
         }
 
-        let lower = Swift.max(1, lowerBound)
-        let upper = Swift.min(sequenceLength, upperBound)
+        let lower = Swift.max(0, lowerBound)
+        let upper = Swift.min(sequenceLength - 1, upperBound)
 
         guard upper >= lower else {
-            return zeroChainRange
+            return zeroRange
         }
 
-        return lower ... upper
-    }
-
-    /**
-     Converts a 1-based inclusive ChainRange into a zero-based NSRange.
-
-     The range is clamped only when it intersects the current text.
-     A range entirely outside the text returns zeroNSRange.
-
-     Examples for a text length of 100:
-
-     1...10      -> NSRange(location: 0, length: 10)
-     95...110    -> NSRange(location: 94, length: 6)
-     120...130   -> zeroNSRange
-     0...0       -> zeroNSRange
-     */
-    func toNSRange(
-        clampedToTextLength textLength: Int
-    ) -> NSRange {
-        guard isValidChainRange,
-              textLength > 0,
-              upperBound >= 1,
-              lowerBound <= textLength
-        else {
-            return zeroNSRange
-        }
-
-        let clampedLower = Swift.max(1, lowerBound)
-        let clampedUpper = Swift.min(textLength, upperBound)
-
-        guard clampedUpper >= clampedLower else {
-            return zeroNSRange
-        }
-
-        return NSRange(
-            location: clampedLower - 1,
-            length: clampedUpper - clampedLower + 1
-        )
-    }
-
-    /**
-     Converts a valid ChainRange into an NSRange without clamping.
-
-     Use this only when you do not need to validate against the current
-     document length.
-     */
-    var nsRange: NSRange {
-        guard isValidChainRange else {
-            return zeroNSRange
-        }
-
-        return NSRange(
-            location: lowerBound - 1,
-            length: length
-        )
-    }
-
-    var zeroBasedArrayRange: Range<Int>? {
-        guard isValidChainRange else {
-            return nil
-        }
-
-        return (lowerBound - 1) ..< upperBound
+        return lower ..< upper
     }
 }
 
-public extension NSRange {
-    /**
-     Converts a zero-based NSRange into a 1-based inclusive ChainRange.
-
-     Examples:
-     NSRange(location: 0, length: 10)  -> 1...10
-     NSRange(location: 80, length: 35) -> 81...115
-     */
-    func toChainRange() -> ChainRange {
-        guard location != NSNotFound,
-              length > 0
-        else {
-            return zeroChainRange
+public extension Range where Bound == Int {
+    var uiRange: UIRange? {
+        guard !isEmpty else {
+            return nil
         }
 
-        let lower = location + 1
-        let upper = location + length
-
-        return lower ... upper
-    }
-
-    /**
-     Creates a zero-based NSRange from a 1-based inclusive ChainRange.
-     */
-    init(oneBased range: ChainRange) {
-        guard range.isValidChainRange else {
-            self = zeroNSRange
-            return
-        }
-
-        self = NSRange(
-            location: range.lowerBound - 1,
-            length: range.length
+        return UIRange(
+            (lowerBound + 1) ... upperBound
         )
     }
+}
+
+
+// MARK: - ClosedRange<Int> conversions
+
+public func range(from closedRange: ClosedRange<Int>) -> Range<Int> {
+    closedRange.lowerBound ..< (closedRange.upperBound + 1)
+}
+
+public func nsRange(from closedRange: ClosedRange<Int>) -> NSRange {
+    NSRange(
+        location: closedRange.lowerBound,
+        length: closedRange.upperBound - closedRange.lowerBound + 1)
+}
+
+// MARK: - Range<Int> conversions
+
+public func closedRange(from range: Range<Int>) -> ClosedRange<Int>? {
+    guard !range.isEmpty else {
+        return nil
+    }
+
+    return range.lowerBound ... (range.upperBound - 1)
+}
+
+public func nsRange(from range: Range<Int>) -> NSRange {
+    NSRange(
+        location: range.lowerBound,
+        length: range.count)
+}
+
+// MARK: - NSRange conversions
+
+public func range(from nsRange: NSRange) -> Range<Int> {
+    nsRange.location ..< (nsRange.location + nsRange.length)
+}
+
+public func closedRange(from nsRange: NSRange) -> ClosedRange<Int>? {
+    guard nsRange.length > 0 else {
+        return nil
+    }
+
+    return nsRange.location ... (nsRange.location + nsRange.length - 1)
 }

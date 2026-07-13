@@ -47,12 +47,12 @@ extension Array where Element: Chain {
         consecutiveGroups(ofSize: size).map { chainGroup in
             let combinedAminoAcids = chainGroup.flatMap { $0.residues }
 
-            let combinedRange: ChainRange =
-                chainGroup.first!.chainRange.lowerBound ...
-                chainGroup.last!.chainRange.upperBound
+            let combinedRange: Range<Int> =
+                chainGroup.first!.range.lowerBound ..<
+                chainGroup.last!.range.upperBound
 
             var newChain = Element(residues: combinedAminoAcids)
-            newChain.chainRange = combinedRange
+            newChain.range = combinedRange
             newChain.parentLength = chainGroup.first!.parentLength
 
             return newChain

@@ -110,7 +110,7 @@ public struct PeptideFragment: Chain, Codable, Fragmenting, Sendable {
     public var cTerminal: Modification = zeroModification
     public var modifications: [LocalizedModification] = []
     public var adducts: [Adduct] = []
-    public var chainRange: ChainRange = zeroChainRange
+    public var range: Range<Int> = zeroRange
     public var fragmentType: PeptideFragmentType = .undefined
     public var parentLength: Int = 0
     public var index = -1
