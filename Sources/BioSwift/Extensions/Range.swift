@@ -56,11 +56,17 @@ public struct UIRange: Equatable {
     public var isValidRange: Bool {
         value.lowerBound >= 0 && value.upperBound >= value.lowerBound
     }
+    
+    public var locationString: String {
+        value.lowerBound == value.upperBound
+            ? "\(value.lowerBound)"
+            : "\(value.lowerBound) - \(value.upperBound)"
+    }
 }
 
 extension UIRange: CustomStringConvertible {
      public var description: String {
-        "\(value.lowerBound) - \(value.upperBound)"
+        locationString
     }
 }
 
