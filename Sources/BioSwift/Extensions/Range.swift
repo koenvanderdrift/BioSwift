@@ -33,9 +33,28 @@ public struct UIRange: Equatable {
 
         self.value = value
     }
+    
+    public init?(nsRange: NSRange) {
+        guard
+            nsRange.location != NSNotFound,
+            nsRange.location >= 0,
+            nsRange.length > 0
+        else {
+            return nil
+        }
+
+        let lowerBound = nsRange.location + 1
+        let upperBound = nsRange.location + nsRange.length
+
+        self.init(lowerBound ... upperBound)
+    }
 
     public var zeroBasedRange: Range<Int> {
         (value.lowerBound - 1) ..< value.upperBound
+    }
+    
+    public var isValidRange: Bool {
+        value.lowerBound >= 0 && value.upperBound >= value.lowerBound
     }
 }
 
