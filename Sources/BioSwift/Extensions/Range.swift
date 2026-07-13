@@ -89,13 +89,13 @@ public extension Range<Int> {
         guard isValidRange,
               sequenceLength > 0,
               lowerBound >= 0,
-              upperBound < sequenceLength
+              upperBound <= sequenceLength
         else {
             return zeroRange
         }
 
         let lower = Swift.max(0, lowerBound)
-        let upper = Swift.min(sequenceLength - 1, upperBound)
+        let upper = Swift.min(sequenceLength, upperBound)
 
         guard upper >= lower else {
             return zeroRange
