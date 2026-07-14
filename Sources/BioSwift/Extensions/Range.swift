@@ -52,7 +52,7 @@ extension UIRange: CustomStringConvertible {
         locationString
     }
 
-    func toNSRange(
+    public func toNSRange(
         clampedToTextLength textLength: Int) -> NSRange?
     {
         guard textLength > 0 else {
