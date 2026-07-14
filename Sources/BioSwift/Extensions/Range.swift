@@ -121,6 +121,17 @@ public extension Range where Bound == Int {
             (lowerBound + 1) ... upperBound
         )
     }
+    
+    var endPoints: (from: Int, to: Int)? {
+        guard !isEmpty else {
+            return nil
+        }
+
+        return (
+            from: lowerBound,
+            to: upperBound - 1
+        )
+    }
 }
 
 
