@@ -16,13 +16,12 @@ public extension String {
     /// Returns all matches for a regular expression pattern.
     ///
     /// Throws when the supplied pattern is invalid.
-    func matches(for pattern: String) throws -> [NSTextCheckingResult] {
+    func matches(
+        for pattern: String) throws -> [NSTextCheckingResult]
+    {
         let expression = try NSRegularExpression(pattern: pattern)
 
-        return expression.matches(
-            in: self,
-            range: NSRange(startIndex ..< endIndex, in: self)
-        )
+        return matches(for: expression)
     }
 
     /// Returns all matches for an already compiled regular expression.
@@ -30,13 +29,12 @@ public extension String {
     /// Prefer this overload when the same expression is used repeatedly.
     func matches(
         for expression: NSRegularExpression,
-        options: NSRegularExpression.MatchingOptions = []
-    ) -> [NSTextCheckingResult] {
+        options: NSRegularExpression.MatchingOptions = []) -> [NSTextCheckingResult]
+    {
         expression.matches(
             in: self,
             options: options,
-            range: NSRange(startIndex ..< endIndex, in: self)
-        )
+            range: NSRange(location: 0, length: utf16.count))
     }
 
     /// Returns the substring between the first occurrence of `startMarker`
@@ -44,8 +42,8 @@ public extension String {
     func substring(
         between startMarker: String,
         and endMarker: String,
-        startingAt searchStart: Index? = nil
-    ) -> Substring? {
+        startingAt searchStart: Index? = nil) -> Substring?
+    {
         guard !startMarker.isEmpty, !endMarker.isEmpty else {
             return nil
         }
@@ -54,15 +52,15 @@ public extension String {
 
         guard let openingRange = range(
             of: startMarker,
-            range: startIndex ..< endIndex
-        ) else {
+            range: startIndex ..< endIndex)
+        else {
             return nil
         }
 
         guard let closingRange = range(
             of: endMarker,
-            range: openingRange.upperBound ..< endIndex
-        ) else {
+            range: openingRange.upperBound ..< endIndex)
+        else {
             return nil
         }
 
@@ -72,8 +70,8 @@ public extension String {
     /// Returns all non-overlapping substrings located between matching markers.
     func substrings(
         between startMarker: String,
-        and endMarker: String
-    ) -> [Substring] {
+        and endMarker: String) -> [Substring]
+    {
         guard !startMarker.isEmpty, !endMarker.isEmpty else {
             return []
         }
@@ -83,12 +81,10 @@ public extension String {
 
         while let openingRange = range(
             of: startMarker,
-            range: searchStart ..< endIndex
-        ),
+            range: searchStart ..< endIndex),
             let closingRange = range(
                 of: endMarker,
-                range: openingRange.upperBound ..< endIndex
-            )
+                range: openingRange.upperBound ..< endIndex)
         {
             results.append(self[openingRange.upperBound ..< closingRange.lowerBound])
             searchStart = closingRange.upperBound
@@ -110,16 +106,15 @@ public extension String {
         of substring: String,
         options: CompareOptions = [],
         locale: Locale? = nil,
-        allowingOverlaps: Bool = false
-    ) -> [Range<Index>] {
+        allowingOverlaps: Bool = false) -> [Range<Index>]
+    {
         guard !substring.isEmpty else {
             return []
         }
 
         precondition(
             !options.contains(.backwards),
-            "ranges(of:) searches forward and does not support .backwards."
-        )
+            "ranges(of:) searches forward and does not support .backwards.")
 
         var results: [Range<Index>] = []
         var searchRange = startIndex ..< endIndex
@@ -128,8 +123,8 @@ public extension String {
             of: substring,
             options: options,
             range: searchRange,
-            locale: locale
-        ) {
+            locale: locale)
+        {
             results.append(foundRange)
 
             let nextStart: Index
@@ -158,20 +153,19 @@ public extension String {
         of substring: String,
         options: CompareOptions = [],
         locale: Locale? = nil,
-        allowingOverlaps: Bool = false
-    ) -> [Range<Int>] {
+        allowingOverlaps: Bool = false) -> [Range<Int>]
+    {
         ranges(
             of: substring,
             options: options,
             locale: locale,
-            allowingOverlaps: allowingOverlaps
-        )
-        .map { range in
-            let lowerBound = distance(from: startIndex, to: range.lowerBound) + 1
-            let upperBound = distance(from: startIndex, to: range.upperBound)
+            allowingOverlaps: allowingOverlaps)
+            .map { range in
+                let lowerBound = distance(from: startIndex, to: range.lowerBound) + 1
+                let upperBound = distance(from: startIndex, to: range.upperBound)
 
-            return lowerBound ..< upperBound
-        }
+                return lowerBound ..< upperBound
+            }
     }
 
     // MARK: - Character membership
@@ -195,11 +189,10 @@ public extension String {
 
 public extension String {
     func substring(
-        in range: Range<Int>
-    ) -> String {
+        in range: Range<Int>) -> String
+    {
         let validRange = range.clamped(
-            toSequenceLength: count
-        )
+            toSequenceLength: count)
 
         guard validRange.isValidRange else {
             return ""
@@ -207,23 +200,20 @@ public extension String {
 
         let start = index(
             startIndex,
-            offsetBy: validRange.lowerBound - 1
-        )
+            offsetBy: validRange.lowerBound - 1)
 
         let end = index(
             start,
-            offsetBy: validRange.length
-        )
+            offsetBy: validRange.length)
 
         return String(self[start ..< end])
     }
 
     func removing(
-        range: Range<Int>
-    ) -> String {
+        range: Range<Int>) -> String
+    {
         let validRange = range.clamped(
-            toSequenceLength: count
-        )
+            toSequenceLength: count)
 
         guard validRange.isValidRange else {
             return self
@@ -233,13 +223,11 @@ public extension String {
 
         let start = result.index(
             result.startIndex,
-            offsetBy: validRange.lowerBound - 1
-        )
+            offsetBy: validRange.lowerBound - 1)
 
         let end = result.index(
             start,
-            offsetBy: validRange.length
-        )
+            offsetBy: validRange.length)
 
         result.removeSubrange(start ..< end)
 
@@ -279,8 +267,7 @@ public extension StringProtocol {
     subscript(_ range: ClosedRange<Int>) -> SubSequence {
         precondition(
             range.upperBound < Int.max,
-            "Upper bound is too large."
-        )
+            "Upper bound is too large.")
 
         return self[range.lowerBound ..< (range.upperBound + 1)]
     }
@@ -289,8 +276,7 @@ public extension StringProtocol {
     subscript(_ range: PartialRangeThrough<Int>) -> SubSequence {
         precondition(
             range.upperBound < Int.max,
-            "Upper bound is too large."
-        )
+            "Upper bound is too large.")
 
         return self[0 ..< (range.upperBound + 1)]
     }
@@ -309,23 +295,20 @@ public extension StringProtocol {
 
     private func index(
         at offset: Int,
-        allowingEndIndex: Bool = true
-    ) -> Index {
+        allowingEndIndex: Bool = true) -> Index
+    {
         precondition(
             offset >= 0,
-            "String offset cannot be negative."
-        )
+            "String offset cannot be negative.")
 
         guard let result = index(
             startIndex,
             offsetBy: offset,
-            limitedBy: endIndex
-        ),
+            limitedBy: endIndex),
             allowingEndIndex || result != endIndex
         else {
             preconditionFailure(
-                "String offset \(offset) is outside the valid bounds."
-            )
+                "String offset \(offset) is outside the valid bounds.")
         }
 
         return result

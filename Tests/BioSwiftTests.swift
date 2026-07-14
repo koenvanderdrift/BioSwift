@@ -966,42 +966,6 @@ struct BioSwiftTests {
         
         #expect(result == 3 ... 7)
     }
-    
-    @Test("ClosedRange to NSRange")
-    func closedRangeToNSRange() {
-        let input: ClosedRange<Int> = 3 ... 7
-        
-        let result = nsRange(from: input)
-        
-        #expect(result == NSRange(location: 3, length: 5))
-    }
-    
-    @Test("NSRange to ClosedRange")
-    func nsRangeToClosedRange() {
-        let input = NSRange(location: 3, length: 5)
-        
-        let result = closedRange(from: input)
-        
-        #expect(result == 3 ... 7)
-    }
-    
-    @Test("Range to NSRange")
-    func rangeToNSRange() {
-        let input: Range<Int> = 3 ..< 8
-        
-        let result = nsRange(from: input)
-        
-        #expect(result == NSRange(location: 3, length: 5))
-    }
-    
-    @Test("NSRange to Range")
-    func nsRangeToRange() {
-        let input = NSRange(location: 3, length: 5)
-        
-        let result = range(from: input)
-        
-        #expect(result == 3 ..< 8)
-    }
 }
 
 

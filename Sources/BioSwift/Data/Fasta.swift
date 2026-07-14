@@ -111,14 +111,12 @@ extension FastaParser {
         let parts = cleanedRecordText.split(
             separator: "\n",
             maxSplits: 1,
-            omittingEmptySubsequences: false
-        )
+            omittingEmptySubsequences: false)
 
         guard let infoPart = parts.first else {
             throw LoadError.fileParsingFailed(
                 name: "records",
-                underlyingError: nil
-            )
+                underlyingError: nil)
         }
 
         let info = String(infoPart)
@@ -135,14 +133,12 @@ extension FastaParser {
         guard !info.isEmpty, !data.isEmpty else {
             throw LoadError.fileParsingFailed(
                 name: "records",
-                underlyingError: nil
-            )
+                underlyingError: nil)
         }
 
         return RawRecord(
             info: info,
-            sequence: data
-        )
+            sequence: data)
     }
 }
 
@@ -203,15 +199,20 @@ extension FastaParser {
         let shortName = entry.scanUntil(" ")
 
         if let nameRange = entry.range(of: " - ") {
-            let nsRange = NSRange(nameRange, in: entry)
-            fullName = entry.skip(nsRange.location) ?? ""
+            let count = entry.distance(
+                from: input.startIndex,
+                to: nameRange.lowerBound)
+
+            fullName = entry.skip(count) ?? ""
         }
 
         entry.skip(3)
 
         if let organismRange = entry.range(of: " ", options: .backwards) {
-            let nsRange = NSRange(organismRange, in: entry)
-            org = entry.skip(nsRange.location) ?? ""
+            let count = entry.distance(
+                from: input.startIndex,
+                to: organismRange.lowerBound)
+            org = entry.skip(count) ?? ""
         }
 
         return FastaRecord(accession: String(acc ?? ""),
@@ -259,7 +260,8 @@ extension FastaParser {
     }
 
     func parseIPI(_ input: Substring) -> FastaRecord {
-        // IPI00300415 IPI:IPI00300415.9|SWISS-PROT:Q8N431-1|TREMBL:D3DWQ7|ENSEMBL:ENSP00000354963;ENSP00000377037|REFSEQ:NP_778232|H-INV:HIT000094619|VEGA:OTTHUMP00000161522;OTTHUMP00000161538 Tax_Id=9606 Gene_Symbol=RASGEF1C Isoform 1 of Ras-GEF domain-containing family member 1C
+        // IPI00300415 IPI:IPI00300415.9|SWISS-PROT:Q8N431-1|TREMBL:D3DWQ7|ENSEMBL:ENSP00000354963;ENSP00000377037|REFSEQ:NP_778232|H-INV:HIT000094619|VEGA:OTTHUMP00000161522;OTTHUMP00000161538
+        // Tax_Id=9606 Gene_Symbol=RASGEF1C Isoform 1 of Ras-GEF domain-containing family member 1C
         let info = input.components(separatedBy: "|")
         let acc = info[1]
         let fullName = info.last ?? ""
