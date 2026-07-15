@@ -145,10 +145,9 @@ public extension String {
         return results
     }
 
-    /// Returns matching substring ranges using one-based residue coordinates.
+    /// Returns matching substring ranges using zero-based residue coordinates.
     ///
-    /// Intended for canonical protein sequence strings, where each Character
-    /// corresponds to exactly one residue.
+    
     func sequenceRanges(
         of substring: String,
         options: CompareOptions = [],
@@ -161,7 +160,7 @@ public extension String {
             locale: locale,
             allowingOverlaps: allowingOverlaps)
             .map { range in
-                let lowerBound = distance(from: startIndex, to: range.lowerBound) + 1
+                let lowerBound = distance(from: startIndex, to: range.lowerBound)
                 let upperBound = distance(from: startIndex, to: range.upperBound)
 
                 return lowerBound ..< upperBound

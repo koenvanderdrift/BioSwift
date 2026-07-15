@@ -11,7 +11,7 @@ import Foundation
 
 public let zeroRange: Range<Int> = 0 ..< 0
 
-// UIRange is 1-based to be used in views, etc
+// UIRange is one-based to be used in views, etc
 
 public struct UIRange: Equatable {
     public let value: ClosedRange<Int>

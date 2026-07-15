@@ -165,12 +165,12 @@ public extension Chain {
 }
 
 public extension Chain {
-    // Sequence domain logic: one-based residue positions
+    // Sequence domain logic: zero-based residue positions
 
-    /// Returns the sequence contained within a one-based, inclusive residue range.
+    /// Returns the sequence contained within a zero-based, non-inclusive residue range.
     ///
     /// Example:
-    /// `sequenceString == "MKWVTFISLL"` and `range == 4...6`
+    /// `sequenceString == "MKWVTFISLL"` and `range == 3..<6`
     /// returns `"VTF"`.
     func subSequence(range: Range<Int>) -> String {
         precondition(

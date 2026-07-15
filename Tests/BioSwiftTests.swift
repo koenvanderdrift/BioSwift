@@ -829,10 +829,16 @@ struct BioSwiftTests {
     }
     
     @Test
+    func findsSingleLetterRanges() {
+        let sequence = "AAAA"
+        
+        #expect(sequence.sequenceRanges(of: "A") == [0..<1, 1..<2, 2..<3, 3..<4])
+    }
+    @Test
     func findsNonOverlappingSequenceRanges() {
         let sequence = "AAAA"
         
-        #expect(sequence.sequenceRanges(of: "AA") == [1 ..< 2, 3 ..< 4])
+        #expect(sequence.sequenceRanges(of: "AA") == [0 ..< 2, 2 ..< 4])
     }
     
     @Test
@@ -841,7 +847,7 @@ struct BioSwiftTests {
         
         #expect(
             sequence.sequenceRanges(of: "AA", allowingOverlaps: true)
-            == [1 ..< 2, 2 ..< 3, 3 ..< 4]
+            == [0 ..< 2, 1 ..< 3, 2 ..< 4]
         )
     }
     
@@ -849,7 +855,7 @@ struct BioSwiftTests {
     func convertsSequenceCoordinatesToOneBasedRanges() {
         let sequence = "MKWVTFISLL"
         
-        #expect(sequence.sequenceRanges(of: "VTF") == [4 ..< 6])
+        #expect(sequence.sequenceRanges(of: "VTF") == [3 ..< 6])
     }
     
     @Test
