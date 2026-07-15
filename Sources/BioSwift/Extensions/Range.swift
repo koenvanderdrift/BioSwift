@@ -11,7 +11,7 @@ import Foundation
 
 public let zeroRange: Range<Int> = 0 ..< 0
 
-// UIRange is one-based to be used in views, etc
+// UIRange is one-based wrapper around ClosedRange<Int> to be used in views, etc
 
 public struct UIRange: Equatable {
     public let value: ClosedRange<Int>
@@ -48,18 +48,31 @@ public struct UIRange: Equatable {
     }
 
     public var zeroBasedRange: Range<Int> {
-        (value.lowerBound - 1) ..< value.upperBound
+        (lowerBound - 1) ..< upperBound
     }
 
     public var isValidRange: Bool {
-        value.lowerBound >= 0 && value.upperBound >= value.lowerBound
+        lowerBound >= 0 && upperBound >= lowerBound
     }
 
     public var locationString: String {
-        value.lowerBound == value.upperBound
-            ? "\(value.lowerBound)"
-            : "\(value.lowerBound) - \(value.upperBound)"
+        lowerBound == upperBound
+            ? "\(lowerBound)"
+            : "\(lowerBound) - \(upperBound)"
     }
+    
+    public var length: Int {
+        return upperBound - lowerBound + 1
+    }
+    
+    public var lowerBound: Int {
+        value.lowerBound
+    }
+    
+    public var upperBound: Int {
+        value.upperBound
+    }
+
 }
 
 extension UIRange: CustomStringConvertible {
@@ -79,19 +92,19 @@ extension UIRange: CustomStringConvertible {
          Ignore ranges that do not intersect the current text.
          */
         guard
-            value.upperBound >= 1,
-            value.lowerBound <= textLength
+            upperBound >= 1,
+            lowerBound <= textLength
         else {
             return nil
         }
 
         let clampedLowerBound = Swift.max(
             1,
-            value.lowerBound)
+            lowerBound)
 
         let clampedUpperBound = Swift.min(
             textLength,
-            value.upperBound)
+            upperBound)
 
         guard clampedUpperBound >= clampedLowerBound else {
             return nil
