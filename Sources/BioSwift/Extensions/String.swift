@@ -147,7 +147,7 @@ public extension String {
 
     /// Returns matching substring ranges using zero-based residue coordinates.
     ///
-    
+
     func sequenceRanges(
         of substring: String,
         options: CompareOptions = [],
@@ -183,6 +183,39 @@ public extension String {
 
     func containsCharacterOutside(_ allowedCharacters: CharacterSet) -> Bool {
         rangeOfCharacter(from: allowedCharacters.inverted) != nil
+    }
+}
+
+public extension String {
+    func ranges(
+        matching searchString: String) -> [Range<Int>]
+    {
+        guard !searchString.isEmpty else {
+            return []
+        }
+
+        var results: [Range<Int>] = []
+        var searchStart = startIndex
+
+        while searchStart < endIndex,
+              let match = range(
+                  of: searchString,
+                  range: searchStart ..< endIndex)
+        {
+            let lowerBound = distance(
+                from: startIndex,
+                to: match.lowerBound)
+
+            let upperBound = distance(
+                from: startIndex,
+                to: match.upperBound)
+
+            results.append(lowerBound ..< upperBound)
+
+            searchStart = match.upperBound
+        }
+
+        return results
     }
 }
 

@@ -47,39 +47,6 @@ public struct UIRange: Equatable {
         self.init(lowerBound ... upperBound)
     }
 
-    public var zeroBasedRange: Range<Int> {
-        (lowerBound - 1) ..< upperBound
-    }
-
-    public var isValidRange: Bool {
-        lowerBound >= 0 && upperBound >= lowerBound
-    }
-
-    public var locationString: String {
-        lowerBound == upperBound
-            ? "\(lowerBound)"
-            : "\(lowerBound) - \(upperBound)"
-    }
-    
-    public var length: Int {
-        return upperBound - lowerBound + 1
-    }
-    
-    public var lowerBound: Int {
-        value.lowerBound
-    }
-    
-    public var upperBound: Int {
-        value.upperBound
-    }
-
-}
-
-extension UIRange: CustomStringConvertible {
-    public var description: String {
-        locationString
-    }
-
     public func toNSRange(
         clampedToTextLength textLength: Int) -> NSRange?
     {
@@ -113,6 +80,38 @@ extension UIRange: CustomStringConvertible {
         return NSRange(
             location: clampedLowerBound - 1,
             length: clampedUpperBound - clampedLowerBound + 1)
+    }
+
+    public var zeroBasedRange: Range<Int> {
+        (lowerBound - 1) ..< upperBound
+    }
+
+    public var isValidRange: Bool {
+        lowerBound >= 0 && upperBound >= lowerBound
+    }
+
+    public var locationString: String {
+        lowerBound == upperBound
+            ? "\(lowerBound)"
+            : "\(lowerBound) - \(upperBound)"
+    }
+
+    public var length: Int {
+        return upperBound - lowerBound + 1
+    }
+
+    public var lowerBound: Int {
+        value.lowerBound
+    }
+
+    public var upperBound: Int {
+        value.upperBound
+    }
+}
+
+extension UIRange: CustomStringConvertible {
+    public var description: String {
+        locationString
     }
 }
 
