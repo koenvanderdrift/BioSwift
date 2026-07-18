@@ -1054,3 +1054,57 @@ func invalidUIRange() {
 
     #expect(result == nil)
 }
+
+@Test
+func propertySetContainsExpectedValues() {
+    let properties: Set<AminoAcidProperty> = [.polar, .aromatic]
+
+    #expect(properties.contains(.polar))
+    #expect(properties.contains(.aromatic))
+    #expect(!properties.contains(.nonpolar))
+    #expect(properties.count == 2)
+}
+
+@Test
+func duplicatePropertiesAreIgnored() {
+    let properties: Set<AminoAcidProperty> = [.polar, .polar, .aromatic]
+
+    #expect(properties == [.polar, .aromatic])
+    #expect(properties.count == 2)
+}
+
+/*
+ @Test
+     func filteringItemsByProperty() {
+         let items = [
+             Item(name: "First", properties: [.foo, .bar]),
+             Item(name: "Second", properties: [.bar]),
+             Item(name: "Third", properties: [.foo, .baz])
+         ]
+
+         let fooItems = items.filter {
+             $0.properties.contains(.foo)
+         }
+
+         #expect(fooItems.map(\.name) == [
+             "First",
+             "Third"
+         ])
+     }
+
+     @Test
+     func commaSeparatedFooItemNames() {
+         let items = [
+             Item(name: "First", properties: [.foo]),
+             Item(name: "Second", properties: [.bar]),
+             Item(name: "Third", properties: [.foo, .baz])
+         ]
+
+         let names = items
+             .filter { $0.properties.contains(.foo) }
+             .map(\.name)
+             .joined(separator: ", ")
+
+         #expect(names == "First, Third")
+     }
+ */

@@ -8,26 +8,28 @@
 
 import Foundation
 
-public struct AminoAcidProperties: OptionSet, Codable, Sendable {
-    public let rawValue: Int
+public enum AminoAcidProperty: String, CaseIterable, Codable, Sendable, Identifiable {
+    case polar
+    case nonpolar
+    case hydrophobic
+    case small
+    case tiny
+    case aromatic
+    case aliphatic
+    case negative
+    case positive
+    case uncharged
+    case chargedPositive
+    case chargedNegative
 
-    public init(rawValue: Int) {
-        self.rawValue = rawValue
+    public var id: Self { self }
+
+    public var displayName: String {
+        rawValue.capitalized
     }
-
-    public static let polar = AminoAcidProperties(rawValue: 1 << 0)
-    public static let nonpolar = AminoAcidProperties(rawValue: 1 << 1)
-    public static let hydrophobic = AminoAcidProperties(rawValue: 1 << 2)
-    public static let small = AminoAcidProperties(rawValue: 1 << 3)
-    public static let tiny = AminoAcidProperties(rawValue: 1 << 4)
-    public static let aromatic = AminoAcidProperties(rawValue: 1 << 5)
-    public static let aliphatic = AminoAcidProperties(rawValue: 1 << 6)
-    public static let negative = AminoAcidProperties(rawValue: 1 << 7)
-    public static let positive = AminoAcidProperties(rawValue: 1 << 8)
-    public static let uncharged = AminoAcidProperties(rawValue: 1 << 9)
-    public static let chargedPos = AminoAcidProperties(rawValue: 1 << 10)
-    public static let chargedNeg = AminoAcidProperties(rawValue: 1 << 11)
 }
+
+/// AminoAcid conforms to the ``Residue`` protocol
 
 public struct AminoAcid: Residue, Codable, Sendable {
     public let formula: Formula
@@ -37,7 +39,7 @@ public struct AminoAcid: Residue, Codable, Sendable {
     public let represents: [String]
     public let representedBy: [String]
 
-    public var properties: [AminoAcidProperties] = []
+    public var properties: Set<AminoAcidProperty>
     public var modification: Modification?
 
     public var adducts: [Adduct]
@@ -53,7 +55,8 @@ public struct AminoAcid: Residue, Codable, Sendable {
         self.formula = formula
         self.represents = represents
         self.representedBy = representedBy
-        adducts = []
+        self.adducts = []
+        self.properties = []
 
         setProperties()
     }
@@ -67,15 +70,15 @@ public struct AminoAcid: Residue, Codable, Sendable {
     private mutating func setProperties() {
         switch oneLetterCode {
         case "A", "G", "L", "V", "M", "I":
-            properties += [.small, .aliphatic, .hydrophobic]
+            properties = [.small, .aliphatic, .hydrophobic]
         case "S", "T", "C", "P", "N", "Q":
-            properties += [.polar, .uncharged]
+            properties = [.polar, .uncharged]
         case "K", "R", "H":
-            properties += [.polar, .chargedPos]
+            properties = [.polar, .chargedPositive]
         case "E", "D":
-            properties += [.polar, .chargedNeg]
+            properties = [.polar, .chargedNegative]
         case "F", "Y", "W":
-            properties += [.nonpolar, .aromatic]
+            properties = [.nonpolar, .aromatic]
         default:
             break
         }
