@@ -204,7 +204,7 @@ public extension PeptideFragment {
 
     func maxNumberOfCharges() -> Int {
         // if let aa = residues as? [AminoAcid] {
-        return residues.filter { $0.properties.contains([.chargedPositive]) }.count
+        return residues.filter { $0.properties.contains(.chargedPositive) }.count
         // }
 
         // return 0
