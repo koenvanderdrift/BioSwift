@@ -8,6 +8,9 @@
 
 import Foundation
 
+/// ProteinDigester produces a ``Peptides`` array.
+///  It takes an ``Enzyme`` and optionally a missedCleavages paramenter
+///  
 public class ProteinDigester {
     public let protein: Protein
 
@@ -15,7 +18,7 @@ public class ProteinDigester {
         self.protein = protein
     }
 
-    public func peptides(using enzyme: Enzyme, with missedCleavages: Int) -> [Peptide] {
+    public func peptides(using enzyme: Enzyme, with missedCleavages: Int = 0) -> [Peptide] {
         var peptides: [Peptide] = []
 
         for chain in protein.chains {

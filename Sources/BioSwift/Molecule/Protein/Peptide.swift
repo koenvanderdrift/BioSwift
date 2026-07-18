@@ -8,6 +8,7 @@
 
 import Foundation
 
+/// Peptide conforms to ``Chain`` using an ``AminoAcid`` array
 public struct Peptide: Chain, Codable, Equatable, Sendable {
     public var name: String = ""
     public var residues: [AminoAcid] = []

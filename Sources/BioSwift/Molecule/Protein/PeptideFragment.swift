@@ -102,6 +102,7 @@ public protocol Fragmenting {
     var index: Int { get set }
 }
 
+/// PeptideFragment iis generated using the ``ProteinDigester`` 
 public struct PeptideFragment: Chain, Codable, Fragmenting, Sendable {
     public var name: String = ""
     public var sequence: String = ""
@@ -203,7 +204,7 @@ public extension PeptideFragment {
 
     func maxNumberOfCharges() -> Int {
         // if let aa = residues as? [AminoAcid] {
-        return residues.filter { $0.properties.contains([.chargedPos]) }.count
+        return residues.filter { $0.properties.contains([.chargedPositive]) }.count
         // }
 
         // return 0

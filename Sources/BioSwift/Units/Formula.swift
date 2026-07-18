@@ -10,6 +10,8 @@ import Foundation
 
 public let zeroFormula = Formula("")
 
+/// Formula is used in every Chemical Structure.
+/// 
 public struct Formula: Codable, Sendable {
     public var string: String
     public var countedElements: [ChemicalElement: Int]

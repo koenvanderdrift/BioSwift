@@ -8,6 +8,9 @@
 
 import Foundation
 
+/// PeptideFragmenter calculates the common y- and b-type fragment ions for a ``Peptide``
+/// The fragments are stored in an array of ``PeptideFragment``
+///
 public class PeptideFragmenter {
     // http://www.matrixscience.com/help/fragmentation_help.html
 

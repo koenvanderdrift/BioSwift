@@ -8,6 +8,8 @@
 
 import Foundation
 
+/// Protein can contain one or more ``Peptide`` chains and conforms to the ``BioMolecule`` protocol
+///
 public struct Protein: BioMolecule, Codable, Equatable, Sendable {
     public var adducts: [Adduct] = []
     public var chains: [Peptide]

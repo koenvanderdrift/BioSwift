@@ -8,6 +8,8 @@
 
 import Foundation
 
+/// Residue is a building block for a ``Chain``
+/// 
 public protocol Residue: Symbol, Structure, Modifiable, Hashable {
     var oneLetterCode: String { get }
     var threeLetterCode: String { get }

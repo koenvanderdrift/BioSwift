@@ -14,6 +14,7 @@ public struct Isotope: Codable, Sendable {
     public let abundance: String
 }
 
+/// ChemicalElement conforms to ``Symbol`` and is the building block for every chemical structure
 public struct ChemicalElement: Codable, Symbol, Sendable {
     public let name: String
     public let symbol: String

@@ -8,6 +8,7 @@
 
 import Foundation
 
+/// BioMolecule is a protocol that contains a ``Chain`` array
 public protocol BioMolecule: Chargeable {
     associatedtype ChainType: Chain
 

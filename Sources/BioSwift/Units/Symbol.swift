@@ -8,6 +8,7 @@
 
 import Foundation
 
+// Symbol holds a ``String`` as the identifier
 public protocol Symbol {
     var identifier: String { get }
 }

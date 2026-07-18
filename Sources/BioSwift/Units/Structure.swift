@@ -10,6 +10,8 @@ import Foundation
 
 // TODO: rethink Structure, Mass, ChargedMass
 
+// Structure is the basic building block with a name and ``Formula``
+
 public protocol Structure: Mass {
     var name: String { get }
     var formula: Formula { get }

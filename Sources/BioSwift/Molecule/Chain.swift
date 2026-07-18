@@ -10,6 +10,7 @@ import Foundation
 
 // https://medium.com/swift2go/mastering-generics-with-protocols-the-specification-pattern-5e2e303af4ca
 
+/// Chain is a protocol that describes ``Residue`` array 
 public protocol Chain {
     associatedtype ResidueType: Residue
 
