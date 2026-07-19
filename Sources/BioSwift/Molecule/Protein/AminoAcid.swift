@@ -19,8 +19,8 @@ public enum AminoAcidProperty: String, CaseIterable, Codable, Sendable, Identifi
     case negative
     case positive
     case uncharged
-    case chargedPositive
-    case chargedNegative
+    case chargedPositive = "Charged Positive"
+    case chargedNegative = "Charged Negative"
 
     public var id: Self { self }
 

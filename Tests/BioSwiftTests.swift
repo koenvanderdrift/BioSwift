@@ -1073,6 +1073,13 @@ func duplicatePropertiesAreIgnored() {
     #expect(properties.count == 2)
 }
 
+@Test
+    func twoWordHasCorrectDisplayName() {
+        let property = AminoAcidProperty.chargedPositive
+
+        #expect(property.displayName == "Charged Positive")
+    }
+
 /*
  @Test
      func filteringItemsByProperty() {
