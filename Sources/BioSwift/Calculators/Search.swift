@@ -124,7 +124,10 @@ public extension Chain {
 
         for startIndex in residues.indices {
             for endIndex in (startIndex + 1)..<residues.count {
-                var sub = subChain(range: startIndex..<endIndex)
+                let subRange = startIndex..<endIndex
+                var sub = subChain(range: subRange)
+                
+                sub.range = subRange
                 sub.setAdducts(type: protonAdduct, count: using.charge)
                 
                 let moverz = sub.massOverCharge()
