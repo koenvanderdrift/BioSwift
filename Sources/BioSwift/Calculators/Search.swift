@@ -119,46 +119,32 @@ public extension Chain {
 }
 
 public extension Chain {
-    func searchMass(params: MassSearchParameters) -> [Self] where Self: Chargeable {
+    func searchMass(using: MassSearchParameters) -> [Self] where Self: Chargeable {
         var result: [Self] = []
 
-        let ranges = searchMass(using: params)
-        
-        for range in ranges {
-            let sub = subChain(range: range)
-            result.append(sub)
-        }
-        
-        return result
-    }
-    
-    func searchMass(using params: MassSearchParameters) -> [Range<Int>] {
-        var matchingRanges: [Range<Int>] = []
-        let massRange = params.massRange
-        
         for startIndex in residues.indices {
-            var summedMasses: MassContainer = water.masses
-
-            for endIndex in startIndex..<residues.count {
-                summedMasses += residues[endIndex].masses
+            for endIndex in (startIndex + 1)..<residues.count {
+                var sub = subChain(range: startIndex..<endIndex)
+                sub.setAdducts(type: protonAdduct, count: using.charge)
                 
-                if massRange.upperLimit(excludes: summedMasses) {
+                let moverz = sub.massOverCharge()
+                
+                if using.massRange.upperLimit(excludes: moverz) {
                     break
                 }
                 
-                if massRange.contains(summedMasses, for: params.massType) {
-                    let range = startIndex ..< (endIndex + 1)
-                    
-                    if range.isValidRange {
-                        matchingRanges.append(range)
+                if using.massRange.contains(moverz, for: using.massType) {
+                    if (startIndex ..< endIndex).isValidRange {
+                        debugPrint(sub.sequenceString)
+                        result.append(sub)
                     }
                 }
             }
         }
-        
-        return matchingRanges
-    }
 
+        return result
+    }
+    
     private func subChain(with range: Range<Int>, for masses: MassContainer, in massRange: MassRange, and type: MassType) -> Self? where Self: Chargeable {
         if massRange.contains(masses, for: type) {
             var sub = subChain(range: range)

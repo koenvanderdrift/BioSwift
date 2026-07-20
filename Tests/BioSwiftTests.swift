@@ -470,14 +470,14 @@ struct BioSwiftTests {
                                                         massType: .monoisotopic,
                                                         charge: 0)
 
-            let peptides: [Peptide] = chain.searchMass(params: searchParameters)
+            let peptides: [Peptide] = chain.searchMass(using: searchParameters)
             print(peptides.map(\.sequenceString))
 
             #expect(peptides.isEmpty)
         }
     }
 
-    @Test func massSearch() {
+    @Test func averageMassSearch() {
         if let chain = testProtein.chains.first {
             let searchParameters = MassSearchParameters(searchValue: 609.71,
                                                         tolerance: MassTolerance(type: .ppm, value: 20),
@@ -485,16 +485,46 @@ struct BioSwiftTests {
                                                         massType: .average,
                                                         charge: 0)
 
-            let peptides: [Peptide] = chain.searchMass(params: searchParameters)
+            let peptides: [Peptide] = chain.searchMass(using: searchParameters)
 
             #expect(peptides.contains(where: { $0.sequenceString == "IFFSP" }))
             #expect(!peptides.contains(where: { $0.sequenceString == "NIFFS" }))
 
-            let ranges = chain.searchMass(using: searchParameters)
-            let sequenceStrings = ranges.map { chain.sequenceString[$0] }
+//            let ranges = chain.searchMass(using: searchParameters)
+//            let sequenceStrings = ranges.map { chain.sequenceString[$0] }
+//
+//            #expect(sequenceStrings.contains(where: { $0 == "IFFSP" }))
+//            #expect(!sequenceStrings.contains(where: { $0 == "NIFFS" }))
+        }
+    }
 
-            #expect(sequenceStrings.contains(where: { $0 == "IFFSP" }))
-            #expect(!sequenceStrings.contains(where: { $0 == "NIFFS" }))
+    @Test func moverzSearch() {
+        if let chain = testProtein.chains.first {
+            let searchParameters = MassSearchParameters(searchValue: 750.4032,
+                                                        tolerance: MassTolerance(type: .ppm, value: 5),
+                                                        searchType: .sequential,
+                                                        massType: .monoisotopic,
+                                                        charge: 1)
+            
+            let peptides: [Peptide] = chain.searchMass(using: searchParameters)
+            
+            #expect(peptides.contains(where: { $0.sequenceString == "FLEDVK" }))
+            #expect(!peptides.contains(where: { $0.sequenceString == "NIFFS" }))
+        }
+    }
+
+    @Test func moverzSearch2() {
+        if let chain = testProtein.chains.first {
+            let searchParameters = MassSearchParameters(searchValue: 890.3877,
+                                                        tolerance: MassTolerance(type: .ppm, value: 20),
+                                                        searchType: .sequential,
+                                                        massType: .monoisotopic,
+                                                        charge: 2)
+
+            let peptides: [Peptide] = chain.searchMass(using: searchParameters)
+
+            #expect(peptides.contains(where: { $0.sequenceString == "TDTSHHDQDHPTFNK" }))
+            #expect(!peptides.contains(where: { $0.sequenceString == "NIFFS" }))
         }
     }
 
@@ -510,7 +540,7 @@ struct BioSwiftTests {
                                                         massType: .monoisotopic,
                                                         charge: 0)
 
-            let peptides: [Peptide] = chain.searchMass(params: searchParameters)
+            let peptides: [Peptide] = chain.searchMass(using: searchParameters)
             print(peptides.map(\.sequenceString))
 
             #expect(peptides.contains(where: { $0.sequenceString == "IFFSP" }))
@@ -1074,11 +1104,11 @@ func duplicatePropertiesAreIgnored() {
 }
 
 @Test
-    func twoWordHasCorrectDisplayName() {
-        let property = AminoAcidProperty.chargedPositive
+func twoWordHasCorrectDisplayName() {
+    let property = AminoAcidProperty.chargedPositive
 
-        #expect(property.displayName == "Charged Positive")
-    }
+    #expect(property.displayName == "Charged Positive")
+}
 
 /*
  @Test
