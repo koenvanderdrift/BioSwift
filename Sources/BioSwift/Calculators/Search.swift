@@ -119,7 +119,7 @@ public extension Chain {
 }
 
 public extension Chain {
-    func searchMass(using: MassSearchParameters) -> [Self] where Self: Chargeable {
+    func searchMass(params: MassSearchParameters) -> [Self] where Self: Chargeable {
         var result: [Self] = []
 
         for startIndex in residues.indices {
@@ -128,17 +128,16 @@ public extension Chain {
                 var sub = subChain(range: subRange)
                 
                 sub.range = subRange
-                sub.setAdducts(type: protonAdduct, count: using.charge)
+                sub.setAdducts(type: protonAdduct, count: params.charge)
                 
                 let moverz = sub.massOverCharge()
                 
-                if using.massRange.upperLimit(excludes: moverz) {
+                if params.massRange.upperLimit(excludes: moverz) {
                     break
                 }
-                
-                if using.massRange.contains(moverz, for: using.massType) {
+
+                if params.massRange.contains(moverz, for: params.massType) {
                     if (startIndex ..< endIndex).isValidRange {
-                        debugPrint(sub.sequenceString)
                         result.append(sub)
                     }
                 }
@@ -147,8 +146,52 @@ public extension Chain {
 
         return result
     }
-    
-    private func subChain(with range: Range<Int>, for masses: MassContainer, in massRange: MassRange, and type: MassType) -> Self? where Self: Chargeable {
+
+    func searchMass(params: MassSearchParameters) -> [Range<Int>] where Self: Chargeable {
+        // prefixValues[i] is the sum of items[0..<i].
+        var prefixValues = Array(
+            repeating: zeroMass,
+            count: residues.count + 1)
+
+        for index in residues.indices {
+            prefixValues[index + 1] =
+                prefixValues[index] + residues[index].masses
+        }
+
+        func massContainer(from start: Int, to end: Int) -> MassContainer {
+            let itemSum = prefixValues[end] - prefixValues[start]
+            
+            return water.masses + itemSum
+        }
+
+        var results: [Range<Int>] = []
+
+        for start in residues.indices {
+            var end = start + 1
+
+            while end <= residues.count {
+                let candidate = massContainer(
+                    from: start,
+                    to: end).moverz(for: params.charge)
+
+                if params.massRange.upperLimit(excludes: candidate) {
+                    break
+                }
+
+                if params.massRange.contains(candidate, for: params.massType) {
+                    results.append(start ..< end)
+                }
+
+                end += 1
+            }
+        }
+
+        return results
+    }
+
+    private func subChain(with range: Range<Int>, for masses: MassContainer, in massRange: MassRange, and type: MassType) -> Self?
+        where Self: Chargeable
+    {
         if massRange.contains(masses, for: type) {
             var sub = subChain(range: range)
 

@@ -171,6 +171,55 @@ struct BioSwiftTests {
 
         #expect(group.averageMass.rounded(scale: 3) == decimal("608.555"))
     } // 608.5556
+    
+    @Test func chainMassesForIndividualResidues() {
+        var peptide = Peptide(sequence: "SAMPLER")
+        debugPrint(peptide.masses.monoisotopicMass)
+        
+        #expect(peptide.masses.monoisotopicMass.rounded(scale: 5) == decimal("802.40072"))
+        #expect(peptide.masses.moverz(for: 1).monoisotopicMass.rounded(scale: 4) == decimal("803.4080"))
+
+        peptide.setAdducts(type: protonAdduct, count: 2)
+        #expect(peptide.masses.monoisotopicMass.rounded(scale: 4) == decimal("402.2076"))
+
+        var sum = water.masses
+        
+        for aa in peptide.residues {
+            sum += aa.masses
+        }
+        debugPrint(sum.monoisotopicMass)
+
+        #expect(sum.monoisotopicMass.rounded(scale: 5) == decimal("802.40072"))
+        #expect(sum.moverz(for: 2).monoisotopicMass.rounded(scale: 4) == decimal("402.2076"))
+
+        sum = water.masses
+        
+        for aa in peptide.residues[1..<7] {
+            sum += aa.masses
+        }
+        debugPrint(sum.monoisotopicMass)
+
+        #expect(sum.monoisotopicMass.rounded(scale: 5) == decimal("715.36870"))
+        #expect(sum.moverz(for: 2).monoisotopicMass.rounded(scale: 4) == decimal("358.6916"))
+        
+        
+       // https://www.chemcalc.org/peptides?digestion=%5Bobject%20Object%5D&filter=%5Bobject%20Object%5D&fragmentation=a%3Dfalse%26b%3Dfalse%26c%3Dfalse%26i%3Dfalse%26n%3Dfalse%26x%3Dfalse%26y%3Dfalse%26ya%3Dfalse%26yb%3Dfalse%26z%3Dfalse&ionizations=H%2B.%28H%2B%292.%28H%2B%293&protonation=false&sequence=SAMPLER%0A%0A
+        
+        
+//        var aas: [AminoAcid] = []
+//        
+//        for c in string {
+//            if let aa = aminoAcidLibrary.first(where: { $0.oneLetterCode == String(c)}) {
+//                aas.append(aa)
+//                
+//            }
+//        }
+//        
+//        let testPeptide = Peptide(residues: aas)
+//        #expect(testPeptide.masses.moverz(for: 1).monoisotopicMass.rounded(scale: 4) == decimal("803.4080"))
+        
+        
+    }
 
     @Test mutating func peptideMonoisotopicMass() {
         testPeptide.setAdducts(type: protonAdduct, count: 1)
@@ -470,7 +519,7 @@ struct BioSwiftTests {
                                                         massType: .monoisotopic,
                                                         charge: 0)
 
-            let peptides: [Peptide] = chain.searchMass(using: searchParameters)
+            let peptides: [Peptide] = chain.searchMass(params: searchParameters)
             print(peptides.map(\.sequenceString))
 
             #expect(peptides.isEmpty)
@@ -485,7 +534,7 @@ struct BioSwiftTests {
                                                         massType: .average,
                                                         charge: 0)
 
-            let peptides: [Peptide] = chain.searchMass(using: searchParameters)
+            let peptides: [Peptide] = chain.searchMass(params: searchParameters)
 
             #expect(peptides.contains(where: { $0.sequenceString == "IFFSP" }))
             #expect(!peptides.contains(where: { $0.sequenceString == "NIFFS" }))
@@ -506,7 +555,7 @@ struct BioSwiftTests {
                                                         massType: .monoisotopic,
                                                         charge: 1)
             
-            let peptides: [Peptide] = chain.searchMass(using: searchParameters)
+            let peptides: [Peptide] = chain.searchMass(params: searchParameters)
             
             #expect(peptides.contains(where: { $0.sequenceString == "FLEDVK" }))
             #expect(!peptides.contains(where: { $0.sequenceString == "NIFFS" }))
@@ -521,8 +570,25 @@ struct BioSwiftTests {
                                                         massType: .monoisotopic,
                                                         charge: 2)
 
-            let peptides: [Peptide] = chain.searchMass(using: searchParameters)
+            let peptides: [Peptide] = chain.searchMass(params: searchParameters)
 
+            #expect(peptides.contains(where: { $0.sequenceString == "TDTSHHDQDHPTFNK" }))
+            #expect(!peptides.contains(where: { $0.sequenceString == "NIFFS" }))
+        }
+    }
+    
+    @Test func moverzSearch3() {
+        if let chain = testProtein.chains.first {
+            let searchParameters = MassSearchParameters(searchValue: 890.3877,
+                                                        tolerance: MassTolerance(type: .ppm, value: 20),
+                                                        searchType: .sequential,
+                                                        massType: .monoisotopic,
+                                                        charge: 2)
+
+            
+            let ranges: [Range<Int>] = chain.searchMass(params: searchParameters)
+            let peptides = ranges.map { chain.subChain(range: $0 )}
+            print(peptides.map { $0.sequenceString})
             #expect(peptides.contains(where: { $0.sequenceString == "TDTSHHDQDHPTFNK" }))
             #expect(!peptides.contains(where: { $0.sequenceString == "NIFFS" }))
         }
@@ -540,10 +606,52 @@ struct BioSwiftTests {
                                                         massType: .monoisotopic,
                                                         charge: 0)
 
-            let peptides: [Peptide] = chain.searchMass(using: searchParameters)
+            let peptides: [Peptide] = chain.searchMass(params: searchParameters)
             print(peptides.map(\.sequenceString))
 
             #expect(peptides.contains(where: { $0.sequenceString == "IFFSP" }))
+        }
+    }
+    
+    @Test func checkMassDifferences() {
+        let peptide = Peptide(sequence: "SAMPLER")
+        let first = peptide.subChain(range: 0..<1)
+        let truncated = peptide.subChain(range: 1..<7)
+
+        #expect(first.sequenceString == "S")
+        #expect(truncated.sequenceString == "AMPLER")
+
+        let peptideMass = peptide.monoisotopicMass
+        let truncatedMass = truncated.monoisotopicMass
+        let firstMass = first.monoisotopicMass
+        
+        #expect(truncatedMass == peptideMass - firstMass + water.monoisotopicMass)
+    }
+    
+    @Test
+    func compareSearchImplementations() {
+        if let chain = testProtein.chains.first {
+            let searchParameters = MassSearchParameters(searchValue: 890.3877,
+                                                        tolerance: MassTolerance(type: .ppm, value: 10),
+                                                        searchType: .sequential,
+                                                        massType: .monoisotopic,
+                                                        charge: 2)
+            
+            
+            let bruteForceResults = measure("Brute force") {
+                let peptides: [Peptide] = chain.searchMass(params: searchParameters)
+                return peptides.map { $0.range }
+            }
+            
+            let optimizedResults = measure("Optimized") {
+                let ranges: [Range<Int>] = chain.searchMass(params: searchParameters)
+                return ranges
+            }
+            
+            debugPrint(bruteForceResults)
+            debugPrint(optimizedResults)
+            
+            #expect(bruteForceResults == optimizedResults)
         }
     }
 

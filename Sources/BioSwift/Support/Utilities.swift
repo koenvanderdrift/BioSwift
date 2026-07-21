@@ -60,6 +60,26 @@ public func loadText(from url: URL, encoding: String.Encoding = .utf8) throws ->
     }
 }
 
+func measure<T>(
+    _ name: String,
+    operation: () -> T
+) -> T {
+    let start = DispatchTime.now().uptimeNanoseconds
+
+    let result = operation()
+
+    let end = DispatchTime.now().uptimeNanoseconds
+    let milliseconds =
+        Double(end - start) / 1_000_000
+
+    print(
+        "\(name):",
+        String(format: "%.3f ms", milliseconds)
+    )
+
+    return result
+}
+
 /*
  via:  http://stackoverflow.com/questions/41402770/swift-parse-string-with-different-formats/41402868#41402868
 

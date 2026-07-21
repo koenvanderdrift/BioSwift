@@ -57,10 +57,13 @@ public struct MassContainer: Codable, Sendable {
 }
 
 extension MassContainer {
-    public func moverz(for charge: Int) -> Self {
+    public func moverz(for charge: Int, with adduct: Adduct = protonAdduct) -> Self {
         let charge = charge > 0 ? charge : 1
-
-        return self / charge
+        let totalMass = self + (charge * (adduct.group.masses - electronMass))
+        
+        let result = totalMass / charge
+        
+        return result
     }
 }
 
@@ -156,9 +159,9 @@ public extension Chargeable {
 
     func massOverCharge() -> MassContainer {
         let masses = calculateMasses() + adductMasses()
-        //let charge = charge > 0 ? charge : 1
+        let charge = charge > 0 ? charge : 1
 
-        return masses // charge
+        return masses / charge
     }
 
     func adductMasses() -> MassContainer {

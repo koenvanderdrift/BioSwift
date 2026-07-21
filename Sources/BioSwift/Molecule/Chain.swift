@@ -217,6 +217,7 @@ public extension Chain {
         )
 
         subChain.adducts = adducts
+        subChain.range = validRange
 
         return subChain
     }
@@ -242,7 +243,8 @@ public extension Chain {
         )
 
         subChain.adducts = adducts
-
+        subChain.range = validRange
+        
         return subChain
     }
 
