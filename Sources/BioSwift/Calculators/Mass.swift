@@ -56,6 +56,14 @@ public struct MassContainer: Codable, Sendable {
     public var nominalMass = Int(0)
 }
 
+extension MassContainer {
+    public func moverz(for charge: Int) -> Self {
+        let charge = charge > 0 ? charge : 1
+
+        return self / charge
+    }
+}
+
 extension MassContainer: Equatable {
     public static func + (lhs: MassContainer, rhs: MassContainer) -> MassContainer {
         MassContainer(monoisotopicMass: lhs.monoisotopicMass + rhs.monoisotopicMass, averageMass: lhs.averageMass + rhs.averageMass, nominalMass: lhs.nominalMass + rhs.nominalMass)
@@ -143,14 +151,14 @@ public extension Chargeable {
     }
 
     func pseudomolecularIon() -> MassContainer {
-        massOverCharge()
+        masses.moverz(for: self.charge)
     }
 
     func massOverCharge() -> MassContainer {
         let masses = calculateMasses() + adductMasses()
-        let charge = charge > 0 ? charge : 1
+        //let charge = charge > 0 ? charge : 1
 
-        return masses / charge
+        return masses // charge
     }
 
     func adductMasses() -> MassContainer {
