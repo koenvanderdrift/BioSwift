@@ -58,12 +58,15 @@ public struct MassContainer: Codable, Sendable {
 
 extension MassContainer {
     public func moverz(for charge: Int, with adduct: Adduct = protonAdduct) -> Self {
-        let charge = charge > 0 ? charge : 1
-        let totalMass = self + (charge * (adduct.group.masses - electronMass))
+        if charge > 0 {
+            let totalMass = self + (charge * (adduct.group.masses - electronMass))
+            
+            let result = totalMass / charge
+            
+            return result
+        }
         
-        let result = totalMass / charge
-        
-        return result
+        return self
     }
 }
 
@@ -111,6 +114,9 @@ public let sodiumAdduct = Adduct(group: sodium, charge: 1)
 public let ammoniumAdduct = Adduct(group: ammonium, charge: 1)
 public let potassiumAdduct = Adduct(group: potassium, charge: 1)
 
+public let negativeProtonAdduct = Adduct(group: hydrogen, charge: -1)
+public let chlorineAdduct = Adduct(group: chloride, charge: -1)
+
 public let zeroMass = MassContainer(monoisotopicMass: 0.0, averageMass: 0.0, nominalMass: 0)
 public let electronMass = MassContainer(monoisotopicMass: Dalton(0.000549), averageMass: Dalton(0.000549), nominalMass: 0)
 
@@ -149,8 +155,13 @@ public extension Chargeable {
         adducts.reduce(0) { $0 + $1.charge }
     }
 
+    mutating func setAdducts(_ adducts: [Adduct]) {
+        self.adducts = adducts
+    }
+    
     mutating func setAdducts(type: Adduct, count: Int) {
-        adducts = [Adduct](repeating: type, count: count)
+        let adducts = Array(repeating: type, count: count)
+        setAdducts(adducts)
     }
 
     func pseudomolecularIon() -> MassContainer {
@@ -158,10 +169,13 @@ public extension Chargeable {
     }
 
     func massOverCharge() -> MassContainer {
-        let masses = calculateMasses() + adductMasses()
-        let charge = charge > 0 ? charge : 1
+        let masses = calculateMasses()
+        
+        if charge > 0 {
+            return (masses + adductMasses()) / charge
+        }
 
-        return masses / charge
+        return masses
     }
 
     func adductMasses() -> MassContainer {

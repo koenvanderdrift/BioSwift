@@ -174,13 +174,13 @@ struct BioSwiftTests {
 
     @Test func chainMassesForIndividualResidues() {
         var peptide = Peptide(sequence: "SAMPLER")
-        debugPrint(peptide.masses.monoisotopicMass)
+        debugPrint(peptide.monoisotopicMass)
 
-        #expect(peptide.masses.monoisotopicMass.rounded(scale: 5) == decimal("802.40072"))
+        #expect(peptide.monoisotopicMass.rounded(scale: 5) == decimal("802.40072"))
         #expect(peptide.masses.moverz(for: 1).monoisotopicMass.rounded(scale: 4) == decimal("803.4080"))
 
         peptide.setAdducts(type: protonAdduct, count: 2)
-        #expect(peptide.masses.monoisotopicMass.rounded(scale: 4) == decimal("402.2076"))
+        #expect(peptide.monoisotopicMass.rounded(scale: 4) == decimal("402.2076"))
 
         var sum = water.masses
 

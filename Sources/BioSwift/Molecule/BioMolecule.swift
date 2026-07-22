@@ -59,8 +59,10 @@ public extension BioMolecule {
     func selectionMass(chainIndex index: Int = 0, _ range: Range<Int>) -> MassContainer {
         guard var sub = chains[index].subChain(range: range) as? Chargeable else { return zeroMass }
 
-        sub.setAdducts(type: protonAdduct, count: charge)
-
+        if charge > 0 {
+            sub.setAdducts(type: protonAdduct, count: charge)
+        }
+        
         return sub.pseudomolecularIon()
     }
 
@@ -113,8 +115,9 @@ public extension BioMolecule {
 
     mutating func setAdducts(type: Adduct, count: Int, for chainIndex: Int = 0) {
         if var chain = chains[chainIndex] as? Chargeable {
-            chain.setAdducts(type: type, count: count)
-            adducts = [Adduct](repeating: type, count: count)
+            adducts = Array(repeating: type, count: count)
+
+            chain.setAdducts(adducts)
         }
     }
 
