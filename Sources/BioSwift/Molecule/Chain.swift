@@ -10,7 +10,7 @@ import Foundation
 
 // https://medium.com/swift2go/mastering-generics-with-protocols-the-specification-pattern-5e2e303af4ca
 
-/// Chain is a protocol that describes ``Residue`` array 
+/// Chain is a protocol that describes ``Residue`` array
 public protocol Chain {
     associatedtype ResidueType: Residue
 
@@ -175,48 +175,39 @@ public extension Chain {
     /// returns `"VTF"`.
     func subSequence(range: Range<Int>) -> String {
         precondition(
-            range.lowerBound >= 0,
-        )
+            range.lowerBound >= 0)
 
         precondition(
-            range.upperBound < sequenceString.count,
-        )
+            range.upperBound < sequenceString.count)
 
         let lowerIndex = sequenceString.index(
             sequenceString.startIndex,
-            offsetBy: range.lowerBound - 1
-        )
+            offsetBy: range.lowerBound - 1)
 
         let upperIndex = sequenceString.index(
             sequenceString.startIndex,
-            offsetBy: range.upperBound
-        )
+            offsetBy: range.upperBound)
 
         return String(sequenceString[lowerIndex ..< upperIndex])
     }
 
     func subChain(range: Range<Int>) -> Self {
         let validRange = range.clamped(
-            toSequenceLength: residues.count
-        )
+            toSequenceLength: residues.count)
 
         guard
             validRange.isValidRange
         else {
             return Self(
-                residues: []
-            )
+                residues: [])
         }
 
         let newResidues = Array(
-            residues[validRange]
-        )
+            residues[validRange])
 
         var subChain = Self(
-            residues: newResidues
-        )
+            residues: newResidues)
 
-        subChain.adducts = adducts
         subChain.range = validRange
 
         return subChain
@@ -224,27 +215,23 @@ public extension Chain {
 
     func removing(_ range: Range<Int>) -> Self {
         let validRange = range.clamped(
-            toSequenceLength: residues.count
-        )
+            toSequenceLength: residues.count)
 
         guard
             validRange.isValidRange
         else {
             return Self(
-                residues: residues
-            )
+                residues: residues)
         }
 
         var newResidues = residues
         newResidues.removeSubrange(validRange)
 
         var subChain = Self(
-            residues: newResidues
-        )
+            residues: newResidues)
 
-        subChain.adducts = adducts
         subChain.range = validRange
-        
+
         return subChain
     }
 

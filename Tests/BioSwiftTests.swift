@@ -451,7 +451,8 @@ struct BioSwiftTests {
             #expect(peptide.monoisotopicMass.rounded(scale: 4) == decimal("1699.7891"))
 
             let range = (2 ..< 12)
-            let subChain = peptide.subChain(range: range)
+            var subChain = peptide.subChain(range: range)
+            subChain.adducts = peptide.adducts
             #expect(subChain.sequenceString == "MPLEVCAAAG")
             #expect(subChain.modification(at: 6) == cysMod)
             #expect(subChain.monoisotopicMass.rounded(scale: 4) == decimal("1019.4536"))

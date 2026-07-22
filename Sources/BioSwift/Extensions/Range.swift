@@ -157,6 +157,14 @@ public extension Range<Int> {
 }
 
 public extension Range where Bound == Int {
+    func localIndex(for sourceIndex: Int) -> Int? {
+        guard contains(sourceIndex) else {
+            return nil
+        }
+
+        return sourceIndex - lowerBound
+    }
+
     var uiRange: UIRange? {
         guard !isEmpty else {
             return nil
