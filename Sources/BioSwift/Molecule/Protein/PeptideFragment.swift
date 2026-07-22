@@ -109,7 +109,6 @@ public struct PeptideFragment: Chain, Codable, Fragmenting, Sendable {
     public var residues: [AminoAcid] = []
     public var nTerminal: Modification = zeroModification
     public var cTerminal: Modification = zeroModification
-    public var modifications: [LocalizedModification] = []
     public var adducts: [Adduct] = []
     public var range: Range<Int> = zeroRange
     public var fragmentType: PeptideFragmentType = .undefined
@@ -125,14 +124,13 @@ public struct PeptideFragment: Chain, Codable, Fragmenting, Sendable {
         self.residues = residues
     }
 
-    public init(residues: [AminoAcid], type: PeptideFragmentType, index: Int = -1, adducts: [Adduct], modifications: [LocalizedModification] = [], nTerm: Modification = zeroModification, cTerm: Modification = zeroModification, parentLength: Int = 0) {
+    public init(residues: [AminoAcid], type: PeptideFragmentType, index: Int = -1, adducts: [Adduct], nTerm: Modification = zeroModification, cTerm: Modification = zeroModification, parentLength: Int = 0) {
         self.residues = residues
-        fragmentType = type
+        self.fragmentType = type
         self.index = index
         self.adducts = adducts
-        self.modifications = modifications
-        nTerminal = nTerm
-        cTerminal = cTerm
+        self.nTerminal = nTerm
+        self.cTerminal = cTerm
         self.parentLength = parentLength
     }
 
@@ -153,15 +151,11 @@ extension PeptideFragment: Chargeable {
             return zeroMass
         }
 
-        return residueMasses() + modificationMasses() + terminalMasses() + fragmentType.masses
+        return residueMasses() + terminalMasses() + fragmentType.masses // + modificationMasses() 
     }
 
     func residueMasses() -> MassContainer {
         residues.reduce(zeroMass) { $0 + $1.masses }
-    }
-
-    func modificationMasses() -> MassContainer {
-        modifications.reduce(zeroMass) { $0 + $1.modification.masses }
     }
 
     func terminalMasses() -> MassContainer {

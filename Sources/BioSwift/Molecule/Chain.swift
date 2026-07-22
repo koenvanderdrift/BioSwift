@@ -16,7 +16,6 @@ public protocol Chain {
 
     var name: String { get set }
     var residues: [ResidueType] { get set }
-    var modifications: [LocalizedModification] { get set }
     var nTerminal: Modification { get set }
     var cTerminal: Modification { get set }
     var adducts: [Adduct] { get set }
@@ -279,37 +278,24 @@ public extension Chain {
         residue(at: location)?.modification
     }
 
-    mutating func setModifcations(_ mods: [LocalizedModification]) {
-        for mod in mods {
-            addModification(mod)
+    mutating func addModification(_ mod: Modification, at loc: Int) {
+        guard residues.indices.contains(loc) else {
+            return
         }
+        residues[loc].modification = mod
     }
 
-    mutating func addModification(_ mod: LocalizedModification) {
-        if var r = residue(at: mod.location) {
-            r.setModification(mod.modification)
-            residues[mod.location] = r
+    mutating func removeModification(at loc: Int) {
+        guard residues.indices.contains(loc) else {
+            return
         }
-    }
-
-    mutating func removeModification(at location: Int) {
-        if var r = residue(at: location) {
-            r.removeModification()
-            residues[location] = r
-        }
-    }
-
-    mutating func removeModification(mod: LocalizedModification) {
-        if var r = residue(at: mod.location) {
-            r.removeModification()
-            residues[mod.location] = r
-        }
+        residues[loc].modification = nil
     }
 
     mutating func modifyResidues(for identifier: String, with modification: Modification) {
         for index in residues.indices {
             if residues[index].identifier == identifier {
-                residues[index].setModification(modification)
+                residues[index].modification = modification
             }
         }
     }
@@ -317,7 +303,7 @@ public extension Chain {
     mutating func removeModifications(for identifier: String) {
         for index in residues.indices {
             if residues[index].identifier == identifier {
-                residues[index].removeModification()
+                residues[index].modification = nil
             }
         }
     }

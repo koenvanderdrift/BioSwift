@@ -70,28 +70,6 @@ extension Reaction: Mass {
     }
 }
 
-public protocol Modifiable {
-    var modification: Modification? { get set }
-
-    func allowedModifications() -> [Modification]
-}
-
-extension Modifiable {
-    mutating func setModification(_ modification: Modification) {
-        if allowedModifications().contains(modification) {
-            self.modification = modification
-        }
-    }
-
-    mutating func removeModification() {
-        modification = zeroModification
-    }
-
-    func modificationMasses() -> MassContainer {
-        modification?.masses ?? zeroMass
-    }
-}
-
 public struct ModificationSpecificity: Codable, Sendable {
     /*
      via: https://www.unimod.org/fields.html
@@ -179,53 +157,43 @@ extension Modification: Mass {
     }
 }
 
-public struct LocalizedModification: Codable, Hashable, Sendable {
-    public let location: Int
-    public let chain: Int
-    public let modification: Modification
+// TODO: rethink Link
 
-    public init(_ modification: Modification, at location: Int, in chain: Int = 0) {
-        self.location = location
-        self.chain = chain
-        self.modification = modification
-    }
-}
-
-public struct Link: Hashable, Codable {
-    public var mods: [LocalizedModification]
-
-    public init(mods: [LocalizedModification]) {
-        self.mods = mods
-    }
-
-    public func contains(_ location: Int) -> Bool {
-        mods.contains(where: { $0.location == location })
-    }
-}
-
-public extension Link {
-    // https://codereview.stackexchange.com/questions/237295/comparing-two-structs-in-swift#
-
-    enum CompareResult: Identifiable {
-        case equal
-        case intersect
-        case disjoint
-
-        public var id: Self {
-            self
-        }
-    }
-
-    func compareLocations(with other: Link) -> CompareResult {
-        let modsSet = Set(mods)
-        let otherModsSet = Set(other.mods)
-
-        if modsSet == otherModsSet {
-            return .equal
-        } else if modsSet.isDisjoint(with: otherModsSet) {
-            return .disjoint
-        } else {
-            return .intersect
-        }
-    }
-}
+//public struct Link: Hashable, Codable {
+//    public var mods: [LocalizedModification]
+//
+//    public init(mods: [LocalizedModification]) {
+//        self.mods = mods
+//    }
+//
+//    public func contains(_ location: Int) -> Bool {
+//        mods.contains(where: { $0.location == location })
+//    }
+//}
+//
+//public extension Link {
+//    // https://codereview.stackexchange.com/questions/237295/comparing-two-structs-in-swift#
+//
+//    enum CompareResult: Identifiable {
+//        case equal
+//        case intersect
+//        case disjoint
+//
+//        public var id: Self {
+//            self
+//        }
+//    }
+//
+//    func compareLocations(with other: Link) -> CompareResult {
+//        let modsSet = Set(mods)
+//        let otherModsSet = Set(other.mods)
+//
+//        if modsSet == otherModsSet {
+//            return .equal
+//        } else if modsSet.isDisjoint(with: otherModsSet) {
+//            return .disjoint
+//        } else {
+//            return .intersect
+//        }
+//    }
+//}

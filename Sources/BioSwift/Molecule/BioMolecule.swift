@@ -119,19 +119,11 @@ public extension BioMolecule {
     }
 
     mutating func addModification(mod: Modification, at loc: Int, for chainIndex: Int = 0) {
-        chains[chainIndex].addModification(LocalizedModification(mod, at: loc))
-    }
-
-    mutating func addModification(mod: LocalizedModification, for chainIndex: Int = 0) {
-        addModification(mod: mod.modification, at: mod.location, for: chainIndex)
+        chains[chainIndex].addModification(mod, at: loc)
     }
 
     mutating func removeModification(at loc: Int, for chainIndex: Int = 0) {
         chains[chainIndex].removeModification(at: loc)
-    }
-
-    mutating func removeModification(mod: LocalizedModification, for chainIndex: Int = 0) {
-        removeModification(at: mod.location, for: chainIndex)
     }
 
     mutating func modifyResidues(for identifier: String, with modification: Modification, for chainIndex: Int = 0) {

@@ -43,7 +43,6 @@ RNA = BioMolecule<Nucleotide>
 An oligo would be a protein modification (as a Chain)
 
 protocol RangedChain: subchain range in full chain
-protocol Modifiable: add and remove modifications
 protocol Symbolized: letter
 protocol Structure: name, formula
 
@@ -54,10 +53,10 @@ ing, e.g. Loading, Generating, Coordinating
 If something is done to the implementer, name the protocol with an adjective ending
 with able or ible, e.g. Comparable, Codable, Cachable
 
-struct Chain: Structure, modifiable
+struct Chain: Structure
 struct ChemicalElement: Structure, Symbolized
-struct Residue: Structure, Modifiable
-struct Modification, LocalizedModification: Structure
+struct Residue: Structure
+struct Modification: Structure
 struct FunctionalGroup: Structure
 struct Enzyme
 

@@ -9,12 +9,12 @@
 import Foundation
 
 /// Peptide conforms to ``Chain`` using an ``AminoAcid`` array
+
 public struct Peptide: Chain, Codable, Equatable, Sendable {
     public var name: String = ""
     public var residues: [AminoAcid] = []
     public var nTerminal: Modification = hydrogenModification
     public var cTerminal: Modification = hydroxylModification
-    public var modifications: [LocalizedModification] = []
     public var adducts: [Adduct] = []
     public var range: Range<Int> = zeroRange
     public var parentLength: Int = 0
@@ -56,15 +56,11 @@ extension Peptide: Chargeable {
             return zeroMass
         }
 
-        return residueMasses() + modificationMasses() + terminalMasses()
+        return residueMasses() + terminalMasses()
     }
 
     func residueMasses() -> MassContainer {
         residues.reduce(zeroMass) { $0 + $1.masses }
-    }
-
-    func modificationMasses() -> MassContainer {
-        modifications.reduce(zeroMass) { $0 + $1.modification.masses }
     }
 
     func terminalMasses() -> MassContainer {

@@ -10,13 +10,10 @@ import Foundation
 
 /// Residue is a building block for a ``Chain``
 /// 
-public protocol Residue: Symbol, Structure, Modifiable, Hashable {
+public protocol Residue: Symbol, Structure, Hashable {
     var oneLetterCode: String { get }
     var threeLetterCode: String { get }
     var modification: Modification? { get set }
-
-    mutating func setModification(_ modification: Modification)
-    mutating func removeModification()
 }
 
 public extension Residue {
@@ -31,13 +28,17 @@ public extension Residue {
     var masses: MassContainer {
         formula.masses + modificationMasses()
     }
-
-    mutating func setModification(_ modification: Modification) {
-        self.modification = modification
+    
+    func modificationMasses() -> MassContainer {
+        modification?.masses ?? zeroMass
     }
-
-    mutating func removeModification() {
-        modification = nil
+    
+    func allowedModifications() -> [Modification] {
+        modificationLibrary.filter { mod in
+            mod.specificities.contains { spec in
+                spec.site == identifier
+            }
+        }
     }
 }
 

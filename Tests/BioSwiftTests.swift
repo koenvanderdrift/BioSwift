@@ -149,7 +149,7 @@ struct BioSwiftTests {
     @Test func modifiedPeptideFormula() {
         var peptide = Peptide(sequence: "DWSSD")
         if let ser = modificationLibrary.first(where: { $0.name == "Phospho" }) {
-            peptide.addModification(LocalizedModification(ser, at: 3))
+            peptide.addModification(ser, at: 3)
             #expect(peptide.formula.countFor(element: "P") == 1)
         }
     }
@@ -171,11 +171,11 @@ struct BioSwiftTests {
 
         #expect(group.averageMass.rounded(scale: 3) == decimal("608.555"))
     } // 608.5556
-    
+
     @Test func chainMassesForIndividualResidues() {
         var peptide = Peptide(sequence: "SAMPLER")
         debugPrint(peptide.masses.monoisotopicMass)
-        
+
         #expect(peptide.masses.monoisotopicMass.rounded(scale: 5) == decimal("802.40072"))
         #expect(peptide.masses.moverz(for: 1).monoisotopicMass.rounded(scale: 4) == decimal("803.4080"))
 
@@ -183,7 +183,7 @@ struct BioSwiftTests {
         #expect(peptide.masses.monoisotopicMass.rounded(scale: 4) == decimal("402.2076"))
 
         var sum = water.masses
-        
+
         for aa in peptide.residues {
             sum += aa.masses
         }
@@ -193,32 +193,28 @@ struct BioSwiftTests {
         #expect(sum.moverz(for: 2).monoisotopicMass.rounded(scale: 4) == decimal("402.2076"))
 
         sum = water.masses
-        
-        for aa in peptide.residues[1..<7] {
+
+        for aa in peptide.residues[1 ..< 7] {
             sum += aa.masses
         }
         debugPrint(sum.monoisotopicMass)
 
         #expect(sum.monoisotopicMass.rounded(scale: 5) == decimal("715.36870"))
         #expect(sum.moverz(for: 2).monoisotopicMass.rounded(scale: 4) == decimal("358.6916"))
-        
-        
-       // https://www.chemcalc.org/peptides?digestion=%5Bobject%20Object%5D&filter=%5Bobject%20Object%5D&fragmentation=a%3Dfalse%26b%3Dfalse%26c%3Dfalse%26i%3Dfalse%26n%3Dfalse%26x%3Dfalse%26y%3Dfalse%26ya%3Dfalse%26yb%3Dfalse%26z%3Dfalse&ionizations=H%2B.%28H%2B%292.%28H%2B%293&protonation=false&sequence=SAMPLER%0A%0A
-        
-        
-//        var aas: [AminoAcid] = []
-//        
-//        for c in string {
-//            if let aa = aminoAcidLibrary.first(where: { $0.oneLetterCode == String(c)}) {
-//                aas.append(aa)
-//                
-//            }
-//        }
-//        
-//        let testPeptide = Peptide(residues: aas)
-//        #expect(testPeptide.masses.moverz(for: 1).monoisotopicMass.rounded(scale: 4) == decimal("803.4080"))
-        
-        
+
+        // https://www.chemcalc.org/peptides?digestion=%5Bobject%20Object%5D&filter=%5Bobject%20Object%5D&fragmentation=a%3Dfalse%26b%3Dfalse%26c%3Dfalse%26i%3Dfalse%26n%3Dfalse%26x%3Dfalse%26y%3Dfalse%26ya%3Dfalse%26yb%3Dfalse%26z%3Dfalse&ionizations=H%2B.%28H%2B%292.%28H%2B%293&protonation=false&sequence=SAMPLER%0A%0A
+
+        //        var aas: [AminoAcid] = []
+        //
+        //        for c in string {
+        //            if let aa = aminoAcidLibrary.first(where: { $0.oneLetterCode == String(c)}) {
+        //                aas.append(aa)
+        //
+        //            }
+        //        }
+        //
+        //        let testPeptide = Peptide(residues: aas)
+        //        #expect(testPeptide.masses.moverz(for: 1).monoisotopicMass.rounded(scale: 4) == decimal("803.4080"))
     }
 
     @Test mutating func peptideMonoisotopicMass() {
@@ -239,7 +235,7 @@ struct BioSwiftTests {
 
     @Test mutating func peptideSerinePhosphorylationMonoisotopicMass() {
         if let phos = modificationLibrary.first(where: { $0.name == "Phospho" }) {
-            testPeptide.addModification(LocalizedModification(phos, at: 3))
+            testPeptide.addModification(phos, at: 3)
 
             testPeptide.setAdducts(type: protonAdduct, count: 1)
             #expect(testPeptide.monoisotopicMass.rounded(scale: 4) == decimal("689.1814"))
@@ -257,7 +253,7 @@ struct BioSwiftTests {
         if let phos = modificationLibrary.first(where: { $0.name == "Phospho" }),
            let methylmalonylation = modificationLibrary.first(where: { $0.name == "Methylmalonylation" })
         {
-            testPeptide.addModification(LocalizedModification(phos, at: 3))
+            testPeptide.addModification(phos, at: 3)
 
             testPeptide.setAdducts(type: protonAdduct, count: 1)
             #expect(testPeptide.monoisotopicMass.rounded(scale: 4) == decimal("689.1814"))
@@ -265,7 +261,7 @@ struct BioSwiftTests {
             testPeptide.setAdducts(type: protonAdduct, count: 2)
             #expect(testPeptide.monoisotopicMass.rounded(scale: 4) == decimal("345.0944"))
 
-            testPeptide.addModification(LocalizedModification(methylmalonylation, at: 3))
+            testPeptide.addModification(methylmalonylation, at: 3)
             testPeptide.setAdducts(type: protonAdduct, count: 1)
             #expect(testPeptide.monoisotopicMass.rounded(scale: 4) == decimal("709.2311"))
         }
@@ -447,7 +443,7 @@ struct BioSwiftTests {
 
         if let cysMod = modificationLibrary.first(where: { $0.name == "Carboxymethyl" }) {
             #expect(cysMod.fullName == "Iodoacetic acid derivative")
-            peptide.addModification(LocalizedModification(cysMod, at: 8))
+            peptide.addModification(cysMod, at: 8)
             #expect(peptide.monoisotopicMass.rounded(scale: 4) == decimal("1699.7891"))
 
             let range = (2 ..< 12)
@@ -540,11 +536,11 @@ struct BioSwiftTests {
             #expect(peptides.contains(where: { $0.sequenceString == "IFFSP" }))
             #expect(!peptides.contains(where: { $0.sequenceString == "NIFFS" }))
 
-//            let ranges = chain.searchMass(using: searchParameters)
-//            let sequenceStrings = ranges.map { chain.sequenceString[$0] }
-//
-//            #expect(sequenceStrings.contains(where: { $0 == "IFFSP" }))
-//            #expect(!sequenceStrings.contains(where: { $0 == "NIFFS" }))
+            //            let ranges = chain.searchMass(using: searchParameters)
+            //            let sequenceStrings = ranges.map { chain.sequenceString[$0] }
+            //
+            //            #expect(sequenceStrings.contains(where: { $0 == "IFFSP" }))
+            //            #expect(!sequenceStrings.contains(where: { $0 == "NIFFS" }))
         }
     }
 
@@ -555,9 +551,9 @@ struct BioSwiftTests {
                                                         searchType: .sequential,
                                                         massType: .monoisotopic,
                                                         charge: 1)
-            
+
             let peptides: [Peptide] = chain.searchMass(params: searchParameters)
-            
+
             #expect(peptides.contains(where: { $0.sequenceString == "FLEDVK" }))
             #expect(!peptides.contains(where: { $0.sequenceString == "NIFFS" }))
         }
@@ -577,7 +573,7 @@ struct BioSwiftTests {
             #expect(!peptides.contains(where: { $0.sequenceString == "NIFFS" }))
         }
     }
-    
+
     @Test func moverzSearch3() {
         if let chain = testProtein.chains.first {
             let searchParameters = MassSearchParameters(searchValue: 890.3877,
@@ -586,10 +582,9 @@ struct BioSwiftTests {
                                                         massType: .monoisotopic,
                                                         charge: 2)
 
-            
             let ranges: [Range<Int>] = chain.searchMass(params: searchParameters)
-            let peptides = ranges.map { chain.subChain(range: $0 )}
-            print(peptides.map { $0.sequenceString})
+            let peptides = ranges.map { chain.subChain(range: $0) }
+            print(peptides.map { $0.sequenceString })
             #expect(peptides.contains(where: { $0.sequenceString == "TDTSHHDQDHPTFNK" }))
             #expect(!peptides.contains(where: { $0.sequenceString == "NIFFS" }))
         }
@@ -599,7 +594,7 @@ struct BioSwiftTests {
         if var chain = testProtein.chains.first,
            let phos = modificationLibrary.first(where: { $0.name == "Phospho" })
         {
-            chain.addModification(LocalizedModification(phos, at: 76))
+            chain.addModification(phos, at: 76)
 
             let searchParameters = MassSearchParameters(searchValue: 689.28,
                                                         tolerance: MassTolerance(type: .ppm, value: 20),
@@ -607,17 +602,18 @@ struct BioSwiftTests {
                                                         massType: .monoisotopic,
                                                         charge: 0)
 
+            // TODO: make work with Range<Int> search method
             let peptides: [Peptide] = chain.searchMass(params: searchParameters)
             print(peptides.map(\.sequenceString))
 
             #expect(peptides.contains(where: { $0.sequenceString == "IFFSP" }))
         }
     }
-    
+
     @Test func checkMassDifferences() {
         let peptide = Peptide(sequence: "SAMPLER")
-        let first = peptide.subChain(range: 0..<1)
-        let truncated = peptide.subChain(range: 1..<7)
+        let first = peptide.subChain(range: 0 ..< 1)
+        let truncated = peptide.subChain(range: 1 ..< 7)
 
         #expect(first.sequenceString == "S")
         #expect(truncated.sequenceString == "AMPLER")
@@ -625,10 +621,10 @@ struct BioSwiftTests {
         let peptideMass = peptide.monoisotopicMass
         let truncatedMass = truncated.monoisotopicMass
         let firstMass = first.monoisotopicMass
-        
+
         #expect(truncatedMass == peptideMass - firstMass + water.monoisotopicMass)
     }
-    
+
     @Test
     func compareSearchImplementations() {
         if let chain = testProtein.chains.first {
@@ -637,21 +633,20 @@ struct BioSwiftTests {
                                                         searchType: .sequential,
                                                         massType: .monoisotopic,
                                                         charge: 2)
-            
-            
+
             let bruteForceResults = measure("Brute force") {
                 let peptides: [Peptide] = chain.searchMass(params: searchParameters)
                 return peptides.map { $0.range }
             }
-            
+
             let optimizedResults = measure("Optimized") {
                 let ranges: [Range<Int>] = chain.searchMass(params: searchParameters)
                 return ranges
             }
-            
+
             debugPrint(bruteForceResults)
             debugPrint(optimizedResults)
-            
+
             #expect(bruteForceResults == optimizedResults)
         }
     }
@@ -771,7 +766,7 @@ struct BioSwiftTests {
 
         if let ox = modificationLibrary.first(where: { $0.name == "Oxidation" }) {
             #expect(ox.fullName == "Oxidation or Hydroxylation")
-            peptide.addModification(LocalizedModification(ox, at: 8))
+            peptide.addModification(ox, at: 8)
             #expect(peptide.monoisotopicMass.rounded(scale: 4) == decimal("1685.8098"))
 
             let fragmenter = PeptideFragmenter(peptide: peptide)
@@ -1149,108 +1144,108 @@ struct BioSwiftTests {
 
         #expect(result == 3 ... 7)
     }
-}
 
-@Test("Convert UIRange to zero-based Range")
-func uiRangeToRange() {
-    let uiRange = UIRange(1 ... 4)
+    @Test("Convert UIRange to zero-based Range")
+    func uiRangeToRange() {
+        let uiRange = UIRange(1 ... 4)
 
-    let result = uiRange.zeroBasedRange
+        let result = uiRange.zeroBasedRange
 
-    #expect(result == 0 ..< 4)
-}
+        #expect(result == 0 ..< 4)
+    }
 
-@Test("Convert zero-based Range to UIRange")
-func rangeToUIRange() {
-    let range: Range<Int> = 0 ..< 4
+    @Test("Convert zero-based Range to UIRange")
+    func rangeToUIRange() {
+        let range: Range<Int> = 0 ..< 4
 
-    let result = range.uiRange
+        let result = range.uiRange
 
-    #expect(result == UIRange(1 ... 4))
-}
+        #expect(result == UIRange(1 ... 4))
+    }
 
-@Test("Round-trip Range through UIRange")
-func rangeUIRangeRoundTrip() {
-    let original: Range<Int> = 25 ..< 33
+    @Test("Round-trip Range through UIRange")
+    func rangeUIRangeRoundTrip() {
+        let original: Range<Int> = 25 ..< 33
 
-    let uiRange = original.uiRange
-    let convertedBack = uiRange?.zeroBasedRange
+        let uiRange = original.uiRange
+        let convertedBack = uiRange?.zeroBasedRange
 
-    #expect(uiRange == UIRange(26 ... 33))
-    #expect(convertedBack == original)
-}
+        #expect(uiRange == UIRange(26 ... 33))
+        #expect(convertedBack == original)
+    }
 
-@Test("Empty Range cannot convert to UIRange")
-func emptyRangeToUIRange() {
-    let emptyRange: Range<Int> = 0 ..< 0
+    @Test("Empty Range cannot convert to UIRange")
+    func emptyRangeToUIRange() {
+        let emptyRange: Range<Int> = 0 ..< 0
 
-    #expect(emptyRange.uiRange == nil)
-}
+        #expect(emptyRange.uiRange == nil)
+    }
 
-@Test("UIRange rejects a zero-based ClosedRange")
-func invalidUIRange() {
-    let result = UIRange(validating: 0 ... 4)
+    @Test("UIRange rejects a zero-based ClosedRange")
+    func invalidUIRange() {
+        let result = UIRange(validating: 0 ... 4)
 
-    #expect(result == nil)
-}
+        #expect(result == nil)
+    }
 
-@Test
-func propertySetContainsExpectedValues() {
-    let properties: Set<AminoAcidProperty> = [.polar, .aromatic]
+    @Test
+    func propertySetContainsExpectedValues() {
+        let properties: Set<AminoAcidProperty> = [.polar, .aromatic]
 
-    #expect(properties.contains(.polar))
-    #expect(properties.contains(.aromatic))
-    #expect(!properties.contains(.nonpolar))
-    #expect(properties.count == 2)
-}
+        #expect(properties.contains(.polar))
+        #expect(properties.contains(.aromatic))
+        #expect(!properties.contains(.nonpolar))
+        #expect(properties.count == 2)
+    }
 
-@Test
-func duplicatePropertiesAreIgnored() {
-    let properties: Set<AminoAcidProperty> = [.polar, .polar, .aromatic]
+    @Test
+    func duplicatePropertiesAreIgnored() {
+        let properties: Set<AminoAcidProperty> = [.polar, .polar, .aromatic]
 
-    #expect(properties == [.polar, .aromatic])
-    #expect(properties.count == 2)
-}
+        #expect(properties == [.polar, .aromatic])
+        #expect(properties.count == 2)
+    }
 
-@Test
-func twoWordHasCorrectDisplayName() {
-    let property = AminoAcidProperty.chargedPositive
+    @Test
+    func twoWordHasCorrectDisplayName() {
+        let property = AminoAcidProperty.chargedPositive
 
-    #expect(property.displayName == "Charged Positive")
-}
+        #expect(property.displayName == "Charged Positive")
+    }
 
-/*
- @Test
+    /*
+     @Test
      func filteringItemsByProperty() {
-         let items = [
-             Item(name: "First", properties: [.foo, .bar]),
-             Item(name: "Second", properties: [.bar]),
-             Item(name: "Third", properties: [.foo, .baz])
-         ]
+     let items = [
+     Item(name: "First", properties: [.foo, .bar]),
+     Item(name: "Second", properties: [.bar]),
+     Item(name: "Third", properties: [.foo, .baz])
+     ]
 
-         let fooItems = items.filter {
-             $0.properties.contains(.foo)
-         }
+     let fooItems = items.filter {
+     $0.properties.contains(.foo)
+     }
 
-         #expect(fooItems.map(\.name) == [
-             "First",
-             "Third"
-         ])
+     #expect(fooItems.map(\.name) == [
+     "First",
+     "Third"
+     ])
      }
 
      @Test
      func commaSeparatedFooItemNames() {
-         let items = [
-             Item(name: "First", properties: [.foo]),
-             Item(name: "Second", properties: [.bar]),
-             Item(name: "Third", properties: [.foo, .baz])
-         ]
+     let items = [
+     Item(name: "First", properties: [.foo]),
+     Item(name: "Second", properties: [.bar]),
+     Item(name: "Third", properties: [.foo, .baz])
+     ]
 
-         let names = items
-             .filter { $0.properties.contains(.foo) }
-             .map(\.name)
-             .joined(separator: ", ")
+     let names = items
+     .filter { $0.properties.contains(.foo) }
+     .map(\.name)
+     .joined(separator: ", ")
 
-         #expect(names == "First, Third")
+     #expect(names == "First, Third")
      }
- */
+     */
+}
