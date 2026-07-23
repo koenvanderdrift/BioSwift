@@ -516,10 +516,9 @@ struct BioSwiftTests {
                                                         massType: .monoisotopic,
                                                         charge: 0)
 
-            let peptides: [Peptide] = chain.searchMass(params: searchParameters)
-            print(peptides.map(\.sequenceString))
+            let ranges: [Range<Int>] = chain.searchMassOld(params: searchParameters)
 
-            #expect(peptides.isEmpty)
+            #expect(ranges.isEmpty)
         }
     }
 
@@ -531,20 +530,15 @@ struct BioSwiftTests {
                                                         massType: .average,
                                                         charge: 0)
 
-            let peptides: [Peptide] = chain.searchMass(params: searchParameters)
+            let ranges: [Range<Int>] = chain.searchMassOld(params: searchParameters)
+            let sequenceStrings = ranges.map { chain.sequenceString[$0] }
 
-            #expect(peptides.contains(where: { $0.sequenceString == "IFFSP" }))
-            #expect(!peptides.contains(where: { $0.sequenceString == "NIFFS" }))
-
-            //            let ranges = chain.searchMass(using: searchParameters)
-            //            let sequenceStrings = ranges.map { chain.sequenceString[$0] }
-            //
-            //            #expect(sequenceStrings.contains(where: { $0 == "IFFSP" }))
-            //            #expect(!sequenceStrings.contains(where: { $0 == "NIFFS" }))
+            #expect(sequenceStrings.contains(where: { $0 == "IFFSP" }))
+            #expect(!sequenceStrings.contains(where: { $0 == "NIFFS" }))
         }
     }
 
-    @Test func moverzSearch() {
+    @Test func moverzSearchOld() {
         if let chain = testProtein.chains.first {
             let searchParameters = MassSearchParameters(searchValue: 750.4032,
                                                         tolerance: MassTolerance(type: .ppm, value: 5),
@@ -552,14 +546,15 @@ struct BioSwiftTests {
                                                         massType: .monoisotopic,
                                                         charge: 1)
 
-            let peptides: [Peptide] = chain.searchMass(params: searchParameters)
+            let ranges: [Range<Int>] = chain.searchMassOld(params: searchParameters)
+            let sequenceStrings = ranges.map { chain.sequenceString[$0] }
 
-            #expect(peptides.contains(where: { $0.sequenceString == "FLEDVK" }))
-            #expect(!peptides.contains(where: { $0.sequenceString == "NIFFS" }))
+            #expect(sequenceStrings.contains(where: { $0 == "FLEDVK" }))
+            #expect(!sequenceStrings.contains(where: { $0 == "NIFFS" }))
         }
     }
 
-    @Test func moverzSearch2() {
+    @Test func moverzSearchNew() {
         if let chain = testProtein.chains.first {
             let searchParameters = MassSearchParameters(searchValue: 890.3877,
                                                         tolerance: MassTolerance(type: .ppm, value: 20),
@@ -567,30 +562,20 @@ struct BioSwiftTests {
                                                         massType: .monoisotopic,
                                                         charge: 2)
 
-            let peptides: [Peptide] = chain.searchMass(params: searchParameters)
+            let ranges = measure("Optimized Search") {
+                let ranges: [Range<Int>] = chain.searchMass(params: searchParameters)
+                debugPrint(ranges)
+                return ranges
+            }
 
-            #expect(peptides.contains(where: { $0.sequenceString == "TDTSHHDQDHPTFNK" }))
-            #expect(!peptides.contains(where: { $0.sequenceString == "NIFFS" }))
-        }
-    }
-
-    @Test func moverzSearch3() {
-        if let chain = testProtein.chains.first {
-            let searchParameters = MassSearchParameters(searchValue: 890.3877,
-                                                        tolerance: MassTolerance(type: .ppm, value: 20),
-                                                        searchType: .sequential,
-                                                        massType: .monoisotopic,
-                                                        charge: 2)
-
-            let ranges: [Range<Int>] = chain.searchMass(params: searchParameters)
             let peptides = ranges.map { chain.subChain(range: $0) }
-            print(peptides.map { $0.sequenceString })
+
             #expect(peptides.contains(where: { $0.sequenceString == "TDTSHHDQDHPTFNK" }))
             #expect(!peptides.contains(where: { $0.sequenceString == "NIFFS" }))
         }
     }
 
-    @Test func massSearchWithModification() {
+    @Test func massSearchOldWithModification() {
         if var chain = testProtein.chains.first,
            let phos = modificationLibrary.first(where: { $0.name == "Phospho" })
         {
@@ -602,9 +587,27 @@ struct BioSwiftTests {
                                                         massType: .monoisotopic,
                                                         charge: 0)
 
-            // TODO: make work with Range<Int> search method
-            let peptides: [Peptide] = chain.searchMass(params: searchParameters)
-            print(peptides.map(\.sequenceString))
+            let ranges: [Range<Int>] = chain.searchMassOld(params: searchParameters)
+            let peptides = ranges.map { chain.subChain(range: $0) }
+
+            #expect(peptides.contains(where: { $0.sequenceString == "IFFSP" }))
+        }
+    }
+
+    @Test func massSearchNewWithModification() {
+        if var chain = testProtein.chains.first,
+           let phos = modificationLibrary.first(where: { $0.name == "Phospho" })
+        {
+            chain.addModification(phos, at: 76)
+
+            let searchParameters = MassSearchParameters(searchValue: 689.28,
+                                                        tolerance: MassTolerance(type: .ppm, value: 20),
+                                                        searchType: .sequential,
+                                                        massType: .monoisotopic,
+                                                        charge: 0)
+
+            let ranges: [Range<Int>] = chain.searchMass(params: searchParameters)
+            let peptides = ranges.map { chain.subChain(range: $0) }
 
             #expect(peptides.contains(where: { $0.sequenceString == "IFFSP" }))
         }
@@ -634,20 +637,20 @@ struct BioSwiftTests {
                                                         massType: .monoisotopic,
                                                         charge: 2)
 
-            let bruteForceResults = measure("Brute force") {
-                let peptides: [Peptide] = chain.searchMass(params: searchParameters)
-                return peptides.map { $0.range }
+            let new1 = measure("Original brute force") {
+                let ranges: [Range<Int>] = chain.searchMassOld(params: searchParameters)
+                return ranges
             }
 
-            let optimizedResults = measure("Optimized") {
+            let new2 = measure("Optimized search") {
                 let ranges: [Range<Int>] = chain.searchMass(params: searchParameters)
                 return ranges
             }
 
-            debugPrint(bruteForceResults)
-            debugPrint(optimizedResults)
+            debugPrint(new1)
+            debugPrint(new2)
 
-            #expect(bruteForceResults == optimizedResults)
+            #expect(new1 == new2)
         }
     }
 

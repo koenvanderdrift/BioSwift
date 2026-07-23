@@ -119,26 +119,26 @@ public extension Chain {
 }
 
 public extension Chain {
-    func searchMass(params: MassSearchParameters) -> [Self] where Self: Chargeable {
-        var result: [Self] = []
+    func searchMassOld(params: MassSearchParameters) -> [Range<Int>] where Self: Chargeable {
+        var result: [Range<Int>] = []
 
         for startIndex in residues.indices {
-            for endIndex in (startIndex + 1)..<residues.count {
-                let subRange = startIndex..<endIndex
+            for endIndex in (startIndex + 1) ..< residues.count {
+                let subRange = startIndex ..< endIndex
                 var sub = subChain(range: subRange)
-                
+
                 sub.range = subRange
                 sub.setAdducts(type: protonAdduct, count: params.charge)
-                
+
                 let moverz = sub.massOverCharge()
-                
+
                 if params.massRange.upperLimit(excludes: moverz) {
                     break
                 }
 
                 if params.massRange.contains(moverz, for: params.massType) {
                     if (startIndex ..< endIndex).isValidRange {
-                        result.append(sub)
+                        result.append(startIndex ..< endIndex)
                     }
                 }
             }
@@ -160,28 +160,31 @@ public extension Chain {
 
         func massContainer(from start: Int, to end: Int) -> MassContainer {
             let itemSum = prefixValues[end] - prefixValues[start]
-            
-            return water.masses + itemSum
+
+            return (water.masses + itemSum).moverz(for: params.charge)
         }
+
+        let count = residues.count
+        let acceptableRange = params.massRange
 
         var results: [Range<Int>] = []
 
         for start in residues.indices {
             var end = start + 1
 
-            while end <= residues.count {
-                let candidate = massContainer(
-                    from: start,
-                    to: end).moverz(for: params.charge)
+            while end <= count {
+                let candidate = massContainer(from: start, to: end)
 
-                if params.massRange.upperLimit(excludes: candidate) {
+                if acceptableRange.isBelow(candidate, for: params.massType) {
+                    end += 1
+                    continue
+                }
+
+                if acceptableRange.isAbove(candidate, for: params.massType) {
                     break
                 }
 
-                if params.massRange.contains(candidate, for: params.massType) {
-                    results.append(start ..< end)
-                }
-
+                results.append(start ..< end)
                 end += 1
             }
         }

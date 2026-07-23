@@ -15,24 +15,52 @@ public typealias Dalton = Decimal
 
 public typealias MassRange = ClosedRange<Dalton>
 
-extension MassRange {
-    public func contains(_ masses: MassContainer, for type: MassType) -> Bool {
+public extension MassRange {
+    func contains(_ masses: MassContainer, for type: MassType) -> Bool {
         switch type {
         case .monoisotopic:
             return contains(masses.monoisotopicMass)
+
         case .average:
             return contains(masses.averageMass)
+
         case .nominal:
             return false
         }
     }
 
-    public func lowerLimit(excludes masses: MassContainer) -> Bool {
-        masses.monoisotopicMass < 0.95 * lowerBound
+    func lowerLimit(excludes masses: MassContainer) -> Bool {
+        masses.monoisotopicMass < 0.99 * lowerBound
     }
 
-    public func upperLimit(excludes masses: MassContainer) -> Bool {
-        masses.averageMass > 1.05 * upperBound
+    func upperLimit(excludes masses: MassContainer) -> Bool {
+        masses.averageMass > 1.01 * upperBound
+    }
+
+    func isBelow(_ value: MassContainer, for type: MassType) -> Bool {
+        switch type {
+        case .monoisotopic:
+            return value.monoisotopicMass < lowerBound
+
+        case .average:
+            return value.averageMass < lowerBound
+
+        case .nominal:
+            return false
+        }
+    }
+
+    func isAbove(_ value: MassContainer, for type: MassType) -> Bool {
+        switch type {
+        case .monoisotopic:
+            return value.monoisotopicMass > upperBound
+
+        case .average:
+            return value.averageMass > upperBound
+
+        case .nominal:
+            return false
+        }
     }
 }
 
@@ -48,7 +76,8 @@ public enum MassType: String, CaseIterable, Codable, Identifiable, Equatable, Se
 }
 
 /// MassContainer is a wrapper around the calculated ``Mass`` for each ``MassType``
-/// Monoisotopic and average masses are calculated and stored as Dalton, a Decimal typealias. The nominal mass is calculated and store as an Int.
+/// Monoisotopic and average masses are calculated and stored as Dalton, a Decimal typealias. The nominal mass is calculated and store as an
+/// Int.
 
 public struct MassContainer: Codable, Sendable {
     public var monoisotopicMass = Dalton(0.0)
@@ -56,23 +85,24 @@ public struct MassContainer: Codable, Sendable {
     public var nominalMass = Int(0)
 }
 
-extension MassContainer {
-    public func moverz(for charge: Int, with adduct: Adduct = protonAdduct) -> Self {
+public extension MassContainer {
+    func moverz(for charge: Int, with adduct: Adduct = protonAdduct) -> Self {
         if charge > 0 {
             let totalMass = self + (charge * (adduct.group.masses - electronMass))
-            
-            let result = totalMass / charge
-            
-            return result
+
+            return totalMass / charge
         }
-        
+
         return self
     }
 }
 
 extension MassContainer: Equatable {
     public static func + (lhs: MassContainer, rhs: MassContainer) -> MassContainer {
-        MassContainer(monoisotopicMass: lhs.monoisotopicMass + rhs.monoisotopicMass, averageMass: lhs.averageMass + rhs.averageMass, nominalMass: lhs.nominalMass + rhs.nominalMass)
+        MassContainer(
+            monoisotopicMass: lhs.monoisotopicMass + rhs.monoisotopicMass,
+            averageMass: lhs.averageMass + rhs.averageMass,
+            nominalMass: lhs.nominalMass + rhs.nominalMass)
     }
 
     public static func += (lhs: inout MassContainer, rhs: MassContainer) {
@@ -80,7 +110,10 @@ extension MassContainer: Equatable {
     }
 
     public static func - (lhs: MassContainer, rhs: MassContainer) -> MassContainer {
-        MassContainer(monoisotopicMass: lhs.monoisotopicMass - rhs.monoisotopicMass, averageMass: lhs.averageMass - rhs.averageMass, nominalMass: lhs.nominalMass - rhs.nominalMass)
+        MassContainer(
+            monoisotopicMass: lhs.monoisotopicMass - rhs.monoisotopicMass,
+            averageMass: lhs.averageMass - rhs.averageMass,
+            nominalMass: lhs.nominalMass - rhs.nominalMass)
     }
 
     public static func -= (lhs: inout MassContainer, rhs: MassContainer) {
@@ -88,11 +121,17 @@ extension MassContainer: Equatable {
     }
 
     public static func * (lhs: Int, rhs: MassContainer) -> MassContainer {
-        MassContainer(monoisotopicMass: Dalton(lhs) * rhs.monoisotopicMass, averageMass: Dalton(lhs) * rhs.averageMass, nominalMass: lhs * rhs.nominalMass)
+        MassContainer(
+            monoisotopicMass: Dalton(lhs) * rhs.monoisotopicMass,
+            averageMass: Dalton(lhs) * rhs.averageMass,
+            nominalMass: lhs * rhs.nominalMass)
     }
 
     public static func / (lhs: MassContainer, rhs: Int) -> MassContainer {
-        MassContainer(monoisotopicMass: lhs.monoisotopicMass / Dalton(rhs), averageMass: lhs.averageMass / Dalton(rhs), nominalMass: Int(lhs.nominalMass / rhs))
+        MassContainer(
+            monoisotopicMass: lhs.monoisotopicMass / Dalton(rhs),
+            averageMass: lhs.averageMass / Dalton(rhs),
+            nominalMass: Int(lhs.nominalMass / rhs))
     }
 }
 
@@ -158,19 +197,19 @@ public extension Chargeable {
     mutating func setAdducts(_ adducts: [Adduct]) {
         self.adducts = adducts
     }
-    
+
     mutating func setAdducts(type: Adduct, count: Int) {
         let adducts = Array(repeating: type, count: count)
         setAdducts(adducts)
     }
 
     func pseudomolecularIon() -> MassContainer {
-        masses.moverz(for: self.charge)
+        masses.moverz(for: charge)
     }
 
     func massOverCharge() -> MassContainer {
         let masses = calculateMasses()
-        
+
         if charge > 0 {
             return (masses + adductMasses()) / charge
         }
