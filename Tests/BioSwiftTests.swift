@@ -554,6 +554,27 @@ struct BioSwiftTests {
         }
     }
 
+    @Test func moverzSearchOld2() {
+        if let chain = testProtein.chains.first {
+            let searchParameters = MassSearchParameters(searchValue: 890.3877,
+                                                        tolerance: MassTolerance(type: .ppm, value: 20),
+                                                        searchType: .sequential,
+                                                        massType: .monoisotopic,
+                                                        charge: 2)
+
+            let ranges = measure("Brute Force with precalculation") {
+                let ranges: [Range<Int>] = chain.searchMassOld2(params: searchParameters)
+                debugPrint(ranges)
+                return ranges
+            }
+
+            let peptides = ranges.map { chain.subChain(range: $0) }
+
+            #expect(peptides.contains(where: { $0.sequenceString == "TDTSHHDQDHPTFNK" }))
+            #expect(!peptides.contains(where: { $0.sequenceString == "NIFFS" }))
+        }
+    }
+    
     @Test func moverzSearchNew() {
         if let chain = testProtein.chains.first {
             let searchParameters = MassSearchParameters(searchValue: 890.3877,
@@ -637,12 +658,12 @@ struct BioSwiftTests {
                                                         massType: .monoisotopic,
                                                         charge: 2)
 
-            let new1 = measure("Original brute force") {
-                let ranges: [Range<Int>] = chain.searchMassOld(params: searchParameters)
+            let new1 = measure("Brute force with precalculation") {
+                let ranges: [Range<Int>] = chain.searchMassOld2(params: searchParameters)
                 return ranges
             }
 
-            let new2 = measure("Optimized search") {
+            let new2 = measure("Optimized search with precalculation") {
                 let ranges: [Range<Int>] = chain.searchMass(params: searchParameters)
                 return ranges
             }

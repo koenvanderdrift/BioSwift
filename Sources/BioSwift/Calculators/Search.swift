@@ -147,6 +147,46 @@ public extension Chain {
         return result
     }
 
+    func searchMassOld2(params: MassSearchParameters) -> [Range<Int>] where Self: Chargeable {
+        // prefixValues[i] is the sum of items[0..<i].
+        var prefixValues = Array(
+            repeating: zeroMass,
+            count: residues.count + 1)
+
+        for index in residues.indices {
+            prefixValues[index + 1] =
+                prefixValues[index] + residues[index].masses
+        }
+
+        func massContainer(from start: Int, to end: Int) -> MassContainer {
+            let itemSum = prefixValues[end] - prefixValues[start]
+
+            return (water.masses + itemSum).moverz(for: params.charge)
+        }
+
+        let acceptableRange = params.massRange
+
+        var result: [Range<Int>] = []
+
+        for start in residues.indices {
+            for end in (start + 1) ..< residues.count {
+                let candidate = massContainer(from: start, to: end)
+
+                if acceptableRange.upperLimit(excludes: candidate) {
+                    break
+                }
+
+                if acceptableRange.contains(candidate, for: params.massType) {
+                    if (start ..< end).isValidRange {
+                        result.append(start ..< end)
+                    }
+                }
+            }
+        }
+
+        return result
+    }
+
     func searchMass(params: MassSearchParameters) -> [Range<Int>] where Self: Chargeable {
         // prefixValues[i] is the sum of items[0..<i].
         var prefixValues = Array(
