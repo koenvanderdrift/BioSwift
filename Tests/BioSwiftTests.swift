@@ -516,7 +516,7 @@ struct BioSwiftTests {
                                                         massType: .monoisotopic,
                                                         charge: 0)
 
-            let ranges: [Range<Int>] = chain.searchMassOld(params: searchParameters)
+            let ranges: [Range<Int>] = chain.searchMass(params: searchParameters)
 
             #expect(ranges.isEmpty)
         }
@@ -530,7 +530,7 @@ struct BioSwiftTests {
                                                         massType: .average,
                                                         charge: 0)
 
-            let ranges: [Range<Int>] = chain.searchMassOld(params: searchParameters)
+            let ranges: [Range<Int>] = chain.searchMass(params: searchParameters)
             let sequenceStrings = ranges.map { chain.sequenceString[$0] }
 
             #expect(sequenceStrings.contains(where: { $0 == "IFFSP" }))
@@ -538,7 +538,26 @@ struct BioSwiftTests {
         }
     }
 
-    @Test func moverzSearchOld() {
+    @Test func moverzSearchOrig() {
+        if let chain = testProtein.chains.first {
+            let searchParameters = MassSearchParameters(searchValue: 890.3877,
+                                                        tolerance: MassTolerance(type: .ppm, value: 20),
+                                                        searchType: .sequential,
+                                                        massType: .monoisotopic,
+                                                        charge: 2)
+
+            let peptides = measure("Original Brute Force") {
+                let peptides: [Peptide] = chain.searchMassOrig(params: searchParameters)
+                debugPrint(peptides.map(\.range))
+                return peptides
+            }
+
+            #expect(peptides.contains(where: { $0.sequenceString == "TDTSHHDQDHPTFNK" }))
+            #expect(!peptides.contains(where: { $0.sequenceString == "NIFFS" }))
+        }
+    }
+    
+    @Test func moverzSearchOld1() {
         if let chain = testProtein.chains.first {
             let searchParameters = MassSearchParameters(searchValue: 750.4032,
                                                         tolerance: MassTolerance(type: .ppm, value: 5),
@@ -546,7 +565,7 @@ struct BioSwiftTests {
                                                         massType: .monoisotopic,
                                                         charge: 1)
 
-            let ranges: [Range<Int>] = chain.searchMassOld(params: searchParameters)
+            let ranges: [Range<Int>] = chain.searchMassOld1(params: searchParameters)
             let sequenceStrings = ranges.map { chain.sequenceString[$0] }
 
             #expect(sequenceStrings.contains(where: { $0 == "FLEDVK" }))
@@ -575,7 +594,7 @@ struct BioSwiftTests {
         }
     }
     
-    @Test func moverzSearchNew() {
+    @Test func moverzSearch() {
         if let chain = testProtein.chains.first {
             let searchParameters = MassSearchParameters(searchValue: 890.3877,
                                                         tolerance: MassTolerance(type: .ppm, value: 20),
@@ -596,7 +615,7 @@ struct BioSwiftTests {
         }
     }
 
-    @Test func massSearchOldWithModification() {
+    @Test func massSearchOld1WithModification() {
         if var chain = testProtein.chains.first,
            let phos = modificationLibrary.first(where: { $0.name == "Phospho" })
         {
@@ -608,7 +627,7 @@ struct BioSwiftTests {
                                                         massType: .monoisotopic,
                                                         charge: 0)
 
-            let ranges: [Range<Int>] = chain.searchMassOld(params: searchParameters)
+            let ranges: [Range<Int>] = chain.searchMassOld1(params: searchParameters)
             let peptides = ranges.map { chain.subChain(range: $0) }
 
             #expect(peptides.contains(where: { $0.sequenceString == "IFFSP" }))
@@ -658,8 +677,8 @@ struct BioSwiftTests {
                                                         massType: .monoisotopic,
                                                         charge: 2)
 
-            let new1 = measure("Brute force with precalculation") {
-                let ranges: [Range<Int>] = chain.searchMassOld2(params: searchParameters)
+            let new1 = measure("Original Brute force") {
+                let ranges: [Range<Int>] = chain.searchMassOrig(params: searchParameters).map(\.range)
                 return ranges
             }
 

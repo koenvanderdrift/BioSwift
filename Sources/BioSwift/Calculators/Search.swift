@@ -119,12 +119,40 @@ public extension Chain {
 }
 
 public extension Chain {
-    func searchMassOld(params: MassSearchParameters) -> [Range<Int>] where Self: Chargeable {
+    func searchMassOrig(params: MassSearchParameters) -> [Self] where Self: Chargeable {
+        var result: [Self] = []
+        
+        for start in residues.indices {
+            for end in (start + 1)..<residues.count {
+                let subRange = start..<end
+                var sub = subChain(range: subRange)
+                
+                sub.range = subRange
+                sub.setAdducts(type: protonAdduct, count: params.charge)
+                
+                let moverz = sub.massOverCharge()
+
+                if params.massRange.upperLimit(excludes: moverz) {
+                    break
+                }
+                
+                if params.massRange.contains(moverz, for: params.massType) {
+                    if (start ..< end).isValidRange {
+                        result.append(sub)
+                    }
+                }
+            }
+        }
+        
+        return result
+    }
+    
+    func searchMassOld1(params: MassSearchParameters) -> [Range<Int>] where Self: Chargeable {
         var result: [Range<Int>] = []
 
-        for startIndex in residues.indices {
-            for endIndex in (startIndex + 1) ..< residues.count {
-                let subRange = startIndex ..< endIndex
+        for start in residues.indices {
+            for end in (start + 1) ..< residues.count {
+                let subRange = start ..< end
                 var sub = subChain(range: subRange)
 
                 sub.range = subRange
@@ -137,8 +165,8 @@ public extension Chain {
                 }
 
                 if params.massRange.contains(moverz, for: params.massType) {
-                    if (startIndex ..< endIndex).isValidRange {
-                        result.append(startIndex ..< endIndex)
+                    if (start ..< end).isValidRange {
+                        result.append(start ..< end)
                     }
                 }
             }
@@ -228,7 +256,7 @@ public extension Chain {
                 end += 1
             }
         }
-
+        
         return results
     }
 
