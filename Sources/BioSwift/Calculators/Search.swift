@@ -125,15 +125,26 @@ public extension Chain {
             repeating: zeroMass,
             count: residues.count + 1)
 
-        for index in residues.indices {
-            prefixValues[index + 1] =
-                prefixValues[index] + residues[index].masses
+        
+        let _ = measure("prefix values") {
+            for index in residues.indices {
+                prefixValues[index + 1] =
+                    prefixValues[index] + residues[index].masses
+            }
         }
-
+        
+        var candidateCount = 0
+        
         func massContainer(from start: Int, to end: Int) -> MassContainer {
-            let itemSum = prefixValues[end] - prefixValues[start]
-
-            return (water.masses + itemSum).moverz(for: params.charge)
+            let result = measure("candidate") {
+                let itemSum = prefixValues[end] - prefixValues[start]
+                
+                return (water.masses + itemSum).moverz(for: params.charge)
+            }
+            
+            candidateCount += 1
+            
+            return result
         }
 
         let count = residues.count
@@ -181,6 +192,8 @@ public extension Chain {
             }
         }
 
+        debugPrint(candidateCount)
+        
         return results
     }
 

@@ -278,7 +278,7 @@ enum JSONDataLibraryLoader {
 //                return try parseJSONDataFromBundle(from: "hydropathy")
 //            }
 //        } catch {
-//            print("Error occurred \(error)")
+//            debugPrint("Error occurred \(error)")
 //        }
 //
 //        return []

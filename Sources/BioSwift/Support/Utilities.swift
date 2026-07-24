@@ -72,7 +72,7 @@ func measure<T>(
     let milliseconds =
         Double(end - start) / 1_000_000
 
-    print(
+    debugPrint(
         "\(name):",
         String(format: "%.3f ms", milliseconds)
     )

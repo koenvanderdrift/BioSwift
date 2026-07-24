@@ -13,7 +13,7 @@ import Testing
 
 // struct DataLibraryTrait: SuiteTrait, TestScoping {
 //    func provideScope(for _: Test, testCase _: Test.Case?, performing function: @Sendable () async throws -> Void) async throws {
-//        print("start set up")
+//        debugPrint("start set up")
 //
 //        let _ = DataLibraryDefaults.bundled
 //        let data = try loadData(
@@ -24,7 +24,7 @@ import Testing
 //
 //        try _ = UnimodXMLParser().parse(data: data)
 //        try await function()
-//        print("tests completed")
+//        debugPrint("tests completed")
 //    }
 // }
 //
@@ -95,8 +95,8 @@ struct BioSwiftTests {
     func xmlDataLibrariesLoadDebug() throws {
         let xmlLibraries = try XMLDataLibraryLoader.load()
 
-        print("aminoAcids:", xmlLibraries.aminoAcids.count)
-        print("modifications:", xmlLibraries.modifications.count)
+        debugPrint("aminoAcids:", xmlLibraries.aminoAcids.count)
+        debugPrint("modifications:", xmlLibraries.modifications.count)
 
         #expect(!xmlLibraries.aminoAcids.isEmpty)
         #expect(!xmlLibraries.modifications.isEmpty)
@@ -336,7 +336,7 @@ struct BioSwiftTests {
         let formula2 = Formula("C2H2O2")
         let formula3 = formula1 + formula2
 
-        print(formula3.string)
+        debugPrint(formula3.string)
 
         #expect(formula3.countFor(element: "C") == 14)
         #expect(formula3.countFor(element: "N") == 5)
@@ -347,7 +347,7 @@ struct BioSwiftTests {
         let formula2 = Formula("C2H2O2")
         let formula3 = formula1 - formula2
 
-        print(formula3.string)
+        debugPrint(formula3.string)
 
         #expect(formula3.countFor(element: "C") == 10)
         #expect(formula3.countFor(element: "N") == 5)
@@ -530,13 +530,48 @@ struct BioSwiftTests {
                                                         massType: .monoisotopic,
                                                         charge: 2)
 
-            let ranges: [Range<Int>] = chain.searchMass(params: searchParameters)
+            let ranges = measure("Sliding Window") {
+                let ranges: [Range<Int>] = chain.searchMass(params: searchParameters)
+                return ranges
+            }
+
+            debugPrint(ranges)
             let sequenceStrings = ranges.map { chain.sequenceString[$0] }
 
             #expect(sequenceStrings.contains(where: { $0 == "TDTSHHDQDHPTFNK" }))
             #expect(!sequenceStrings.contains(where: { $0 == "NIFFS" }))
         }
     }
+    
+    @Test func moverzLongSearch() {
+        let longTest = Protein(sequence: """
+            
+            MIPARFAGVLLALALILPGTLCAEGTRGRSSTARCSLFGSDFVNTFDGSMYSFAGYCSYLLAGGCQKRSFSIIGDFQNGKRVSLSVYLGEFFDIHLFVNGTVTQGDQRVSMPYASKGLYLETEAGYYKLSGEAYGFVARIDGSGNFQVLLSDRYFNKTCGLCGNFNIFAEDDFMTQEGTLTSDPYDFANSWALSSGEQWCERASPPSSSCNISSGEMQKGLWEQCQLLKSTSVFARCHPLVDPEPFVALCEKTLCECAGGLECACPALLEYARTCAQEGMVLYGWTDHSACSPVCPAGMEYRQCVSPCARTCQSLHINEMCQERCVDGCSCPEGQLLDEGLCVESTECPCVHSGKRYPPGTSLSRDCNTCICRNSQWICSNEECPGECLVTGQSHFKSFDNRYFTFSGICQYLLARDCQDHSFSIVIETVQCADDRDAVCTRSVTVRLPGLHNSLVKLKHGAGVAMDGQDVQLPLLKGDLRIQHTVTASVRLSYGEDLQMDWDGRGRLLVKLSPVYAGKTCGLCGNYNGNQGDDFLTPSGLAEPRVEDFGNAWKLHGDCQDLQKQHSDPCALNPRMTRFSEEACAVLTSPTFEACHRAVSPLPYLRNCRYDVCSCSDGRECLCGALASYAAACAGRGVRVAWREPGRCELNCPKGQVYLQCGTPCNLTCRSLSYPDEECNEACLEGCFCPPGLYMDERGDCVPKAQCPCYYDGEIFQPEDIFSDHHTMCYCEDGFMHCTMSGVPGSLLPDAVLSSPLSHRSKRSLSCRPPMVKLVCPADNLRAEGLECTKTCQNYDLECMSMGCVSGCLCPPGMVRHENRCVALERCPCFHQGKEYAPGETVKIGCNTCVCQDRKWNCTDHVCDATCSTIGMAHYLTFDGLKYLFPGECQYVLVQDYCGSNPGTFRILVGNKGCSHPSVKCKKRVTILVEGGEIELFDGEVNVKRPMKDETHFEVVESGRYIILLLGKALSVVWDRHLSISVVLKQTYQEKVCGLCGNFDGIQNNDLTSSNLQVEEDPVDFGNSWKVSSQCADTRKVPLDSSPATCHNNIMKQTMVDSSCRILTSDVFQDCNKLVDPEPYLDVCIYDTCSCESIGDCACFCDTIAAYAHVCAQHGKVVTWRTATLCPQSCEERNLRENGYECEWRYNSCAPACQVTCQHPEPLACPVQCVEGCHAHCPPGKILDELLQTCVDPEDCPVCEVAGRRFASGKKVTLNPSDPEHCQICHCDVVNLTCEACQEPGGLVVPPTDAPVSPTTLYVEDISEPPLHDFYCSRLLDLVFLLDGSSRLSEAEFEVLKAFVVDMMERLRISQKWVRVAVVEYHDGSHAYIGLKDRKRPSELRRIASQVKYAGSQVASTSEVLKYTLFQIFSKIDRPEASRITLLLMASQEPQRMSRNFVRYVQGLKKKKVIVIPVGIGPHANLKQIRLIEKQAPENKAFVLSSVDELEQQRDEIVSYLCDLAPEAPPPTLPPDMAQVTVGPGLLGVSTLGPKRNSMVLDVAFVLEGSDKIGEADFNRSKEFMEEVIQRMDVGQDSIHVTVLQYSYMVTVEYPFSEAQSKGDILQRVREIRYQGGNRTNTGLALRYLSDHSFLVSQGDREQAPNLVYMVTGNPASDEIKRLPGDIQVVPIGVGPNANVQELERIGWPNAPILIQDFETLPREAPDLVLQRCCSGEGLQIPTLSPAPDCSQPLDVILLLDGSSSFPASYFDEMKSFAKAFISKANIGPRLTQVSVLQYGSITTIDVPWNVVPEKAHLLSLVDVMQREGGPSQIGDALGFAVRYLTSEMHGARPGASKAVVILVTDVSVDSVDAAADAARSNRVTVFPIGIGDRYDAAQLRILAGPAGDSNVVKLQRIEDLPTMVTLGNSFLHKLCSGFVRICMDEDGNEKRPGDVWTLPDQCHTVTCQPDGQTLLKSHRVNCDRGLRPSCPNSQSPVKVEETCGCRWTCPCVCTGSSTRHIVTFDGQNFKLTGSCSYVLFQNKEQDLEVILHNGACSPGARQGCMKSIEVKHSALSVELHSDMEVTVNGRLVSVPYVGGNMEVNVYGAIMHEVRFNHLGHIFTFTPQNNEFQLQLSPKTFASKTYGLCGICDENGANDFMLRDGTVTTDWKTLVQEWTVQRPGQTCQPILEEQCLVPDSSHCQVLLLPLFAECHKVLAPATFYAICQQDSCHQEQVCEVIASYAHLCRTNGVCVDWRTPDFCAMSCPPSLVYNHCEHGCPRHCDGNVSSCGDHPSEGCFCPPDKVMLEGSCVPEEACTQCIGEDGVQHQFLEAWVPDHQPCQICTCLSGRKVNCTTQPCPTAKAPTCGLCEVARLRQNADQCCPEYECVCDPVSCDLPPVPHCERGLQPTLTNPGECRPNFTCACRKEECKRVSPPSCPPHRLPTLRKTQCCDEYECACNCVNSTVSCPLGYLASTATNDCGCTTTTCLPDKVCVHRSTIYPVGQFWEEGCDVCTCTDMEDAVMGLRVAQCSQKPCEDSCRSGFTYVLHEGECCGRCLPSACEVVTGSPRGDSQSSWKSVGSQWASPENPCLINECVRVKEEVFIQQRNVSCPQLEVPVCPSGFQLSCKTSACCPSCRCERMEACMLNGTVIGPGKTVMIDVCTTCRCMVQVGVISGFKLECRKTTCNPCPLGYKEENNTGECCGRCLPTACTIQLRGGQIMTLKRDETLQDGCDTHFCKVNERGEYFWEKRVTGCPPFDEHKCLAEGGKIMKIPGTCCDTCEEPECNDITARLQYVKVGSCKSEVEVDIHYCQGKCASKAMYSIDINDVQDQCSCCSPTRTEPMQVALHCTNGSVVYHEVLNAMECKCSPRKCSK
+            """)
+        
+        
+        if let chain = longTest.chains.first {
+            let searchParameters = MassSearchParameters(searchValue: 10355.6744
+,
+                                                        tolerance: MassTolerance(type: .ppm, value: 10),
+                                                        searchType: .sequential,
+                                                        massType: .monoisotopic,
+                                                        charge: 1)
+
+            let ranges = measure("Sliding Window") {
+                let ranges: [Range<Int>] = chain.searchMass(params: searchParameters)
+                return ranges
+            }
+
+            debugPrint(ranges)
+            let sequenceStrings = ranges.map { chain.sequenceString[$0] }
+
+            #expect(sequenceStrings.contains(where: { $0 == "LKKKKVIVIPVGIGPHANLKQIRLIEKQAPENKAFVLSSVDELEQQRDEIVSYLCDLAPEAPPPTLPPDMAQVTVGPGLLGVSTLGPKRNSMVLDV" }))
+            #expect(!sequenceStrings.contains(where: { $0 == "NIFFS" }))
+        }
+    }
+
+
 
     @Test func massSearchWithModification() {
         if var chain = testProtein.chains.first,
