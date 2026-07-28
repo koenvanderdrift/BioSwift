@@ -464,6 +464,19 @@ struct BioSwiftTests {
             #expect(peptides[0].sequenceString == "MPSSVSWGILLLAGLCCLVPVSLAE")
             #expect(peptides[1].sequenceString == "DPQG")
         }
+
+        let pepsin = enzymeLibrary.first(where: { $0.name == "Pepsin" })
+
+        if let enzyme = pepsin {
+            let peptides: [Peptide] = digester.peptides(using: enzyme, with: missedCleavages)
+            debugPrint(peptides.map { $0.sequenceString })
+            #expect(peptides[0].sequenceString == "MPSSVS")
+            #expect(peptides[1].sequenceString == "W")
+            #expect(peptides[2].sequenceString == "GI")
+            #expect(peptides[12].sequenceString == "AEDPQGDAAQKTDTSHHDQDHPT")
+            #expect(peptides[14].sequenceString == "NKITPN")
+            #expect(peptides.last?.sequenceString == "MGKVVNPTQK")
+        }
     }
 
     @Test func digestUnspecified() {

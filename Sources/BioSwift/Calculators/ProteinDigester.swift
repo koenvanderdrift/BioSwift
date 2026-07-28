@@ -31,22 +31,17 @@ public class ProteinDigester {
 
 extension Chain {
     // TODO: this is Protein only
-    // TODO: recreate residues
 
     public func digest(using enzyme: Enzyme, with missedCleavages: Int) -> [Peptide] {
-        let sites = cleavageSites(for: enzyme.regex())  // site is first residue of new peptide 0-based
+        var baseRanges: [Range<Int>] = []
 
-        var ranges: [Range<Int>] = []
-
-        let validatedSites = Array(Set(sites.filter { $0 > 0 && $0 < residues.count })).sorted()
-
-        let boundaries = [0] + validatedSites + [residues.count]
-
-        let baseRanges: [Range<Int>] = zip(boundaries, boundaries.dropFirst()).map { start, end in
-            start..<end
+        do {
+            baseRanges = try enzyme.cutRanges(in: sequenceString)
+        } catch {
+            debugPrint(error.localizedDescription)
         }
 
-        ranges = baseRanges
+        var ranges = baseRanges
 
         let chunksToCombine = missedCleavages + 1
 
@@ -59,7 +54,9 @@ extension Chain {
         }
 
         ranges.sort {
-            if $0.lowerBound == $1.lowerBound { return $0.upperBound < $1.upperBound }
+            if $0.lowerBound == $1.lowerBound {
+                return $0.upperBound < $1.upperBound
+            }
 
             return $0.lowerBound < $1.lowerBound
         }

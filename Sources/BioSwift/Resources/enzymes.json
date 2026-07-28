@@ -3,7 +3,7 @@
         "dontCleaveBefore": ["P"],
         "alternativeName": "",
         "fullName": "",
-        "cleaveDirection": "C",
+        "cleaveDirection": ["after"],
         "cleaveAt": [
             "K",
             "R"
@@ -14,7 +14,7 @@
         "dontCleaveBefore": [],
         "alternativeName": "",
         "fullName": "Cyanogen Bromide",
-        "cleaveDirection": "C",
+        "cleaveDirection": ["after"],
         "cleaveAt": ["M"]
     },
     {
@@ -22,7 +22,7 @@
         "dontCleaveBefore": [],
         "alternativeName": "Staphylococcus aureus Protease V8",
         "fullName": "Endoproteinase Glu-C",
-        "cleaveDirection": "C",
+        "cleaveDirection": ["after"],
         "cleaveAt": ["E"]
     },
     {
@@ -30,7 +30,7 @@
         "dontCleaveBefore": [],
         "alternativeName": "",
         "fullName": "",
-        "cleaveDirection": "C",
+        "cleaveDirection": ["after"],
         "cleaveAt": [
             "K",
             "R"
@@ -41,7 +41,7 @@
         "dontCleaveBefore": ["P"],
         "alternativeName": "",
         "fullName": "",
-        "cleaveDirection": "C",
+        "cleaveDirection": ["after"],
         "cleaveAt": [
             "F",
             "Y",
@@ -55,7 +55,7 @@
         "dontCleaveBefore": ["P"],
         "alternativeName": "Clostripain",
         "fullName": "Endoproteinase-Arg-C",
-        "cleaveDirection": "C",
+        "cleaveDirection": ["after"],
         "cleaveAt": ["R"]
     },
     {
@@ -63,7 +63,7 @@
         "dontCleaveBefore": [],
         "alternativeName": "",
         "fullName": "",
-        "cleaveDirection": "N",
+        "cleaveDirection": ["before"],
         "cleaveAt": ["D"]
     },
     {
@@ -71,7 +71,7 @@
         "dontCleaveBefore": ["P"],
         "alternativeName": "",
         "fullName": "Endoproteinase Lys-C",
-        "cleaveDirection": "C",
+        "cleaveDirection": ["after"],
         "cleaveAt": ["K"]
     },
     {
@@ -79,7 +79,15 @@
         "dontCleaveBefore": [],
         "alternativeName": "",
         "fullName": "",
-        "cleaveDirection": "C",
+        "cleaveDirection": ["after"],
         "cleaveAt": ["K"]
+    },
+    {
+        "name": "Pepsin",
+        "dontCleaveBefore": ["R"],
+        "alternativeName": "",
+        "fullName": "",
+        "cleaveDirection": ["after", "before"],
+        "cleaveAt": ["F", "L", "Y", "W"]
     }
 ]
