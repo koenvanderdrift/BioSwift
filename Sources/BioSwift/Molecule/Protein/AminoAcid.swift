@@ -24,9 +24,7 @@ public enum AminoAcidProperty: String, CaseIterable, Codable, Sendable, Identifi
 
     public var id: Self { self }
 
-    public var displayName: String {
-        rawValue.capitalized
-    }
+    public var displayName: String { rawValue.capitalized }
 }
 
 /// AminoAcid conforms to the ``Residue`` protocol
@@ -44,11 +42,12 @@ public struct AminoAcid: Residue, Codable, Sendable {
 
     public var adducts: [Adduct]
 
-    public var chemicalString: String {
-        formula.chemicalString
-    }
+    public var chemicalString: String { formula.chemicalString }
 
-    public init(name: String, oneLetterCode: String, threeLetterCode: String = "", formula: Formula, represents: [String] = [], representedBy: [String] = []) {
+    public init(
+        name: String, oneLetterCode: String, threeLetterCode: String = "", formula: Formula,
+        represents: [String] = [], representedBy: [String] = []
+    ) {
         self.name = name
         self.oneLetterCode = oneLetterCode
         self.threeLetterCode = threeLetterCode
@@ -61,34 +60,30 @@ public struct AminoAcid: Residue, Codable, Sendable {
         setProperties()
     }
 
-    public init(name: String, oneLetterCode: String, threeLetterCode: String = "", elements: [String: Int]) {
-        self.init(name: name, oneLetterCode: oneLetterCode, threeLetterCode: threeLetterCode, formula: Formula(from: elements))
+    public init(
+        name: String, oneLetterCode: String, threeLetterCode: String = "", elements: [String: Int]
+    ) {
+        self.init(
+            name: name, oneLetterCode: oneLetterCode, threeLetterCode: threeLetterCode,
+            formula: Formula(from: elements))
 
         setProperties()
     }
 
     private mutating func setProperties() {
         switch oneLetterCode {
-        case "A", "G", "L", "V", "M", "I":
-            properties = [.small, .aliphatic, .hydrophobic]
-        case "S", "T", "C", "P", "N", "Q":
-            properties = [.polar, .uncharged]
-        case "K", "R", "H":
-            properties = [.polar, .chargedPositive]
-        case "E", "D":
-            properties = [.polar, .chargedNegative]
-        case "F", "Y", "W":
-            properties = [.nonpolar, .aromatic]
-        default:
-            break
+        case "A", "G", "L", "V", "M", "I": properties = [.small, .aliphatic, .hydrophobic]
+        case "S", "T", "C", "P", "N", "Q": properties = [.polar, .uncharged]
+        case "K", "R", "H": properties = [.polar, .chargedPositive]
+        case "E", "D": properties = [.polar, .chargedNegative]
+        case "F", "Y", "W": properties = [.nonpolar, .aromatic]
+        default: break
         }
     }
 
     public func allowedModifications() -> [Modification] {
         modificationLibrary.filter { mod in
-            mod.specificities.contains { spec in
-                spec.site == identifier
-            }
+            mod.specificities.contains { spec in spec.site == identifier }
         }
     }
 }

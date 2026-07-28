@@ -18,26 +18,18 @@ public var loadElementsFromUnimod: Bool = false
 
 // MARK: - public globals
 
-public var aminoAcidLibrary: [AminoAcid] {
-    DataLibraryDefaults.bundled.aminoAcids
-}
+public var aminoAcidLibrary: [AminoAcid] { DataLibraryDefaults.bundled.aminoAcids }
 
 public var modificationLibrary: [Modification] {
     DataLibraryDefaults.bundled.modifications + [zeroModification]
 }
 
-public var elementLibrary: [ChemicalElement] {
-    ElementsLibraryDefaults.bundled
-}
+public var elementLibrary: [ChemicalElement] { ElementsLibraryDefaults.bundled }
 
-public var enzymeLibrary: [Enzyme] {
-    DataLibraryDefaults.bundled.enzymes + [unspecifiedEnzyme]
-}
+public var enzymeLibrary: [Enzyme] { DataLibraryDefaults.bundled.enzymes + [unspecifiedEnzyme] }
 
 // @available(*, deprecated, message: "Use DataLibraryDefaults.bundled.modifications instead.")
-public var hydropathyLibrary: [Hydro] {
-    DataLibraryDefaults.bundled.hydropathyValues
-}
+public var hydropathyLibrary: [Hydro] { DataLibraryDefaults.bundled.hydropathyValues }
 
 // MARK: - Final public bundled-data snapshot
 
@@ -49,12 +41,9 @@ public struct DataLibraries: Sendable {
     public let hydropathyValues: [Hydro]
 
     public init(
-        elements: [ChemicalElement],
-        aminoAcids: [AminoAcid],
-        modifications: [Modification],
-        enzymes: [Enzyme],
-        hydropathyValues: [Hydro])
-    {
+        elements: [ChemicalElement], aminoAcids: [AminoAcid], modifications: [Modification],
+        enzymes: [Enzyme], hydropathyValues: [Hydro]
+    ) {
         self.elements = elements
         self.aminoAcids = aminoAcids
         self.modifications = modifications
@@ -67,22 +56,16 @@ public struct DataLibraries: Sendable {
 
 public enum DataLibraryDefaults {
     public static let bundled: DataLibraries = {
-        do {
-            return try DataLibraryLoader.load()
-        } catch {
+        do { return try DataLibraryLoader.load() } catch {
             fatalError("Failed to load bundled data libraries: \(error)")
         }
     }()
 
-    public static func loadBundled() throws -> DataLibraries {
-        try DataLibraryLoader.load()
-    }
+    public static func loadBundled() throws -> DataLibraries { try DataLibraryLoader.load() }
 
     public enum ElementsLibraryDefaults {
         public static let bundled: [ChemicalElement] = {
-            do {
-                return try JSONDataLibraryLoader.loadElements()
-            } catch {
+            do { return try JSONDataLibraryLoader.loadElements() } catch {
                 fatalError("Failed to load bundled foo library: \(error)")
             }
         }()
@@ -91,15 +74,11 @@ public enum DataLibraryDefaults {
 
 public enum ElementsLibraryDefaults {
     public static let bundled: [ChemicalElement] = {
-        do {
-            return try JSONDataLibraryLoader.loadElements()
-        } catch {
+        do { return try JSONDataLibraryLoader.loadElements() } catch {
             fatalError("Failed to load bundled elements library: \(error)")
         }
     }()
 }
-
-
 
 // MARK: - Combined loader
 
@@ -111,10 +90,8 @@ enum DataLibraryLoader {
         let xmlLibraries = try XMLDataLibraryLoader.load()
 
         return DataLibraries(
-            elements: elements,
-            aminoAcids: xmlLibraries.aminoAcids,
-            modifications: xmlLibraries.modifications,
-            enzymes: jsonLibraries.enzymes,
+            elements: elements, aminoAcids: xmlLibraries.aminoAcids,
+            modifications: xmlLibraries.modifications, enzymes: jsonLibraries.enzymes,
             hydropathyValues: jsonLibraries.hydropathyValues)
     }
 }
@@ -130,10 +107,7 @@ struct XMLDataLibraries {
 
 enum XMLDataLibraryLoader {
     static func load() throws -> XMLDataLibraries {
-        let data = try loadData(
-            from: "unimod",
-            withExtension: "xml",
-            in: .module)
+        let data = try loadData(from: "unimod", withExtension: "xml", in: .module)
 
         let parser = UnimodXMLParser()
         return try parser.parse(data: data)
@@ -157,23 +131,17 @@ struct JSONDataLibraries {
 
 enum JSONDataLibraryLoader {
     // parse elements first before anything else.
-    
+
     static func loadElements() throws -> [ChemicalElement] {
         try parseJSONDataFromBundle(ChemicalElement.self, from: "elements")
     }
 
     static func loadOtherLibraries() throws -> JSONDataLibraries {
-        let enzymes = try parseJSONDataFromBundle(
-            Enzyme.self,
-            from: "enzymes")
+        let enzymes = try parseJSONDataFromBundle(Enzyme.self, from: "enzymes")
 
-        let hydropathyValues = try parseJSONDataFromBundle(
-            Hydro.self,
-            from: "hydropathy")
+        let hydropathyValues = try parseJSONDataFromBundle(Hydro.self, from: "hydropathy")
 
-        return JSONDataLibraries(
-            enzymes: enzymes,
-            hydropathyValues: hydropathyValues)
+        return JSONDataLibraries(enzymes: enzymes, hydropathyValues: hydropathyValues)
     }
 }
 

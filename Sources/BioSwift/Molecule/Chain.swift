@@ -28,20 +28,18 @@ public protocol Chain {
     func createResidues(from string: String) -> [ResidueType]
 }
 
-public extension Chain {
-    static func == (lhs: Self, rhs: Self) -> Bool {
+extension Chain {
+    public static func == (lhs: Self, rhs: Self) -> Bool {
         lhs.sequenceString == rhs.sequenceString && lhs.name == rhs.name
     }
 
-    var formula: Formula {
+    public var formula: Formula {
         var f = zeroFormula
 
         for residue in residues {
             f += residue.formula
 
-            if let mod = residue.modification {
-                f += mod.formula
-            }
+            if let mod = residue.modification { f += mod.formula }
         }
 
         f += nTerminal.formula + cTerminal.formula
@@ -49,122 +47,86 @@ public extension Chain {
         return f
     }
 
-    var sequenceString: String {
-        residues.map(\.identifier).joined()
-    }
+    public var sequenceString: String { residues.map(\.identifier).joined() }
 
-    var sequenceLength: Int {
-        numberOfResidues
-    }
+    public var sequenceLength: Int { numberOfResidues }
 
-    var symbolSequence: [Symbol] {
-        residues
-    }
+    public var symbolSequence: [Symbol] { residues }
 
-    var symbolSet: SymbolSet? {
-        SymbolSet(array: symbolSequence)
-    }
+    public var symbolSet: SymbolSet? { SymbolSet(array: symbolSequence) }
 
-    func symbol(at index: Int) -> Symbol? {
-        symbolSequence[index]
-    }
+    public func symbol(at index: Int) -> Symbol? { symbolSequence[index] }
 
-    func residue(at index: Int) -> ResidueType? {
-        residues[index]
-    }
+    public func residue(at index: Int) -> ResidueType? { residues[index] }
 
-    var numberOfResidues: Int {
-        residues.count
-    }
+    public var numberOfResidues: Int { residues.count }
 
-    func countAllResidues() -> NSCountedSet {
-        NSCountedSet(array: residues)
-    }
+    public func countAllResidues() -> NSCountedSet { NSCountedSet(array: residues) }
 
-    func countOneResidue(with identifier: String) -> Int {
+    public func countOneResidue(with identifier: String) -> Int {
         var count = 0
 
-        for residue in residues where residue.oneLetterCode == identifier {
-            count += 1
-        }
+        for residue in residues where residue.oneLetterCode == identifier { count += 1 }
 
         return count
     }
 }
 
-public extension Chain {
-    mutating func insertResidue(_ residue: ResidueType, at location: Int) {
-        guard residues.indices.contains(location) || location == residues.endIndex else {
-            return
-        }
+extension Chain {
+    public mutating func insertResidue(_ residue: ResidueType, at location: Int) {
+        guard residues.indices.contains(location) || location == residues.endIndex else { return }
 
         residues.insert(residue, at: location)
     }
 
-    mutating func insertResidue(_ residue: any Residue, at location: Int) {
-        guard let residue = residue as? ResidueType else {
-            return
-        }
+    public mutating func insertResidue(_ residue: any Residue, at location: Int) {
+        guard let residue = residue as? ResidueType else { return }
 
         insertResidue(residue, at: location)
     }
 
-    mutating func insertResidues(_ newResidues: [ResidueType], at location: Int) {
-        guard location >= residues.startIndex,
-              location <= residues.endIndex
-        else {
-            return
-        }
+    public mutating func insertResidues(_ newResidues: [ResidueType], at location: Int) {
+        guard location >= residues.startIndex, location <= residues.endIndex else { return }
 
         residues.insert(contentsOf: newResidues, at: location)
     }
 
-    mutating func insertResidues(_ newResidues: [any Residue], at location: Int) {
+    public mutating func insertResidues(_ newResidues: [any Residue], at location: Int) {
         let typedResidues = newResidues.compactMap { $0 as? ResidueType }
 
-        guard typedResidues.count == newResidues.count else {
-            return
-        }
+        guard typedResidues.count == newResidues.count else { return }
 
         insertResidues(typedResidues, at: location)
     }
 
-    mutating func removeResidue(at location: Int) {
-        guard residues.indices.contains(location) else {
-            return
-        }
+    public mutating func removeResidue(at location: Int) {
+        guard residues.indices.contains(location) else { return }
 
         residues.remove(at: location)
     }
 
-    mutating func removeResidues(in range: Range<Int>) {
-        guard range.lowerBound >= residues.startIndex,
-              range.upperBound <= residues.endIndex
-        else {
+    public mutating func removeResidues(in range: Range<Int>) {
+        guard range.lowerBound >= residues.startIndex, range.upperBound <= residues.endIndex else {
             return
         }
 
         residues.removeSubrange(range)
     }
 
-    mutating func replaceResidue(at location: Int, with residue: ResidueType) {
-        guard residues.indices.contains(location) else {
-            return
-        }
+    public mutating func replaceResidue(at location: Int, with residue: ResidueType) {
+        guard residues.indices.contains(location) else { return }
 
         residues[location] = residue
     }
 
-    mutating func replaceResidue(at location: Int, with residue: any Residue) {
-        guard let residue = residue as? ResidueType else {
-            return
-        }
+    public mutating func replaceResidue(at location: Int, with residue: any Residue) {
+        guard let residue = residue as? ResidueType else { return }
 
         replaceResidue(at: location, with: residue)
     }
 }
 
-public extension Chain {
+extension Chain {
     // Sequence domain logic: zero-based residue positions
 
     /// Returns the sequence contained within a zero-based, non-inclusive residue range.
@@ -172,127 +134,95 @@ public extension Chain {
     /// Example:
     /// `sequenceString == "MKWVTFISLL"` and `range == 3..<6`
     /// returns `"VTF"`.
-    func subSequence(range: Range<Int>) -> String {
-        precondition(
-            range.lowerBound >= 0)
+    public func subSequence(range: Range<Int>) -> String {
+        precondition(range.lowerBound >= 0)
 
-        precondition(
-            range.upperBound < sequenceString.count)
+        precondition(range.upperBound < sequenceString.count)
 
         let lowerIndex = sequenceString.index(
-            sequenceString.startIndex,
-            offsetBy: range.lowerBound - 1)
+            sequenceString.startIndex, offsetBy: range.lowerBound - 1)
 
-        let upperIndex = sequenceString.index(
-            sequenceString.startIndex,
-            offsetBy: range.upperBound)
+        let upperIndex = sequenceString.index(sequenceString.startIndex, offsetBy: range.upperBound)
 
-        return String(sequenceString[lowerIndex ..< upperIndex])
+        return String(sequenceString[lowerIndex..<upperIndex])
     }
 
-    func subChain(range: Range<Int>) -> Self {
-        let validRange = range.clamped(
-            toSequenceLength: residues.count)
+    public func subChain(range: Range<Int>) -> Self {
+        let validRange = range.clamped(toSequenceLength: residues.count)
 
-        guard
-            validRange.isValidRange
-        else {
-            return Self(
-                residues: [])
-        }
+        guard validRange.isValidRange else { return Self(residues: []) }
 
-        let newResidues = Array(
-            residues[validRange])
+        let newResidues = Array(residues[validRange])
 
-        var subChain = Self(
-            residues: newResidues)
+        var subChain = Self(residues: newResidues)
 
         subChain.range = validRange
 
         return subChain
     }
 
-    func removing(_ range: Range<Int>) -> Self {
-        let validRange = range.clamped(
-            toSequenceLength: residues.count)
+    public func removing(_ range: Range<Int>) -> Self {
+        let validRange = range.clamped(toSequenceLength: residues.count)
 
-        guard
-            validRange.isValidRange
-        else {
-            return Self(
-                residues: residues)
-        }
+        guard validRange.isValidRange else { return Self(residues: residues) }
 
         var newResidues = residues
         newResidues.removeSubrange(validRange)
 
-        var subChain = Self(
-            residues: newResidues)
+        var subChain = Self(residues: newResidues)
 
         subChain.range = validRange
 
         return subChain
     }
 
-    func residueLocations(with identifiers: Set<String>) -> [Int] {
+    public func residueLocations(with identifiers: Set<String>) -> [Int] {
         var locations: [Int] = []
         locations.reserveCapacity(residues.count)
 
         for index in residues.indices {
-            if identifiers.contains(residues[index].identifier) {
-                locations.append(index)
-            }
+            if identifiers.contains(residues[index].identifier) { locations.append(index) }
         }
 
         return locations
     }
 }
 
-public extension Chain {
-    mutating func setTermini(nTerm: Modification, cTerm: Modification) {
+extension Chain {
+    public mutating func setTermini(nTerm: Modification, cTerm: Modification) {
         nTerminal = nTerm
         cTerminal = cTerm
     }
 
-    func allowedModifications(at location: Int) -> [Modification]? {
-        if let residue = residue(at: location) {
-            return residue.allowedModifications()
-        }
+    public func allowedModifications(at location: Int) -> [Modification]? {
+        if let residue = residue(at: location) { return residue.allowedModifications() }
 
         return nil
     }
 
-    func getModifications() -> [Modification] {
+    public func getModifications() -> [Modification] {
         var result: [Modification] = []
 
-        for residue in residues {
-            if let mod = residue.modification {
-                result.append(mod)
-            }
-        }
+        for residue in residues { if let mod = residue.modification { result.append(mod) } }
 
         return result
     }
 
-    func modification(at location: Int) -> Modification? {
+    public func modification(at location: Int) -> Modification? {
         residue(at: location)?.modification
     }
 
-    mutating func addModification(_ mod: Modification, at loc: Int) {
-        guard residues.indices.contains(loc) else {
-            return
-        }
+    public mutating func addModification(_ mod: Modification, at loc: Int) {
+        guard residues.indices.contains(loc) else { return }
         residues[loc].modification = mod
     }
 
-    mutating func removeModification(at loc: Int) {
-        guard residues.indices.contains(loc) else {
-            return
-        }
+    public mutating func removeModification(at loc: Int) {
+        guard residues.indices.contains(loc) else { return }
         residues[loc].modification = nil
     }
 
-    mutating func modifyResidues(for identifier: String, with modification: Modification) {
+    public mutating func modifyResidues(for identifier: String, with modification: Modification) {
         for index in residues.indices {
             if residues[index].identifier == identifier {
                 residues[index].modification = modification
@@ -300,11 +230,9 @@ public extension Chain {
         }
     }
 
-    mutating func removeModifications(for identifier: String) {
+    public mutating func removeModifications(for identifier: String) {
         for index in residues.indices {
-            if residues[index].identifier == identifier {
-                residues[index].modification = nil
-            }
+            if residues[index].identifier == identifier { residues[index].modification = nil }
         }
     }
 }

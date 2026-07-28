@@ -8,16 +8,16 @@
 
 import Foundation
 
-public let unspecifiedEnzyme = Enzyme(name: "Unspecified", cleaveAt: [], dontCleaveBefore: [], cleaveDirection: .unspecified, fullName: "", alternativeName: "")
+public let unspecifiedEnzyme = Enzyme(
+    name: "Unspecified", cleaveAt: [], dontCleaveBefore: [], cleaveDirection: .unspecified,
+    fullName: "", alternativeName: "")
 
 public enum CleaveDirection: String, CaseIterable, Codable, Identifiable, Sendable {
     case C
     case N
     case unspecified
 
-    public var id: Self {
-        self
-    }
+    public var id: Self { self }
 }
 
 public struct Enzyme: Codable, Sendable {
@@ -28,7 +28,10 @@ public struct Enzyme: Codable, Sendable {
     public let fullName: String
     public let alternativeName: String
 
-    public init(name: String, cleaveAt: [String], dontCleaveBefore: [String], cleaveDirection: CleaveDirection, fullName: String, alternativeName: String) {
+    public init(
+        name: String, cleaveAt: [String], dontCleaveBefore: [String],
+        cleaveDirection: CleaveDirection, fullName: String, alternativeName: String
+    ) {
         self.name = name
         self.cleaveAt = cleaveAt
         self.dontCleaveBefore = dontCleaveBefore
@@ -38,8 +41,8 @@ public struct Enzyme: Codable, Sendable {
     }
 }
 
-public extension Enzyme {
-    func regex() -> String {
+extension Enzyme {
+    public func regex() -> String {
         var regex = ""
 
         if cleaveDirection == .C {
@@ -57,11 +60,7 @@ public extension Enzyme {
 }
 
 extension Enzyme: Equatable, Hashable {
-    public static func == (lhs: Enzyme, rhs: Enzyme) -> Bool {
-        lhs.name == rhs.name
-    }
+    public static func == (lhs: Enzyme, rhs: Enzyme) -> Bool { lhs.name == rhs.name }
 
-    public func hash(into hasher: inout Hasher) {
-        hasher.combine(name)
-    }
+    public func hash(into hasher: inout Hasher) { hasher.combine(name) }
 }

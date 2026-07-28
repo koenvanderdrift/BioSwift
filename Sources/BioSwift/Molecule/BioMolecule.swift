@@ -15,12 +15,10 @@ public protocol BioMolecule: Chargeable {
     var chains: [ChainType] { get set }
 }
 
-public extension BioMolecule {
-    var masses: MassContainer {
-        massOverCharge()
-    }
+extension BioMolecule {
+    public var masses: MassContainer { massOverCharge() }
 
-    var charge: Charge {
+    public var charge: Charge {
         if let chargeableChains = chains as? [Chargeable] {
             return chargeableChains.reduce(0) { $0 + $1.charge }
         }
@@ -28,7 +26,7 @@ public extension BioMolecule {
         return 0
     }
 
-    func calculateMasses() -> MassContainer {
+    public func calculateMasses() -> MassContainer {
         if let chargeableChains = chains as? [Chargeable] {
             return chargeableChains.reduce(zeroMass) { $0 + $1.massOverCharge() }
         }
@@ -36,84 +34,72 @@ public extension BioMolecule {
         return zeroMass
     }
 
-    func monoIsotopicMass() -> Dalton {
-        return pseudomolecularIon().monoisotopicMass
-    }
+    public func monoIsotopicMass() -> Dalton { return pseudomolecularIon().monoisotopicMass }
 
-    func averageMass() -> Dalton {
-        return pseudomolecularIon().averageMass
-    }
+    public func averageMass() -> Dalton { return pseudomolecularIon().averageMass }
 
-    func isoelectricPoint(chainIndex index: Int = 0) -> Double {
+    public func isoelectricPoint(chainIndex index: Int = 0) -> Double {
         return Hydropathy(residues: chains[index].residues).isoElectricPoint()
     }
 
-    func selectedMonoIsotopicMass(chainIndex _: Int = 0, _ range: Range<Int>) -> Dalton {
+    public func selectedMonoIsotopicMass(chainIndex _: Int = 0, _ range: Range<Int>) -> Dalton {
         return selectionMass(range).monoisotopicMass
     }
 
-    func selectedAverageMass(chainIndex _: Int = 0, _ range: Range<Int>) -> Dalton {
+    public func selectedAverageMass(chainIndex _: Int = 0, _ range: Range<Int>) -> Dalton {
         return selectionMass(range).averageMass
     }
 
-    func selectionMass(chainIndex index: Int = 0, _ range: Range<Int>) -> MassContainer {
+    public func selectionMass(chainIndex index: Int = 0, _ range: Range<Int>) -> MassContainer {
         guard var sub = chains[index].subChain(range: range) as? Chargeable else { return zeroMass }
 
-        if charge > 0 {
-            sub.setAdducts(type: protonAdduct, count: charge)
-        }
-        
+        if charge > 0 { sub.setAdducts(type: protonAdduct, count: charge) }
+
         return sub.pseudomolecularIon()
     }
 
-    func selectedIsoelectricPoint(chainIndex index: Int = 0, _ range: Range<Int>) -> Double {
+    public func selectedIsoelectricPoint(chainIndex index: Int = 0, _ range: Range<Int>) -> Double {
         let sub = chains[index].subChain(range: range)
         guard sub.numberOfResidues > 0 else { return 0.0 }
 
         return Hydropathy(residues: sub.residues).isoElectricPoint()
     }
 
-    func selectionLength(chainIndex index: Int = 0, _ range: Range<Int>) -> Int {
+    public func selectionLength(chainIndex index: Int = 0, _ range: Range<Int>) -> Int {
         let sub = chains[index].subChain(range: range)
 
         return sub.numberOfResidues
     }
 }
 
-public extension BioMolecule {
-    var formula: Formula {
-        chains.reduce(zeroFormula) { $0 + $1.formula }
-    }
+extension BioMolecule {
+    public var formula: Formula { chains.reduce(zeroFormula) { $0 + $1.formula } }
 
-    func sequenceLength(for chainIndex: Int = 0) -> Int {
+    public func sequenceLength(for chainIndex: Int = 0) -> Int {
         chains[chainIndex].numberOfResidues
     }
 
-    func residues(for chainIndex: Int = 0) -> [any Residue] {
+    public func residues(for chainIndex: Int = 0) -> [any Residue] {
         return chains[chainIndex].residues
     }
 
-    func sequence(for chainIndex: Int = 0) -> String {
-        chains[chainIndex].sequenceString
-    }
+    public func sequence(for chainIndex: Int = 0) -> String { chains[chainIndex].sequenceString }
 
-    func residueLocations(for chainIndex: Int = 0, with identifiers: [String]) -> [Int] {
-        guard chains.indices.contains(chainIndex) else {
-            return []
-        }
+    public func residueLocations(for chainIndex: Int = 0, with identifiers: [String]) -> [Int] {
+        guard chains.indices.contains(chainIndex) else { return [] }
 
         return chains[chainIndex].residueLocations(with: Set(identifiers))
     }
 
-    func countResidues(for chainIndex: Int = 0) -> NSCountedSet {
+    public func countResidues(for chainIndex: Int = 0) -> NSCountedSet {
         chains[chainIndex].countAllResidues()
     }
 
-    func countOneResidue(with identifier: String, for chainIndex: Int = 0) -> Int {
+    public func countOneResidue(with identifier: String, for chainIndex: Int = 0) -> Int {
         chains[chainIndex].countOneResidue(with: identifier)
     }
 
-    mutating func setAdducts(type: Adduct, count: Int, for chainIndex: Int = 0) {
+    public mutating func setAdducts(type: Adduct, count: Int, for chainIndex: Int = 0) {
         if var chain = chains[chainIndex] as? Chargeable {
             adducts = Array(repeating: type, count: count)
 
@@ -121,26 +107,24 @@ public extension BioMolecule {
         }
     }
 
-    mutating func addModification(mod: Modification, at loc: Int, for chainIndex: Int = 0) {
+    public mutating func addModification(mod: Modification, at loc: Int, for chainIndex: Int = 0) {
         chains[chainIndex].addModification(mod, at: loc)
     }
 
-    mutating func removeModification(at loc: Int, for chainIndex: Int = 0) {
+    public mutating func removeModification(at loc: Int, for chainIndex: Int = 0) {
         chains[chainIndex].removeModification(at: loc)
     }
 
-    mutating func modifyResidues(for identifier: String, with modification: Modification, for chainIndex: Int = 0) {
-        guard chains.indices.contains(chainIndex) else {
-            return
-        }
+    public mutating func modifyResidues(
+        for identifier: String, with modification: Modification, for chainIndex: Int = 0
+    ) {
+        guard chains.indices.contains(chainIndex) else { return }
 
         chains[chainIndex].modifyResidues(for: identifier, with: modification)
     }
 
-    mutating func removeModifications(for identifier: String, for chainIndex: Int = 0) {
-        guard chains.indices.contains(chainIndex) else {
-            return
-        }
+    public mutating func removeModifications(for identifier: String, for chainIndex: Int = 0) {
+        guard chains.indices.contains(chainIndex) else { return }
 
         chains[chainIndex].removeModifications(for: identifier)
     }

@@ -15,51 +15,42 @@ public typealias Dalton = Decimal
 
 public typealias MassRange = ClosedRange<Dalton>
 
-public extension MassRange {
-    func contains(_ masses: MassContainer, for type: MassType) -> Bool {
+extension MassRange {
+    public func contains(_ masses: MassContainer, for type: MassType) -> Bool {
         switch type {
-        case .monoisotopic:
-            return contains(masses.monoisotopicMass)
+        case .monoisotopic: return contains(masses.monoisotopicMass)
 
-        case .average:
-            return contains(masses.averageMass)
+        case .average: return contains(masses.averageMass)
 
-        case .nominal:
-            return false
+        case .nominal: return false
         }
     }
 
-    func lowerLimit(excludes masses: MassContainer) -> Bool {
+    public func lowerLimit(excludes masses: MassContainer) -> Bool {
         masses.monoisotopicMass < 0.99 * lowerBound
     }
 
-    func upperLimit(excludes masses: MassContainer) -> Bool {
+    public func upperLimit(excludes masses: MassContainer) -> Bool {
         masses.averageMass > 1.01 * upperBound
     }
 
-    func isBelow(_ value: MassContainer, for type: MassType) -> Bool {
+    public func isBelow(_ value: MassContainer, for type: MassType) -> Bool {
         switch type {
-        case .monoisotopic:
-            return value.monoisotopicMass < lowerBound
+        case .monoisotopic: return value.monoisotopicMass < lowerBound
 
-        case .average:
-            return value.averageMass < lowerBound
+        case .average: return value.averageMass < lowerBound
 
-        case .nominal:
-            return false
+        case .nominal: return false
         }
     }
 
-    func isAbove(_ value: MassContainer, for type: MassType) -> Bool {
+    public func isAbove(_ value: MassContainer, for type: MassType) -> Bool {
         switch type {
-        case .monoisotopic:
-            return value.monoisotopicMass > upperBound
+        case .monoisotopic: return value.monoisotopicMass > upperBound
 
-        case .average:
-            return value.averageMass > upperBound
+        case .average: return value.averageMass > upperBound
 
-        case .nominal:
-            return false
+        case .nominal: return false
         }
     }
 }
@@ -70,9 +61,7 @@ public enum MassType: String, CaseIterable, Codable, Identifiable, Equatable, Se
     case monoisotopic
     case nominal
 
-    public var id: Self {
-        self
-    }
+    public var id: Self { self }
 }
 
 /// MassContainer is a wrapper around the calculated ``Mass`` for each ``MassType``
@@ -85,8 +74,8 @@ public struct MassContainer: Codable, Sendable {
     public var nominalMass = Int(0)
 }
 
-public extension MassContainer {
-    func moverz(for charge: Int, with adduct: Adduct = protonAdduct) -> Self {
+extension MassContainer {
+    public func moverz(for charge: Int, with adduct: Adduct = protonAdduct) -> Self {
         if charge > 0 {
             let totalMass = self + (charge * (adduct.group.masses - electronMass))
 
@@ -105,9 +94,7 @@ extension MassContainer: Equatable {
             nominalMass: lhs.nominalMass + rhs.nominalMass)
     }
 
-    public static func += (lhs: inout MassContainer, rhs: MassContainer) {
-        lhs = lhs + rhs
-    }
+    public static func += (lhs: inout MassContainer, rhs: MassContainer) { lhs = lhs + rhs }
 
     public static func - (lhs: MassContainer, rhs: MassContainer) -> MassContainer {
         MassContainer(
@@ -116,22 +103,18 @@ extension MassContainer: Equatable {
             nominalMass: lhs.nominalMass - rhs.nominalMass)
     }
 
-    public static func -= (lhs: inout MassContainer, rhs: MassContainer) {
-        lhs = lhs - rhs
-    }
+    public static func -= (lhs: inout MassContainer, rhs: MassContainer) { lhs = lhs - rhs }
 
     public static func * (lhs: Int, rhs: MassContainer) -> MassContainer {
         MassContainer(
             monoisotopicMass: Dalton(lhs) * rhs.monoisotopicMass,
-            averageMass: Dalton(lhs) * rhs.averageMass,
-            nominalMass: lhs * rhs.nominalMass)
+            averageMass: Dalton(lhs) * rhs.averageMass, nominalMass: lhs * rhs.nominalMass)
     }
 
     public static func / (lhs: MassContainer, rhs: Int) -> MassContainer {
         MassContainer(
             monoisotopicMass: lhs.monoisotopicMass / Dalton(rhs),
-            averageMass: lhs.averageMass / Dalton(rhs),
-            nominalMass: Int(lhs.nominalMass / rhs))
+            averageMass: lhs.averageMass / Dalton(rhs), nominalMass: Int(lhs.nominalMass / rhs))
     }
 }
 
@@ -157,7 +140,8 @@ public let negativeProtonAdduct = Adduct(group: hydrogen, charge: -1)
 public let chlorineAdduct = Adduct(group: chloride, charge: -1)
 
 public let zeroMass = MassContainer(monoisotopicMass: 0.0, averageMass: 0.0, nominalMass: 0)
-public let electronMass = MassContainer(monoisotopicMass: Dalton(0.000549), averageMass: Dalton(0.000549), nominalMass: 0)
+public let electronMass = MassContainer(
+    monoisotopicMass: Dalton(0.000549), averageMass: Dalton(0.000549), nominalMass: 0)
 
 /// Types conforming to ``Mass`` must provide ``calculateMasses()``.
 /// All  calculations use the values provided in https://physics.nist.gov/cgi-bin/Compositions/stand_alone.pl
@@ -168,67 +152,53 @@ public protocol Mass {
     func calculateMasses() -> MassContainer
 }
 
-public extension Mass {
-    var monoisotopicMass: Dalton {
-        masses.monoisotopicMass
-    }
+extension Mass {
+    public var monoisotopicMass: Dalton { masses.monoisotopicMass }
 
-    var averageMass: Dalton {
-        masses.averageMass
-    }
+    public var averageMass: Dalton { masses.averageMass }
 
-    var nominalMass: Int {
-        masses.nominalMass
-    }
+    public var nominalMass: Int { masses.nominalMass }
 }
 
 /// Types conforming to Chargeable must provide one or more``Adduct``  values.
 /// In this case, ``MassContainer`` will contain the mass-over-charge ratios
 
-public protocol Chargeable: Mass, Codable {
-    var adducts: [Adduct] { get set }
-}
+public protocol Chargeable: Mass, Codable { var adducts: [Adduct] { get set } }
 
-public extension Chargeable {
-    var charge: Charge {
-        adducts.reduce(0) { $0 + $1.charge }
-    }
+extension Chargeable {
+    public var charge: Charge { adducts.reduce(0) { $0 + $1.charge } }
 
-    mutating func setAdducts(_ adducts: [Adduct]) {
-        self.adducts = adducts
-    }
+    public mutating func setAdducts(_ adducts: [Adduct]) { self.adducts = adducts }
 
-    mutating func setAdducts(type: Adduct, count: Int) {
+    public mutating func setAdducts(type: Adduct, count: Int) {
         let adducts = Array(repeating: type, count: count)
         setAdducts(adducts)
     }
 
-    func pseudomolecularIon() -> MassContainer {
-        masses.moverz(for: charge)
-    }
+    public func pseudomolecularIon() -> MassContainer { masses.moverz(for: charge) }
 
-    func massOverCharge() -> MassContainer {
+    public func massOverCharge() -> MassContainer {
         let masses = calculateMasses()
 
-        if charge > 0 {
-            return (masses + adductMasses()) / charge
-        }
+        if charge > 0 { return (masses + adductMasses()) / charge }
 
         return masses
     }
 
-    func adductMasses() -> MassContainer {
-        return adducts.map { $0.group.masses - ($0.charge * electronMass) }
-            .reduce(zeroMass) { $0 + $1 }
+    public func adductMasses() -> MassContainer {
+        return adducts.map { $0.group.masses - ($0.charge * electronMass) }.reduce(zeroMass) {
+            $0 + $1
+        }
     }
 }
 
-public extension Array where Element: Chain & Chargeable {
-    func charge(with range: ClosedRange<Charge>) -> [Element] {
+extension Array where Element: Chain & Chargeable {
+    public func charge(with range: ClosedRange<Charge>) -> [Element] {
         flatMap { sequence in
             range.map { charge in
                 var chargedSequence = sequence
-                chargedSequence.adducts.append(contentsOf: repeatElement(protonAdduct, count: charge))
+                chargedSequence.adducts.append(
+                    contentsOf: repeatElement(protonAdduct, count: charge))
 
                 return chargedSequence
             }

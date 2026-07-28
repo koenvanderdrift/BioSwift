@@ -37,17 +37,11 @@ public struct FunctionalGroup: Structure, Codable, Sendable {
         formula = Formula(from: elements)
     }
 
-    public var masses: MassContainer {
-        calculateMasses()
-    }
+    public var masses: MassContainer { calculateMasses() }
 
-    public var description: String {
-        name
-    }
+    public var description: String { name }
 
-    public var chemicalString: String {
-        formula.chemicalString
-    }
+    public var chemicalString: String { formula.chemicalString }
 }
 
 extension FunctionalGroup: Hashable {

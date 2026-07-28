@@ -16,29 +16,20 @@ public struct Hydro: Codable, Sendable {
 public class Hydropathy {
     public var residues: [any Residue] = []
 
-    public init(residues: [any Residue]) {
-        self.residues = residues
-    }
+    public init(residues: [any Residue]) { self.residues = residues }
 
     public func isoElectricPoint() -> Double {
         // http://isoelectric.org/www_old/files/practise-isoelectric-point.html
         // https://stackoverflow.com/questions/30545518/how-to-count-occurrences-of-an-element-in-a-swift-array
 
-        if residues.isEmpty {
-            return 0.0
-        }
+        if residues.isEmpty { return 0.0 }
 
         let pKaValues = hydrophathyValues(for: "pKa")
 
-        guard
-            let cTerminalpKa = pKaValues["CTerminal"],
-            let nTerminalpKa = pKaValues["NTerminal"],
-            let asparticAcidpKa = pKaValues["D"],
-            let glutamicAcidpKa = pKaValues["E"],
-            let cystinepKa = pKaValues["C"],
-            let tyrosinepKa = pKaValues["Y"],
-            let histidinepKa = pKaValues["H"],
-            let lysinepKa = pKaValues["K"],
+        guard let cTerminalpKa = pKaValues["CTerminal"], let nTerminalpKa = pKaValues["NTerminal"],
+            let asparticAcidpKa = pKaValues["D"], let glutamicAcidpKa = pKaValues["E"],
+            let cystinepKa = pKaValues["C"], let tyrosinepKa = pKaValues["Y"],
+            let histidinepKa = pKaValues["H"], let lysinepKa = pKaValues["K"],
             let argininepKa = pKaValues["R"]
         else { return 0.0 }
 
@@ -57,13 +48,13 @@ public class Hydropathy {
         let delta = 0.01
 
         while pH - minpH > delta, maxpH - pH > delta {
-            if pH >= 14.0 {
-                break
-            }
+            if pH >= 14.0 { break }
 
             let cTerminalCharge = -1 * (1 / (1 + pow(10, cTerminalpKa - pH)))
-            let asparticAcidCharge = -1 * (numberOfAsparticAcid / (1 + pow(10, asparticAcidpKa - pH)))
-            let glutamicAcidCharge = -1 * (numberOfGlutamicAcid / (1 + pow(10, glutamicAcidpKa - pH)))
+            let asparticAcidCharge =
+                -1 * (numberOfAsparticAcid / (1 + pow(10, asparticAcidpKa - pH)))
+            let glutamicAcidCharge =
+                -1 * (numberOfGlutamicAcid / (1 + pow(10, glutamicAcidpKa - pH)))
             let cysteineCharge = -1 * (numberOfCysteine / (1 + pow(10, cystinepKa - pH)))
             let tyrosineCharge = -1 * (numberOfTyrosine / (1 + pow(10, tyrosinepKa - pH)))
 
@@ -72,14 +63,15 @@ public class Hydropathy {
             let lysineCharge = numberOfLysine / (1 + pow(10, pH - lysinepKa))
             let arginineCharge = numberOfArginine / (1 + pow(10, pH - argininepKa))
 
-            let neutralCharge = cTerminalCharge + asparticAcidCharge + glutamicAcidCharge + cysteineCharge + tyrosineCharge +
-                nTerminalCharge + histidineCharge + lysineCharge + arginineCharge
+            let neutralCharge =
+                cTerminalCharge + asparticAcidCharge + glutamicAcidCharge + cysteineCharge
+                + tyrosineCharge + nTerminalCharge + histidineCharge + lysineCharge + arginineCharge
 
-            if neutralCharge < 0 { // we are out of range, thus the new pH value must be smaller
+            if neutralCharge < 0 {  // we are out of range, thus the new pH value must be smaller
                 let temp = pH
                 pH = pH - ((pH - minpH) / 2)
                 maxpH = temp
-            } else { // we used too small of a pH value, so we have to increase it
+            } else {  // we used too small of a pH value, so we have to increase it
                 let temp = pH
                 pH = pH + ((maxpH - pH) / 2)
                 minpH = temp
@@ -90,8 +82,9 @@ public class Hydropathy {
     }
 
     public func hydrophathyValues(for name: String) -> [String: Double] {
-        guard let values = hydropathyLibrary.first(where: { $0.name == name })?.values
-        else { return [:] }
+        guard let values = hydropathyLibrary.first(where: { $0.name == name })?.values else {
+            return [:]
+        }
 
         return values.mapValues { Double($0)! }
     }

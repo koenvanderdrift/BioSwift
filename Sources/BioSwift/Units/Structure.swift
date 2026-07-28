@@ -17,8 +17,4 @@ public protocol Structure: Mass {
     var formula: Formula { get }
 }
 
-public extension Structure {
-    func calculateMasses() -> MassContainer {
-        formula.masses
-    }
-}
+extension Structure { public func calculateMasses() -> MassContainer { formula.masses } }

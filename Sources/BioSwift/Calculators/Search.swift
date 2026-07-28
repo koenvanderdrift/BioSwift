@@ -13,9 +13,7 @@ public enum SearchType: Int, Codable, Identifiable, Equatable, Sendable {
     case unique
     case exhaustive
 
-    public var id: Self {
-        self
-    }
+    public var id: Self { self }
 }
 
 public enum MassToleranceType: String, CaseIterable, Codable, Identifiable, Equatable, Sendable {
@@ -24,29 +22,21 @@ public enum MassToleranceType: String, CaseIterable, Codable, Identifiable, Equa
     case percent = "%"
     case mmu
 
-    public var id: Self {
-        self
-    }
+    public var id: Self { self }
 }
 
-public extension MassToleranceType {
-    var minValue: Double {
-        0.0
-    }
+extension MassToleranceType {
+    public var minValue: Double { 0.0 }
 
-    var maxValue: Double {
+    public var maxValue: Double {
         switch self {
-        case .ppm:
-            return 10000.0
+        case .ppm: return 10000.0
 
-        case .dalton:
-            return 10.0
+        case .dalton: return 10.0
 
-        case .percent:
-            return 1.0
+        case .percent: return 1.0
 
-        case .mmu:
-            return 10000.0
+        case .mmu: return 10000.0
         }
     }
 }
@@ -68,7 +58,10 @@ public struct MassSearchParameters: Codable, Equatable, Sendable {
     public var massType: MassType
     public var charge: Int
 
-    public init(searchValue: Dalton, tolerance: MassTolerance, searchType: SearchType, massType: MassType, charge: Int) {
+    public init(
+        searchValue: Dalton, tolerance: MassTolerance, searchType: SearchType, massType: MassType,
+        charge: Int
+    ) {
         self.searchValue = searchValue
         self.tolerance = tolerance
         self.searchType = searchType
@@ -100,12 +93,12 @@ public struct MassSearchParameters: Codable, Equatable, Sendable {
             maxMass = searchValue + toleranceValue / 1000
         }
 
-        return minMass ... maxMass
+        return minMass...maxMass
     }
 }
 
-public extension Chain {
-    func searchSequence(searchString: String) -> [Self] {
+extension Chain {
+    public func searchSequence(searchString: String) -> [Self] {
         var result: [Self] = []
         for range in sequenceString.sequenceRanges(of: searchString) {
             var sub = subChain(range: range)
@@ -118,16 +111,13 @@ public extension Chain {
     }
 }
 
-public extension Chain {
-    func searchMass(params: MassSearchParameters) -> [Range<Int>] where Self: Chargeable {
+extension Chain {
+    public func searchMass(params: MassSearchParameters) -> [Range<Int>] where Self: Chargeable {
         // prefixValues[i] is the sum of items[0..<i].
-        var prefixValues = Array(
-            repeating: zeroMass,
-            count: residues.count + 1)
+        var prefixValues = Array(repeating: zeroMass, count: residues.count + 1)
 
         for index in residues.indices {
-            prefixValues[index + 1] =
-                prefixValues[index] + residues[index].masses
+            prefixValues[index + 1] = prefixValues[index] + residues[index].masses
         }
 
         var candidateCount = 0
@@ -151,11 +141,13 @@ public extension Chain {
         // First end whose value is above the acceptable range.
         var firstAboveEnd = 1
 
-        for start in 0 ..< count {
+        for start in 0..<count {
             firstAcceptableEnd = max(firstAcceptableEnd, start + 1)
 
             while firstAcceptableEnd <= count {
-                if !acceptableRange.isBelow(massContainer(from: start, to: firstAcceptableEnd), for: params.massType) {
+                if !acceptableRange.isBelow(
+                    massContainer(from: start, to: firstAcceptableEnd), for: params.massType)
+                {
                     break
                 }
 
@@ -164,14 +156,14 @@ public extension Chain {
 
             // No range beginning here can reach the lower bound.
             // With nonnegative contributions, no later start can either.
-            guard firstAcceptableEnd <= count else {
-                break
-            }
+            guard firstAcceptableEnd <= count else { break }
 
             firstAboveEnd = max(firstAboveEnd, firstAcceptableEnd)
 
             while firstAboveEnd <= count {
-                if acceptableRange.isAbove(massContainer(from: start, to: firstAboveEnd), for: params.massType) {
+                if acceptableRange.isAbove(
+                    massContainer(from: start, to: firstAboveEnd), for: params.massType)
+                {
                     break
                 }
 
@@ -180,9 +172,7 @@ public extension Chain {
 
             // firstAboveEnd may be count + 1. That intentionally includes
             // a valid range whose exclusive upper bound is `count`.
-            for end in firstAcceptableEnd ..< firstAboveEnd {
-                results.append(start ..< end)
-            }
+            for end in firstAcceptableEnd..<firstAboveEnd { results.append(start..<end) }
         }
 
         debugPrint("Candidates tested: \(candidateCount)")
@@ -190,12 +180,13 @@ public extension Chain {
         return results
     }
 
-    func searchMassBruteForce(params: MassSearchParameters) -> [Self] where Self: Chargeable {
+    public func searchMassBruteForce(params: MassSearchParameters) -> [Self]
+    where Self: Chargeable {
         var result: [Self] = []
 
         for start in residues.indices {
-            for end in (start + 1) ..< residues.count {
-                let subRange = start ..< end
+            for end in (start + 1)..<residues.count {
+                let subRange = start..<end
                 var sub = subChain(range: subRange)
 
                 sub.range = subRange
@@ -203,14 +194,10 @@ public extension Chain {
 
                 let moverz = sub.massOverCharge()
 
-                if params.massRange.upperLimit(excludes: moverz) {
-                    break
-                }
+                if params.massRange.upperLimit(excludes: moverz) { break }
 
                 if params.massRange.contains(moverz, for: params.massType) {
-                    if (start ..< end).isValidRange {
-                        result.append(sub)
-                    }
+                    if (start..<end).isValidRange { result.append(sub) }
                 }
             }
         }
@@ -218,9 +205,10 @@ public extension Chain {
         return result
     }
 
-    private func subChain(with range: Range<Int>, for masses: MassContainer, in massRange: MassRange, and type: MassType) -> Self?
-        where Self: Chargeable
-    {
+    private func subChain(
+        with range: Range<Int>, for masses: MassContainer, in massRange: MassRange,
+        and type: MassType
+    ) -> Self? where Self: Chargeable {
         if massRange.contains(masses, for: type) {
             var sub = subChain(range: range)
 

@@ -27,20 +27,19 @@ public enum PeptideFragmentType: CaseIterable, Codable, Identifiable, Sendable {
     case zIon
     case undefined
 
-    public var id: Self {
-        self
-    }
+    public var id: Self { self }
 
     public var isPrecursor: Bool {
         [.precursorIon, .precursorIonMinusWater, .precursorIonMinusAmmonia].contains(self)
     }
 
-    public var isImmonium: Bool {
-        [.immoniumIon].contains(self)
-    }
+    public var isImmonium: Bool { [.immoniumIon].contains(self) }
 
     public var isNTerminal: Bool {
-        [.aIon, .aIonMinusWater, .aIonMinusAmmonia, .bIon, .bIonMinusWater, .bIonMinusAmmonia, .cIon].contains(self)
+        [
+            .aIon, .aIonMinusWater, .aIonMinusAmmonia, .bIon, .bIonMinusWater, .bIonMinusAmmonia,
+            .cIon,
+        ].contains(self)
     }
 
     public var isCTerminal: Bool {
@@ -49,50 +48,35 @@ public enum PeptideFragmentType: CaseIterable, Codable, Identifiable, Sendable {
 
     public var masses: MassContainer {
         switch self {
-        case .precursorIon:
-            return water.masses
+        case .precursorIon: return water.masses
 
-        case .precursorIonMinusAmmonia:
-            return water.masses - ammonia.masses
+        case .precursorIonMinusAmmonia: return water.masses - ammonia.masses
 
-        case .aIon:
-            return zeroMass - carbonyl.masses
+        case .aIon: return zeroMass - carbonyl.masses
 
-        case .aIonMinusWater:
-            return zeroMass - carbonyl.masses + water.masses
+        case .aIonMinusWater: return zeroMass - carbonyl.masses + water.masses
 
-        case .aIonMinusAmmonia:
-            return zeroMass - carbonyl.masses + ammonia.masses
+        case .aIonMinusAmmonia: return zeroMass - carbonyl.masses + ammonia.masses
 
-        case .bIon:
-            return zeroMass - hydrogen.masses
+        case .bIon: return zeroMass - hydrogen.masses
 
-        case .bIonMinusWater:
-            return zeroMass - water.masses - hydrogen.masses
+        case .bIonMinusWater: return zeroMass - water.masses - hydrogen.masses
 
-        case .bIonMinusAmmonia:
-            return zeroMass - ammonia.masses - hydrogen.masses
+        case .bIonMinusAmmonia: return zeroMass - ammonia.masses - hydrogen.masses
 
-        case .cIon:
-            return ammonia.masses - hydrogen.masses
+        case .cIon: return ammonia.masses - hydrogen.masses
 
-        case .yIon:
-            return hydrogen.masses
+        case .yIon: return hydrogen.masses
 
-        case .yIonMinusWater:
-            return hydrogen.masses - water.masses
+        case .yIonMinusWater: return hydrogen.masses - water.masses
 
-        case .yIonMinusAmmonia:
-            return hydrogen.masses - ammonia.masses
+        case .yIonMinusAmmonia: return hydrogen.masses - ammonia.masses
 
-        case .xIon:
-            return carbonyl.masses - hydrogen.masses
+        case .xIon: return carbonyl.masses - hydrogen.masses
 
-        case .zIon:
-            return zeroMass - ammonia.masses + 2 * hydrogen.masses
+        case .zIon: return zeroMass - ammonia.masses + 2 * hydrogen.masses
 
-        default:
-            return zeroMass
+        default: return zeroMass
         }
     }
 }
@@ -102,7 +86,7 @@ public protocol Fragmenting {
     var index: Int { get set }
 }
 
-/// PeptideFragment iis generated using the ``ProteinDigester`` 
+/// PeptideFragment iis generated using the ``ProteinDigester``
 public struct PeptideFragment: Chain, Codable, Fragmenting, Sendable {
     public var name: String = ""
     public var sequence: String = ""
@@ -120,11 +104,13 @@ public struct PeptideFragment: Chain, Codable, Fragmenting, Sendable {
         residues = createResidues(from: sequence)
     }
 
-    public init(residues: [AminoAcid]) {
-        self.residues = residues
-    }
+    public init(residues: [AminoAcid]) { self.residues = residues }
 
-    public init(residues: [AminoAcid], type: PeptideFragmentType, index: Int = -1, adducts: [Adduct], nTerm: Modification = zeroModification, cTerm: Modification = zeroModification, parentLength: Int = 0) {
+    public init(
+        residues: [AminoAcid], type: PeptideFragmentType, index: Int = -1, adducts: [Adduct],
+        nTerm: Modification = zeroModification, cTerm: Modification = zeroModification,
+        parentLength: Int = 0
+    ) {
         self.residues = residues
         self.fragmentType = type
         self.index = index
@@ -135,71 +121,51 @@ public struct PeptideFragment: Chain, Codable, Fragmenting, Sendable {
     }
 
     public func createResidues(from string: String) -> [AminoAcid] {
-        string.compactMap { char in
-            aminoAcidLibrary.first(where: { $0.identifier == String(char) })
+        string.compactMap { char in aminoAcidLibrary.first(where: { $0.identifier == String(char) })
         }
     }
 }
 
 extension PeptideFragment: Chargeable {
-    public var masses: MassContainer {
-        massOverCharge()
-    }
+    public var masses: MassContainer { massOverCharge() }
 
     public func calculateMasses() -> MassContainer {
-        if residues.isEmpty {
-            return zeroMass
-        }
+        if residues.isEmpty { return zeroMass }
 
-        return residueMasses() + terminalMasses() + fragmentType.masses // + modificationMasses() 
+        return residueMasses() + terminalMasses() + fragmentType.masses  // + modificationMasses()
     }
 
-    func residueMasses() -> MassContainer {
-        residues.reduce(zeroMass) { $0 + $1.masses }
-    }
+    func residueMasses() -> MassContainer { residues.reduce(zeroMass) { $0 + $1.masses } }
 
-    func terminalMasses() -> MassContainer {
-        nTerminal.masses + cTerminal.masses
-    }
+    func terminalMasses() -> MassContainer { nTerminal.masses + cTerminal.masses }
 }
 
-public extension PeptideFragment {
-    func canLoseWater() -> Bool {
+extension PeptideFragment {
+    public func canLoseWater() -> Bool {
         return sequenceString.containsAnyCharacter(in: "STED")
 
-//        if fragmentType == .bIon, let last = sequenceString.last {
-//            if "RQNKW".contains(last) {
-//                result = false
-//            }
-//        }
-//
-//        return result
+        //        if fragmentType == .bIon, let last = sequenceString.last {
+        //            if "RQNKW".contains(last) {
+        //                result = false
+        //            }
+        //        }
+        //
+        //        return result
     }
 
-    func canLoseAmmonia() -> Bool {
-        return sequenceString.containsAnyCharacter(in: "RQNK")
-    }
+    public func canLoseAmmonia() -> Bool { return sequenceString.containsAnyCharacter(in: "RQNK") }
 
-    func isPrecursor() -> Bool {
-        return fragmentType.isPrecursor
-    }
+    public func isPrecursor() -> Bool { return fragmentType.isPrecursor }
 
-    func isImmonium() -> Bool {
-        return fragmentType.isImmonium
-    }
+    public func isImmonium() -> Bool { return fragmentType.isImmonium }
 
-    func isNterminal() -> Bool {
-        return fragmentType.isNTerminal
-    }
+    public func isNterminal() -> Bool { return fragmentType.isNTerminal }
 
-    func isCterminal() -> Bool {
-        return fragmentType.isCTerminal
-    }
+    public func isCterminal() -> Bool { return fragmentType.isCTerminal }
 
-    func maxNumberOfCharges() -> Int {
+    public func maxNumberOfCharges() -> Int {
         // if let aa = residues as? [AminoAcid] {
-        return residues.filter { $0.properties.contains(.chargedPositive) }.count
-        // }
+        return residues.filter { $0.properties.contains(.chargedPositive) }.count  // }
 
         // return 0
     }

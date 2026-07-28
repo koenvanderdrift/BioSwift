@@ -19,51 +19,38 @@ public struct Peptide: Chain, Codable, Equatable, Sendable {
     public var range: Range<Int> = zeroRange
     public var parentLength: Int = 0
 
-    public init(sequence: String) {
-        residues = createResidues(from: sequence)
-    }
+    public init(sequence: String) { residues = createResidues(from: sequence) }
 
-    public init(residues: [AminoAcid]) {
-        self.residues = residues
-    }
+    public init(residues: [AminoAcid]) { self.residues = residues }
 
     public func createResidues(from string: String) -> [AminoAcid] {
-        string.compactMap { char in
-            aminoAcidLibrary.first(where: { $0.identifier == String(char) })
+        string.compactMap { char in aminoAcidLibrary.first(where: { $0.identifier == String(char) })
         }
     }
 }
 
-public extension Peptide {
-    func hydropathyValues(for hydropathyType: String) -> [Double] {
+extension Peptide {
+    public func hydropathyValues(for hydropathyType: String) -> [Double] {
         let values = Hydropathy(residues: residues).hydrophathyValues(for: hydropathyType)
 
         return residues.compactMap { values[$0.oneLetterCode] }
     }
 
-    func isoelectricPoint() -> Double {
+    public func isoelectricPoint() -> Double {
         return Hydropathy(residues: residues).isoElectricPoint()
     }
 }
 
 extension Peptide: Chargeable {
-    public var masses: MassContainer {
-        massOverCharge()
-    }
+    public var masses: MassContainer { massOverCharge() }
 
     public func calculateMasses() -> MassContainer {
-        if residues.isEmpty {
-            return zeroMass
-        }
+        if residues.isEmpty { return zeroMass }
 
         return residueMasses() + terminalMasses()
     }
 
-    func residueMasses() -> MassContainer {
-        residues.reduce(zeroMass) { $0 + $1.masses }
-    }
+    func residueMasses() -> MassContainer { residues.reduce(zeroMass) { $0 + $1.masses } }
 
-    func terminalMasses() -> MassContainer {
-        return nTerminal.masses + cTerminal.masses
-    }
+    func terminalMasses() -> MassContainer { return nTerminal.masses + cTerminal.masses }
 }

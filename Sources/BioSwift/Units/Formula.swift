@@ -11,38 +11,33 @@ import Foundation
 public let zeroFormula = Formula("")
 
 /// Formula is used in every Chemical Structure.
-/// 
+///
 public struct Formula: Codable, Sendable {
     public var string: String
     public var countedElements: [ChemicalElement: Int]
     public var cachedMasses: MassContainer = zeroMass
-    
+
     public var chemicalString: String {
         var result = ""
 
         for c in string {
-            if c.isNumber {
-                result.append(String(c).subScript())
-            } else {
-                result.append(c)
-            }
+            if c.isNumber { result.append(String(c).subScript()) } else { result.append(c) }
         }
 
         return result
     }
 
-    public init(_ string: String = "", with countedElements: [ChemicalElement: Int] = [:], from elementsDictionary: [String: Int] = [:]) {
+    public init(
+        _ string: String = "", with countedElements: [ChemicalElement: Int] = [:],
+        from elementsDictionary: [String: Int] = [:]
+    ) {
         self.string = string
         self.countedElements = countedElements
 
-        if self.countedElements.isEmpty {
-            setUp(from: string, or: elementsDictionary)
-        }
+        if self.countedElements.isEmpty { setUp(from: string, or: elementsDictionary) }
 
-        if self.string.isEmpty {
-            self.string = formulaString()
-        }
-        
+        if self.string.isEmpty { self.string = formulaString() }
+
         cachedMasses = calculateMasses()
     }
 
@@ -54,32 +49,22 @@ public struct Formula: Codable, Sendable {
                 let absCount = abs(count)
                 if absCount > 0 {
                     elementsString += element
-                    if absCount > 1 {
-                        elementsString += String(absCount)
-                    }
+                    if absCount > 1 { elementsString += String(absCount) }
                 }
             }
         }
 
         do {
-            try parseElements(from: elementsString) // elementsString -> countedElements
-        } catch {
-            debugPrint(error)
-        }
+            try parseElements(from: elementsString)  // elementsString -> countedElements
+        } catch { debugPrint(error) }
 
-        if self.string.isEmpty {
-            self.string = formulaString()
-        }
+        if self.string.isEmpty { self.string = formulaString() }
     }
 
     public func countFor(element: String) -> Int {
         var result = 0
 
-        for (key, value) in countedElements {
-            if key.symbol == element {
-                result += value
-            }
-        }
+        for (key, value) in countedElements { if key.symbol == element { result += value } }
 
         return result
     }
@@ -87,9 +72,7 @@ public struct Formula: Codable, Sendable {
     public func countAllElements() -> Int {
         var result = 0
 
-        for (_, value) in countedElements {
-            result += value
-        }
+        for (_, value) in countedElements { result += value }
 
         return result
     }
@@ -114,9 +97,7 @@ extension Formula {
 
         for (element, count) in countedElements {
             result += element.symbol
-            if count > 1 {
-                result += String(count)
-            }
+            if count > 1 { result += String(count) }
         }
 
         return result
@@ -135,9 +116,7 @@ extension Formula {
         var elementCount = 0
         var elementName = ""
 
-        if i == 0 {
-            return
-        }
+        if i == 0 { return }
 
         // parse string backwards
 
@@ -151,35 +130,26 @@ extension Formula {
                     throw ParseError.missingClosingBracket
                 }
             } else if isClosingBracket(char) {
-                if elementCount == 0 {
-                    elementCount = 1
-                }
+                if elementCount == 0 { elementCount = 1 }
 
                 parenthesisLevel += 1
 
-                if parenthesisLevel > multiplication.count - 1 {
-                    multiplication.append(0)
-                }
+                if parenthesisLevel > multiplication.count - 1 { multiplication.append(0) }
 
-                multiplication[parenthesisLevel] = elementCount * multiplication[parenthesisLevel - 1]
+                multiplication[parenthesisLevel] =
+                    elementCount * multiplication[parenthesisLevel - 1]
 
                 elementCount = 0
             } else if char.isNumber {
                 let j = i
 
-                while i > 0, characters[i - 1].isNumber {
-                    i -= 1
-                }
+                while i > 0, characters[i - 1].isNumber { i -= 1 }
 
-                guard let count = Int(string[i ..< (j + 1)]) else {
-                    throw ParseError.invalidCount
-                }
+                guard let count = Int(string[i..<(j + 1)]) else { throw ParseError.invalidCount }
 
                 elementCount = count
 
-                if elementCount == 0 {
-                    throw ParseError.zeroCount
-                }
+                if elementCount == 0 { throw ParseError.zeroCount }
             } else if char.isLowercase {
                 if characters[i - 1].isUppercase == false {
                     throw ParseError.invalidCharacterFound(char)
@@ -189,22 +159,16 @@ extension Formula {
             } else if char.isUppercase {
                 elementName = String(char) + elementName
 
-                if elementCount == 0 {
-                    elementCount = 1
-                }
+                if elementCount == 0 { elementCount = 1 }
 
                 let j = i
 
-                while i > 0, characters[i - 1].isNumber {
-                    i -= 1
-                }
+                while i > 0, characters[i - 1].isNumber { i -= 1 }
 
-                if i > 0, isOpeningBracket(characters[i - 1]) == false {
-                    i = j
-                }
+                if i > 0, isOpeningBracket(characters[i - 1]) == false { i = j }
 
                 if let element = elementLibrary.first(where: { $0.identifier == elementName }) {
-                    for _ in 0 ..< (elementCount * multiplication[parenthesisLevel]) {
+                    for _ in 0..<(elementCount * multiplication[parenthesisLevel]) {
                         countedElements[element] = (countedElements[element] ?? 0) + 1
                     }
                 } else {
@@ -218,30 +182,18 @@ extension Formula {
             }
         }
 
-        if elementCount != 0 {
-            throw ParseError.numberPrecedingFormula
-        }
+        if elementCount != 0 { throw ParseError.numberPrecedingFormula }
 
-        if parenthesisLevel != 0 {
-            throw ParseError.missingOpeningBracket
-        }
+        if parenthesisLevel != 0 { throw ParseError.missingOpeningBracket }
 
-        if parenthesisLevel != 0 {
-            throw ParseError.missingOpeningBracket
-        }
+        if parenthesisLevel != 0 { throw ParseError.missingOpeningBracket }
 
-        if countedElements.isEmpty {
-            throw ParseError.invalidFormula
-        }
+        if countedElements.isEmpty { throw ParseError.invalidFormula }
     }
 
-    private func isOpeningBracket(_ char: Character) -> Bool {
-        "({[<".contains(char)
-    }
+    private func isOpeningBracket(_ char: Character) -> Bool { "({[<".contains(char) }
 
-    private func isClosingBracket(_ char: Character) -> Bool {
-        ")}]>".contains(char)
-    }
+    private func isClosingBracket(_ char: Character) -> Bool { ")}]>".contains(char) }
 }
 
 extension Formula: Equatable {
@@ -250,79 +202,92 @@ extension Formula: Equatable {
     }
 
     static func + (lhs: Formula, rhs: Formula) -> Formula {
-        let result = lhs.countedElements.merging(rhs.countedElements, uniquingKeysWith: { left, right in
-            left + right
-        })
+        let result = lhs.countedElements.merging(
+            rhs.countedElements, uniquingKeysWith: { left, right in left + right })
 
         return Formula(with: result)
     }
 
-    static func += (lhs: inout Formula, rhs: Formula) {
-        lhs = lhs + rhs
-    }
+    static func += (lhs: inout Formula, rhs: Formula) { lhs = lhs + rhs }
 
     static func - (lhs: Formula, rhs: Formula) -> Formula {
-        let result = lhs.countedElements.merging(rhs.countedElements, uniquingKeysWith: { left, right in
-            abs(left - right)
-        })
+        let result = lhs.countedElements.merging(
+            rhs.countedElements, uniquingKeysWith: { left, right in abs(left - right) })
 
         return Formula(with: result)
     }
 
-    static func -= (lhs: inout Formula, rhs: Formula) {
-        lhs = lhs - rhs
-    }
+    static func -= (lhs: inout Formula, rhs: Formula) { lhs = lhs - rhs }
 }
 
 extension Formula: Mass {
-    public var masses: MassContainer {
-       cachedMasses
-    }
+    public var masses: MassContainer { cachedMasses }
 
     public func calculateMasses() -> MassContainer {
         var result = zeroMass
 
-        for (element, count) in countedElements {
-            result += count * element.masses
-        }
+        for (element, count) in countedElements { result += count * element.masses }
 
         return result
     }
 }
 
-public extension String {
-    func superScript() -> String {
+extension String {
+    public func superScript() -> String {
         var result = ""
         for char in self {
-            if char == "+" { result.append("\u{207A}") }
-            else if char == "-" { result.append("\u{207B}") }
-            else if char == "1" { result.append("") }
-            else if char == "2" { result.append("\u{00B2}") }
-            else if char == "3" { result.append("\u{00B3}") }
-            else if char == "4" { result.append("\u{2074}") }
-            else if char == "5" { result.append("\u{2075}") }
-            else if char == "6" { result.append("\u{2076}") }
-            else if char == "7" { result.append("\u{2077}") }
-            else if char == "8" { result.append("\u{2078}") }
-            else if char == "9" { result.append("\u{2079}") }
+            if char == "+" {
+                result.append("\u{207A}")
+            } else if char == "-" {
+                result.append("\u{207B}")
+            } else if char == "1" {
+                result.append("")
+            } else if char == "2" {
+                result.append("\u{00B2}")
+            } else if char == "3" {
+                result.append("\u{00B3}")
+            } else if char == "4" {
+                result.append("\u{2074}")
+            } else if char == "5" {
+                result.append("\u{2075}")
+            } else if char == "6" {
+                result.append("\u{2076}")
+            } else if char == "7" {
+                result.append("\u{2077}")
+            } else if char == "8" {
+                result.append("\u{2078}")
+            } else if char == "9" {
+                result.append("\u{2079}")
+            }
         }
 
         return result
     }
 
-    func subScript() -> String {
+    public func subScript() -> String {
         var result = ""
         for char in self {
-            if char == "0" { result.append("\u{2080}") }
-            else if char == "1" { result.append("\u{2081}") }
-            else if char == "2" { result.append("\u{2082}") }
-            else if char == "3" { result.append("\u{2083}") }
-            else if char == "4" { result.append("\u{2084}") }
-            else if char == "5" { result.append("\u{2085}") }
-            else if char == "6" { result.append("\u{2086}") }
-            else if char == "7" { result.append("\u{2087}") }
-            else if char == "8" { result.append("\u{2088}") }
-            else if char == "9" { result.append("\u{2089}") }
+            if char == "0" {
+                result.append("\u{2080}")
+            } else if char == "1" {
+                result.append("\u{2081}")
+            } else if char == "2" {
+                result.append("\u{2082}")
+            } else if char == "3" {
+                result.append("\u{2083}")
+            } else if char == "4" {
+                result.append("\u{2084}")
+            } else if char == "5" {
+                result.append("\u{2085}")
+            } else if char == "6" {
+                result.append("\u{2086}")
+            } else if char == "7" {
+                result.append("\u{2087}")
+            } else if char == "8" {
+                result.append("\u{2088}")
+            } else if char == "9" {
+                result.append("\u{2089}")
+            }
         }
 
         return result

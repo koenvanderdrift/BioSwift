@@ -14,19 +14,19 @@ public let zeroModification = Modification(name: unmodifiedString, reactions: [.
 public let hydrogenModification = Modification(name: "Hydrogen", reactions: [.add(hydrogen)])
 public let hydroxylModification = Modification(name: "Hydroxyl", reactions: [.add(hydroxyl)])
 
-public let lossOfWater = Modification(name: "Loss of Water", reactions: [.remove(water)], specificities: [
-    ModificationSpecificity(site: "S"),
-    ModificationSpecificity(site: "T"),
-    ModificationSpecificity(site: "E"),
-    ModificationSpecificity(site: "D"),
-])
+public let lossOfWater = Modification(
+    name: "Loss of Water", reactions: [.remove(water)],
+    specificities: [
+        ModificationSpecificity(site: "S"), ModificationSpecificity(site: "T"),
+        ModificationSpecificity(site: "E"), ModificationSpecificity(site: "D"),
+    ])
 
-public let lossOfAmmonia = Modification(name: "Loss of Ammonia", reactions: [.remove(ammonia)], specificities: [
-    ModificationSpecificity(site: "R"),
-    ModificationSpecificity(site: "Q"),
-    ModificationSpecificity(site: "N"),
-    ModificationSpecificity(site: "K"),
-])
+public let lossOfAmmonia = Modification(
+    name: "Loss of Ammonia", reactions: [.remove(ammonia)],
+    specificities: [
+        ModificationSpecificity(site: "R"), ModificationSpecificity(site: "Q"),
+        ModificationSpecificity(site: "N"), ModificationSpecificity(site: "K"),
+    ])
 
 public indirect enum Reaction: Codable, Sendable {
     case add(FunctionalGroup)
@@ -35,20 +35,15 @@ public indirect enum Reaction: Codable, Sendable {
 }
 
 extension Reaction: Mass {
-    public var masses: MassContainer {
-        calculateMasses()
-    }
+    public var masses: MassContainer { calculateMasses() }
 
     public func calculateMasses() -> MassContainer {
         var result = zeroMass
 
         switch self {
-        case let .add(group):
-            result += group.masses
-        case let .remove(group):
-            result -= group.masses
-        case .undefined:
-            break
+        case .add(let group): result += group.masses
+        case .remove(let group): result -= group.masses
+        case .undefined: break
         }
 
         return result
@@ -58,12 +53,9 @@ extension Reaction: Mass {
         var result = zeroFormula
 
         switch self {
-        case let .add(group):
-            result += group.formula
-        case let .remove(group):
-            result -= group.formula
-        case .undefined:
-            break
+        case .add(let group): result += group.formula
+        case .remove(let group): result -= group.formula
+        case .undefined: break
         }
 
         return result
@@ -98,14 +90,20 @@ public struct Modification: Codable, Sendable {
     public let reactions: [Reaction]
     public let specificities: [ModificationSpecificity]
 
-    public init(name: String, fullName: String = "", reactions: [Reaction], specificities: [ModificationSpecificity] = []) {
+    public init(
+        name: String, fullName: String = "", reactions: [Reaction],
+        specificities: [ModificationSpecificity] = []
+    ) {
         self.name = name
         self.fullName = fullName
         self.specificities = specificities
         self.reactions = reactions
     }
 
-    public init(name: String, fullName: String = "", elements: [String: Int], specificities: [ModificationSpecificity] = []) {
+    public init(
+        name: String, fullName: String = "", elements: [String: Int],
+        specificities: [ModificationSpecificity] = []
+    ) {
         // TODO: switch to [ChemicalElement: Int] ?
 
         var reactions = [Reaction]()
@@ -122,7 +120,8 @@ public struct Modification: Codable, Sendable {
             reactions.append(Reaction.add(group))
         }
 
-        self.init(name: name, fullName: fullName, reactions: reactions, specificities: specificities)
+        self.init(
+            name: name, fullName: fullName, reactions: reactions, specificities: specificities)
     }
 
     public init(_ modification: Modification) {
@@ -134,27 +133,17 @@ public struct Modification: Codable, Sendable {
 }
 
 extension Modification: Hashable {
-    public static func == (lhs: Modification, rhs: Modification) -> Bool {
-        lhs.name == rhs.name
-    }
+    public static func == (lhs: Modification, rhs: Modification) -> Bool { lhs.name == rhs.name }
 
-    public func hash(into hasher: inout Hasher) {
-        hasher.combine(name)
-    }
+    public func hash(into hasher: inout Hasher) { hasher.combine(name) }
 }
 
 extension Modification: Mass {
-    public var masses: MassContainer {
-        calculateMasses()
-    }
+    public var masses: MassContainer { calculateMasses() }
 
-    public var formula: Formula {
-        reactions.reduce(zeroFormula) { $0 + $1.formula }
-    }
+    public var formula: Formula { reactions.reduce(zeroFormula) { $0 + $1.formula } }
 
-    public func calculateMasses() -> MassContainer {
-        reactions.reduce(zeroMass) { $0 + $1.masses }
-    }
+    public func calculateMasses() -> MassContainer { reactions.reduce(zeroMass) { $0 + $1.masses } }
 }
 
 // TODO: rethink Link

@@ -24,58 +24,50 @@ public enum LoadError: Error {
 
  */
 
-public func loadData(from fileName: String, withExtension fileExtension: String, in bundle: Bundle = .main) throws -> Data {
+public func loadData(
+    from fileName: String, withExtension fileExtension: String, in bundle: Bundle = .main
+) throws -> Data {
     let fullName = "\(fileName).\(fileExtension)"
 
     guard let url = bundle.url(forResource: fileName, withExtension: fileExtension) else {
         throw LoadError.fileNotFound(name: fullName)
     }
 
-    do {
-        return try Data(contentsOf: url)
-    } catch {
+    do { return try Data(contentsOf: url) } catch {
         throw LoadError.fileReadFailed(name: fullName, underlyingError: error)
     }
 }
 
-public func loadText(from fileName: String, withExtension fileExtension: String, in bundle: Bundle = .main, encoding: String.Encoding = .utf8) throws -> String {
+public func loadText(
+    from fileName: String, withExtension fileExtension: String, in bundle: Bundle = .main,
+    encoding: String.Encoding = .utf8
+) throws -> String {
     let fullName = "\(fileName).\(fileExtension)"
 
     guard let url = bundle.url(forResource: fileName, withExtension: fileExtension) else {
         throw LoadError.fileNotFound(name: fullName)
     }
 
-    do {
-        return try String(contentsOf: url, encoding: encoding)
-    } catch {
+    do { return try String(contentsOf: url, encoding: encoding) } catch {
         throw LoadError.fileReadFailed(name: fullName, underlyingError: error)
     }
 }
 
 public func loadText(from url: URL, encoding: String.Encoding = .utf8) throws -> String {
-    do {
-        return try String(contentsOf: url, encoding: encoding)
-    } catch {
+    do { return try String(contentsOf: url, encoding: encoding) } catch {
         throw LoadError.fileReadFailed(name: url.lastPathComponent, underlyingError: error)
     }
 }
 
-func measure<T>(
-    _ name: String,
-    operation: () -> T
-) -> T {
+func measure<T>(_ name: String, operation: () -> T) -> T {
     let start = DispatchTime.now().uptimeNanoseconds
 
     let result = operation()
 
     let end = DispatchTime.now().uptimeNanoseconds
-    let milliseconds =
-        Double(end - start) / 1_000_000
+    let milliseconds = Double(end - start) / 1_000_000
 
-    debugPrint(
-        "\(name):",
-        String(format: "%.3f ms", milliseconds)
-    )
+    debugPrint("\(name):", String(format: "%.3f ms", milliseconds))
 
     return result
 }

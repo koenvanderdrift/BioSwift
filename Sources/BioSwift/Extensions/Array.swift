@@ -8,34 +8,28 @@
 
 import Foundation
 
-public extension Array {
-    func consecutiveGroups(ofSize size: Int) -> [[Element]] {
-        guard size > 0, size <= count else {
-            return []
-        }
+extension Array {
+    public func consecutiveGroups(ofSize size: Int) -> [[Element]] {
+        guard size > 0, size <= count else { return [] }
 
-        return (0 ... (count - size)).map { startIndex in
-            Array(self[startIndex ..< (startIndex + size)])
+        return (0...(count - size)).map { startIndex in
+            Array(self[startIndex..<(startIndex + size)])
         }
     }
 }
 
-public extension Array where Element: Sendable {
-    func concurrentMap<B: Sendable>(
-        _ transform: @Sendable @escaping (Element) throws -> B) async throws -> [B]
+extension Array where Element: Sendable {
+    public func concurrentMap<B: Sendable>(_ transform: @Sendable @escaping (Element) throws -> B)
+        async throws -> [B]
     {
         try await withThrowingTaskGroup(of: (Int, B).self) { group in
             for (index, element) in self.enumerated() {
-                group.addTask {
-                    try (index, transform(element))
-                }
+                group.addTask { try (index, transform(element)) }
             }
 
             var results = [B?](repeating: nil, count: count)
 
-            for try await (index, value) in group {
-                results[index] = value
-            }
+            for try await (index, value) in group { results[index] = value }
 
             return results.map { $0! }
         }
@@ -48,8 +42,7 @@ extension Array where Element: Chain {
             let combinedAminoAcids = chainGroup.flatMap { $0.residues }
 
             let combinedRange: Range<Int> =
-                chainGroup.first!.range.lowerBound ..<
-                chainGroup.last!.range.upperBound
+                chainGroup.first!.range.lowerBound..<chainGroup.last!.range.upperBound
 
             var newChain = Element(residues: combinedAminoAcids)
             newChain.range = combinedRange

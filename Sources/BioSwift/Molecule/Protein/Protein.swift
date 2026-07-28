@@ -14,26 +14,16 @@ public struct Protein: BioMolecule, Codable, Equatable, Sendable {
     public var adducts: [Adduct] = []
     public var chains: [Peptide]
 
-    public init(chains: [Peptide]) {
-        self.chains = chains
-    }
+    public init(chains: [Peptide]) { self.chains = chains }
 
-    public init(sequence: String) {
-        chains = [Peptide(sequence: sequence)]
-    }
+    public init(sequence: String) { chains = [Peptide(sequence: sequence)] }
 
-    public init(sequences: [String]) {
-        chains = sequences.map { Peptide(sequence: $0) }
-    }
+    public init(sequences: [String]) { chains = sequences.map { Peptide(sequence: $0) } }
 
-    public init(residues: [AminoAcid]) {
-        chains = [Peptide(residues: residues)]
-    }
+    public init(residues: [AminoAcid]) { chains = [Peptide(residues: residues)] }
 
     public func truncate(by range: Range<Int>) -> Protein {
-        if let subChain = chains.first?.removing(range) {
-            return Protein(chains: [subChain])
-        }
+        if let subChain = chains.first?.removing(range) { return Protein(chains: [subChain]) }
 
         return self
     }
@@ -70,9 +60,7 @@ public struct Protein: BioMolecule, Codable, Equatable, Sendable {
         return []
     }
 
-    public func nTermLocation(for _: Int = 0) -> Int {
-        0
-    }
+    public func nTermLocation(for _: Int = 0) -> Int { 0 }
 
     public func cTermLocation(for chainIndex: Int = 0) -> Int {
         chains[chainIndex].sequenceLength - 1
@@ -93,15 +81,14 @@ public struct Protein: BioMolecule, Codable, Equatable, Sendable {
     public func isoelectricPoint(for chainIndex: Int = 0, with range: Range<Int>) -> Double {
         let peptide = chains[chainIndex].subChain(range: range)
 
-        if peptide.numberOfResidues > 0 {
-            return peptide.isoelectricPoint()
-        }
+        if peptide.numberOfResidues > 0 { return peptide.isoelectricPoint() }
 
         return 0.0
     }
 
     public func hydropathyValues(chainIndex index: Int = 0, for hydropathyType: String) -> [Double] {
-        let values = Hydropathy(residues: chains[index].residues).hydrophathyValues(for: hydropathyType)
+        let values = Hydropathy(residues: chains[index].residues).hydrophathyValues(
+            for: hydropathyType)
 
         return chains[index].residues.compactMap { values[$0.oneLetterCode] }
     }

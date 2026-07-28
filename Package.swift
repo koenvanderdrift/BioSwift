@@ -14,16 +14,15 @@ let package = Package(
         .library(
             name: "BioSwift",
             targets: ["BioSwift"]
-        ),
+        )
     ],
-    dependencies: [
-    ],
+    dependencies: [],
     targets: [
         .target(
             name: "BioSwift",
             dependencies: [],
             resources: [
-                .process("Resources"),
+                .process("Resources")
             ]
         ),
         .testTarget(

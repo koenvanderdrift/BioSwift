@@ -7,7 +7,8 @@
 
 import Foundation
 
-public let zeroFastaRecord = FastaRecord(accession: "", shortName: "", fullName: "", organism: "", sequence: "")
+public let zeroFastaRecord = FastaRecord(
+    accession: "", shortName: "", fullName: "", organism: "", sequence: "")
 
 public struct FastaRecord: Codable, Hashable, Identifiable, Sendable {
     // TODO: add DNA/RNA fasta parsing
@@ -18,7 +19,9 @@ public struct FastaRecord: Codable, Hashable, Identifiable, Sendable {
     public let organism: String
     public var sequence: String
 
-    public init(accession: String, shortName: String, fullName: String, organism: String, sequence: String) {
+    public init(
+        accession: String, shortName: String, fullName: String, organism: String, sequence: String
+    ) {
         id = UUID()
         self.accession = accession
         self.shortName = shortName
@@ -54,9 +57,7 @@ public final class FastaParser {
         do {
             return try await parseFasta(fastaText)
 
-        } catch {
-            throw LoadError.fileDecodingFailed(name: fullName, underlyingError: error)
-        }
+        } catch { throw LoadError.fileDecodingFailed(name: fullName, underlyingError: error) }
     }
 
     public func parse(_ data: Data) async throws -> [FastaRecord] {
@@ -74,73 +75,49 @@ public final class FastaParser {
         do {
             return try await parseFasta(fastaText)
 
-        } catch {
-            throw LoadError.fileDecodingFailed(name: fullName, underlyingError: error)
-        }
+        } catch { throw LoadError.fileDecodingFailed(name: fullName, underlyingError: error) }
     }
 
     public func parseFasta(_ fastaText: String) async throws -> [FastaRecord] {
         let rawRecords = try splitRawRecords(from: fastaText)
 
-        return try await rawRecords.concurrentMap { rawRecord in
-            try self.parseRecord(rawRecord)
-        }
+        return try await rawRecords.concurrentMap { rawRecord in try self.parseRecord(rawRecord) }
     }
 }
 
 extension FastaParser {
     func splitRawRecords(from text: String) throws -> [RawRecord] {
-        let normalizedText = text
-            .replacingOccurrences(of: "\r\n", with: "\n")
-            .replacingOccurrences(of: "\r", with: "\n")
+        let normalizedText = text.replacingOccurrences(of: "\r\n", with: "\n").replacingOccurrences(
+            of: "\r", with: "\n")
 
-        return try normalizedText
-            .components(separatedBy: "\n>")
-            .map { recordText in
-                try rawRecord(from: recordText)
-            }
-            .filter { !$0.info.isEmpty || !$0.sequence.isEmpty }
+        return try normalizedText.components(separatedBy: "\n>").map { recordText in
+            try rawRecord(from: recordText)
+        }.filter { !$0.info.isEmpty || !$0.sequence.isEmpty }
     }
 
     func rawRecord(from recordText: String) throws -> RawRecord {
-        var cleanedRecordText = recordText
-            .trimmingCharacters(in: .whitespacesAndNewlines)
+        var cleanedRecordText = recordText.trimmingCharacters(in: .whitespacesAndNewlines)
 
-        if cleanedRecordText.first == ">" {
-            cleanedRecordText.removeFirst()
-        }
+        if cleanedRecordText.first == ">" { cleanedRecordText.removeFirst() }
 
         let parts = cleanedRecordText.split(
-            separator: "\n",
-            maxSplits: 1,
-            omittingEmptySubsequences: false)
+            separator: "\n", maxSplits: 1, omittingEmptySubsequences: false)
 
         guard let infoPart = parts.first else {
-            throw LoadError.fileParsingFailed(
-                name: "records",
-                underlyingError: nil)
+            throw LoadError.fileParsingFailed(name: "records", underlyingError: nil)
         }
 
-        let info = String(infoPart)
-            .trimmingCharacters(in: .whitespacesAndNewlines)
+        let info = String(infoPart).trimmingCharacters(in: .whitespacesAndNewlines)
 
-        let rawData = parts.count > 1
-            ? String(parts[1])
-            : ""
+        let rawData = parts.count > 1 ? String(parts[1]) : ""
 
-        let data = rawData.filter {
-            !$0.isWhitespace
-        }
+        let data = rawData.filter { !$0.isWhitespace }
 
         guard !info.isEmpty, !data.isEmpty else {
-            throw LoadError.fileParsingFailed(
-                name: "records",
-                underlyingError: nil)
+            throw LoadError.fileParsingFailed(name: "records", underlyingError: nil)
         }
 
-        return RawRecord(
-            info: info,
-            sequence: data)
+        return RawRecord(info: info, sequence: data)
     }
 }
 
@@ -172,9 +149,7 @@ extension FastaParser {
 
         var input = input[...]
 
-        if input.hasPrefix(">") {
-            input.remove(at: input.startIndex)
-        }
+        if input.hasPrefix(">") { input.remove(at: input.startIndex) }
 
         if input.contains("ups|") {
             return parseUPS(input)
@@ -201,9 +176,7 @@ extension FastaParser {
         let shortName = entry.scanUntil(" ")
 
         if let nameRange = entry.range(of: " - ") {
-            let count = entry.distance(
-                from: input.startIndex,
-                to: nameRange.lowerBound)
+            let count = entry.distance(from: input.startIndex, to: nameRange.lowerBound)
 
             fullName = entry.skip(count) ?? ""
         }
@@ -211,17 +184,13 @@ extension FastaParser {
         entry.skip(3)
 
         if let organismRange = entry.range(of: " ", options: .backwards) {
-            let count = entry.distance(
-                from: input.startIndex,
-                to: organismRange.lowerBound)
+            let count = entry.distance(from: input.startIndex, to: organismRange.lowerBound)
             org = entry.skip(count) ?? ""
         }
 
-        return FastaRecord(accession: String(acc ?? ""),
-                           shortName: String(shortName ?? ""),
-                           fullName: String(fullName),
-                           organism: String(org),
-                           sequence: "")
+        return FastaRecord(
+            accession: String(acc ?? ""), shortName: String(shortName ?? ""),
+            fullName: String(fullName), organism: String(org), sequence: "")
     }
 
     func parseSwissProt(_ input: Substring) -> FastaRecord {
@@ -254,11 +223,9 @@ extension FastaParser {
 
         let org = input.scanUntil("=")?.dropLast(3)
 
-        return FastaRecord(accession: String(acc ?? ""),
-                           shortName: String(shortName ?? ""),
-                           fullName: String(fullName ?? ""),
-                           organism: String(org ?? ""),
-                           sequence: "")
+        return FastaRecord(
+            accession: String(acc ?? ""), shortName: String(shortName ?? ""),
+            fullName: String(fullName ?? ""), organism: String(org ?? ""), sequence: "")
     }
 
     func parseIPI(_ input: Substring) -> FastaRecord {
@@ -270,7 +237,8 @@ extension FastaParser {
 
         // TODO: implement
 
-        return FastaRecord(accession: acc, shortName: "", fullName: fullName, organism: "", sequence: "")
+        return FastaRecord(
+            accession: acc, shortName: "", fullName: fullName, organism: "", sequence: "")
     }
 
     func parseEnsemble(_ input: Substring) -> FastaRecord {
@@ -280,7 +248,8 @@ extension FastaParser {
 
         // TODO: implement
 
-        return FastaRecord(accession: "", shortName: "", fullName: fullName, organism: "", sequence: "")
+        return FastaRecord(
+            accession: "", shortName: "", fullName: fullName, organism: "", sequence: "")
     }
 
     func parseUnspecified(_ input: Substring) -> FastaRecord {
@@ -290,7 +259,8 @@ extension FastaParser {
 
         // TODO: implement
 
-        return FastaRecord(accession: "", shortName: "", fullName: fullName, organism: "", sequence: "")
+        return FastaRecord(
+            accession: "", shortName: "", fullName: fullName, organism: "", sequence: "")
     }
 }
 
