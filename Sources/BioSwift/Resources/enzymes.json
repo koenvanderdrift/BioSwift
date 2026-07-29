@@ -1,9 +1,30 @@
-[{
+[
+    {
         "name": "Trypsin",
-        "dontCleaveBefore": ["P"],
         "alternativeName": "",
         "fullName": "",
-        "cleaveDirection": ["after"],
+        "cleaveRestrictions": [
+            {
+                "characters": "P",
+                "position": 1
+            }
+        ],
+        "cleaveDirections": [
+            "after"
+        ],
+        "cleaveAt": [
+            "K",
+            "R"
+        ]
+    },
+    {
+        "name": "Trypsin/P",
+        "cleaveRestrictions": [],
+        "alternativeName": "",
+        "fullName": "",
+        "cleaveDirections": [
+            "after"
+        ],
         "cleaveAt": [
             "K",
             "R"
@@ -11,37 +32,41 @@
     },
     {
         "name": "CNBr",
-        "dontCleaveBefore": [],
         "alternativeName": "",
         "fullName": "Cyanogen Bromide",
-        "cleaveDirection": ["after"],
-        "cleaveAt": ["M"]
+        "cleaveRestrictions": [],
+        "cleaveDirections": [
+            "after"
+        ],
+        "cleaveAt": [
+            "M"
+        ]
     },
     {
         "name": "Glu-C",
-        "dontCleaveBefore": [],
+        "cleaveRestrictions": [],
         "alternativeName": "Staphylococcus aureus Protease V8",
         "fullName": "Endoproteinase Glu-C",
-        "cleaveDirection": ["after"],
-        "cleaveAt": ["E"]
-    },
-    {
-        "name": "Trypsin\/P",
-        "dontCleaveBefore": [],
-        "alternativeName": "",
-        "fullName": "",
-        "cleaveDirection": ["after"],
+        "cleaveDirections": [
+            "after"
+        ],
         "cleaveAt": [
-            "K",
-            "R"
+            "E"
         ]
     },
     {
         "name": "Chymotrypsin",
-        "dontCleaveBefore": ["P"],
+        "cleaveRestrictions": [
+            {
+                "characters": "P",
+                "position": 1
+            }
+        ],
         "alternativeName": "",
         "fullName": "",
-        "cleaveDirection": ["after"],
+        "cleaveDirections": [
+            "after"
+        ],
         "cleaveAt": [
             "F",
             "Y",
@@ -52,42 +77,119 @@
     },
     {
         "name": "Arg-C",
-        "dontCleaveBefore": ["P"],
+        "cleaveRestrictions": [
+            {
+                "characters": "P",
+                "position": 1
+            }
+        ],
         "alternativeName": "Clostripain",
         "fullName": "Endoproteinase-Arg-C",
-        "cleaveDirection": ["after"],
-        "cleaveAt": ["R"]
+        "cleaveDirections": [
+            "after"
+        ],
+        "cleaveAt": [
+            "R"
+        ]
     },
     {
         "name": "Asp-N",
-        "dontCleaveBefore": [],
+        "cleaveRestrictions": [],
         "alternativeName": "",
         "fullName": "",
-        "cleaveDirection": ["before"],
-        "cleaveAt": ["D"]
+        "cleaveDirections": [
+            "before"
+        ],
+        "cleaveAt": [
+            "D"
+        ]
     },
     {
         "name": "Lys-C",
-        "dontCleaveBefore": ["P"],
+        "cleaveRestrictions": [
+            {
+                "characters": "P",
+                "position": 1
+            }
+        ],
         "alternativeName": "",
         "fullName": "Endoproteinase Lys-C",
-        "cleaveDirection": ["after"],
-        "cleaveAt": ["K"]
+        "cleaveDirections": [
+            "after"
+        ],
+        "cleaveAt": [
+            "K"
+        ]
     },
     {
         "name": "Lys-C\/P",
-        "dontCleaveBefore": [],
+        "cleaveRestrictions": [],
         "alternativeName": "",
         "fullName": "",
-        "cleaveDirection": ["after"],
-        "cleaveAt": ["K"]
+        "cleaveDirections": [
+            "after"
+        ],
+        "cleaveAt": [
+            "K"
+        ]
     },
     {
-        "name": "Pepsin",
-        "dontCleaveBefore": ["R"],
-        "alternativeName": "",
+        "name": "Pepsin (pH = 1.3)",
         "fullName": "",
-        "cleaveDirection": ["after", "before"],
-        "cleaveAt": ["F", "L", "Y", "W"]
+        "alternativeName": "",
+        "cleaveAt": [
+            "F",
+            "L",
+            "A"
+        ],
+        "cleaveDirections": [
+            "after"
+        ],
+        "cleaveRestrictions": [],
+    },
+    {
+        "name": "Pepsin (pH > 2)",
+        "fullName": "",
+        "alternativeName": "",
+        "cleaveAt": [
+            "F",
+            "L",
+            "Y",
+            "W"
+        ],
+        "cleaveDirections": [
+            "after",
+            "before"
+        ],
+        "cleaveRestrictions": [
+            {
+                "characters": "R",
+                "position": -1
+            },
+            {
+                "characters": "RKH",
+                "position": -3
+            },
+            {
+                "characters": "P",
+                "position": -2
+            },
+            {
+                "characters": "P",
+                "position": -1
+            },
+            {
+                "characters": "P",
+                "position": 1
+            },
+            {
+                "characters": "P",
+                "position": 2
+            },
+            {
+                "characters": "P",
+                "position": 3
+            }
+        ]
     }
 ]

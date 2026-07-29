@@ -33,23 +33,27 @@ extension Chain {
     // TODO: this is Protein only
 
     public func digest(using enzyme: Enzyme, with missedCleavages: Int) -> [Peptide] {
-        var baseRanges: [Range<Int>] = []
+        let regex = enzyme.regex()
+        debugPrint(regex)
+        let matches = cleavageSites(for: regex)  // site is first residue of new peptide 0-based
 
-        do {
-            baseRanges = try enzyme.cutRanges(in: sequenceString)
-        } catch {
-            debugPrint(error.localizedDescription)
-        }
+        let baseRanges: [Range<Int>] =
+            zip(matches, matches.dropFirst()).map { start, end in
+                start..<end
+            }
 
         var ranges = baseRanges
 
         let chunksToCombine = missedCleavages + 1
 
-        if missedCleavages > 0, chunksToCombine <= baseRanges.count {
+        if missedCleavages > 0,
+            chunksToCombine <= baseRanges.count
+        {
             for startIndex in 0...(baseRanges.count - chunksToCombine) {
                 let endIndex = startIndex + chunksToCombine - 1
 
-                ranges.append(baseRanges[startIndex].lowerBound..<baseRanges[endIndex].upperBound)
+                ranges.append(
+                    baseRanges[startIndex].lowerBound..<baseRanges[endIndex].upperBound)
             }
         }
 
@@ -76,7 +80,17 @@ extension Chain {
     }
 
     func cleavageSites(for regex: String) -> [Int] {
-        do { return try sequenceString.matches(for: regex).map(\.range.location) } catch {
+        do {
+            let matches = try sequenceString.matches(for: regex).map(\.range.location)
+
+            let validatedSites = Array(
+                Set(matches.filter { $0 > 0 && $0 < residues.count })
+            ).sorted()
+
+            let sites = [0] + validatedSites + [residues.count]
+
+            return sites
+        } catch {
             debugPrint(error.localizedDescription)
         }
 

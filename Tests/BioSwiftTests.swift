@@ -454,8 +454,21 @@ struct BioSwiftTests {
 
             #expect(peptides[0].sequenceString == "MPSSVSWGILLLAGLCCLVPVSLAEDPQGDAAQK")
             #expect(peptides[1].sequenceString == "TDTSHHDQDHPTFNK")
+            #expect(peptides.map(\.sequenceString).contains("WERPFEVK"))
+            #expect(!peptides.map(\.sequenceString).contains("WER"))
         }
 
+        let lysC = enzymeLibrary.first(where: { $0.name == "Lys-C" })
+
+        if let enzyme = lysC {
+            let peptides: [Peptide] = digester.peptides(using: enzyme, with: missedCleavages)
+
+            #expect(peptides[0].sequenceString == "MPSSVSWGILLLAGLCCLVPVSLAEDPQGDAAQK")
+            #expect(peptides[1].sequenceString == "TDTSHHDQDHPTFNK")
+            #expect(peptides.map(\.sequenceString).contains("FNKPFVFMIEQNTK"))
+            #expect(!peptides.map(\.sequenceString).contains("FNK"))
+        }
+        
         let aspN = enzymeLibrary.first(where: { $0.name == "Asp-N" })
 
         if let enzyme = aspN {
@@ -464,18 +477,31 @@ struct BioSwiftTests {
             #expect(peptides[0].sequenceString == "MPSSVSWGILLLAGLCCLVPVSLAE")
             #expect(peptides[1].sequenceString == "DPQG")
         }
+        
+        let pepsin1 = enzymeLibrary.first(where: { $0.name == "Pepsin (pH = 1.3)" })
 
-        let pepsin = enzymeLibrary.first(where: { $0.name == "Pepsin" })
-
-        if let enzyme = pepsin {
+        if let enzyme = pepsin1 {
             let peptides: [Peptide] = digester.peptides(using: enzyme, with: missedCleavages)
-            debugPrint(peptides.map { $0.sequenceString })
+
+            #expect(peptides[0].sequenceString == "MPSSVSWGIL")
+            #expect(peptides[1].sequenceString == "L")
+            #expect(peptides[2].sequenceString == "L")
+            #expect(!peptides.map(\.sequenceString).contains("AEDPQGDAAQKTDTSHHDQDHPTF"))
+            #expect(peptides.map(\.sequenceString).contains("NKITPNL"))
+            #expect(peptides.map(\.sequenceString).contains("MGKVVNPTQK"))
+        }
+
+        let pepsin2 = enzymeLibrary.first(where: { $0.name == "Pepsin (pH > 2)" })
+
+        if let enzyme = pepsin2 {
+            let peptides: [Peptide] = digester.peptides(using: enzyme, with: missedCleavages)
+
             #expect(peptides[0].sequenceString == "MPSSVS")
             #expect(peptides[1].sequenceString == "W")
             #expect(peptides[2].sequenceString == "GI")
-            #expect(peptides[12].sequenceString == "AEDPQGDAAQKTDTSHHDQDHPT")
-            #expect(peptides[14].sequenceString == "NKITPN")
-            #expect(peptides.last?.sequenceString == "MGKVVNPTQK")
+            #expect(peptides.map(\.sequenceString).contains("AEDPQGDAAQKTDTSHHDQDHPTF"))
+            #expect(peptides.map(\.sequenceString).contains("NKITPNL"))
+            #expect(peptides.map(\.sequenceString).contains("MGKVVNPTQK"))
         }
     }
 
