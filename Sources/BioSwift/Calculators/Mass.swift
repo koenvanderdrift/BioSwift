@@ -192,6 +192,12 @@ extension Chargeable {
     }
 }
 
+extension Dalton {
+    public func formattedString(fractions: Int) -> String {
+        formatted(fractionDigits: fractions)
+    }
+}
+
 extension Array where Element: Chain & Chargeable {
     public func charge(with range: ClosedRange<Charge>) -> [Element] {
         flatMap { sequence in

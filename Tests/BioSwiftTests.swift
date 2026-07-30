@@ -263,18 +263,18 @@ struct BioSwiftTests {
 
             testProtein.addModification(mod: lysLoss, at: testProtein.cTermLocation())
             #expect(
-                testProtein.monoisotopicMass.rounded(scale: 1)
-                    == (decimal("46708.0267") - decimal("128.094963)")).rounded(scale: 1))
+                testProtein.monoisotopicMass.formatted(fractionDigits: 1)
+                == (decimal("46708.0267") - decimal("128.094963)")).formatted(fractionDigits: 1))
 
             testProtein.removeModification(at: testProtein.cTermLocation())
-            #expect(testProtein.monoisotopicMass.rounded(scale: 4) == decimal("46708.0267"))
+            #expect(testProtein.monoisotopicMass.formatted(fractionDigits: 4) == decimal("46708.0267").formatted(fractionDigits: 4))
         }
     }
 
     @Test mutating func proteinAverageMass() {
         testProtein.setAdducts(type: protonAdduct, count: 1)
         #expect(
-            testProtein.averageMass.rounded(scale: 1) == decimal("46737.9568").rounded(scale: 1))
+            testProtein.averageMass.formatted(fractionDigits: 1) == decimal("46737.9568").formatted(fractionDigits: 1))
     }  // 46737.0703
 
     @Test mutating func proteinSerinePhosphorylationMonoisotopicMass() {
@@ -283,13 +283,13 @@ struct BioSwiftTests {
             testProtein.setAdducts(type: protonAdduct, count: 1)
             #expect(phos.fullName == "Phosphorylation")
             #expect(
-                testProtein.monoisotopicMass.rounded(scale: 1)
-                    == decimal("46787.9931").rounded(scale: 1))  // 46787.9930
+                testProtein.monoisotopicMass.formatted(fractionDigits: 1)
+                    == decimal("46787.9931").formatted(fractionDigits: 1))  // 46787.9930
 
             testProtein.setAdducts(type: protonAdduct, count: 2)
             #expect(
-                testProtein.monoisotopicMass.rounded(scale: 1)
-                    == decimal("23394.5002").rounded(scale: 1))
+                testProtein.monoisotopicMass.formatted(fractionDigits: 1)
+                    == decimal("23394.5002").formatted(fractionDigits: 1))
         }
     }
 
