@@ -50,9 +50,13 @@ public struct ChemicalElement: Codable, Symbol, Sendable {
 
     private mutating func setUp() { cachedMasses = calculateMasses() }
 
-    public var identifier: String { symbol }
+    public var identifier: String {
+        symbol
+    }
 
-    public var description: String { symbol }
+    public var description: String {
+        symbol
+    }
 }
 
 extension ChemicalElement: Equatable, Hashable {
@@ -60,11 +64,15 @@ extension ChemicalElement: Equatable, Hashable {
         lhs.symbol == rhs.symbol && lhs.name == rhs.name
     }
 
-    public func hash(into hasher: inout Hasher) { hasher.combine(name) }
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(name)
+    }
 }
 
 extension ChemicalElement: Mass {
-    public var masses: MassContainer { cachedMasses }
+    public var masses: MassContainer {
+        cachedMasses
+    }
 
     public func calculateMasses() -> MassContainer {
         var currentAbundance = Decimal(0.0)

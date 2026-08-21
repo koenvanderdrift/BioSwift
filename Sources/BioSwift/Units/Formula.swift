@@ -193,7 +193,9 @@ extension Formula {
 
     private func isOpeningBracket(_ char: Character) -> Bool { "({[<".contains(char) }
 
-    private func isClosingBracket(_ char: Character) -> Bool { ")}]>".contains(char) }
+    private func isClosingBracket(_ char: Character) -> Bool {
+        ")}]>".contains(char)
+    }
 }
 
 extension Formula: Equatable {
@@ -208,7 +210,9 @@ extension Formula: Equatable {
         return Formula(with: result)
     }
 
-    static func += (lhs: inout Formula, rhs: Formula) { lhs = lhs + rhs }
+    static func += (lhs: inout Formula, rhs: Formula) {
+        lhs = lhs + rhs
+    }
 
     static func - (lhs: Formula, rhs: Formula) -> Formula {
         let result = lhs.countedElements.merging(
@@ -217,11 +221,15 @@ extension Formula: Equatable {
         return Formula(with: result)
     }
 
-    static func -= (lhs: inout Formula, rhs: Formula) { lhs = lhs - rhs }
+    static func -= (lhs: inout Formula, rhs: Formula) {
+        lhs = lhs - rhs
+    }
 }
 
 extension Formula: Mass {
-    public var masses: MassContainer { cachedMasses }
+    public var masses: MassContainer {
+        cachedMasses
+    }
 
     public func calculateMasses() -> MassContainer {
         var result = zeroMass

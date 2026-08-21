@@ -13,8 +13,17 @@ import Foundation
 // Structure is the basic building block with a name and ``Formula``
 
 public protocol Structure: Mass {
-    var name: String { get }
-    var formula: Formula { get }
+    var name: String {
+        get
+    }
+
+    var formula: Formula {
+        get
+    }
 }
 
-extension Structure { public func calculateMasses() -> MassContainer { formula.masses } }
+extension Structure {
+    public func calculateMasses() -> MassContainer {
+        formula.masses
+    }
+}

@@ -42,7 +42,9 @@ extension Peptide {
 }
 
 extension Peptide: Chargeable {
-    public var masses: MassContainer { massOverCharge() }
+    public var masses: MassContainer {
+        massOverCharge()
+    }
 
     public func calculateMasses() -> MassContainer {
         if residues.isEmpty { return zeroMass }
@@ -50,7 +52,13 @@ extension Peptide: Chargeable {
         return residueMasses() + terminalMasses()
     }
 
-    func residueMasses() -> MassContainer { residues.reduce(zeroMass) { $0 + $1.masses } }
+    func residueMasses() -> MassContainer {
+        residues.reduce(zeroMass) {
+            $0 + $1.masses
+        }
+    }
 
-    func terminalMasses() -> MassContainer { return nTerminal.masses + cTerminal.masses }
+    func terminalMasses() -> MassContainer {
+        return nTerminal.masses + cTerminal.masses
+    }
 }

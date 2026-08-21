@@ -60,7 +60,9 @@ public struct Protein: BioMolecule, Codable, Equatable, Sendable {
         return []
     }
 
-    public func nTermLocation(for _: Int = 0) -> Int { 0 }
+    public func nTermLocation(for _: Int = 0) -> Int {
+        0
+    }
 
     public func cTermLocation(for chainIndex: Int = 0) -> Int {
         chains[chainIndex].sequenceLength - 1

@@ -57,27 +57,45 @@ public struct UIRange: Equatable {
             location: clampedLowerBound - 1, length: clampedUpperBound - clampedLowerBound + 1)
     }
 
-    public var zeroBasedRange: Range<Int> { (lowerBound - 1)..<upperBound }
+    public var zeroBasedRange: Range<Int> {
+        (lowerBound - 1)..<upperBound
+    }
 
-    public var isValidRange: Bool { lowerBound >= 0 && upperBound >= lowerBound }
+    public var isValidRange: Bool {
+        lowerBound >= 0 && upperBound >= lowerBound
+    }
 
     public var locationString: String {
         lowerBound == upperBound ? "\(lowerBound)" : "\(lowerBound) - \(upperBound)"
     }
 
-    public var length: Int { return upperBound - lowerBound + 1 }
+    public var length: Int {
+        return upperBound - lowerBound + 1
+    }
 
-    public var lowerBound: Int { value.lowerBound }
+    public var lowerBound: Int {
+        value.lowerBound
+    }
 
-    public var upperBound: Int { value.upperBound }
+    public var upperBound: Int {
+        value.upperBound
+    }
 }
 
-extension UIRange: CustomStringConvertible { public var description: String { locationString } }
+extension UIRange: CustomStringConvertible {
+    public var description: String {
+        locationString
+    }
+}
 
 extension Range<Int> {
-    public var isZeroRange: Bool { self == zeroRange }
+    public var isZeroRange: Bool {
+        self == zeroRange
+    }
 
-    public var isValidRange: Bool { lowerBound >= 0 && upperBound >= lowerBound }
+    public var isValidRange: Bool {
+        lowerBound >= 0 && upperBound >= lowerBound
+    }
 
     public var length: Int {
         guard isValidRange else { return 0 }
@@ -132,7 +150,9 @@ public func range(from closedRange: ClosedRange<Int>) -> Range<Int> {
 // MARK: - Range<Int> conversions
 
 public func closedRange(from range: Range<Int>) -> ClosedRange<Int>? {
-    guard !range.isEmpty else { return nil }
+    guard !range.isEmpty else {
+        return nil
+    }
 
     return range.lowerBound...(range.upperBound - 1)
 }

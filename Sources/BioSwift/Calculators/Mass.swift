@@ -18,11 +18,14 @@ public typealias MassRange = ClosedRange<Dalton>
 extension MassRange {
     public func contains(_ masses: MassContainer, for type: MassType) -> Bool {
         switch type {
-        case .monoisotopic: return contains(masses.monoisotopicMass)
+        case .monoisotopic:
+            return contains(masses.monoisotopicMass)
 
-        case .average: return contains(masses.averageMass)
+        case .average:
+            return contains(masses.averageMass)
 
-        case .nominal: return false
+        case .nominal:
+            return false
         }
     }
 
@@ -36,21 +39,27 @@ extension MassRange {
 
     public func isBelow(_ value: MassContainer, for type: MassType) -> Bool {
         switch type {
-        case .monoisotopic: return value.monoisotopicMass < lowerBound
+        case .monoisotopic:
+            return value.monoisotopicMass < lowerBound
 
-        case .average: return value.averageMass < lowerBound
+        case .average:
+            return value.averageMass < lowerBound
 
-        case .nominal: return false
+        case .nominal:
+            return false
         }
     }
 
     public func isAbove(_ value: MassContainer, for type: MassType) -> Bool {
         switch type {
-        case .monoisotopic: return value.monoisotopicMass > upperBound
+        case .monoisotopic:
+            return value.monoisotopicMass > upperBound
 
-        case .average: return value.averageMass > upperBound
+        case .average:
+            return value.averageMass > upperBound
 
-        case .nominal: return false
+        case .nominal:
+            return false
         }
     }
 }
@@ -61,7 +70,9 @@ public enum MassType: String, CaseIterable, Codable, Identifiable, Equatable, Se
     case monoisotopic
     case nominal
 
-    public var id: Self { self }
+    public var id: Self {
+        self
+    }
 }
 
 /// MassContainer is a wrapper around the calculated ``Mass`` for each ``MassType``
@@ -94,7 +105,9 @@ extension MassContainer: Equatable {
             nominalMass: lhs.nominalMass + rhs.nominalMass)
     }
 
-    public static func += (lhs: inout MassContainer, rhs: MassContainer) { lhs = lhs + rhs }
+    public static func += (lhs: inout MassContainer, rhs: MassContainer) {
+        lhs = lhs + rhs
+    }
 
     public static func - (lhs: MassContainer, rhs: MassContainer) -> MassContainer {
         MassContainer(
@@ -103,7 +116,9 @@ extension MassContainer: Equatable {
             nominalMass: lhs.nominalMass - rhs.nominalMass)
     }
 
-    public static func -= (lhs: inout MassContainer, rhs: MassContainer) { lhs = lhs - rhs }
+    public static func -= (lhs: inout MassContainer, rhs: MassContainer) {
+        lhs = lhs - rhs
+    }
 
     public static func * (lhs: Int, rhs: MassContainer) -> MassContainer {
         MassContainer(
@@ -147,46 +162,70 @@ public let electronMass = MassContainer(
 /// All  calculations use the values provided in https://physics.nist.gov/cgi-bin/Compositions/stand_alone.pl
 
 public protocol Mass {
-    var masses: MassContainer { get }
+    var masses: MassContainer {
+        get
+    }
 
     func calculateMasses() -> MassContainer
 }
 
 extension Mass {
-    public var monoisotopicMass: Dalton { masses.monoisotopicMass }
+    public var monoisotopicMass: Dalton {
+        masses.monoisotopicMass
+    }
 
-    public var averageMass: Dalton { masses.averageMass }
+    public var averageMass: Dalton {
+        masses.averageMass
+    }
 
-    public var nominalMass: Int { masses.nominalMass }
+    public var nominalMass: Int {
+        masses.nominalMass
+    }
 }
 
 /// Types conforming to Chargeable must provide one or more``Adduct``  values.
 /// In this case, ``MassContainer`` will contain the mass-over-charge ratios
 
-public protocol Chargeable: Mass, Codable { var adducts: [Adduct] { get set } }
+public protocol Chargeable: Mass, Codable {
+    var adducts: [Adduct] {
+        get set
+    }
+}
 
 extension Chargeable {
-    public var charge: Charge { adducts.reduce(0) { $0 + $1.charge } }
+    public var charge: Charge {
+        adducts.reduce(0) {
+            $0 + $1.charge
+        }
+    }
 
-    public mutating func setAdducts(_ adducts: [Adduct]) { self.adducts = adducts }
+    public mutating func setAdducts(_ adducts: [Adduct]) {
+        self.adducts = adducts
+    }
 
     public mutating func setAdducts(type: Adduct, count: Int) {
         let adducts = Array(repeating: type, count: count)
         setAdducts(adducts)
     }
 
-    public func pseudomolecularIon() -> MassContainer { masses.moverz(for: charge) }
+    public func pseudomolecularIon() -> MassContainer {
+        masses.moverz(for: charge)
+    }
 
     public func massOverCharge() -> MassContainer {
         let masses = calculateMasses()
 
-        if charge > 0 { return (masses + adductMasses()) / charge }
+        if charge > 0 {
+            return (masses + adductMasses()) / charge
+        }
 
         return masses
     }
 
     public func adductMasses() -> MassContainer {
-        return adducts.map { $0.group.masses - ($0.charge * electronMass) }.reduce(zeroMass) {
+        return adducts.map {
+            $0.group.masses - ($0.charge * electronMass)
+        }.reduce(zeroMass) {
             $0 + $1
         }
     }

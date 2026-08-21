@@ -13,7 +13,9 @@ public enum SearchType: Int, Codable, Identifiable, Equatable, Sendable {
     case unique
     case exhaustive
 
-    public var id: Self { self }
+    public var id: Self {
+        self
+    }
 }
 
 public enum MassToleranceType: String, CaseIterable, Codable, Identifiable, Equatable, Sendable {
@@ -22,21 +24,29 @@ public enum MassToleranceType: String, CaseIterable, Codable, Identifiable, Equa
     case percent = "%"
     case mmu
 
-    public var id: Self { self }
+    public var id: Self {
+        self
+    }
 }
 
 extension MassToleranceType {
-    public var minValue: Double { 0.0 }
+    public var minValue: Double {
+        0.0
+    }
 
     public var maxValue: Double {
         switch self {
-        case .ppm: return 10000.0
+        case .ppm:
+            return 10000.0
 
-        case .dalton: return 10.0
+        case .dalton:
+            return 10.0
 
-        case .percent: return 1.0
+        case .percent:
+            return 1.0
 
-        case .mmu: return 10000.0
+        case .mmu:
+            return 10000.0
         }
     }
 }

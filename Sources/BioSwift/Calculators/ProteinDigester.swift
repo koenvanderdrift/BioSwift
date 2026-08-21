@@ -26,7 +26,9 @@ public class ProteinDigester {
         return peptides
     }
 
-    private func digestChain() -> [Peptide] { [] }
+    private func digestChain() -> [Peptide] {
+        []
+    }
 }
 
 extension Chain {

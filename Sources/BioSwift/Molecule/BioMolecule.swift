@@ -12,11 +12,15 @@ import Foundation
 public protocol BioMolecule: Chargeable {
     associatedtype ChainType: Chain
 
-    var chains: [ChainType] { get set }
+    var chains: [ChainType] {
+        get set
+    }
 }
 
 extension BioMolecule {
-    public var masses: MassContainer { massOverCharge() }
+    public var masses: MassContainer {
+        massOverCharge()
+    }
 
     public var charge: Charge {
         if let chargeableChains = chains as? [Chargeable] {
@@ -34,9 +38,13 @@ extension BioMolecule {
         return zeroMass
     }
 
-    public func monoIsotopicMass() -> Dalton { return pseudomolecularIon().monoisotopicMass }
+    public func monoIsotopicMass() -> Dalton {
+        return pseudomolecularIon().monoisotopicMass
+    }
 
-    public func averageMass() -> Dalton { return pseudomolecularIon().averageMass }
+    public func averageMass() -> Dalton {
+        return pseudomolecularIon().averageMass
+    }
 
     public func isoelectricPoint(chainIndex index: Int = 0) -> Double {
         return Hydropathy(residues: chains[index].residues).isoElectricPoint()
@@ -51,9 +59,13 @@ extension BioMolecule {
     }
 
     public func selectionMass(chainIndex index: Int = 0, _ range: Range<Int>) -> MassContainer {
-        guard var sub = chains[index].subChain(range: range) as? Chargeable else { return zeroMass }
+        guard var sub = chains[index].subChain(range: range) as? Chargeable else {
+            return zeroMass
+        }
 
-        if charge > 0 { sub.setAdducts(type: protonAdduct, count: charge) }
+        if charge > 0 {
+            sub.setAdducts(type: protonAdduct, count: charge)
+        }
 
         return sub.pseudomolecularIon()
     }
@@ -83,10 +95,14 @@ extension BioMolecule {
         return chains[chainIndex].residues
     }
 
-    public func sequence(for chainIndex: Int = 0) -> String { chains[chainIndex].sequenceString }
+    public func sequence(for chainIndex: Int = 0) -> String {
+        chains[chainIndex].sequenceString
+    }
 
     public func residueLocations(for chainIndex: Int = 0, with identifiers: [String]) -> [Int] {
-        guard chains.indices.contains(chainIndex) else { return [] }
+        guard chains.indices.contains(chainIndex) else {
+            return []
+        }
 
         return chains[chainIndex].residueLocations(with: Set(identifiers))
     }

@@ -22,9 +22,13 @@ public enum AminoAcidProperty: String, CaseIterable, Codable, Sendable, Identifi
     case chargedPositive = "Charged Positive"
     case chargedNegative = "Charged Negative"
 
-    public var id: Self { self }
+    public var id: Self {
+        self
+    }
 
-    public var displayName: String { rawValue.capitalized }
+    public var displayName: String {
+        rawValue.capitalized
+    }
 }
 
 /// AminoAcid conforms to the ``Residue`` protocol
@@ -42,7 +46,9 @@ public struct AminoAcid: Residue, Codable, Sendable {
 
     public var adducts: [Adduct]
 
-    public var chemicalString: String { formula.chemicalString }
+    public var chemicalString: String {
+        formula.chemicalString
+    }
 
     public init(
         name: String, oneLetterCode: String, threeLetterCode: String = "", formula: Formula,
@@ -72,11 +78,16 @@ public struct AminoAcid: Residue, Codable, Sendable {
 
     private mutating func setProperties() {
         switch oneLetterCode {
-        case "A", "G", "L", "V", "M", "I": properties = [.small, .aliphatic, .hydrophobic]
-        case "S", "T", "C", "P", "N", "Q": properties = [.polar, .uncharged]
-        case "K", "R", "H": properties = [.polar, .chargedPositive]
-        case "E", "D": properties = [.polar, .chargedNegative]
-        case "F", "Y", "W": properties = [.nonpolar, .aromatic]
+        case "A", "G", "L", "V", "M", "I":
+            properties = [.small, .aliphatic, .hydrophobic]
+        case "S", "T", "C", "P", "N", "Q":
+            properties = [.polar, .uncharged]
+        case "K", "R", "H":
+            properties = [.polar, .chargedPositive]
+        case "E", "D":
+            properties = [.polar, .chargedNegative]
+        case "F", "Y", "W":
+            properties = [.nonpolar, .aromatic]
         default: break
         }
     }

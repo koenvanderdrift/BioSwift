@@ -9,11 +9,21 @@
 import Foundation
 
 public enum LoadError: Error {
-    case fileNotFound(name: String)
-    case fileReadFailed(name: String, underlyingError: Error)
-    case fileConversionFailed(name: String, underlyingError: Error?)
-    case fileDecodingFailed(name: String, underlyingError: Error)
-    case fileParsingFailed(name: String, underlyingError: Error?)
+    case fileNotFound(
+        name:
+            String)
+    case fileReadFailed(
+        name:
+            String, underlyingError: Error)
+    case fileConversionFailed(
+        name:
+            String, underlyingError: Error?)
+    case fileDecodingFailed(
+        name:
+            String, underlyingError: Error)
+    case fileParsingFailed(
+        name:
+            String, underlyingError: Error?)
 }
 
 /*

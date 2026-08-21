@@ -16,7 +16,9 @@ public struct Hydro: Codable, Sendable {
 public class Hydropathy {
     public var residues: [any Residue] = []
 
-    public init(residues: [any Residue]) { self.residues = residues }
+    public init(residues: [any Residue]) {
+        self.residues = residues
+    }
 
     public func isoElectricPoint() -> Double {
         // http://isoelectric.org/www_old/files/practise-isoelectric-point.html

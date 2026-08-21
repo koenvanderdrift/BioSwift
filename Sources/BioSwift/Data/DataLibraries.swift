@@ -18,18 +18,26 @@ public var loadElementsFromUnimod: Bool = false
 
 // MARK: - public globals
 
-public var aminoAcidLibrary: [AminoAcid] { DataLibraryDefaults.bundled.aminoAcids }
+public var aminoAcidLibrary: [AminoAcid] {
+    DataLibraryDefaults.bundled.aminoAcids
+}
 
 public var modificationLibrary: [Modification] {
     DataLibraryDefaults.bundled.modifications + [zeroModification]
 }
 
-public var elementLibrary: [ChemicalElement] { ElementsLibraryDefaults.bundled }
+public var elementLibrary: [ChemicalElement] {
+    ElementsLibraryDefaults.bundled
+}
 
-public var enzymeLibrary: [Enzyme] { DataLibraryDefaults.bundled.enzymes + [unspecifiedEnzyme] }
+public var enzymeLibrary: [Enzyme] {
+    DataLibraryDefaults.bundled.enzymes + [unspecifiedEnzyme]
+}
 
 // @available(*, deprecated, message: "Use DataLibraryDefaults.bundled.modifications instead.")
-public var hydropathyLibrary: [Hydro] { DataLibraryDefaults.bundled.hydropathyValues }
+public var hydropathyLibrary: [Hydro] {
+    DataLibraryDefaults.bundled.hydropathyValues
+}
 
 // MARK: - Final public bundled-data snapshot
 
@@ -61,7 +69,9 @@ public enum DataLibraryDefaults {
         }
     }()
 
-    public static func loadBundled() throws -> DataLibraries { try DataLibraryLoader.load() }
+    public static func loadBundled() throws -> DataLibraries {
+        try DataLibraryLoader.load()
+    }
 
     public enum ElementsLibraryDefaults {
         public static let bundled: [ChemicalElement] = {

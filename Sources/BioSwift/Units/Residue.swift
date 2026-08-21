@@ -11,19 +11,35 @@ import Foundation
 /// Residue is a building block for a ``Chain``
 ///
 public protocol Residue: Symbol, Structure, Hashable {
-    var oneLetterCode: String { get }
-    var threeLetterCode: String { get }
-    var modification: Modification? { get set }
+    var oneLetterCode: String {
+        get
+    }
+
+    var threeLetterCode: String {
+        get
+    }
+
+    var modification: Modification? {
+        get set
+    }
 }
 
 extension Residue {
-    public var identifier: String { oneLetterCode }
+    public var identifier: String {
+        oneLetterCode
+    }
 
-    public var description: String { threeLetterCode }
+    public var description: String {
+        threeLetterCode
+    }
 
-    public var masses: MassContainer { formula.masses + modificationMasses() }
+    public var masses: MassContainer {
+        formula.masses + modificationMasses()
+    }
 
-    public func modificationMasses() -> MassContainer { modification?.masses ?? zeroMass }
+    public func modificationMasses() -> MassContainer {
+        modification?.masses ?? zeroMass
+    }
 
     public func allowedModifications() -> [Modification] {
         modificationLibrary.filter { mod in
@@ -37,5 +53,7 @@ extension Residue {
         lhs.threeLetterCode == rhs.threeLetterCode
     }
 
-    public func hash(into hasher: inout Hasher) { hasher.combine(threeLetterCode) }
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(threeLetterCode)
+    }
 }

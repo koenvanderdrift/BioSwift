@@ -14,14 +14,33 @@ import Foundation
 public protocol Chain {
     associatedtype ResidueType: Residue
 
-    var name: String { get set }
-    var residues: [ResidueType] { get set }
-    var nTerminal: Modification { get set }
-    var cTerminal: Modification { get set }
-    var adducts: [Adduct] { get set }
-    var range: Range<Int> { get set }
-    var parentLength: Int { get set }
+    var name: String {
+        get set
+    }
 
+    var residues: [ResidueType] {
+        get set
+    }
+
+    var nTerminal: Modification {
+        get set
+    }
+
+    var cTerminal: Modification {
+        get set
+    }
+
+    var adducts: [Adduct] {
+        get set
+    }
+
+    var range: Range<Int> {
+        get set
+    }
+
+    var parentLength: Int {
+        get set
+    }
     init(sequence: String)
     init(residues: [ResidueType])
 
@@ -47,21 +66,37 @@ extension Chain {
         return f
     }
 
-    public var sequenceString: String { residues.map(\.identifier).joined() }
+    public var sequenceString: String {
+        residues.map(\.identifier).joined()
+    }
 
-    public var sequenceLength: Int { numberOfResidues }
+    public var sequenceLength: Int {
+        numberOfResidues
+    }
 
-    public var symbolSequence: [Symbol] { residues }
+    public var symbolSequence: [Symbol] {
+        residues
+    }
 
-    public var symbolSet: SymbolSet? { SymbolSet(array: symbolSequence) }
+    public var symbolSet: SymbolSet? {
+        SymbolSet(array: symbolSequence)
+    }
 
-    public func symbol(at index: Int) -> Symbol? { symbolSequence[index] }
+    public func symbol(at index: Int) -> Symbol? {
+        symbolSequence[index]
+    }
 
-    public func residue(at index: Int) -> ResidueType? { residues[index] }
+    public func residue(at index: Int) -> ResidueType? {
+        residues[index]
+    }
 
-    public var numberOfResidues: Int { residues.count }
+    public var numberOfResidues: Int {
+        residues.count
+    }
 
-    public func countAllResidues() -> NSCountedSet { NSCountedSet(array: residues) }
+    public func countAllResidues() -> NSCountedSet {
+        NSCountedSet(array: residues)
+    }
 
     public func countOneResidue(with identifier: String) -> Int {
         var count = 0
@@ -114,7 +149,9 @@ extension Chain {
     }
 
     public mutating func replaceResidue(at location: Int, with residue: ResidueType) {
-        guard residues.indices.contains(location) else { return }
+        guard residues.indices.contains(location) else {
+            return
+        }
 
         residues[location] = residue
     }

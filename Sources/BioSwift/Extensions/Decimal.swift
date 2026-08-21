@@ -44,8 +44,9 @@ extension Decimal {
     }
 
     /// Converts the Decimal to Double without additional rounding.
-    public var asDouble: Double { NSDecimalNumber(decimal: self).doubleValue }
-
+    public var asDouble: Double {
+        NSDecimalNumber(decimal: self).doubleValue
+    }
     /// Rounds as Decimal first, then converts to Double.
     public func roundedDouble(scale: Int, mode: Decimal.RoundingMode = .plain) -> Double {
         rounded(scale: scale, mode: mode).asDouble

@@ -105,7 +105,9 @@ struct BioSwiftTests {
         #expect(formula.countFor(element: "C") == 24)
     }
 
-    @Test func proteinFormula() { #expect(testProtein.formula.countFor(element: "C") == 2112) }  // C2112H3313N539O629S13
+    @Test func proteinFormula() {
+        #expect(testProtein.formula.countFor(element: "C") == 2112)
+    }  // C2112H3313N539O629S13
 
     @Test func peptideFormula() {
         let peptide = Peptide(sequence: "DWSSD")
@@ -264,10 +266,12 @@ struct BioSwiftTests {
             testProtein.addModification(mod: lysLoss, at: testProtein.cTermLocation())
             #expect(
                 testProtein.monoisotopicMass.formatted(fractionDigits: 1)
-                == (decimal("46708.0267") - decimal("128.094963)")).formatted(fractionDigits: 1))
+                    == (decimal("46708.0267") - decimal("128.094963)")).formatted(fractionDigits: 1))
 
             testProtein.removeModification(at: testProtein.cTermLocation())
-            #expect(testProtein.monoisotopicMass.formatted(fractionDigits: 4) == decimal("46708.0267").formatted(fractionDigits: 4))
+            #expect(
+                testProtein.monoisotopicMass.formatted(fractionDigits: 4)
+                    == decimal("46708.0267").formatted(fractionDigits: 4))
         }
     }
 
@@ -440,7 +444,9 @@ struct BioSwiftTests {
         #expect(peptide.masses == zeroMass)
     }
 
-    @Test func emptySelection() { #expect(testProtein.selectionMass(zeroRange) == zeroMass) }
+    @Test func emptySelection() {
+        #expect(testProtein.selectionMass(zeroRange) == zeroMass)
+    }
 
     @Test func digest() {
         let digester = ProteinDigester(protein: testProtein)
@@ -468,7 +474,7 @@ struct BioSwiftTests {
             #expect(peptides.map(\.sequenceString).contains("FNKPFVFMIEQNTK"))
             #expect(!peptides.map(\.sequenceString).contains("FNK"))
         }
-        
+
         let aspN = enzymeLibrary.first(where: { $0.name == "Asp-N" })
 
         if let enzyme = aspN {
@@ -477,7 +483,7 @@ struct BioSwiftTests {
             #expect(peptides[0].sequenceString == "MPSSVSWGILLLAGLCCLVPVSLAE")
             #expect(peptides[1].sequenceString == "DPQG")
         }
-        
+
         let pepsin1 = enzymeLibrary.first(where: { $0.name == "Pepsin (pH = 1.3)" })
 
         if let enzyme = pepsin1 {

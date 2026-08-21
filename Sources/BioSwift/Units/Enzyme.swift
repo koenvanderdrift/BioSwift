@@ -16,7 +16,9 @@ public enum CleaveDirection: String, CaseIterable, Codable, Identifiable, Sendab
     case after
     case before
 
-    public var id: Self { self }
+    public var id: Self {
+        self
+    }
 }
 
 public struct CleaveRestriction: Codable, Sendable {
@@ -79,7 +81,7 @@ public struct Enzyme: Codable, Sendable {
     public let name: String
     public let fullName: String
     public let alternativeName: String
-    public let cleaveAt: [String] // The actual split happens right between P1 and P1'
+    public let cleaveAt: [String]  // The actual split happens right between P1 and P1'
     public let cleaveDirections: [CleaveDirection]
     public let cleaveRestrictions: [CleaveRestriction]
 
@@ -97,9 +99,13 @@ public struct Enzyme: Codable, Sendable {
 }
 
 extension Enzyme: Equatable, Hashable {
-    public static func == (lhs: Enzyme, rhs: Enzyme) -> Bool { lhs.name == rhs.name }
+    public static func == (lhs: Enzyme, rhs: Enzyme) -> Bool {
+        lhs.name == rhs.name
+    }
 
-    public func hash(into hasher: inout Hasher) { hasher.combine(name) }
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(name)
+    }
 }
 
 /*
@@ -391,4 +397,3 @@ extension Enzyme {
     //            }
     //    }
 }
-
