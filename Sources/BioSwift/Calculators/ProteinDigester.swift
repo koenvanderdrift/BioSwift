@@ -13,89 +13,14 @@ import Foundation
 ///
 public class ProteinDigester {
     public let protein: Protein
-
-    public init(protein: Protein) { self.protein = protein }
-
+    
+    public init(protein: Protein) {
+        self.protein = protein
+    }
+    
     public func peptides(using enzyme: Enzyme, with missedCleavages: Int = 0) -> [Peptide] {
-        var peptides: [Peptide] = []
-
-        for chain in protein.chains {
-            peptides += chain.digest(using: enzyme, with: missedCleavages)
+        protein.chains.flatMap { chain in
+            chain.digest(using: enzyme, with: missedCleavages)
         }
-
-        return peptides
-    }
-
-    private func digestChain() -> [Peptide] {
-        []
-    }
-}
-
-extension Chain {
-    // TODO: this is Protein only
-
-    public func digest(using enzyme: Enzyme, with missedCleavages: Int) -> [Peptide] {
-        let regex = enzyme.regex()
-        debugPrint(regex)
-        let matches = cleavageSites(for: regex)  // site is first residue of new peptide 0-based
-
-        let baseRanges: [Range<Int>] =
-            zip(matches, matches.dropFirst()).map { start, end in
-                start..<end
-            }
-
-        var ranges = baseRanges
-
-        let chunksToCombine = missedCleavages + 1
-
-        if missedCleavages > 0,
-            chunksToCombine <= baseRanges.count
-        {
-            for startIndex in 0...(baseRanges.count - chunksToCombine) {
-                let endIndex = startIndex + chunksToCombine - 1
-
-                ranges.append(
-                    baseRanges[startIndex].lowerBound..<baseRanges[endIndex].upperBound)
-            }
-        }
-
-        ranges.sort {
-            if $0.lowerBound == $1.lowerBound {
-                return $0.upperBound < $1.upperBound
-            }
-
-            return $0.lowerBound < $1.lowerBound
-        }
-
-        var peptides = [Peptide]()
-
-        for range in ranges {
-            if var new: Peptide = subChain(range: range) as? Peptide {
-                new.range = range
-                new.parentLength = sequenceLength
-
-                peptides.append(new)
-            }
-        }
-
-        return peptides
-    }
-
-    func cleavageSites(for regex: String) -> [Int] {
-        do {
-            let matches = try sequenceString.matches(for: regex).map(\.range.location)
-
-            let validatedSites = Array(
-                Set(matches.filter { $0 > 0 && $0 < residues.count })
-            ).sorted()
-
-            let sites = [0] + validatedSites + [residues.count]
-
-            return sites
-        } catch {
-            debugPrint(error.localizedDescription)
-        }
-
-        return []
     }
 }

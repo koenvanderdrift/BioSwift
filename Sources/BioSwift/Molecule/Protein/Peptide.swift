@@ -27,16 +27,12 @@ public struct Peptide: Chain, Codable, Equatable, Sendable {
         sequence: String,
         aminoAcids: AminoAcidReferences
     ) {
-        residues = createResidues(from: sequence, aminoAcids: aminoAcids)
+        residues = Self.createResidues(from: sequence, aminoAcids: aminoAcids)
     }
 
     public init(residues: [AminoAcid]) { self.residues = residues }
 
-    public func createResidues(from string: String) -> [AminoAcid] {
-        createResidues(from: string, aminoAcids: AminoAcidReferenceDefaults.bundled)
-    }
-
-    public func createResidues(
+    private static func createResidues(
         from string: String,
         aminoAcids: AminoAcidReferences
     ) -> [AminoAcid] {

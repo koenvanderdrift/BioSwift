@@ -109,7 +109,7 @@ public protocol Fragmenting {
     }
 }
 
-/// PeptideFragment iis generated using the ``ProteinDigester``
+/// PeptideFragment is generated from a ``Peptide`` by ``PeptideFragmenter``
 public struct PeptideFragment: Chain, Codable, Fragmenting, Sendable {
     public var name: String = ""
     public var sequence: String = ""
@@ -131,7 +131,7 @@ public struct PeptideFragment: Chain, Codable, Fragmenting, Sendable {
         aminoAcids: AminoAcidReferences
     ) {
         self.sequence = sequence
-        residues = createResidues(from: sequence, aminoAcids: aminoAcids)
+        residues = Self.createResidues(from: sequence, aminoAcids: aminoAcids)
     }
 
     public init(residues: [AminoAcid]) { self.residues = residues }
@@ -150,11 +150,7 @@ public struct PeptideFragment: Chain, Codable, Fragmenting, Sendable {
         self.parentLength = parentLength
     }
 
-    public func createResidues(from string: String) -> [AminoAcid] {
-        createResidues(from: string, aminoAcids: AminoAcidReferenceDefaults.bundled)
-    }
-
-    public func createResidues(
+    private static func createResidues(
         from string: String,
         aminoAcids: AminoAcidReferences
     ) -> [AminoAcid] {

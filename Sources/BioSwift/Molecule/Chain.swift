@@ -41,10 +41,8 @@ public protocol Chain {
     var parentLength: Int {
         get set
     }
-    init(sequence: String)
-    init(residues: [ResidueType])
 
-    func createResidues(from string: String) -> [ResidueType]
+    init(residues: [ResidueType])
 }
 
 extension Chain {
@@ -222,6 +220,176 @@ extension Chain {
         }
 
         return locations
+    }
+
+    public func searchSequence(searchString: String) -> [Self] {
+        var result: [Self] = []
+
+        for range in sequenceString.sequenceRanges(of: searchString) {
+            var sub = subChain(range: range)
+            sub.range = range
+
+            result.append(sub)
+        }
+
+        return result
+    }
+
+    public func searchMass(params: MassSearchParameters) -> [Range<Int>] where Self: Chargeable {
+        // prefixValues[i] is the sum of items[0..<i].
+        var prefixValues = Array(repeating: zeroMass, count: residues.count + 1)
+
+        for index in residues.indices {
+            prefixValues[index + 1] = prefixValues[index] + residues[index].masses
+        }
+
+        var candidateCount = 0
+
+        func massContainer(from start: Int, to end: Int) -> MassContainer {
+            let itemSum = prefixValues[end] - prefixValues[start]
+
+            candidateCount += 1
+
+            return (water.masses + itemSum).moverz(for: params.charge)
+        }
+
+        let count = residues.count
+        let acceptableRange = params.massRange
+
+        var results: [Range<Int>] = []
+
+        // First end whose value is not below the acceptable range.
+        var firstAcceptableEnd = 1
+
+        // First end whose value is above the acceptable range.
+        var firstAboveEnd = 1
+
+        for start in 0..<count {
+            firstAcceptableEnd = max(firstAcceptableEnd, start + 1)
+
+            while firstAcceptableEnd <= count {
+                if !acceptableRange.isBelow(
+                    massContainer(from: start, to: firstAcceptableEnd), for: params.massType)
+                {
+                    break
+                }
+
+                firstAcceptableEnd += 1
+            }
+
+            // No range beginning here can reach the lower bound.
+            // With nonnegative contributions, no later start can either.
+            guard firstAcceptableEnd <= count else { break }
+
+            firstAboveEnd = max(firstAboveEnd, firstAcceptableEnd)
+
+            while firstAboveEnd <= count {
+                if acceptableRange.isAbove(
+                    massContainer(from: start, to: firstAboveEnd), for: params.massType)
+                {
+                    break
+                }
+
+                firstAboveEnd += 1
+            }
+
+            // firstAboveEnd may be count + 1. That intentionally includes
+            // a valid range whose exclusive upper bound is `count`.
+            for end in firstAcceptableEnd..<firstAboveEnd { results.append(start..<end) }
+        }
+
+        debugPrint("Candidates tested: \(candidateCount)")
+
+        return results
+    }
+
+    public func searchMassBruteForce(params: MassSearchParameters) -> [Self] where Self: Chargeable {
+        var result: [Self] = []
+
+        for start in residues.indices {
+            for end in (start + 1)..<residues.count {
+                let subRange = start..<end
+                var sub = subChain(range: subRange)
+
+                sub.range = subRange
+                sub.setAdducts(type: protonAdduct, count: params.charge)
+
+                let moverz = sub.massOverCharge()
+
+                if params.massRange.upperLimit(excludes: moverz) { break }
+
+                if params.massRange.contains(moverz, for: params.massType) {
+                    if (start..<end).isValidRange { result.append(sub) }
+                }
+            }
+        }
+
+        return result
+    }
+
+    public func digest(using enzyme: Enzyme, with missedCleavages: Int = 0) -> [Self] {
+        let regex = enzyme.regex()
+        debugPrint(regex)
+
+        return digest(using: regex, with: missedCleavages)
+    }
+
+    public func digest(using regex: String, with missedCleavages: Int = 0) -> [Self] {
+        let matches = cleavageSites(for: regex)  // site is first residue of new peptide 0-based
+
+        let baseRanges: [Range<Int>] = zip(matches, matches.dropFirst()).map { start, end in
+            start..<end
+        }
+
+        var ranges = baseRanges
+        let chunksToCombine = missedCleavages + 1
+
+        if missedCleavages > 0, chunksToCombine <= baseRanges.count {
+            for startIndex in 0...(baseRanges.count - chunksToCombine) {
+                let endIndex = startIndex + chunksToCombine - 1
+                ranges.append(baseRanges[startIndex].lowerBound..<baseRanges[endIndex].upperBound)
+            }
+        }
+
+        ranges.sort {
+            if $0.lowerBound == $1.lowerBound {
+                return $0.upperBound < $1.upperBound
+            }
+
+            return $0.lowerBound < $1.lowerBound
+        }
+
+        var chains = [Self]()
+
+        for range in ranges {
+            let validRange = range.clamped(toSequenceLength: residues.count)
+
+            guard validRange.isValidRange else { continue }
+
+            var digestedChain = subChain(range: validRange)
+            digestedChain.range = validRange
+            digestedChain.parentLength = sequenceLength
+
+            chains.append(digestedChain)
+        }
+
+        return chains
+    }
+
+    func cleavageSites(for regex: String) -> [Int] {
+        do {
+            let matches = try sequenceString.matches(for: regex).map(\.range.location)
+
+            let validatedSites = Array(
+                Set(matches.filter { $0 > 0 && $0 < residues.count })
+            ).sorted()
+
+            return [0] + validatedSites + [residues.count]
+        } catch {
+            debugPrint(error.localizedDescription)
+        }
+
+        return []
     }
 }
 
