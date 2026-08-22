@@ -86,16 +86,23 @@ public struct Protein: BioMolecule, Codable, Equatable, Sendable {
         return []
     }
 
-    public func nTermLocation(for _: Int = 0) -> Int {
-        0
+    public func nTermLocation(for chainIndex: Int = 0) -> Int? {
+        guard chains.indices.contains(chainIndex), chains[chainIndex].sequenceLength > 0 else { return nil }
+
+        return 0
     }
 
-    public func cTermLocation(for chainIndex: Int = 0) -> Int {
-        chains[chainIndex].sequenceLength - 1
+    public func cTermLocation(for chainIndex: Int = 0) -> Int? {
+        guard chains.indices.contains(chainIndex), chains[chainIndex].sequenceLength > 0 else { return nil }
+
+        return chains[chainIndex].sequenceLength - 1
     }
 
-    public func aminoAcid(at loc: Int, for chainIndex: Int = 0) -> AminoAcid {
-        aminoAcids(for: chainIndex)[loc]
+    public func aminoAcid(at loc: Int, for chainIndex: Int = 0) -> AminoAcid? {
+        let aminoAcids = aminoAcids(for: chainIndex)
+        guard aminoAcids.indices.contains(loc) else { return nil }
+
+        return aminoAcids[loc]
     }
 
     public func aminoAcids(for chainIndex: Int = 0) -> [AminoAcid] {

@@ -174,14 +174,12 @@ extension Chain {
     /// `sequenceString == "MKWVTFISLL"` and `range == 3..<6`
     /// returns `"VTF"`.
     public func subSequence(range: Range<Int>) -> String {
-        precondition(range.lowerBound >= 0)
+        let validRange = range.clamped(toSequenceLength: sequenceString.count)
 
-        precondition(range.upperBound < sequenceString.count)
+        guard validRange.isValidRange, !validRange.isEmpty else { return "" }
 
-        let lowerIndex = sequenceString.index(
-            sequenceString.startIndex, offsetBy: range.lowerBound - 1)
-
-        let upperIndex = sequenceString.index(sequenceString.startIndex, offsetBy: range.upperBound)
+        let lowerIndex = sequenceString.index(sequenceString.startIndex, offsetBy: validRange.lowerBound)
+        let upperIndex = sequenceString.index(sequenceString.startIndex, offsetBy: validRange.upperBound)
 
         return String(sequenceString[lowerIndex..<upperIndex])
     }
@@ -423,11 +421,13 @@ extension Chain {
 
     public mutating func addModification(_ mod: Modification, at loc: Int) {
         guard residues.indices.contains(loc) else { return }
+
         residues[loc].modification = mod
     }
 
     public mutating func removeModification(at loc: Int) {
         guard residues.indices.contains(loc) else { return }
+
         residues[loc].modification = nil
     }
 

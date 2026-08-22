@@ -244,15 +244,17 @@ struct BioSwiftTests {
     }
 
     @Test mutating func proteinNTermMetLossMonoisotopicMass() {
-        if let metLoss = testProtein.nTermModifications().first(where: { $0.name == "Met-loss" }) {
+        if let metLoss = testProtein.nTermModifications().first(where: { $0.name == "Met-loss" }),
+            let nTermLocation = testProtein.nTermLocation()
+        {
             testProtein.setAdducts(type: protonAdduct, count: 1)
 
-            testProtein.addModification(mod: metLoss, at: testProtein.nTermLocation())
+            testProtein.addModification(mod: metLoss, at: nTermLocation)
             #expect(
                 testProtein.monoisotopicMass.rounded(scale: 1)
                     == (decimal("46708.0267") - decimal("131.040485)")).rounded(scale: 1))
 
-            testProtein.removeModification(at: testProtein.nTermLocation())
+            testProtein.removeModification(at: nTermLocation)
             #expect(
                 testProtein.monoisotopicMass.rounded(scale: 1)
                     == decimal("46708.0267").rounded(scale: 1))
@@ -260,15 +262,18 @@ struct BioSwiftTests {
     }
 
     @Test mutating func proteinCTermLysLossMonoisotopicMass() {
-        if let lysLoss = testProtein.cTermModifications().first(where: { $0.name == "Lys-loss" }) {
+        if let lysLoss = testProtein.cTermModifications().first(where: { $0.name == "Lys-loss" }),
+            let cTermLocation = testProtein.cTermLocation()
+        {
             testProtein.setAdducts(type: protonAdduct, count: 1)
 
-            testProtein.addModification(mod: lysLoss, at: testProtein.cTermLocation())
+            testProtein.addModification(mod: lysLoss, at: cTermLocation)
+            #expect(testProtein.chains[0].residues.last?.modification == lysLoss)
             #expect(
                 testProtein.monoisotopicMass.formatted(fractionDigits: 1)
                     == (decimal("46708.0267") - decimal("128.094963)")).formatted(fractionDigits: 1))
 
-            testProtein.removeModification(at: testProtein.cTermLocation())
+            testProtein.removeModification(at: cTermLocation)
             #expect(
                 testProtein.monoisotopicMass.formatted(fractionDigits: 4)
                     == decimal("46708.0267").formatted(fractionDigits: 4))
@@ -349,6 +354,18 @@ struct BioSwiftTests {
         }
     }
 
+    @Test func proteinAminoAcidAndTermLocationsAreOptional() {
+        #expect(testProtein.aminoAcid(at: 0)?.identifier == "M")
+        #expect(testProtein.aminoAcid(at: -1) == nil)
+        #expect(testProtein.aminoAcid(at: 0, for: 10) == nil)
+        #expect(testProtein.nTermLocation() == 0)
+        #expect(testProtein.nTermLocation(for: 10) == nil)
+        #expect(Protein(sequence: "").nTermLocation() == nil)
+        #expect(testProtein.cTermLocation() == 417)
+        #expect(testProtein.cTermLocation(for: 10) == nil)
+        #expect(Protein(sequence: "").cTermLocation() == nil)
+    }
+
     @Test mutating func replaceAminoAcid() {
         #expect(testPeptide.sequenceString == "DWSSD")
 
@@ -417,6 +434,15 @@ struct BioSwiftTests {
             let range3: Range<Int> = (10..<400)
             let subChain3 = chain.removing(range3)
             #expect(subChain3.sequenceString == "MPSSVSWGILQNTKSPLFMGKVVNPTQK")
+        }
+    }
+
+    @Test func subSequence() {
+        if let chain = testProtein.chains.first {
+            #expect(chain.subSequence(range: 0..<1) == "M")
+            #expect(chain.subSequence(range: 2..<9) == "SSVSWGI")
+            #expect(chain.subSequence(range: -1..<2) == "")
+            #expect(chain.subSequence(range: 0..<500) == "")
         }
     }
 
