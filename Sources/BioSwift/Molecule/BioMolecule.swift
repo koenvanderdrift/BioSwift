@@ -23,44 +23,58 @@ extension BioMolecule {
     }
 
     public func sequenceLength(for chainIndex: Int = 0) -> Int {
-        chains[chainIndex].numberOfResidues
+        guard chains.indices.contains(chainIndex) else { return 0 }
+
+        return chains[chainIndex].numberOfResidues
     }
 
     public func residues(for chainIndex: Int = 0) -> [any Residue] {
+        guard chains.indices.contains(chainIndex) else { return [] }
+
         return chains[chainIndex].residues
     }
 
     public func sequence(for chainIndex: Int = 0) -> String {
-        chains[chainIndex].sequenceString
+        guard chains.indices.contains(chainIndex) else { return "" }
+
+        return chains[chainIndex].sequenceString
     }
 
     public func residueLocations(for chainIndex: Int = 0, with identifiers: [String]) -> [Int] {
-        guard chains.indices.contains(chainIndex) else {
-            return []
-        }
+        guard chains.indices.contains(chainIndex) else { return [] }
 
         return chains[chainIndex].residueLocations(with: Set(identifiers))
     }
 
     public func countResidues(for chainIndex: Int = 0) -> NSCountedSet {
-        chains[chainIndex].countAllResidues()
+        guard chains.indices.contains(chainIndex) else { return NSCountedSet() }
+
+        return chains[chainIndex].countAllResidues()
     }
 
     public func countOneResidue(with identifier: String, for chainIndex: Int = 0) -> Int {
-        chains[chainIndex].countOneResidue(with: identifier)
+        guard chains.indices.contains(chainIndex) else { return 0 }
+
+        return chains[chainIndex].countOneResidue(with: identifier)
     }
 
     public func selectionLength(chainIndex index: Int = 0, _ range: Range<Int>) -> Int {
+        guard chains.indices.contains(index) else { return 0 }
+
         let sub = chains[index].subChain(range: range)
 
         return sub.numberOfResidues
     }
 
     public mutating func addModification(mod: Modification, at loc: Int, for chainIndex: Int = 0) {
+        guard chains.indices.contains(chainIndex) else { return }
+
         chains[chainIndex].addModification(mod, at: loc)
     }
 
     public mutating func removeModification(at loc: Int, for chainIndex: Int = 0) {
+        guard chains.indices.contains(chainIndex) else { return }
+
         chains[chainIndex].removeModification(at: loc)
     }
 
@@ -79,10 +93,14 @@ extension BioMolecule {
 
 extension BioMolecule where ChainType.ResidueType == AminoAcid {
     public func isoelectricPoint(chainIndex index: Int = 0) -> Double {
+        guard chains.indices.contains(index) else { return 0.0 }
+
         return Hydropathy(residues: chains[index].residues).isoElectricPoint()
     }
 
     public func selectedIsoelectricPoint(chainIndex index: Int = 0, _ range: Range<Int>) -> Double {
+        guard chains.indices.contains(index) else { return 0.0 }
+
         let sub = chains[index].subChain(range: range)
         guard sub.numberOfResidues > 0 else { return 0.0 }
 
@@ -126,6 +144,8 @@ extension BioMolecule where Self: Ionizable, ChainType: Ionizable {
     }
 
     public func selectionMass(chainIndex index: Int = 0, _ range: Range<Int>) -> MassContainer {
+        guard chains.indices.contains(index) else { return zeroMass }
+
         var sub = chains[index].subChain(range: range)
 
         if charge > 0 {

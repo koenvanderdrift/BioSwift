@@ -62,13 +62,14 @@ public class PeptideFragmenter {
         var result = [PeptideFragment]()
 
         guard peptide.adducts.count > 0 else { return result }
+        guard let firstResidue = peptide.residues.first else { return result }
 
         let startIndex = peptide.residues.startIndex
 
         for z in 1...min(2, peptide.adducts.count) {
             // add c1
             let cIon = PeptideFragment(
-                residues: [peptide.residues[0]], type: .cIon, index: 1,
+                residues: [firstResidue], type: .cIon, index: 1,
                 adducts: Array(repeatElement(protonAdduct, count: z)), nTerm: peptide.nTerminal)
 
             if cIon.residues[0].oneLetterCode != "P" {
@@ -82,6 +83,8 @@ public class PeptideFragmenter {
                     }
                 }
             }
+
+            guard peptide.residues.count > 2 else { continue }
 
             for i in 2...peptide.residues.count - 1 {
                 let index = peptide.residues.index(startIndex, offsetBy: i)
@@ -183,6 +186,7 @@ public class PeptideFragmenter {
         var result = [PeptideFragment]()
 
         guard peptide.adducts.count > 0 else { return result }
+        guard peptide.residues.count > 1 else { return result }
 
         let endIndex = peptide.residues.endIndex
 

@@ -81,11 +81,15 @@ extension Chain {
     }
 
     public func symbol(at index: Int) -> Symbol? {
-        symbolSequence[index]
+        guard symbolSequence.indices.contains(index) else { return nil }
+
+        return symbolSequence[index]
     }
 
     public func residue(at index: Int) -> ResidueType? {
-        residues[index]
+        guard residues.indices.contains(index) else { return nil }
+
+        return residues[index]
     }
 
     public var numberOfResidues: Int {

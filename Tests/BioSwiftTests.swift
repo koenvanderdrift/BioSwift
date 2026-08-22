@@ -693,6 +693,22 @@ struct BioSwiftTests {
         #expect(yIons.count == 6)
     }
 
+    @Test func fragmenterHandlesShortPeptides() {
+        var emptyPeptide = Peptide(sequence: "")
+        emptyPeptide.setAdducts(type: protonAdduct, count: 1)
+
+        let emptyFragmenter = PeptideFragmenter(peptide: emptyPeptide)
+        #expect(emptyFragmenter.fragments.filter { $0.isNterminal() || $0.isCterminal() }.isEmpty)
+        #expect(emptyFragmenter.fragment(at: 1, for: .cIon) == nil)
+
+        var singleResiduePeptide = Peptide(sequence: "A")
+        singleResiduePeptide.setAdducts(type: protonAdduct, count: 1)
+
+        let singleResidueFragmenter = PeptideFragmenter(peptide: singleResiduePeptide)
+        #expect(singleResidueFragmenter.fragments.filter { $0.isCterminal() }.isEmpty)
+        #expect(singleResidueFragmenter.fragment(at: 1, for: .cIon) != nil)
+    }
+
     @Test func fragmentMass1() {
         // theoretical masses via https://prospector.ucsf.edu/prospector/cgi-bin/msform.cgi?form=msproduct
 
