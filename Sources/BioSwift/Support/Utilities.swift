@@ -8,6 +8,16 @@
 
 import Foundation
 
+public enum BioSwiftDiagnostics {
+    public static var isDebugLoggingEnabled = false
+
+    public static func log(_ message: @autoclosure () -> Any) {
+        guard isDebugLoggingEnabled else { return }
+
+        debugPrint(message())
+    }
+}
+
 public enum LoadError: Error {
     case fileNotFound(
         name:
@@ -77,7 +87,7 @@ func measure<T>(_ name: String, operation: () -> T) -> T {
     let end = DispatchTime.now().uptimeNanoseconds
     let milliseconds = Double(end - start) / 1_000_000
 
-    debugPrint("\(name):", String(format: "%.3f ms", milliseconds))
+    BioSwiftDiagnostics.log("\(name): \(String(format: "%.3f ms", milliseconds))")
 
     return result
 }

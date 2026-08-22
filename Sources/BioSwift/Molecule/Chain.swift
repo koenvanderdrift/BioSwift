@@ -235,7 +235,7 @@ extension Chain {
         return result
     }
 
-    public func searchMass(params: MassSearchParameters) -> [Range<Int>] where Self: Chargeable {
+    public func searchMass(params: MassSearchParameters) -> [Range<Int>] where Self: Ionizable {
         // prefixValues[i] is the sum of items[0..<i].
         var prefixValues = Array(repeating: zeroMass, count: residues.count + 1)
 
@@ -298,12 +298,12 @@ extension Chain {
             for end in firstAcceptableEnd..<firstAboveEnd { results.append(start..<end) }
         }
 
-        debugPrint("Candidates tested: \(candidateCount)")
+        BioSwiftDiagnostics.log("Candidates tested: \(candidateCount)")
 
         return results
     }
 
-    public func searchMassBruteForce(params: MassSearchParameters) -> [Self] where Self: Chargeable {
+    public func searchMassBruteForce(params: MassSearchParameters) -> [Self] where Self: Ionizable {
         var result: [Self] = []
 
         for start in residues.indices {
@@ -329,7 +329,7 @@ extension Chain {
 
     public func digest(using enzyme: Enzyme, with missedCleavages: Int = 0) -> [Self] {
         let regex = enzyme.regex()
-        debugPrint(regex)
+        BioSwiftDiagnostics.log(regex)
 
         return digest(using: regex, with: missedCleavages)
     }
@@ -386,7 +386,7 @@ extension Chain {
 
             return [0] + validatedSites + [residues.count]
         } catch {
-            debugPrint(error.localizedDescription)
+            BioSwiftDiagnostics.log(error.localizedDescription)
         }
 
         return []

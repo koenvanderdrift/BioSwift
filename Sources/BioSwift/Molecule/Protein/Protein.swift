@@ -136,3 +136,5 @@ public struct Protein: BioMolecule, Codable, Equatable, Sendable {
         return chains[index].residues.compactMap { values[$0.oneLetterCode] }
     }
 }
+
+extension Protein: Ionizable {}

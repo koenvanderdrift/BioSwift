@@ -69,7 +69,7 @@ extension ChemicalElement: Equatable, Hashable {
     }
 }
 
-extension ChemicalElement: Mass {
+extension ChemicalElement: MassRepresentable {
     public var masses: MassContainer {
         cachedMasses
     }

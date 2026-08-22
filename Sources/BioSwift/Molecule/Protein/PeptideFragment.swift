@@ -159,7 +159,7 @@ public struct PeptideFragment: Chain, Codable, Fragmenting, Sendable {
     }
 }
 
-extension PeptideFragment: Chargeable {
+extension PeptideFragment: Ionizable {
     public var masses: MassContainer {
         massOverCharge()
     }

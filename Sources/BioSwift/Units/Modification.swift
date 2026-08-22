@@ -34,7 +34,7 @@ public indirect enum Reaction: Codable, Sendable {
     case undefined
 }
 
-extension Reaction: Mass {
+extension Reaction: MassRepresentable {
     public var masses: MassContainer {
         calculateMasses()
     }
@@ -153,7 +153,7 @@ extension Modification: Hashable {
     }
 }
 
-extension Modification: Mass {
+extension Modification: MassRepresentable {
     public var masses: MassContainer {
         calculateMasses()
     }

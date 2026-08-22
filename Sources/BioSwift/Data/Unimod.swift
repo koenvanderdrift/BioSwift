@@ -98,7 +98,7 @@ public final class UnimodXMLParser: NSObject {
 extension UnimodXMLParser: XMLParserDelegate {
     public func parserDidStartDocument(_: XMLParser) {
         #if DEBUG
-            debugPrint("Started parsing unimod.xml")
+            BioSwiftDiagnostics.log("Started parsing unimod.xml")
         #endif
     }
 
@@ -230,7 +230,7 @@ extension UnimodXMLParser: XMLParserDelegate {
 
     public func parserDidEndDocument(_: XMLParser) {
         #if DEBUG
-            debugPrint("Finished parsing unimod.xml")
+            BioSwiftDiagnostics.log("Finished parsing unimod.xml")
         #endif
     }
 

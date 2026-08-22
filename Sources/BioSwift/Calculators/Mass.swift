@@ -75,7 +75,7 @@ public enum MassType: String, CaseIterable, Codable, Identifiable, Equatable, Se
     }
 }
 
-/// MassContainer is a wrapper around the calculated ``Mass`` for each ``MassType``
+/// MassContainer is a wrapper around the calculated ``MassRepresentable`` values for each ``MassType``
 /// Monoisotopic and average masses are calculated and stored as Dalton, a Decimal typealias. The nominal mass is calculated and store as an
 /// Int.
 
@@ -139,7 +139,7 @@ extension MassContainer: Comparable {
     }
 }
 
-/// Adducts can be added to any ``Structure`` which conforms to the ``Chargeable`` protocol
+/// Adducts can be added to any ``Ionizable`` type.
 
 public struct Adduct: Codable, Equatable, Sendable {
     public var group: FunctionalGroup
@@ -158,10 +158,9 @@ public let zeroMass = MassContainer(monoisotopicMass: 0.0, averageMass: 0.0, nom
 public let electronMass = MassContainer(
     monoisotopicMass: Dalton(0.000549), averageMass: Dalton(0.000549), nominalMass: 0)
 
-/// Types conforming to ``Mass`` must provide ``calculateMasses()``.
-/// All  calculations use the values provided in https://physics.nist.gov/cgi-bin/Compositions/stand_alone.pl
-
-public protocol Mass {
+/// Types conforming to ``MassRepresentable`` must provide ``calculateMasses()``.
+/// All calculations use the values provided in https://physics.nist.gov/cgi-bin/Compositions/stand_alone.pl
+public protocol MassRepresentable {
     var masses: MassContainer {
         get
     }
@@ -169,7 +168,7 @@ public protocol Mass {
     func calculateMasses() -> MassContainer
 }
 
-extension Mass {
+extension MassRepresentable {
     public var monoisotopicMass: Dalton {
         masses.monoisotopicMass
     }
@@ -183,16 +182,14 @@ extension Mass {
     }
 }
 
-/// Types conforming to Chargeable must provide one or more``Adduct``  values.
-/// In this case, ``MassContainer`` will contain the mass-over-charge ratios
-
-public protocol Chargeable: Mass, Codable {
+/// Types conforming to ``Ionizable`` can carry adducts and be represented as m/z values.
+public protocol Ionizable: MassRepresentable, Codable {
     var adducts: [Adduct] {
         get set
     }
 }
 
-extension Chargeable {
+extension Ionizable {
     public var charge: Charge {
         adducts.reduce(0) {
             $0 + $1.charge
@@ -237,7 +234,7 @@ extension Dalton {
     }
 }
 
-extension Array where Element: Chain & Chargeable {
+extension Array where Element: Chain & Ionizable {
     public func charge(with range: ClosedRange<Charge>) -> [Element] {
         flatMap { sequence in
             range.map { charge in

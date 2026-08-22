@@ -187,14 +187,14 @@ public struct Formula: Codable, Sendable {
             do {
                 self = try FormulaParser(elements: elements).parse(elements: elementsDictionary)
             } catch {
-                debugPrint(error)
+                BioSwiftDiagnostics.log(error)
                 self.init(resolvedString: "", countedElements: [:])
             }
         } else if string.isEmpty == false {
             do {
                 self = try FormulaParser(elements: elements).parse(string)
             } catch {
-                debugPrint(error)
+                BioSwiftDiagnostics.log(error)
                 self.init(resolvedString: string, countedElements: [:])
             }
         } else {
@@ -272,7 +272,7 @@ extension Formula: Equatable {
     }
 }
 
-extension Formula: Mass {
+extension Formula: MassRepresentable {
     public var masses: MassContainer {
         cachedMasses
     }

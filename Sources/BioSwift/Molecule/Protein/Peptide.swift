@@ -64,7 +64,7 @@ extension Peptide {
     }
 }
 
-extension Peptide: Chargeable {
+extension Peptide: Ionizable {
     public var masses: MassContainer {
         massOverCharge()
     }
