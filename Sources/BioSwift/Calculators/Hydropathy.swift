@@ -14,13 +14,10 @@ public struct Hydro: Codable, Sendable {
 }
 
 public class Hydropathy {
-    public var residues: [any Residue] = []
+    public var residues: [AminoAcid] = []
     public var hydropathyReferences: HydropathyReferences
 
-    public init(
-        residues: [any Residue],
-        hydropathyReferences: HydropathyReferences = HydropathyReferenceDefaults.bundled
-    ) {
+    public init(residues: [AminoAcid], hydropathyReferences: HydropathyReferences = HydropathyReferenceDefaults.bundled) {
         self.residues = residues
         self.hydropathyReferences = hydropathyReferences
     }
@@ -31,7 +28,7 @@ public class Hydropathy {
 
         if residues.isEmpty { return 0.0 }
 
-        let pKaValues = hydrophathyValues(for: "pKa")
+        let pKaValues = hydropathyValues(for: "pKa")
 
         guard let cTerminalpKa = pKaValues["CTerminal"], let nTerminalpKa = pKaValues["NTerminal"],
             let asparticAcidpKa = pKaValues["D"], let glutamicAcidpKa = pKaValues["E"],
@@ -88,7 +85,7 @@ public class Hydropathy {
         return pH
     }
 
-    public func hydrophathyValues(for name: String) -> [String: Double] {
+    public func hydropathyValues(for name: String) -> [String: Double] {
         guard let values = hydropathyReferences.hydropathy(named: name)?.values else {
             return [:]
         }

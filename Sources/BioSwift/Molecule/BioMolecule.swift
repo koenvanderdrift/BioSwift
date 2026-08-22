@@ -50,17 +50,6 @@ extension BioMolecule {
         chains[chainIndex].countOneResidue(with: identifier)
     }
 
-    public func isoelectricPoint(chainIndex index: Int = 0) -> Double {
-        return Hydropathy(residues: chains[index].residues).isoElectricPoint()
-    }
-
-    public func selectedIsoelectricPoint(chainIndex index: Int = 0, _ range: Range<Int>) -> Double {
-        let sub = chains[index].subChain(range: range)
-        guard sub.numberOfResidues > 0 else { return 0.0 }
-
-        return Hydropathy(residues: sub.residues).isoElectricPoint()
-    }
-
     public func selectionLength(chainIndex index: Int = 0, _ range: Range<Int>) -> Int {
         let sub = chains[index].subChain(range: range)
 
@@ -85,6 +74,19 @@ extension BioMolecule {
         guard chains.indices.contains(chainIndex) else { return }
 
         chains[chainIndex].removeModifications(for: identifier)
+    }
+}
+
+extension BioMolecule where ChainType.ResidueType == AminoAcid {
+    public func isoelectricPoint(chainIndex index: Int = 0) -> Double {
+        return Hydropathy(residues: chains[index].residues).isoElectricPoint()
+    }
+
+    public func selectedIsoelectricPoint(chainIndex index: Int = 0, _ range: Range<Int>) -> Double {
+        let sub = chains[index].subChain(range: range)
+        guard sub.numberOfResidues > 0 else { return 0.0 }
+
+        return Hydropathy(residues: sub.residues).isoElectricPoint()
     }
 }
 

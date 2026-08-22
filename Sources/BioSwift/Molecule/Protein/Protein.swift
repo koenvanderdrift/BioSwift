@@ -131,7 +131,7 @@ public struct Protein: BioMolecule, Codable, Equatable, Sendable {
         let values = Hydropathy(
             residues: chains[index].residues,
             hydropathyReferences: hydropathyReferences
-        ).hydrophathyValues(for: hydropathyType)
+        ).hydropathyValues(for: hydropathyType)
 
         return chains[index].residues.compactMap { values[$0.oneLetterCode] }
     }

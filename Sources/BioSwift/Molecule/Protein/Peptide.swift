@@ -49,7 +49,7 @@ extension Peptide {
         let values = Hydropathy(
             residues: residues,
             hydropathyReferences: hydropathyReferences
-        ).hydrophathyValues(for: hydropathyType)
+        ).hydropathyValues(for: hydropathyType)
 
         return residues.compactMap { values[$0.oneLetterCode] }
     }
