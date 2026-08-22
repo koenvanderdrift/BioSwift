@@ -19,25 +19,52 @@ public struct Peptide: Chain, Codable, Equatable, Sendable {
     public var range: Range<Int> = zeroRange
     public var parentLength: Int = 0
 
-    public init(sequence: String) { residues = createResidues(from: sequence) }
+    public init(sequence: String) {
+        self.init(sequence: sequence, aminoAcids: AminoAcidReferenceDefaults.bundled)
+    }
+
+    public init(
+        sequence: String,
+        aminoAcids: AminoAcidReferences
+    ) {
+        residues = createResidues(from: sequence, aminoAcids: aminoAcids)
+    }
 
     public init(residues: [AminoAcid]) { self.residues = residues }
 
     public func createResidues(from string: String) -> [AminoAcid] {
-        string.compactMap { char in aminoAcidLibrary.first(where: { $0.identifier == String(char) })
+        createResidues(from: string, aminoAcids: AminoAcidReferenceDefaults.bundled)
+    }
+
+    public func createResidues(
+        from string: String,
+        aminoAcids: AminoAcidReferences
+    ) -> [AminoAcid] {
+        string.compactMap { char in aminoAcids.aminoAcid(identifier: String(char))
         }
     }
 }
 
 extension Peptide {
-    public func hydropathyValues(for hydropathyType: String) -> [Double] {
-        let values = Hydropathy(residues: residues).hydrophathyValues(for: hydropathyType)
+    public func hydropathyValues(
+        for hydropathyType: String,
+        hydropathyReferences: HydropathyReferences = HydropathyReferenceDefaults.bundled
+    ) -> [Double] {
+        let values = Hydropathy(
+            residues: residues,
+            hydropathyReferences: hydropathyReferences
+        ).hydrophathyValues(for: hydropathyType)
 
         return residues.compactMap { values[$0.oneLetterCode] }
     }
 
-    public func isoelectricPoint() -> Double {
-        return Hydropathy(residues: residues).isoElectricPoint()
+    public func isoelectricPoint(
+        hydropathyReferences: HydropathyReferences = HydropathyReferenceDefaults.bundled
+    ) -> Double {
+        return Hydropathy(
+            residues: residues,
+            hydropathyReferences: hydropathyReferences
+        ).isoElectricPoint()
     }
 }
 

@@ -15,9 +15,14 @@ public struct Hydro: Codable, Sendable {
 
 public class Hydropathy {
     public var residues: [any Residue] = []
+    public var hydropathyReferences: HydropathyReferences
 
-    public init(residues: [any Residue]) {
+    public init(
+        residues: [any Residue],
+        hydropathyReferences: HydropathyReferences = HydropathyReferenceDefaults.bundled
+    ) {
         self.residues = residues
+        self.hydropathyReferences = hydropathyReferences
     }
 
     public func isoElectricPoint() -> Double {
@@ -84,7 +89,7 @@ public class Hydropathy {
     }
 
     public func hydrophathyValues(for name: String) -> [String: Double] {
-        guard let values = hydropathyLibrary.first(where: { $0.name == name })?.values else {
+        guard let values = hydropathyReferences.hydropathy(named: name)?.values else {
             return [:]
         }
 

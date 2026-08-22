@@ -9,6 +9,7 @@
 import Foundation
 
 public final class UnimodXMLParser: NSObject {
+    private let elementReferences: ElementReferences
     private var parseError: Error?
 
     private let modification = "umod:mod"
@@ -65,7 +66,12 @@ public final class UnimodXMLParser: NSObject {
 
     let rightArrow = "\u{2192}"
 
-    func parse(data: Data) throws -> XMLDataLibraries {
+    public init(elements: ElementReferences = ElementReferenceDefaults.bundled) {
+        self.elementReferences = elements
+        super.init()
+    }
+
+    func parse(data: Data) throws -> XMLReferenceLibraries {
         skipTitleStrings = [cation, unknown, xlink, atypeion, "2H", "13C", "15N"]
 
         parseError = nil
@@ -83,7 +89,7 @@ public final class UnimodXMLParser: NSObject {
                 ?? LoadError.fileParsingFailed(name: "unimod.xml", underlyingError: nil)
         }
 
-        return XMLDataLibraries(aminoAcids: parsedAminoAcids, modifications: parsedModifications)
+        return XMLReferenceLibraries(aminoAcids: parsedAminoAcids, modifications: parsedModifications)
     }
 }
 
@@ -191,7 +197,8 @@ extension UnimodXMLParser: XMLParserDelegate {
             if modificationTitle.isEmpty == false {
                 let mod = Modification(
                     name: modificationTitle, fullName: modificationFullName,
-                    elements: modificationElements, specificities: modificationSpecificities)
+                    elements: modificationElements, specificities: modificationSpecificities,
+                    elementReferences: elementReferences)
 
                 parsedModifications.append(mod)
 
@@ -206,7 +213,8 @@ extension UnimodXMLParser: XMLParserDelegate {
             if aminoAcidName.isEmpty == false {
                 let aa = AminoAcid(
                     name: aminoAcidName, oneLetterCode: aminoAcidOneLetterCode,
-                    threeLetterCode: aminoAcidThreeLetterCode, elements: aminoAcidElements)
+                    threeLetterCode: aminoAcidThreeLetterCode, elements: aminoAcidElements,
+                    elementReferences: elementReferences)
 
                 parsedAminoAcids.append(aa)
 

@@ -42,9 +42,11 @@ extension Residue {
     }
 
     public func allowedModifications() -> [Modification] {
-        modificationLibrary.filter { mod in
-            mod.specificities.contains { spec in spec.site == identifier }
-        }
+        allowedModifications(modifications: ModificationReferenceDefaults.bundled)
+    }
+
+    public func allowedModifications(modifications: ModificationReferences) -> [Modification] {
+        modifications.modifications(applicableTo: identifier)
     }
 }
 

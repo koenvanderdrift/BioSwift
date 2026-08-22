@@ -16,9 +16,27 @@ public struct Protein: BioMolecule, Codable, Equatable, Sendable {
 
     public init(chains: [Peptide]) { self.chains = chains }
 
-    public init(sequence: String) { chains = [Peptide(sequence: sequence)] }
+    public init(sequence: String) {
+        self.init(sequence: sequence, aminoAcids: AminoAcidReferenceDefaults.bundled)
+    }
 
-    public init(sequences: [String]) { chains = sequences.map { Peptide(sequence: $0) } }
+    public init(
+        sequence: String,
+        aminoAcids: AminoAcidReferences
+    ) {
+        chains = [Peptide(sequence: sequence, aminoAcids: aminoAcids)]
+    }
+
+    public init(sequences: [String]) {
+        self.init(sequences: sequences, aminoAcids: AminoAcidReferenceDefaults.bundled)
+    }
+
+    public init(
+        sequences: [String],
+        aminoAcids: AminoAcidReferences
+    ) {
+        chains = sequences.map { Peptide(sequence: $0, aminoAcids: aminoAcids) }
+    }
 
     public init(residues: [AminoAcid]) { chains = [Peptide(residues: residues)] }
 
@@ -29,8 +47,12 @@ public struct Protein: BioMolecule, Codable, Equatable, Sendable {
     }
 
     public func nTermModifications() -> [Modification] {
+        nTermModifications(modifications: ModificationReferenceDefaults.bundled)
+    }
+
+    public func nTermModifications(modifications: ModificationReferences) -> [Modification] {
         if let nTermAA = residues().first {
-            var nTermGroups = modificationLibrary.filter { mod in
+            var nTermGroups = modifications.modifications.filter { mod in
                 mod.specificities.contains { spec in
                     spec.position.contains("Protein N-term") && spec.site == nTermAA.oneLetterCode
                 }
@@ -45,8 +67,12 @@ public struct Protein: BioMolecule, Codable, Equatable, Sendable {
     }
 
     public func cTermModifications() -> [Modification] {
+        cTermModifications(modifications: ModificationReferenceDefaults.bundled)
+    }
+
+    public func cTermModifications(modifications: ModificationReferences) -> [Modification] {
         if let cTermAA = residues().last {
-            var cTermGroups = modificationLibrary.filter { mod in
+            var cTermGroups = modifications.modifications.filter { mod in
                 mod.specificities.contains { spec in
                     spec.position.contains("Protein C-term") && spec.site == cTermAA.oneLetterCode
                 }
@@ -76,21 +102,36 @@ public struct Protein: BioMolecule, Codable, Equatable, Sendable {
         residues(for: chainIndex) as? [AminoAcid] ?? []
     }
 
-    public func isoelectricPoint(for chainIndex: Int = 0) -> Double {
-        chains[chainIndex].isoelectricPoint()
+    public func isoelectricPoint(
+        for chainIndex: Int = 0,
+        hydropathyReferences: HydropathyReferences = HydropathyReferenceDefaults.bundled
+    ) -> Double {
+        chains[chainIndex].isoelectricPoint(hydropathyReferences: hydropathyReferences)
     }
 
-    public func isoelectricPoint(for chainIndex: Int = 0, with range: Range<Int>) -> Double {
+    public func isoelectricPoint(
+        for chainIndex: Int = 0,
+        with range: Range<Int>,
+        hydropathyReferences: HydropathyReferences = HydropathyReferenceDefaults.bundled
+    ) -> Double {
         let peptide = chains[chainIndex].subChain(range: range)
 
-        if peptide.numberOfResidues > 0 { return peptide.isoelectricPoint() }
+        if peptide.numberOfResidues > 0 {
+            return peptide.isoelectricPoint(hydropathyReferences: hydropathyReferences)
+        }
 
         return 0.0
     }
 
-    public func hydropathyValues(chainIndex index: Int = 0, for hydropathyType: String) -> [Double] {
-        let values = Hydropathy(residues: chains[index].residues).hydrophathyValues(
-            for: hydropathyType)
+    public func hydropathyValues(
+        chainIndex index: Int = 0,
+        for hydropathyType: String,
+        hydropathyReferences: HydropathyReferences = HydropathyReferenceDefaults.bundled
+    ) -> [Double] {
+        let values = Hydropathy(
+            residues: chains[index].residues,
+            hydropathyReferences: hydropathyReferences
+        ).hydrophathyValues(for: hydropathyType)
 
         return chains[index].residues.compactMap { values[$0.oneLetterCode] }
     }

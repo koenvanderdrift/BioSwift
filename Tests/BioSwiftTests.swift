@@ -21,8 +21,8 @@ struct BioSwiftTests {
     var serine = AminoAcid(
         name: "Serine", oneLetterCode: "S", threeLetterCode: "Ser", formula: Formula("C3H5NO2"))
 
-    @Test func bundledDataLibrariesLoadProperly() throws {
-        let libraries = try DataLibraryDefaults.loadBundled()
+    @Test func bundledReferenceLibrariesLoadProperly() throws {
+        let libraries = try ReferenceLibraryDefaults.loadBundled()
 
         #expect(!libraries.elements.isEmpty)
         #expect(!libraries.modifications.isEmpty)
@@ -32,7 +32,7 @@ struct BioSwiftTests {
     }
 
     @Test func bundledDefaultsAreAvailable() {
-        let libraries = DataLibraryDefaults.bundled
+        let libraries = ReferenceLibraryDefaults.bundled
 
         #expect(!libraries.elements.isEmpty)
         #expect(!libraries.modifications.isEmpty)
@@ -47,22 +47,22 @@ struct BioSwiftTests {
         #expect(!data.isEmpty)
     }
 
-    @Test func xmlDataLibrariesLoadProperly() throws {
-        let xmlLibraries = try XMLDataLibraryLoader.load()
+    @Test func xmlReferenceLibrariesLoadProperly() throws {
+        let xmlLibraries = try XMLReferenceLibraryLoader.load()
 
         #expect(!xmlLibraries.aminoAcids.isEmpty)
         #expect(!xmlLibraries.modifications.isEmpty)
     }
 
-    @Test func jsonDataLibrariesLoadProperly() throws {
-        let jsonLibraries = try JSONDataLibraryLoader.loadOtherLibraries()
+    @Test func jsonReferenceLibrariesLoadProperly() throws {
+        let jsonLibraries = try JSONReferenceLibraryLoader.loadOtherLibraries()
 
         #expect(!jsonLibraries.enzymes.isEmpty)
         #expect(!jsonLibraries.hydropathyValues.isEmpty)
     }
 
-    @Test func xmlDataLibrariesLoadDebug() throws {
-        let xmlLibraries = try XMLDataLibraryLoader.load()
+    @Test func xmlReferenceLibrariesLoadDebug() throws {
+        let xmlLibraries = try XMLReferenceLibraryLoader.load()
 
         debugPrint("aminoAcids:", xmlLibraries.aminoAcids.count)
         debugPrint("modifications:", xmlLibraries.modifications.count)

@@ -67,11 +67,12 @@ public struct AminoAcid: Residue, Codable, Sendable {
     }
 
     public init(
-        name: String, oneLetterCode: String, threeLetterCode: String = "", elements: [String: Int]
+        name: String, oneLetterCode: String, threeLetterCode: String = "", elements: [String: Int],
+        elementReferences: ElementReferences = ElementReferenceDefaults.bundled
     ) {
         self.init(
             name: name, oneLetterCode: oneLetterCode, threeLetterCode: threeLetterCode,
-            formula: Formula(from: elements))
+            formula: Formula(from: elements, elements: elementReferences))
 
         setProperties()
     }
@@ -93,8 +94,10 @@ public struct AminoAcid: Residue, Codable, Sendable {
     }
 
     public func allowedModifications() -> [Modification] {
-        modificationLibrary.filter { mod in
-            mod.specificities.contains { spec in spec.site == identifier }
-        }
+        allowedModifications(modifications: ModificationReferenceDefaults.bundled)
+    }
+
+    public func allowedModifications(modifications: ModificationReferences) -> [Modification] {
+        modifications.modifications(applicableTo: identifier)
     }
 }
