@@ -216,29 +216,6 @@ extension String {
 }
 
 extension StringProtocol {
-    /*
-     // Text-file parsing only: zero-based character offsets
-     extension StringProtocol {
-         subscript(_ offset: Int) -> Element {
-             ...
-         }
-         subscript(_ range: Range<Int>) -> SubSequence {
-             ...
-         }
-         subscript(_ range: ClosedRange<Int>) -> SubSequence {
-             ...
-         }
-         subscript(_ range: PartialRangeThrough<Int>) -> SubSequence {
-             ...
-         }
-         subscript(_ range: PartialRangeUpTo<Int>) -> SubSequence {
-             ...
-         }
-         subscript(_ range: PartialRangeFrom<Int>) -> SubSequence {
-             ...
-         }
-     }
-     */
 
     /// Returns the character at a zero-based character offset.
     public subscript(_ offset: Int) -> Element {
