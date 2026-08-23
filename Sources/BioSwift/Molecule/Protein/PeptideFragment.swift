@@ -110,7 +110,7 @@ public protocol Fragmenting {
 }
 
 /// PeptideFragment is generated from a ``Peptide`` by ``PeptideFragmenter``
-public struct PeptideFragment: Chain, Codable, Fragmenting, Sendable {
+public struct PeptideFragment: AminoAcidChain, Codable, Fragmenting, Sendable {
     public var name: String = ""
     public var sequence: String = ""
     public var residues: [AminoAcid] = []
@@ -126,10 +126,7 @@ public struct PeptideFragment: Chain, Codable, Fragmenting, Sendable {
         self.init(sequence: sequence, aminoAcids: AminoAcidReferenceDefaults.bundled)
     }
 
-    public init(
-        sequence: String,
-        aminoAcids: AminoAcidReferences
-    ) {
+    public init(sequence: String, aminoAcids: AminoAcidReferences) {
         self.sequence = sequence
         residues = Self.createResidues(from: sequence, aminoAcids: aminoAcids)
     }
@@ -138,11 +135,7 @@ public struct PeptideFragment: Chain, Codable, Fragmenting, Sendable {
         self.residues = residues
     }
 
-    public init(
-        residues: [AminoAcid], type: PeptideFragmentType, index: Int = -1, adducts: [Adduct],
-        nTerm: Modification = zeroModification, cTerm: Modification = zeroModification,
-        parentLength: Int = 0
-    ) {
+    public init(residues: [AminoAcid], type: PeptideFragmentType, index: Int = -1, adducts: [Adduct], nTerm: Modification = zeroModification, cTerm: Modification = zeroModification, parentLength: Int = 0) {
         self.residues = residues
         self.fragmentType = type
         self.index = index
@@ -152,10 +145,7 @@ public struct PeptideFragment: Chain, Codable, Fragmenting, Sendable {
         self.parentLength = parentLength
     }
 
-    private static func createResidues(
-        from string: String,
-        aminoAcids: AminoAcidReferences
-    ) -> [AminoAcid] {
+    private static func createResidues(from string: String, aminoAcids: AminoAcidReferences) -> [AminoAcid] {
         string.compactMap {
             char in aminoAcids.aminoAcid(identifier: String(char))
         }
@@ -175,11 +165,6 @@ extension PeptideFragment: Ionizable {
         return residueMasses() + terminalMasses() + fragmentType.masses  // + modificationMasses()
     }
 
-    func residueMasses() -> MassContainer { residues.reduce(zeroMass) { $0 + $1.masses } }
-
-    func terminalMasses() -> MassContainer {
-        nTerminal.masses + cTerminal.masses
-    }
 }
 
 extension PeptideFragment {

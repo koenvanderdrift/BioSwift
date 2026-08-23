@@ -10,7 +10,7 @@ import Foundation
 
 /// Peptide conforms to ``Chain`` using an ``AminoAcid`` array
 
-public struct Peptide: Chain, Codable, Equatable, Sendable {
+public struct Peptide: AminoAcidChain, Codable, Equatable, Sendable {
     public var name: String = ""
     public var residues: [AminoAcid] = []
     public var nTerminal: Modification = hydrogenModification
@@ -23,10 +23,7 @@ public struct Peptide: Chain, Codable, Equatable, Sendable {
         self.init(sequence: sequence, aminoAcids: AminoAcidReferenceDefaults.bundled)
     }
 
-    public init(
-        sequence: String,
-        aminoAcids: AminoAcidReferences
-    ) {
+    public init(sequence: String, aminoAcids: AminoAcidReferences) {
         residues = Self.createResidues(from: sequence, aminoAcids: aminoAcids)
     }
 
@@ -34,40 +31,13 @@ public struct Peptide: Chain, Codable, Equatable, Sendable {
         self.residues = residues
     }
 
-    private static func createResidues(
-        from string: String,
-        aminoAcids: AminoAcidReferences
-    ) -> [AminoAcid] {
+    private static func createResidues(from string: String, aminoAcids: AminoAcidReferences) -> [AminoAcid] {
         string.compactMap {
             char in aminoAcids.aminoAcid(identifier: String(char))
         }
     }
 }
 
-extension Peptide {
-    public func hydropathyValues(
-        for hydropathyType: String,
-        hydropathyReferences: HydropathyReferences = HydropathyReferenceDefaults.bundled
-    ) -> [Double] {
-        let values = Hydropathy(
-            residues: residues,
-            hydropathyReferences: hydropathyReferences
-        ).hydropathyValues(for: hydropathyType)
-
-        return residues.compactMap {
-            values[$0.oneLetterCode]
-        }
-    }
-
-    public func isoelectricPoint(
-        hydropathyReferences: HydropathyReferences = HydropathyReferenceDefaults.bundled
-    ) -> Double {
-        return Hydropathy(
-            residues: residues,
-            hydropathyReferences: hydropathyReferences
-        ).isoElectricPoint()
-    }
-}
 
 extension Peptide: Ionizable {
     public var masses: MassContainer {
@@ -82,13 +52,4 @@ extension Peptide: Ionizable {
         return residueMasses() + terminalMasses()
     }
 
-    func residueMasses() -> MassContainer {
-        residues.reduce(zeroMass) {
-            $0 + $1.masses
-        }
-    }
-
-    func terminalMasses() -> MassContainer {
-        return nTerminal.masses + cTerminal.masses
-    }
 }

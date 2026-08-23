@@ -10,7 +10,7 @@ import Foundation
 
 /// Protein can contain one or more ``Peptide`` chains and conforms to the ``BioMolecule`` protocol
 ///
-public struct Protein: BioMolecule, Codable, Equatable, Sendable {
+public struct Protein: BioMolecule, Ionizable, Codable, Equatable, Sendable {
     public var adducts: [Adduct] = []
     public var chains: [Peptide]
 
@@ -22,10 +22,7 @@ public struct Protein: BioMolecule, Codable, Equatable, Sendable {
         self.init(sequence: sequence, aminoAcids: AminoAcidReferenceDefaults.bundled)
     }
 
-    public init(
-        sequence: String,
-        aminoAcids: AminoAcidReferences
-    ) {
+    public init(sequence: String, aminoAcids: AminoAcidReferences) {
         chains = [Peptide(sequence: sequence, aminoAcids: aminoAcids)]
     }
 
@@ -33,10 +30,7 @@ public struct Protein: BioMolecule, Codable, Equatable, Sendable {
         self.init(sequences: sequences, aminoAcids: AminoAcidReferenceDefaults.bundled)
     }
 
-    public init(
-        sequences: [String],
-        aminoAcids: AminoAcidReferences
-    ) {
+    public init(sequences: [String], aminoAcids: AminoAcidReferences) {
         chains = sequences.map {
             Peptide(sequence: $0, aminoAcids: aminoAcids)
         }
@@ -122,42 +116,4 @@ public struct Protein: BioMolecule, Codable, Equatable, Sendable {
     public func aminoAcids(for chainIndex: Int = 0) -> [AminoAcid] {
         residues(for: chainIndex) as? [AminoAcid] ?? []
     }
-
-    public func isoelectricPoint(
-        for chainIndex: Int = 0,
-        hydropathyReferences: HydropathyReferences = HydropathyReferenceDefaults.bundled
-    ) -> Double {
-        chains[chainIndex].isoelectricPoint(hydropathyReferences: hydropathyReferences)
-    }
-
-    public func isoelectricPoint(
-        for chainIndex: Int = 0,
-        with range: Range<Int>,
-        hydropathyReferences: HydropathyReferences = HydropathyReferenceDefaults.bundled
-    ) -> Double {
-        let peptide = chains[chainIndex].subChain(range: range)
-
-        if peptide.numberOfResidues > 0 {
-            return peptide.isoelectricPoint(hydropathyReferences: hydropathyReferences)
-        }
-
-        return 0.0
-    }
-
-    public func hydropathyValues(
-        chainIndex index: Int = 0,
-        for hydropathyType: String,
-        hydropathyReferences: HydropathyReferences = HydropathyReferenceDefaults.bundled
-    ) -> [Double] {
-        let values = Hydropathy(
-            residues: chains[index].residues,
-            hydropathyReferences: hydropathyReferences
-        ).hydropathyValues(for: hydropathyType)
-
-        return chains[index].residues.compactMap {
-            values[$0.oneLetterCode]
-        }
-    }
 }
-
-extension Protein: Ionizable {}

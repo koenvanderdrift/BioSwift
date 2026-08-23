@@ -17,13 +17,15 @@ public protocol BioMolecule {
     }
 }
 
-extension BioMolecule {
+extension BioMolecule where ChainType: Structure {
     public var formula: Formula {
         chains.reduce(zeroFormula) {
             $0 + $1.formula
         }
     }
+}
 
+extension BioMolecule {
     public func sequenceLength(for chainIndex: Int = 0) -> Int {
         guard chains.indices.contains(chainIndex) else {
             return 0
@@ -116,26 +118,34 @@ extension BioMolecule {
 }
 
 extension BioMolecule where ChainType.ResidueType == AminoAcid {
-    public func isoelectricPoint(chainIndex index: Int = 0) -> Double {
+    public func isoelectricPoint(chainIndex index: Int = 0, range: Range<Int>? = nil, hydropathyReferences: HydropathyReferences = HydropathyReferenceDefaults.bundled) -> Double {
         guard chains.indices.contains(index) else {
             return 0.0
         }
 
-        return Hydropathy(residues: chains[index].residues).isoElectricPoint()
+        let chain = range.map {
+            chains[index].subChain(range: $0)
+        } ?? chains[index]
+
+        guard chain.numberOfResidues > 0 else {
+            return 0.0
+        }
+
+        return chain.isoelectricPoint(hydropathyReferences: hydropathyReferences)
     }
 
     public func selectedIsoelectricPoint(chainIndex index: Int = 0, _ range: Range<Int>) -> Double {
-        guard chains.indices.contains(index) else {
-            return 0.0
-        }
-
-        let sub = chains[index].subChain(range: range)
-        guard sub.numberOfResidues > 0 else {
-            return 0.0
-        }
-
-        return Hydropathy(residues: sub.residues).isoElectricPoint()
+        isoelectricPoint(chainIndex: index, range: range)
     }
+
+    public func hydropathyValues(chainIndex index: Int = 0, for hydropathyType: String, hydropathyReferences: HydropathyReferences = HydropathyReferenceDefaults.bundled) -> [Double] {
+        guard chains.indices.contains(index) else {
+            return []
+        }
+
+        return chains[index].hydropathyValues(for: hydropathyType, hydropathyReferences: hydropathyReferences)
+    }
+    
 }
 
 extension BioMolecule where ChainType: MassRepresentable {

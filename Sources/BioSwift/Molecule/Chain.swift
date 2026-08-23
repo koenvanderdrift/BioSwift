@@ -22,14 +22,6 @@ public protocol Chain {
         get set
     }
 
-    var nTerminal: Modification {
-        get set
-    }
-
-    var cTerminal: Modification {
-        get set
-    }
-
     var adducts: [Adduct] {
         get set
     }
@@ -45,25 +37,19 @@ public protocol Chain {
     init(residues: [ResidueType])
 }
 
+public protocol AminoAcidChain: Chain, Structure where ResidueType == AminoAcid {
+    var nTerminal: Modification {
+        get set
+    }
+
+    var cTerminal: Modification {
+        get set
+    }
+}
+
 extension Chain {
     public static func == (lhs: Self, rhs: Self) -> Bool {
         lhs.sequenceString == rhs.sequenceString && lhs.name == rhs.name
-    }
-
-    public var formula: Formula {
-        var f = zeroFormula
-
-        for residue in residues {
-            f += residue.formula
-
-            if let mod = residue.modification {
-                f += mod.formula
-            }
-        }
-
-        f += nTerminal.formula + cTerminal.formula
-
-        return f
     }
 
     public var sequenceString: String {
@@ -114,6 +100,54 @@ extension Chain {
         }
 
         return count
+    }
+
+    func residueMasses() -> MassContainer {
+        residues.reduce(zeroMass) {
+            $0 + $1.masses
+        }
+    }
+}
+
+extension AminoAcidChain {
+    public var formula: Formula {
+        var f = zeroFormula
+
+        for residue in residues {
+            f += residue.formula
+
+            if let mod = residue.modification {
+                f += mod.formula
+            }
+        }
+
+        f += nTerminal.formula + cTerminal.formula
+
+        return f
+    }
+
+    func terminalMasses() -> MassContainer {
+        nTerminal.masses + cTerminal.masses
+    }
+
+    public mutating func setTermini(nTerm: Modification, cTerm: Modification) {
+        nTerminal = nTerm
+        cTerminal = cTerm
+    }
+}
+
+extension Chain where ResidueType == AminoAcid {
+    public func hydropathyValues(for hydropathyType: String, hydropathyReferences: HydropathyReferences = HydropathyReferenceDefaults.bundled) -> [Double] {
+        let values = Hydropathy(residues: residues, hydropathyReferences: hydropathyReferences).hydropathyValues(for: hydropathyType)
+
+        return residues.compactMap {
+            values[$0.oneLetterCode]
+        }
+    }
+
+    public func isoelectricPoint(
+        hydropathyReferences: HydropathyReferences = HydropathyReferenceDefaults.bundled) -> Double {
+        Hydropathy(residues: residues, hydropathyReferences: hydropathyReferences).isoElectricPoint()
     }
 }
 
@@ -438,11 +472,6 @@ extension Chain {
 }
 
 extension Chain {
-    public mutating func setTermini(nTerm: Modification, cTerm: Modification) {
-        nTerminal = nTerm
-        cTerminal = cTerm
-    }
-
     public func allowedModifications(at location: Int) -> [Modification]? {
         if let residue = residue(at: location) {
             return residue.allowedModifications()
