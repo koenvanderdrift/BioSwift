@@ -134,7 +134,9 @@ public struct PeptideFragment: Chain, Codable, Fragmenting, Sendable {
         residues = Self.createResidues(from: sequence, aminoAcids: aminoAcids)
     }
 
-    public init(residues: [AminoAcid]) { self.residues = residues }
+    public init(residues: [AminoAcid]) {
+        self.residues = residues
+    }
 
     public init(
         residues: [AminoAcid], type: PeptideFragmentType, index: Int = -1, adducts: [Adduct],
@@ -154,7 +156,8 @@ public struct PeptideFragment: Chain, Codable, Fragmenting, Sendable {
         from string: String,
         aminoAcids: AminoAcidReferences
     ) -> [AminoAcid] {
-        string.compactMap { char in aminoAcids.aminoAcid(identifier: String(char))
+        string.compactMap {
+            char in aminoAcids.aminoAcid(identifier: String(char))
         }
     }
 }

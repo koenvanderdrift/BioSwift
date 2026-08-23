@@ -14,7 +14,9 @@ public struct Protein: BioMolecule, Codable, Equatable, Sendable {
     public var adducts: [Adduct] = []
     public var chains: [Peptide]
 
-    public init(chains: [Peptide]) { self.chains = chains }
+    public init(chains: [Peptide]) {
+        self.chains = chains
+    }
 
     public init(sequence: String) {
         self.init(sequence: sequence, aminoAcids: AminoAcidReferenceDefaults.bundled)
@@ -35,13 +37,19 @@ public struct Protein: BioMolecule, Codable, Equatable, Sendable {
         sequences: [String],
         aminoAcids: AminoAcidReferences
     ) {
-        chains = sequences.map { Peptide(sequence: $0, aminoAcids: aminoAcids) }
+        chains = sequences.map {
+            Peptide(sequence: $0, aminoAcids: aminoAcids)
+        }
     }
 
-    public init(residues: [AminoAcid]) { chains = [Peptide(residues: residues)] }
+    public init(residues: [AminoAcid]) {
+        chains = [Peptide(residues: residues)]
+    }
 
     public func truncate(by range: Range<Int>) -> Protein {
-        if let subChain = chains.first?.removing(range) { return Protein(chains: [subChain]) }
+        if let subChain = chains.first?.removing(range) {
+            return Protein(chains: [subChain])
+        }
 
         return self
     }
@@ -87,20 +95,26 @@ public struct Protein: BioMolecule, Codable, Equatable, Sendable {
     }
 
     public func nTermLocation(for chainIndex: Int = 0) -> Int? {
-        guard chains.indices.contains(chainIndex), chains[chainIndex].sequenceLength > 0 else { return nil }
+        guard chains.indices.contains(chainIndex), chains[chainIndex].sequenceLength > 0 else {
+            return nil
+        }
 
         return 0
     }
 
     public func cTermLocation(for chainIndex: Int = 0) -> Int? {
-        guard chains.indices.contains(chainIndex), chains[chainIndex].sequenceLength > 0 else { return nil }
+        guard chains.indices.contains(chainIndex), chains[chainIndex].sequenceLength > 0 else {
+            return nil
+        }
 
         return chains[chainIndex].sequenceLength - 1
     }
 
     public func aminoAcid(at loc: Int, for chainIndex: Int = 0) -> AminoAcid? {
         let aminoAcids = aminoAcids(for: chainIndex)
-        guard aminoAcids.indices.contains(loc) else { return nil }
+        guard aminoAcids.indices.contains(loc) else {
+            return nil
+        }
 
         return aminoAcids[loc]
     }
@@ -140,7 +154,9 @@ public struct Protein: BioMolecule, Codable, Equatable, Sendable {
             hydropathyReferences: hydropathyReferences
         ).hydropathyValues(for: hydropathyType)
 
-        return chains[index].residues.compactMap { values[$0.oneLetterCode] }
+        return chains[index].residues.compactMap {
+            values[$0.oneLetterCode]
+        }
     }
 }
 

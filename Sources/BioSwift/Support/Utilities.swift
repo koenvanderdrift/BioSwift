@@ -12,7 +12,9 @@ public enum BioSwiftDiagnostics {
     public static var isDebugLoggingEnabled = false
 
     public static func log(_ message: @autoclosure () -> Any) {
-        guard isDebugLoggingEnabled else { return }
+        guard isDebugLoggingEnabled else {
+            return
+        }
 
         debugPrint(message())
     }
@@ -53,28 +55,31 @@ public func loadData(
         throw LoadError.fileNotFound(name: fullName)
     }
 
-    do { return try Data(contentsOf: url) } catch {
+    do {
+        return try Data(contentsOf: url)
+    } catch {
         throw LoadError.fileReadFailed(name: fullName, underlyingError: error)
     }
 }
 
-public func loadText(
-    from fileName: String, withExtension fileExtension: String, in bundle: Bundle = .main,
-    encoding: String.Encoding = .utf8
-) throws -> String {
+public func loadText(from fileName: String, withExtension fileExtension: String, in bundle: Bundle = .main, encoding: String.Encoding = .utf8) throws -> String {
     let fullName = "\(fileName).\(fileExtension)"
 
     guard let url = bundle.url(forResource: fileName, withExtension: fileExtension) else {
         throw LoadError.fileNotFound(name: fullName)
     }
 
-    do { return try String(contentsOf: url, encoding: encoding) } catch {
+    do {
+        return try String(contentsOf: url, encoding: encoding)
+    } catch {
         throw LoadError.fileReadFailed(name: fullName, underlyingError: error)
     }
 }
 
 public func loadText(from url: URL, encoding: String.Encoding = .utf8) throws -> String {
-    do { return try String(contentsOf: url, encoding: encoding) } catch {
+    do {
+        return try String(contentsOf: url, encoding: encoding)
+    } catch {
         throw LoadError.fileReadFailed(name: url.lastPathComponent, underlyingError: error)
     }
 }
@@ -130,7 +135,7 @@ func measure<T>(_ name: String, operation: () -> T) -> T {
  with `value` as an arg, then the `pattern` matches the `value`.
 
  func ~= <T>(pattern: (T) -> Bool, value: T) -> Bool {
-    return pattern(value)
+     return pattern(value)
  }
 
  typealias SortDescriptor<A> = (A, A) -> Bool
@@ -150,8 +155,12 @@ func measure<T>(_ name: String, operation: () -> T) -> T {
  func combine<A>(sortDescriptors: [SortDescriptor<A>]) -> SortDescriptor<A> {
     return { value1, value2 in
         for descriptor in sortDescriptors {
-            if descriptor(value1, value2) { return true }
-            if descriptor(value2, value1) { return false }
+            if descriptor(value1, value2) {
+                return true
+            }
+            if descriptor(value2, value1) {
+                return false
+            }
         }
 
         return false
@@ -186,7 +195,9 @@ func measure<T>(_ name: String, operation: () -> T) -> T {
  public func loadTextFromBundle(filename: String, type: String) -> String? {
     guard
         let path = Bundle.main.path(forResource: filename, ofType: type)
-    else { return nil }
+    else {
+        return nil
+    }
 
     let text: String
 

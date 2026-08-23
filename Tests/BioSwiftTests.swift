@@ -155,7 +155,9 @@ struct BioSwiftTests {
 
         var sum = water.masses
 
-        for aa in peptide.residues { sum += aa.masses }
+        for aa in peptide.residues {
+            sum += aa.masses
+        }
         debugPrint(sum.monoisotopicMass)
 
         #expect(sum.monoisotopicMass.rounded(scale: 5) == decimal("802.40072"))
@@ -163,7 +165,9 @@ struct BioSwiftTests {
 
         sum = water.masses
 
-        for aa in peptide.residues[1..<7] { sum += aa.masses }
+        for aa in peptide.residues[1..<7] {
+            sum += aa.masses
+        }
         debugPrint(sum.monoisotopicMass)
 
         #expect(sum.monoisotopicMass.rounded(scale: 5) == decimal("715.36870"))
@@ -217,7 +221,9 @@ struct BioSwiftTests {
     }
 
     @Test mutating func peptideReplaceModificationMonoisotopicMass() {
-        if let phos = modificationLibrary.first(where: { $0.name == "Phospho" }),
+        if let phos = modificationLibrary.first(where: {
+            $0.name == "Phospho"
+        }),
             let methylmalonylation = modificationLibrary.first(where: {
                 $0.name == "Methylmalonylation"
             })
@@ -244,7 +250,9 @@ struct BioSwiftTests {
     }
 
     @Test mutating func proteinNTermMetLossMonoisotopicMass() {
-        if let metLoss = testProtein.nTermModifications().first(where: { $0.name == "Met-loss" }),
+        if let metLoss = testProtein.nTermModifications().first(where: {
+            $0.name == "Met-loss"
+        }),
             let nTermLocation = testProtein.nTermLocation()
         {
             testProtein.setAdducts(type: protonAdduct, count: 1)
@@ -262,7 +270,9 @@ struct BioSwiftTests {
     }
 
     @Test mutating func proteinCTermLysLossMonoisotopicMass() {
-        if let lysLoss = testProtein.cTermModifications().first(where: { $0.name == "Lys-loss" }),
+        if let lysLoss = testProtein.cTermModifications().first(where: {
+            $0.name == "Lys-loss"
+        }),
             let cTermLocation = testProtein.cTermLocation()
         {
             testProtein.setAdducts(type: protonAdduct, count: 1)
@@ -392,8 +402,12 @@ struct BioSwiftTests {
 
     @Test mutating func insertAminoAcids() {
         #expect(testPeptide.sequenceString == "DWSSD")
-        if let gly = aminoAcidLibrary.first(where: { $0.identifier == "G" }),
-            let pro = aminoAcidLibrary.first(where: { $0.identifier == "P" })
+        if let gly = aminoAcidLibrary.first(where: {
+            $0.identifier == "G"
+        }),
+            let pro = aminoAcidLibrary.first(where: {
+                $0.identifier == "P"
+            })
         {
             testPeptide.insertResidues([gly, pro, pro], at: 2)
         }
@@ -415,7 +429,9 @@ struct BioSwiftTests {
                         == "MAGNDREPIGRKGKPTRPVKQKVSRRRYEDDDDYDDYDDYEDEEPMPRKGKGKGKGRKPRGKRGWLWLLLKLAIVFAVLIAIYGVYLDQKIRSRIDGKVWQLPAAVYGRMVNLEPDMTISKNEMVKLLEATQYRQVSKMTRPGEFTVQANSIEMIRRPFDFPDSKEGQVRARLTFDGDHLATIVNMENNRQFGFFRLDPRLITMISSPNGEQRLFVPRSGFPDLLVDTLLATEDRHFYEHDGISLYSIGRAVLANLTAGRTVQGASTLTQQLVKNLFLSSERSYWRKANEAYMALIMDARYSKDRILELYMNEVYLGQSGDNEIRGFPLASLYYFGRPVEELSLDQQALLVGMVKGASIYNPWRNPKLALERRNLVLRLLQQQQIIDQELYDMLSARPLGVQPRGGVISPQPAFMQLVRQELQAKLGDKVKDLSGVKIFTTFDSVAQDAAEKAAVEGIPALKKQRKLSDLETAIVVVDRFSGEVRAMVGGSEPQFAGYNRAMQARRSIGSLAKPATYLTALSQPKIYRLNTWIADAPIALRQPNGQVWSPQNDDRRYSESGRVMLVDALTRSMNVPTVNLGMALGLPAVTETWIKLGVPKDQLHPVPAMLLGALNLTPIEVAQAFQTIASGGNRAPLSALRSVIAEDGKVLYQSFPQAERAVPAQAAYLTLWTMQQVVQRGTGRQLGAKYPNLHLAGKTGTTNNNVDTWFAGIDGSTVTITWVGRDNNQPTKLYGASGAMSIYQRYLANQTPTPLNLVPPEDIADMGVDYDGNFVCSGGMRILPVWTSDPQSLCQQSEMQQQPSGNPFDQSSQPQQQPQQQPAQQEQKDSDGVAGWIKDMFGSN"
                 )
             }
-        } catch { debugPrint(error.localizedDescription) }
+        } catch {
+            debugPrint(error.localizedDescription)
+        }
     }
 
     @Test func subChain() {
@@ -479,7 +495,9 @@ struct BioSwiftTests {
 
         let missedCleavages = 0
 
-        let trypsin = enzymeLibrary.first(where: { $0.name == "Trypsin" })
+        let trypsin = enzymeLibrary.first(where: {
+            $0.name == "Trypsin"
+        })
 
         if let enzyme = trypsin {
             let peptides: [Peptide] = digester.peptides(using: enzyme, with: missedCleavages)
@@ -490,7 +508,9 @@ struct BioSwiftTests {
             #expect(!peptides.map(\.sequenceString).contains("WER"))
         }
 
-        let lysC = enzymeLibrary.first(where: { $0.name == "Lys-C" })
+        let lysC = enzymeLibrary.first(where: {
+            $0.name == "Lys-C"
+        })
 
         if let enzyme = lysC {
             let peptides: [Peptide] = digester.peptides(using: enzyme, with: missedCleavages)
@@ -501,7 +521,9 @@ struct BioSwiftTests {
             #expect(!peptides.map(\.sequenceString).contains("FNK"))
         }
 
-        let aspN = enzymeLibrary.first(where: { $0.name == "Asp-N" })
+        let aspN = enzymeLibrary.first(where: {
+            $0.name == "Asp-N"
+        })
 
         if let enzyme = aspN {
             let peptides: [Peptide] = digester.peptides(using: enzyme, with: missedCleavages)
@@ -510,7 +532,9 @@ struct BioSwiftTests {
             #expect(peptides[1].sequenceString == "DPQG")
         }
 
-        let pepsin1 = enzymeLibrary.first(where: { $0.name == "Pepsin (pH = 1.3)" })
+        let pepsin1 = enzymeLibrary.first(where: {
+            $0.name == "Pepsin (pH = 1.3)"
+        })
 
         if let enzyme = pepsin1 {
             let peptides: [Peptide] = digester.peptides(using: enzyme, with: missedCleavages)
@@ -523,7 +547,9 @@ struct BioSwiftTests {
             #expect(peptides.map(\.sequenceString).contains("MGKVVNPTQK"))
         }
 
-        let pepsin2 = enzymeLibrary.first(where: { $0.name == "Pepsin (pH > 2)" })
+        let pepsin2 = enzymeLibrary.first(where: {
+            $0.name == "Pepsin (pH > 2)"
+        })
 
         if let enzyme = pepsin2 {
             let peptides: [Peptide] = digester.peptides(using: enzyme, with: missedCleavages)
@@ -538,7 +564,9 @@ struct BioSwiftTests {
     }
 
     @Test func digestUnspecified() {
-        let unspecified = enzymeLibrary.first(where: { $0.name == "Unspecified" })
+        let unspecified = enzymeLibrary.first(where: {
+            $0.name == "Unspecified"
+        })
         #expect(unspecified?.name == "Unspecified")
     }
 
@@ -547,7 +575,9 @@ struct BioSwiftTests {
 
         let missedCleavages = 1
 
-        let trypsin = enzymeLibrary.first(where: { $0.name == "Trypsin" })
+        let trypsin = enzymeLibrary.first(where: {
+            $0.name == "Trypsin"
+        })
 
         if let enzyme = trypsin {
             let peptides: [Peptide] = digester.peptides(using: enzyme, with: missedCleavages)
@@ -581,10 +611,16 @@ struct BioSwiftTests {
             }
 
             debugPrint(ranges)
-            let sequenceStrings = ranges.map { chain.sequenceString[$0] }
+            let sequenceStrings = ranges.map {
+                chain.sequenceString[$0]
+            }
 
-            #expect(sequenceStrings.contains(where: { $0 == "TDTSHHDQDHPTFNK" }))
-            #expect(!sequenceStrings.contains(where: { $0 == "NIFFS" }))
+            #expect(sequenceStrings.contains(where: {
+                $0 == "TDTSHHDQDHPTFNK"
+            }))
+            #expect(!sequenceStrings.contains(where: {
+                $0 == "NIFFS"
+            }))
         }
     }
 
@@ -606,20 +642,26 @@ struct BioSwiftTests {
             }
 
             debugPrint(ranges)
-            let sequenceStrings = ranges.map { chain.sequenceString[$0] }
+            let sequenceStrings = ranges.map {
+                chain.sequenceString[$0]
+            }
 
             #expect(
                 sequenceStrings.contains(where: {
                     $0
                         == "LKKKKVIVIPVGIGPHANLKQIRLIEKQAPENKAFVLSSVDELEQQRDEIVSYLCDLAPEAPPPTLPPDMAQVTVGPGLLGVSTLGPKRNSMVLDV"
                 }))
-            #expect(!sequenceStrings.contains(where: { $0 == "NIFFS" }))
+            #expect(!sequenceStrings.contains(where: {
+                $0 == "NIFFS"
+            }))
         }
     }
 
     @Test func massSearchWithModification() {
         if var chain = testProtein.chains.first,
-            let phos = modificationLibrary.first(where: { $0.name == "Phospho" })
+            let phos = modificationLibrary.first(where: {
+                $0.name == "Phospho"
+            })
         {
             chain.addModification(phos, at: 76)
 
@@ -628,9 +670,13 @@ struct BioSwiftTests {
                 searchType: .sequential, massType: .monoisotopic, charge: 0)
 
             let ranges: [Range<Int>] = chain.searchMass(params: searchParameters)
-            let sequenceStrings = ranges.map { chain.sequenceString[$0] }
+            let sequenceStrings = ranges.map {
+                chain.sequenceString[$0]
+            }
 
-            #expect(sequenceStrings.contains(where: { $0 == "IFFSP" }))
+            #expect(sequenceStrings.contains(where: {
+                $0 == "IFFSP"
+            }))
         }
     }
 
@@ -641,10 +687,16 @@ struct BioSwiftTests {
                 searchType: .sequential, massType: .average, charge: 0)
 
             let ranges: [Range<Int>] = chain.searchMass(params: searchParameters)
-            let sequenceStrings = ranges.map { chain.sequenceString[$0] }
+            let sequenceStrings = ranges.map {
+                chain.sequenceString[$0]
+            }
 
-            #expect(sequenceStrings.contains(where: { $0 == "IFFSP" }))
-            #expect(!sequenceStrings.contains(where: { $0 == "NIFFS" }))
+            #expect(sequenceStrings.contains(where: {
+                $0 == "IFFSP"
+            }))
+            #expect(!sequenceStrings.contains(where: {
+                $0 == "NIFFS"
+            }))
         }
     }
 
@@ -656,8 +708,12 @@ struct BioSwiftTests {
 
             let peptides: [Peptide] = chain.searchMassBruteForce(params: searchParameters)
 
-            #expect(peptides.contains(where: { $0.sequenceString == "TDTSHHDQDHPTFNK" }))
-            #expect(!peptides.contains(where: { $0.sequenceString == "NIFFS" }))
+            #expect(peptides.contains(where: {
+                $0.sequenceString == "TDTSHHDQDHPTFNK"
+            }))
+            #expect(!peptides.contains(where: {
+                $0.sequenceString == "NIFFS"
+            }))
         }
     }
 
@@ -706,16 +762,24 @@ struct BioSwiftTests {
         let fragmenter = PeptideFragmenter(peptide: peptide)
         let fragments = fragmenter.fragments
 
-        let precursors = fragments.filter { $0.fragmentType == .precursorIon }
+        let precursors = fragments.filter {
+            $0.fragmentType == .precursorIon
+        }
         #expect(precursors.count == 1)
 
-        let immoniumIons = fragments.filter { $0.fragmentType == .immoniumIon }
+        let immoniumIons = fragments.filter {
+            $0.fragmentType == .immoniumIon
+        }
         #expect(immoniumIons.count == 7)
 
-        let bIons = fragments.filter { $0.fragmentType == .bIon }
+        let bIons = fragments.filter {
+            $0.fragmentType == .bIon
+        }
         #expect(bIons.count == 5)
 
-        let yIons = fragments.filter { $0.fragmentType == .yIon }
+        let yIons = fragments.filter {
+            $0.fragmentType == .yIon
+        }
         #expect(yIons.count == 6)
     }
 
@@ -724,14 +788,18 @@ struct BioSwiftTests {
         emptyPeptide.setAdducts(type: protonAdduct, count: 1)
 
         let emptyFragmenter = PeptideFragmenter(peptide: emptyPeptide)
-        #expect(emptyFragmenter.fragments.filter { $0.isNterminal() || $0.isCterminal() }.isEmpty)
+        #expect(emptyFragmenter.fragments.filter {
+            $0.isNterminal() || $0.isCterminal()
+        }.isEmpty)
         #expect(emptyFragmenter.fragment(at: 1, for: .cIon) == nil)
 
         var singleResiduePeptide = Peptide(sequence: "A")
         singleResiduePeptide.setAdducts(type: protonAdduct, count: 1)
 
         let singleResidueFragmenter = PeptideFragmenter(peptide: singleResiduePeptide)
-        #expect(singleResidueFragmenter.fragments.filter { $0.isCterminal() }.isEmpty)
+        #expect(singleResidueFragmenter.fragments.filter {
+            $0.isCterminal()
+        }.isEmpty)
         #expect(singleResidueFragmenter.fragment(at: 1, for: .cIon) != nil)
     }
 
@@ -747,7 +815,9 @@ struct BioSwiftTests {
         let fragmenter = PeptideFragmenter(peptide: peptide)
         let fragments = fragmenter.fragments
 
-        let precursors = fragments.filter { $0.isPrecursor() }
+        let precursors = fragments.filter {
+            $0.isPrecursor()
+        }
         #expect(precursors[0].monoisotopicMass.rounded(scale: 4) == decimal("803.4080"))
         #expect(precursors[1].monoisotopicMass.rounded(scale: 4) == decimal("785.3974"))
         #expect(precursors[2].monoisotopicMass.rounded(scale: 4) == decimal("786.3815"))
@@ -794,7 +864,9 @@ struct BioSwiftTests {
         let fragmenter = PeptideFragmenter(peptide: peptide)
         let fragments = fragmenter.fragments
 
-        let bIons = fragments.filter { $0.fragmentType == .bIon }
+        let bIons = fragments.filter {
+            $0.fragmentType == .bIon
+        }
         #expect(bIons.count == 13)
 
         if let b2 = fragmenter.fragment(at: 2, for: .bIon) {
@@ -813,10 +885,14 @@ struct BioSwiftTests {
             #expect(b12minNH3.monoisotopicMass.rounded(scale: 4) == decimal("1109.5296"))  // b12 - NH3
         }
 
-        let zIons = fragments.filter { $0.fragmentType == .zIon }
+        let zIons = fragments.filter {
+            $0.fragmentType == .zIon
+        }
         #expect(zIons.count == 13)
 
-        let cIons = fragments.filter { $0.fragmentType == .cIon }
+        let cIons = fragments.filter {
+            $0.fragmentType == .cIon
+        }
         #expect(cIons.count == 13)
 
         if let c1 = fragmenter.fragment(at: 1, for: .cIon) {
@@ -836,18 +912,32 @@ struct BioSwiftTests {
             let fragmenter = PeptideFragmenter(peptide: peptide)
             let fragments = fragmenter.fragments
 
-            let aIonsMinusWater = fragments.filter { $0.fragmentType == .aIonMinusWater }
+            let aIonsMinusWater = fragments.filter {
+                $0.fragmentType == .aIonMinusWater
+            }
             #expect(aIonsMinusWater.count == 14)
 
-            let aIonsMinusAmmonia = fragments.filter { $0.fragmentType == .aIonMinusAmmonia }
+            let aIonsMinusAmmonia = fragments.filter {
+                $0.fragmentType == .aIonMinusAmmonia
+            }
             #expect(aIonsMinusAmmonia.count == 3)
 
-            let bIons = fragments.filter { $0.fragmentType == .bIon }
-            #expect(!bIons.contains(where: { $0.index == 1 }))
+            let bIons = fragments.filter {
+                $0.fragmentType == .bIon
+            }
+            #expect(!bIons.contains(where: {
+                $0.index == 1
+            }))
 
-            let yIons = fragments.filter { $0.fragmentType == .yIonMinusWater }
-            #expect(!yIons.contains(where: { $0.index == 1 }))
-            #expect(!yIons.contains(where: { $0.index == 2 }))
+            let yIons = fragments.filter {
+                $0.fragmentType == .yIonMinusWater
+            }
+            #expect(!yIons.contains(where: {
+                $0.index == 1
+            }))
+            #expect(!yIons.contains(where: {
+                $0.index == 2
+            }))
 
             if let b8 = fragmenter.fragment(at: 8, for: .bIon) {
                 #expect(b8.monoisotopicMass.rounded(scale: 4) == decimal("799.4019"))  // b8 M-ox
@@ -861,8 +951,12 @@ struct BioSwiftTests {
                 #expect(x9.monoisotopicMass.rounded(scale: 4) == decimal("984.4316"))  // x9 M-ox
             }
 
-            let zIons = fragments.filter { $0.fragmentType == .zIon }
-            #expect(!zIons.contains(where: { $0.index == 13 }))
+            let zIons = fragments.filter {
+                $0.fragmentType == .zIon
+            }
+            #expect(!zIons.contains(where: {
+                $0.index == 13
+            }))
 
             if let z12 = fragmenter.fragment(at: 12, for: .zIon) {
                 #expect(z12.monoisotopicMass.rounded(scale: 4) == decimal("1283.6287"))  // z12 M-ox
@@ -877,15 +971,33 @@ struct BioSwiftTests {
         let fragmenter = PeptideFragmenter(peptide: peptide)
         let fragments = fragmenter.fragments
 
-        let bIonsMinusWater = fragments.filter { $0.fragmentType == .bIonMinusWater }
-        #expect(!bIonsMinusWater.contains(where: { $0.index == 1 }))
-        #expect(!bIonsMinusWater.contains(where: { $0.index == 2 }))
-        #expect(!bIonsMinusWater.contains(where: { $0.index == 3 }))
-        #expect(!bIonsMinusWater.contains(where: { $0.index == 4 }))
-        #expect(!bIonsMinusWater.contains(where: { $0.index == 5 }))
-        #expect(!bIonsMinusWater.contains(where: { $0.index == 6 }))
-        #expect(!bIonsMinusWater.contains(where: { $0.index == 7 }))
-        #expect(bIonsMinusWater.contains(where: { $0.index == 8 }))
+        let bIonsMinusWater = fragments.filter {
+            $0.fragmentType == .bIonMinusWater
+        }
+        #expect(!bIonsMinusWater.contains(where: {
+            $0.index == 1
+        }))
+        #expect(!bIonsMinusWater.contains(where: {
+            $0.index == 2
+        }))
+        #expect(!bIonsMinusWater.contains(where: {
+            $0.index == 3
+        }))
+        #expect(!bIonsMinusWater.contains(where: {
+            $0.index == 4
+        }))
+        #expect(!bIonsMinusWater.contains(where: {
+            $0.index == 5
+        }))
+        #expect(!bIonsMinusWater.contains(where: {
+            $0.index == 6
+        }))
+        #expect(!bIonsMinusWater.contains(where: {
+            $0.index == 7
+        }))
+        #expect(bIonsMinusWater.contains(where: {
+            $0.index == 8
+        }))
 
         if let b8MinusWater = fragmenter.fragment(at: 8, for: .bIonMinusWater) {
             #expect(b8MinusWater.monoisotopicMass.rounded(scale: 4) == decimal("1039.5221"))  // b8-H20
@@ -901,7 +1013,9 @@ struct BioSwiftTests {
         let fragmenter = PeptideFragmenter(peptide: peptide)
         let fragments = fragmenter.fragments
 
-        let bIons = fragments.filter { $0.fragmentType == .bIon }
+        let bIons = fragments.filter {
+            $0.fragmentType == .bIon
+        }
         #expect(bIons.count == 14)
 
         if let b2 = fragmenter.fragment(at: 2, for: .bIon) {
@@ -912,7 +1026,9 @@ struct BioSwiftTests {
             #expect(b12.monoisotopicMass.rounded(scale: 4) == decimal("1126.5561"))  // b12
         }
 
-        let bIonsMinusWater = fragments.filter { $0.fragmentType == .bIonMinusWater }
+        let bIonsMinusWater = fragments.filter {
+            $0.fragmentType == .bIonMinusWater
+        }
         #expect(bIonsMinusWater.count == 14)
 
         if let b12MinusWater = fragmenter.fragment(at: 12, for: .bIonMinusWater) {
@@ -923,10 +1039,14 @@ struct BioSwiftTests {
             #expect(b12MinusAmmonia.monoisotopicMass.rounded(scale: 4) == decimal("1109.5296"))  // b12 - NH3
         }
 
-        let zIons = fragments.filter { $0.fragmentType == .zIon }
+        let zIons = fragments.filter {
+            $0.fragmentType == .zIon
+        }
         #expect(zIons.count == 26)
 
-        let cIons = fragments.filter { $0.fragmentType == .cIon }
+        let cIons = fragments.filter {
+            $0.fragmentType == .cIon
+        }
         #expect(cIons.count == 14)
 
         if let c1 = fragmenter.fragment(at: 1, for: .cIon) {
@@ -963,9 +1083,13 @@ struct BioSwiftTests {
         #expect(protein.sequence(for: 0) == "AASAS")
         #expect(protein.sequence(for: 1) == "AASASSSA")
 
-        #expect(protein.aminoAcids(for: 0).map { $0.oneLetterCode } == ["A", "A", "S", "A", "S"])
+        #expect(protein.aminoAcids(for: 0).map {
+            $0.oneLetterCode
+        } == ["A", "A", "S", "A", "S"])
         #expect(
-            protein.aminoAcids(for: 1).map { $0.oneLetterCode } == [
+            protein.aminoAcids(for: 1).map {
+                $0.oneLetterCode
+            } == [
                 "A", "A", "S", "A", "S", "S", "S", "A",
             ])
 
@@ -1105,7 +1229,9 @@ struct BioSwiftTests {
 
         let data = Data(malformedXML.utf8)
 
-        #expect(throws: Error.self) { try UnimodXMLParser().parse(data: data) }
+        #expect(throws: Error.self) {
+            try UnimodXMLParser().parse(data: data)
+        }
     }
 
     @Test func malformedXMLThrowsParseError2() throws {
@@ -1117,7 +1243,9 @@ struct BioSwiftTests {
         let data = Data(malformedXML.utf8)
 
         let error = try #require(
-            #expect(throws: Error.self) { try UnimodXMLParser().parse(data: data) })
+            #expect(throws: Error.self) {
+                try UnimodXMLParser().parse(data: data)
+            })
 
         let nsError = error as NSError
 
@@ -1131,7 +1259,9 @@ struct BioSwiftTests {
         let parser = UnimodXMLParser()
 
         let error = try #require(
-            #expect(throws: Error.self) { try parser.parse(data: malformedXML) })
+            #expect(throws: Error.self) {
+                try parser.parse(data: malformedXML)
+            })
 
         let nsError = error as NSError
 
@@ -1148,7 +1278,9 @@ struct BioSwiftTests {
 
         let parser = UnimodXMLParser()
 
-        let error = #expect(throws: Error.self) { try parser.parse(data: malformedXML) }
+        let error = #expect(throws: Error.self) {
+            try parser.parse(data: malformedXML)
+        }
 
         let nsError = try #require(error as NSError?)
 
@@ -1242,7 +1374,7 @@ struct BioSwiftTests {
      ]
 
      let fooItems = items.filter {
-     $0.properties.contains(.foo)
+         $0.properties.contains(.foo)
      }
 
      #expect(fooItems.map(\.name) == [
@@ -1260,7 +1392,9 @@ struct BioSwiftTests {
      ]
 
      let names = items
-     .filter { $0.properties.contains(.foo) }
+     .filter {
+         $0.properties.contains(.foo)
+     }
      .map(\.name)
      .joined(separator: ", ")
 

@@ -1,1 +1,3 @@
-struct BioSwift { var text = "Hello, World!" }
+struct BioSwift {
+    var text = "Hello, World!"
+}

@@ -7,6 +7,38 @@
 
 import Foundation
 
+// MARK: - Public compatibility globals
+
+public var aminoAcidLibrary: [AminoAcid] {
+    ReferenceLibraryDefaults.bundled.aminoAcids
+}
+
+public var modificationLibrary: [Modification] {
+    ReferenceLibraryDefaults.bundled.modifications + [zeroModification]
+}
+
+public var elementLibrary: [ChemicalElement] {
+    ReferenceLibraryDefaults.bundled.elements
+}
+
+public var enzymeLibrary: [Enzyme] {
+    ReferenceLibraryDefaults.bundled.enzymes + [unspecifiedEnzyme]
+}
+
+public var hydropathyLibrary: [Hydro] {
+    ReferenceLibraryDefaults.bundled.hydropathyValues
+}
+
+public enum ElementsLibraryDefaults {
+    public static let bundled: [ChemicalElement] = {
+        do {
+            return try JSONReferenceLibraryLoader.loadElements()
+        } catch {
+            fatalError("Failed to load bundled elements library: \(error)")
+        }
+    }()
+}
+
 public enum ReferenceLibraryDefaults {
     public static let bundled: ReferenceLibraries = {
         do {
@@ -73,7 +105,9 @@ public struct ElementReferences: Sendable {
 
     public init(elements: [ChemicalElement]) {
         self.elements = elements
-        self.elementsBySymbol = Dictionary(uniqueKeysWithValues: elements.map { ($0.symbol, $0) })
+        self.elementsBySymbol = Dictionary(uniqueKeysWithValues: elements.map {
+            ($0.symbol, $0)
+        })
     }
 
     public func element(symbol: String) -> ChemicalElement? {
@@ -89,7 +123,9 @@ public struct AminoAcidReferences: Sendable {
     public init(aminoAcids: [AminoAcid]) {
         self.aminoAcids = aminoAcids
         self.aminoAcidsByIdentifier = Dictionary(
-            uniqueKeysWithValues: aminoAcids.map { ($0.identifier, $0) })
+            uniqueKeysWithValues: aminoAcids.map {
+                ($0.identifier, $0)
+            })
     }
 
     public func aminoAcid(identifier: String) -> AminoAcid? {
@@ -104,7 +140,9 @@ public struct ModificationReferences: Sendable {
 
     public init(modifications: [Modification]) {
         self.modifications = modifications
-        self.modificationsByName = Dictionary(uniqueKeysWithValues: modifications.map { ($0.name, $0) })
+        self.modificationsByName = Dictionary(uniqueKeysWithValues: modifications.map {
+            ($0.name, $0)
+        })
     }
 
     public func modification(named name: String) -> Modification? {
@@ -113,7 +151,9 @@ public struct ModificationReferences: Sendable {
 
     public func modifications(applicableTo residueIdentifier: String) -> [Modification] {
         modifications.filter { modification in
-            modification.specificities.contains { $0.site == residueIdentifier }
+            modification.specificities.contains {
+                $0.site == residueIdentifier
+            }
         }
     }
 }
@@ -125,7 +165,9 @@ public struct EnzymeReferences: Sendable {
 
     public init(enzymes: [Enzyme]) {
         self.enzymes = enzymes
-        self.enzymesByName = Dictionary(uniqueKeysWithValues: enzymes.map { ($0.name, $0) })
+        self.enzymesByName = Dictionary(uniqueKeysWithValues: enzymes.map {
+            ($0.name, $0)
+        })
     }
 
     public func enzyme(named name: String) -> Enzyme? {
@@ -141,7 +183,9 @@ public struct HydropathyReferences: Sendable {
     public init(hydropathyValues: [Hydro]) {
         self.hydropathyValues = hydropathyValues
         self.hydropathyValuesByName = Dictionary(
-            uniqueKeysWithValues: hydropathyValues.map { ($0.name, $0) })
+            uniqueKeysWithValues: hydropathyValues.map {
+                ($0.name, $0)
+            })
     }
 
     public func hydropathy(named name: String) -> Hydro? {

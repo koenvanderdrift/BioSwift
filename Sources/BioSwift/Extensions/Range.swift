@@ -23,7 +23,9 @@ public struct UIRange: Equatable {
     }
 
     public init?(validating value: ClosedRange<Int>) {
-        guard value.lowerBound >= 1 else { return nil }
+        guard value.lowerBound >= 1 else {
+            return nil
+        }
 
         self.value = value
     }
@@ -40,18 +42,24 @@ public struct UIRange: Equatable {
     }
 
     public func toNSRange(clampedToTextLength textLength: Int) -> NSRange? {
-        guard textLength > 0 else { return nil }
+        guard textLength > 0 else {
+            return nil
+        }
 
         /*
          UIRange is 1-based and inclusive.
          Ignore ranges that do not intersect the current text.
-         */guard upperBound >= 1, lowerBound <= textLength else { return nil }
+         */guard upperBound >= 1, lowerBound <= textLength else {
+             return nil
+         }
 
         let clampedLowerBound = Swift.max(1, lowerBound)
 
         let clampedUpperBound = Swift.min(textLength, upperBound)
 
-        guard clampedUpperBound >= clampedLowerBound else { return nil }
+        guard clampedUpperBound >= clampedLowerBound else {
+            return nil
+        }
 
         return NSRange(
             location: clampedLowerBound - 1, length: clampedUpperBound - clampedLowerBound + 1)
@@ -98,7 +106,9 @@ extension Range<Int> {
     }
 
     public var length: Int {
-        guard isValidRange else { return 0 }
+        guard isValidRange else {
+            return 0
+        }
 
         return upperBound - lowerBound + 1
     }
@@ -115,7 +125,9 @@ extension Range<Int> {
         let lower = Swift.max(0, lowerBound)
         let upper = Swift.min(sequenceLength, upperBound)
 
-        guard upper >= lower else { return zeroRange }
+        guard upper >= lower else {
+            return zeroRange
+        }
 
         return lower..<upper
     }
@@ -123,19 +135,25 @@ extension Range<Int> {
 
 extension Range where Bound == Int {
     public func localIndex(for sourceIndex: Int) -> Int? {
-        guard contains(sourceIndex) else { return nil }
+        guard contains(sourceIndex) else {
+            return nil
+        }
 
         return sourceIndex - lowerBound
     }
 
     public var uiRange: UIRange? {
-        guard !isEmpty else { return nil }
+        guard !isEmpty else {
+            return nil
+        }
 
         return UIRange((lowerBound + 1)...upperBound)
     }
 
     public var endPoints: (from: Int, to: Int)? {
-        guard !isEmpty else { return nil }
+        guard !isEmpty else {
+            return nil
+        }
 
         return (from: lowerBound, to: upperBound - 1)
     }

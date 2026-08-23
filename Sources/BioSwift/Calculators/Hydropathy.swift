@@ -26,7 +26,9 @@ public class Hydropathy {
         // http://isoelectric.org/www_old/files/practise-isoelectric-point.html
         // https://stackoverflow.com/questions/30545518/how-to-count-occurrences-of-an-element-in-a-swift-array
 
-        if residues.isEmpty { return 0.0 }
+        if residues.isEmpty {
+            return 0.0
+        }
 
         let pKaValues = hydropathyValues(for: "pKa")
 
@@ -35,15 +37,31 @@ public class Hydropathy {
             let cystinepKa = pKaValues["C"], let tyrosinepKa = pKaValues["Y"],
             let histidinepKa = pKaValues["H"], let lysinepKa = pKaValues["K"],
             let argininepKa = pKaValues["R"]
-        else { return 0.0 }
+        else {
+            return 0.0
+        }
 
-        let numberOfAsparticAcid = Double(residues.count { $0.oneLetterCode == "D" })
-        let numberOfGlutamicAcid = Double(residues.count { $0.oneLetterCode == "E" })
-        let numberOfCysteine = Double(residues.count { $0.oneLetterCode == "C" })
-        let numberOfTyrosine = Double(residues.count { $0.oneLetterCode == "Y" })
-        let numberOfHistidine = Double(residues.count { $0.oneLetterCode == "H" })
-        let numberOfLysine = Double(residues.count { $0.oneLetterCode == "K" })
-        let numberOfArginine = Double(residues.count { $0.oneLetterCode == "R" })
+        let numberOfAsparticAcid = Double(residues.count {
+            $0.oneLetterCode == "D"
+        })
+        let numberOfGlutamicAcid = Double(residues.count {
+            $0.oneLetterCode == "E"
+        })
+        let numberOfCysteine = Double(residues.count {
+            $0.oneLetterCode == "C"
+        })
+        let numberOfTyrosine = Double(residues.count {
+            $0.oneLetterCode == "Y"
+        })
+        let numberOfHistidine = Double(residues.count {
+            $0.oneLetterCode == "H"
+        })
+        let numberOfLysine = Double(residues.count {
+            $0.oneLetterCode == "K"
+        })
+        let numberOfArginine = Double(residues.count {
+            $0.oneLetterCode == "R"
+        })
 
         // starting point pI = 6.5 - theoretically it should be 7, but average protein pI is 6.5 so we increase the probability of finding the solution
         var pH = 6.5
@@ -52,7 +70,9 @@ public class Hydropathy {
         let delta = 0.01
 
         while pH - minpH > delta, maxpH - pH > delta {
-            if pH >= 14.0 { break }
+            if pH >= 14.0 {
+                break
+            }
 
             let cTerminalCharge = -1 * (1 / (1 + pow(10, cTerminalpKa - pH)))
             let asparticAcidCharge =
@@ -90,6 +110,8 @@ public class Hydropathy {
             return [:]
         }
 
-        return values.mapValues { Double($0)! }
+        return values.mapValues {
+            Double($0)!
+        }
     }
 }

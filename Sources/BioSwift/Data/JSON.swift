@@ -13,7 +13,9 @@ public func parseJSONData<A: Decodable>(_: A.Type, from fileName: String) throws
 
     let data = try loadData(from: fileName, withExtension: "json")
 
-    do { return try JSONDecoder().decode([A].self, from: data) } catch {
+    do {
+        return try JSONDecoder().decode([A].self, from: data)
+    } catch {
         throw LoadError.fileDecodingFailed(name: fullName, underlyingError: error)
     }
 }
@@ -23,7 +25,32 @@ public func parseJSONDataFromBundle<A: Decodable>(_: A.Type, from fileName: Stri
 
     let data = try loadData(from: fileName, withExtension: "json", in: .module)
 
-    do { return try JSONDecoder().decode([A].self, from: data) } catch {
+    do {
+        return try JSONDecoder().decode([A].self, from: data)
+    } catch {
         throw LoadError.fileDecodingFailed(name: fullName, underlyingError: error)
+    }
+}
+
+// MARK: - Partial JSON result
+
+struct JSONReferenceLibraries {
+    let enzymes: [Enzyme]
+    let hydropathyValues: [Hydro]
+}
+
+// MARK: - JSON loader
+
+enum JSONReferenceLibraryLoader {
+    static func loadElements() throws -> [ChemicalElement] {
+        try parseJSONDataFromBundle(ChemicalElement.self, from: "elements")
+    }
+
+    static func loadOtherLibraries() throws -> JSONReferenceLibraries {
+        let enzymes = try parseJSONDataFromBundle(Enzyme.self, from: "enzymes")
+
+        let hydropathyValues = try parseJSONDataFromBundle(Hydro.self, from: "hydropathy")
+
+        return JSONReferenceLibraries(enzymes: enzymes, hydropathyValues: hydropathyValues)
     }
 }

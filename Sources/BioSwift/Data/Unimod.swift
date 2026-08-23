@@ -8,6 +8,40 @@
 
 import Foundation
 
+public var loadElementsFromUnimod: Bool = false
+
+// MARK: - Partial XML result
+
+struct XMLReferenceLibraries {
+    let aminoAcids: [AminoAcid]
+    let modifications: [Modification]
+}
+
+// MARK: - XML loader
+
+enum XMLReferenceLibraryLoader {
+    static func load() throws -> XMLReferenceLibraries {
+        let elements = ElementReferences(elements: ElementsLibraryDefaults.bundled)
+
+        return try load(elements: elements)
+    }
+
+    static func load(elements: ElementReferences) throws -> XMLReferenceLibraries {
+        let data = try loadData(from: "unimod", withExtension: "xml", in: .module)
+
+        let parser = UnimodXMLParser(elements: elements)
+        return try parser.parse(data: data)
+    }
+
+    /// Handy for tests with custom XML data.
+    static func parse(data: Data) throws -> XMLReferenceLibraries {
+        let elements = ElementReferences(elements: ElementsLibraryDefaults.bundled)
+
+        let parser = UnimodXMLParser(elements: elements)
+        return try parser.parse(data: data)
+    }
+}
+
 public final class UnimodXMLParser: NSObject {
     private let elementReferences: ElementReferences
     private var parseError: Error?

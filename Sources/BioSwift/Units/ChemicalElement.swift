@@ -48,7 +48,9 @@ public struct ChemicalElement: Codable, Symbol, Sendable {
         setUp()
     }
 
-    private mutating func setUp() { cachedMasses = calculateMasses() }
+    private mutating func setUp() {
+        cachedMasses = calculateMasses()
+    }
 
     public var identifier: String {
         symbol

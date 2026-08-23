@@ -209,7 +209,9 @@ extension Enzyme {
 
         let restrictions =
             cleaveRestrictions
-            .filter { $0.position != 0 }
+            .filter {
+                $0.position != 0
+            }
             .map(restrictionRegex)
             .joined()
 

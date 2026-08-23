@@ -117,14 +117,18 @@ public struct Modification: Codable, Sendable {
 
         var reactions = [Reaction]()
 
-        let negativeElements = elements.filter { $0.value < 0 }
+        let negativeElements = elements.filter {
+            $0.value < 0
+        }
         if negativeElements.count > 0 {
             let group = FunctionalGroup(
                 name: name, elements: negativeElements, elementReferences: elementReferences)
             reactions.append(Reaction.remove(group))
         }
 
-        let postiveElements = elements.filter { $0.value > 0 }
+        let postiveElements = elements.filter {
+            $0.value > 0
+        }
         if postiveElements.count > 0 {
             let group = FunctionalGroup(
                 name: name, elements: postiveElements, elementReferences: elementReferences)

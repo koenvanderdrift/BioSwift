@@ -30,13 +30,16 @@ public struct Peptide: Chain, Codable, Equatable, Sendable {
         residues = Self.createResidues(from: sequence, aminoAcids: aminoAcids)
     }
 
-    public init(residues: [AminoAcid]) { self.residues = residues }
+    public init(residues: [AminoAcid]) {
+        self.residues = residues
+    }
 
     private static func createResidues(
         from string: String,
         aminoAcids: AminoAcidReferences
     ) -> [AminoAcid] {
-        string.compactMap { char in aminoAcids.aminoAcid(identifier: String(char))
+        string.compactMap {
+            char in aminoAcids.aminoAcid(identifier: String(char))
         }
     }
 }
@@ -51,7 +54,9 @@ extension Peptide {
             hydropathyReferences: hydropathyReferences
         ).hydropathyValues(for: hydropathyType)
 
-        return residues.compactMap { values[$0.oneLetterCode] }
+        return residues.compactMap {
+            values[$0.oneLetterCode]
+        }
     }
 
     public func isoelectricPoint(
@@ -70,7 +75,9 @@ extension Peptide: Ionizable {
     }
 
     public func calculateMasses() -> MassContainer {
-        if residues.isEmpty { return zeroMass }
+        if residues.isEmpty {
+            return zeroMass
+        }
 
         return residueMasses() + terminalMasses()
     }

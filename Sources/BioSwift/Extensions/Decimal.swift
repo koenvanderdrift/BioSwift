@@ -28,7 +28,9 @@ extension Decimal {
     public func roundedInt(mode: Decimal.RoundingMode = .plain) -> Int? {
         let value = rounded(scale: 0, mode: mode)
 
-        guard value >= Decimal(Int.min), value <= Decimal(Int.max) else { return nil }
+        guard value >= Decimal(Int.min), value <= Decimal(Int.max) else {
+            return nil
+        }
 
         return NSDecimalNumber(decimal: value).intValue
     }

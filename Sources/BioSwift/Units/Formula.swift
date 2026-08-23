@@ -39,7 +39,9 @@ public struct FormulaParser: Sendable {
 
         for (symbol, count) in elementsDictionary {
             let absCount = abs(count)
-            guard absCount > 0 else { continue }
+            guard absCount > 0 else {
+                continue
+            }
 
             guard let element = elements.element(symbol: symbol) else {
                 throw ParseError.elementNotFound(symbol)
@@ -62,7 +64,9 @@ public struct FormulaParser: Sendable {
         var elementCount = 0
         var elementName = ""
 
-        if i == 0 { return [:] }
+        if i == 0 {
+            return [:]
+        }
 
         while i > 0 {
             i -= 1
@@ -74,11 +78,15 @@ public struct FormulaParser: Sendable {
                     throw ParseError.missingClosingBracket
                 }
             } else if isClosingBracket(char) {
-                if elementCount == 0 { elementCount = 1 }
+                if elementCount == 0 {
+                    elementCount = 1
+                }
 
                 parenthesisLevel += 1
 
-                if parenthesisLevel > multiplication.count - 1 { multiplication.append(0) }
+                if parenthesisLevel > multiplication.count - 1 {
+                    multiplication.append(0)
+                }
 
                 multiplication[parenthesisLevel] =
                     elementCount * multiplication[parenthesisLevel - 1]
@@ -87,13 +95,19 @@ public struct FormulaParser: Sendable {
             } else if char.isNumber {
                 let j = i
 
-                while i > 0, characters[i - 1].isNumber { i -= 1 }
+                while i > 0, characters[i - 1].isNumber {
+                    i -= 1
+                }
 
-                guard let count = Int(string[i..<(j + 1)]) else { throw ParseError.invalidCount }
+                guard let count = Int(string[i..<(j + 1)]) else {
+                    throw ParseError.invalidCount
+                }
 
                 elementCount = count
 
-                if elementCount == 0 { throw ParseError.zeroCount }
+                if elementCount == 0 {
+                    throw ParseError.zeroCount
+                }
             } else if char.isLowercase {
                 guard i > 0, characters[i - 1].isUppercase else {
                     throw ParseError.invalidCharacterFound(char)
@@ -103,13 +117,19 @@ public struct FormulaParser: Sendable {
             } else if char.isUppercase {
                 elementName = String(char) + elementName
 
-                if elementCount == 0 { elementCount = 1 }
+                if elementCount == 0 {
+                    elementCount = 1
+                }
 
                 let j = i
 
-                while i > 0, characters[i - 1].isNumber { i -= 1 }
+                while i > 0, characters[i - 1].isNumber {
+                    i -= 1
+                }
 
-                if i > 0, isOpeningBracket(characters[i - 1]) == false { i = j }
+                if i > 0, isOpeningBracket(characters[i - 1]) == false {
+                    i = j
+                }
 
                 guard let element = elements.element(symbol: elementName) else {
                     throw ParseError.elementNotFound(elementName)
@@ -152,7 +172,9 @@ public struct FormulaParser: Sendable {
 
         for (element, count) in countedElements {
             result += element.symbol
-            if count > 1 { result += String(count) }
+            if count > 1 {
+                result += String(count)
+            }
         }
 
         return result
@@ -207,7 +229,9 @@ public struct Formula: Codable, Sendable {
         self.countedElements = countedElements
         self.cachedMasses = zeroMass
 
-        if self.string.isEmpty { self.string = formulaString() }
+        if self.string.isEmpty {
+            self.string = formulaString()
+        }
 
         cachedMasses = calculateMasses()
     }
@@ -223,7 +247,9 @@ public struct Formula: Codable, Sendable {
     public func countAllElements() -> Int {
         var result = 0
 
-        for (_, value) in countedElements { result += value }
+        for (_, value) in countedElements {
+            result += value
+        }
 
         return result
     }
@@ -237,7 +263,9 @@ extension Formula {
 
         for (element, count) in countedElements {
             result += element.symbol
-            if count > 1 { result += String(count) }
+            if count > 1 {
+                result += String(count)
+            }
         }
 
         return result
@@ -251,7 +279,9 @@ extension Formula: Equatable {
 
     static func + (lhs: Formula, rhs: Formula) -> Formula {
         let result = lhs.countedElements.merging(
-            rhs.countedElements, uniquingKeysWith: { left, right in left + right })
+            rhs.countedElements, uniquingKeysWith: {
+                left, right in left + right
+            })
 
         return Formula(with: result)
     }
@@ -262,7 +292,9 @@ extension Formula: Equatable {
 
     static func - (lhs: Formula, rhs: Formula) -> Formula {
         let result = lhs.countedElements.merging(
-            rhs.countedElements, uniquingKeysWith: { left, right in abs(left - right) })
+            rhs.countedElements, uniquingKeysWith: {
+                left, right in abs(left - right)
+            })
 
         return Formula(with: result)
     }
@@ -280,7 +312,9 @@ extension Formula: MassRepresentable {
     public func calculateMasses() -> MassContainer {
         var result = zeroMass
 
-        for (element, count) in countedElements { result += count * element.masses }
+        for (element, count) in countedElements {
+            result += count * element.masses
+        }
 
         return result
     }
@@ -495,7 +529,9 @@ extension String {
      'T': 'C10H13N2O7P',
      'C': 'C9H12N3O6P',
      'G': 'C10H12N5O6P',
-     'complements': {'A': 'T', 'T': 'A', 'C': 'G', 'G': 'C'},
+     'complements': {
+         'A': 'T', 'T': 'A', 'C': 'G', 'G': 'C'
+     },
  }
 
  # Nucleotide monophosphates - H2O
@@ -504,7 +540,9 @@ extension String {
      'U': 'C9H11N2O8P',
      'C': 'C9H12N3O7P',
      'G': 'C10H12N5O7P',
-     'complements': {'A': 'U', 'U': 'A', 'C': 'G', 'G': 'C'},
+     'complements': {
+         'A': 'U', 'U': 'A', 'C': 'G', 'G': 'C'
+     },
  }
 
  # Formula preprocessors

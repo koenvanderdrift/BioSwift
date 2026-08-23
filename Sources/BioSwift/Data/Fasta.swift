@@ -56,8 +56,9 @@ public final class FastaParser {
 
         do {
             return try await parseFasta(fastaText)
-
-        } catch { throw LoadError.fileDecodingFailed(name: fullName, underlyingError: error) }
+        } catch {
+            throw LoadError.fileDecodingFailed(name: fullName, underlyingError: error)
+        }
     }
 
     public func parse(_ data: Data) async throws -> [FastaRecord] {
@@ -74,14 +75,17 @@ public final class FastaParser {
 
         do {
             return try await parseFasta(fastaText)
-
-        } catch { throw LoadError.fileDecodingFailed(name: fullName, underlyingError: error) }
+        } catch {
+            throw LoadError.fileDecodingFailed(name: fullName, underlyingError: error)
+        }
     }
 
     public func parseFasta(_ fastaText: String) async throws -> [FastaRecord] {
         let rawRecords = try splitRawRecords(from: fastaText)
 
-        return try await rawRecords.concurrentMap { rawRecord in try self.parseRecord(rawRecord) }
+        return try await rawRecords.concurrentMap {
+            rawRecord in try self.parseRecord(rawRecord)
+        }
     }
 }
 
@@ -98,7 +102,9 @@ extension FastaParser {
     func rawRecord(from recordText: String) throws -> RawRecord {
         var cleanedRecordText = recordText.trimmingCharacters(in: .whitespacesAndNewlines)
 
-        if cleanedRecordText.first == ">" { cleanedRecordText.removeFirst() }
+        if cleanedRecordText.first == ">" {
+            cleanedRecordText.removeFirst()
+        }
 
         let parts = cleanedRecordText.split(
             separator: "\n", maxSplits: 1, omittingEmptySubsequences: false)
@@ -111,7 +117,9 @@ extension FastaParser {
 
         let rawData = parts.count > 1 ? String(parts[1]) : ""
 
-        let data = rawData.filter { !$0.isWhitespace }
+        let data = rawData.filter {
+            !$0.isWhitespace
+        }
 
         guard !info.isEmpty, !data.isEmpty else {
             throw LoadError.fileParsingFailed(name: "records", underlyingError: nil)
@@ -149,7 +157,9 @@ extension FastaParser {
 
         var input = input[...]
 
-        if input.hasPrefix(">") { input.remove(at: input.startIndex) }
+        if input.hasPrefix(">") {
+            input.remove(at: input.startIndex)
+        }
 
         if input.contains("ups|") {
             return parseUPS(input)
@@ -300,7 +310,7 @@ extension FastaParser {
  }
 
  public func fastaRecords(from _: Data) throws -> [FastaRecord] {
-    []
+     []
  }
 
  public func parseFastaData(from fileName: String) throws -> [FastaRecord] {
@@ -421,7 +431,9 @@ extension FastaParser {
         }
 
         func contains(_ key: Key) -> Bool {
-            allKeys.contains(where: { $0.stringValue == key.stringValue })
+            allKeys.contains(where: {
+                $0.stringValue == key.stringValue
+            })
         }
 
         func decodeNil(forKey key: Key) throws -> Bool {

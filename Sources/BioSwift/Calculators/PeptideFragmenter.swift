@@ -16,7 +16,9 @@ public class PeptideFragmenter {
 
     public let peptide: Peptide
 
-    public init(peptide: Peptide) { self.peptide = peptide }
+    public init(peptide: Peptide) {
+        self.peptide = peptide
+    }
 
     public lazy var fragments: [PeptideFragment] =
         precursorIons() + immoniumIons() + nTerminalIons() + cTerminalIons()
@@ -49,7 +51,9 @@ public class PeptideFragmenter {
     }
 
     func immoniumIons() -> [PeptideFragment] {
-        guard let symbols = peptide.symbolSet as? Set<AminoAcid> else { return [] }
+        guard let symbols = peptide.symbolSet as? Set<AminoAcid> else {
+            return []
+        }
 
         return symbols.map { symbol -> PeptideFragment in
             PeptideFragment(
@@ -61,8 +65,12 @@ public class PeptideFragmenter {
     func nTerminalIons() -> [PeptideFragment] {
         var result = [PeptideFragment]()
 
-        guard peptide.adducts.count > 0 else { return result }
-        guard let firstResidue = peptide.residues.first else { return result }
+        guard peptide.adducts.count > 0 else {
+            return result
+        }
+        guard let firstResidue = peptide.residues.first else {
+            return result
+        }
 
         let startIndex = peptide.residues.startIndex
 
@@ -84,7 +92,9 @@ public class PeptideFragmenter {
                 }
             }
 
-            guard peptide.residues.count > 2 else { continue }
+            guard peptide.residues.count > 2 else {
+                continue
+            }
 
             for i in 2...peptide.residues.count - 1 {
                 let index = peptide.residues.index(startIndex, offsetBy: i)
@@ -96,7 +106,9 @@ public class PeptideFragmenter {
                 if z == 1 {
                     result.append(bIon)
                 } else {
-                    if bIon.index == peptide.residues.count - 1 { result.append(bIon) }
+                    if bIon.index == peptide.residues.count - 1 {
+                        result.append(bIon)
+                    }
                 }
 
                 if bIon.canLoseWater() {
@@ -132,7 +144,9 @@ public class PeptideFragmenter {
                 if z == 1 {
                     result.append(aIon)
                 } else {
-                    if aIon.index == peptide.residues.count - 1 { result.append(aIon) }
+                    if aIon.index == peptide.residues.count - 1 {
+                        result.append(aIon)
+                    }
                 }
 
                 if aIon.canLoseWater() {
@@ -169,7 +183,9 @@ public class PeptideFragmenter {
                     if z == 1 {
                         result.append(cIon)
                     } else {
-                        if cIon.index == peptide.residues.count - 1 { result.append(cIon) }
+                        if cIon.index == peptide.residues.count - 1 {
+                            result.append(cIon)
+                        }
                     }
                 }
             }
@@ -185,8 +201,12 @@ public class PeptideFragmenter {
     func cTerminalIons() -> [PeptideFragment] {
         var result = [PeptideFragment]()
 
-        guard peptide.adducts.count > 0 else { return result }
-        guard peptide.residues.count > 1 else { return result }
+        guard peptide.adducts.count > 0 else {
+            return result
+        }
+        guard peptide.residues.count > 1 else {
+            return result
+        }
 
         let endIndex = peptide.residues.endIndex
 
@@ -222,7 +242,9 @@ public class PeptideFragmenter {
                     residues: yIon.residues, type: .zIon, index: i, adducts: yIon.adducts,
                     cTerm: peptide.cTerminal)
 
-                if zIon.residues.first?.oneLetterCode != "P" { result.append(zIon) }
+                if zIon.residues.first?.oneLetterCode != "P" {
+                    result.append(zIon)
+                }
             }
         }
 
@@ -236,10 +258,16 @@ public class PeptideFragmenter {
     public func fragment(at index: Int, for type: PeptideFragmentType, with charge: Charge = 1)
         -> PeptideFragment?
     {
-        guard precursorIons().isEmpty == false else { return nil }
+        guard precursorIons().isEmpty == false else {
+            return nil
+        }
 
-        let ions = fragments.filter { $0.fragmentType == type }
+        let ions = fragments.filter {
+            $0.fragmentType == type
+        }
 
-        return ions.filter { $0.index == index && $0.charge == charge }.first
+        return ions.filter {
+            $0.index == index && $0.charge == charge
+        }.first
     }
 }

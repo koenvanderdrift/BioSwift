@@ -10,7 +10,9 @@ import Foundation
 
 extension Array {
     public func consecutiveGroups(ofSize size: Int) -> [[Element]] {
-        guard size > 0, size <= count else { return [] }
+        guard size > 0, size <= count else {
+            return []
+        }
 
         return (0...(count - size)).map { startIndex in
             Array(self[startIndex..<(startIndex + size)])
@@ -24,14 +26,20 @@ extension Array where Element: Sendable {
     {
         try await withThrowingTaskGroup(of: (Int, B).self) { group in
             for (index, element) in self.enumerated() {
-                group.addTask { try (index, transform(element)) }
+                group.addTask {
+                    try (index, transform(element))
+                }
             }
 
             var results = [B?](repeating: nil, count: count)
 
-            for try await (index, value) in group { results[index] = value }
+            for try await (index, value) in group {
+                results[index] = value
+            }
 
-            return results.map { $0! }
+            return results.map {
+                $0!
+            }
         }
     }
 }
@@ -39,7 +47,9 @@ extension Array where Element: Sendable {
 extension Array where Element: Chain {
     func combinedConsecutiveChains(ofSize size: Int) -> [Element] {
         consecutiveGroups(ofSize: size).map { chainGroup in
-            let combinedAminoAcids = chainGroup.flatMap { $0.residues }
+            let combinedAminoAcids = chainGroup.flatMap {
+                $0.residues
+            }
 
             let combinedRange: Range<Int> =
                 chainGroup.first!.range.lowerBound..<chainGroup.last!.range.upperBound
@@ -70,7 +80,9 @@ extension Array where Element: StringProtocol {
      }
 
      var value: A {
-         queue.sync { _value }
+         queue.sync {
+             _value
+         }
      }
 
      func atomically(_ transform: (inout A) -> Void) {
@@ -108,7 +120,9 @@ extension Array where Element: StringProtocol {
           }
 
           let result = self[..<index]
-          defer { self = self[index...] }
+          defer {
+              self = self[index...]
+          }
 
           return result
       }

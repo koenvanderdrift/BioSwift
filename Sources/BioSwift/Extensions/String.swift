@@ -37,7 +37,9 @@ extension String {
     public func substring(
         between startMarker: String, and endMarker: String, startingAt searchStart: Index? = nil
     ) -> Substring? {
-        guard !startMarker.isEmpty, !endMarker.isEmpty else { return nil }
+        guard !startMarker.isEmpty, !endMarker.isEmpty else {
+            return nil
+        }
 
         let startIndex = searchStart ?? self.startIndex
 
@@ -46,14 +48,18 @@ extension String {
         }
 
         guard let closingRange = range(of: endMarker, range: openingRange.upperBound..<endIndex)
-        else { return nil }
+        else {
+            return nil
+        }
 
         return self[openingRange.upperBound..<closingRange.lowerBound]
     }
 
     /// Returns all non-overlapping substrings located between matching markers.
     public func substrings(between startMarker: String, and endMarker: String) -> [Substring] {
-        guard !startMarker.isEmpty, !endMarker.isEmpty else { return [] }
+        guard !startMarker.isEmpty, !endMarker.isEmpty else {
+            return []
+        }
 
         var results: [Substring] = []
         var searchStart = startIndex
@@ -81,7 +87,9 @@ extension String {
         of substring: String, options: CompareOptions = [], locale: Locale? = nil,
         allowingOverlaps: Bool = false
     ) -> [Range<Index>] {
-        guard !substring.isEmpty else { return [] }
+        guard !substring.isEmpty else {
+            return []
+        }
 
         precondition(
             !options.contains(.backwards),
@@ -103,7 +111,9 @@ extension String {
                 nextStart = foundRange.upperBound
             }
 
-            guard nextStart < endIndex else { break }
+            guard nextStart < endIndex else {
+                break
+            }
 
             searchRange = nextStart..<endIndex
         }
@@ -148,7 +158,9 @@ extension String {
 
 extension String {
     public func ranges(matching searchString: String) -> [Range<Int>] {
-        guard !searchString.isEmpty else { return [] }
+        guard !searchString.isEmpty else {
+            return []
+        }
 
         var results: [Range<Int>] = []
         var searchStart = startIndex
@@ -173,7 +185,9 @@ extension String {
     public func substring(in range: Range<Int>) -> String {
         let validRange = range.clamped(toSequenceLength: count)
 
-        guard validRange.isValidRange else { return "" }
+        guard validRange.isValidRange else {
+            return ""
+        }
 
         let start = index(startIndex, offsetBy: validRange.lowerBound - 1)
 
@@ -185,7 +199,9 @@ extension String {
     public func removing(range: Range<Int>) -> String {
         let validRange = range.clamped(toSequenceLength: count)
 
-        guard validRange.isValidRange else { return self }
+        guard validRange.isValidRange else {
+            return self
+        }
 
         var result = self
 
@@ -203,17 +219,31 @@ extension StringProtocol {
     /*
      // Text-file parsing only: zero-based character offsets
      extension StringProtocol {
-         subscript(_ offset: Int) -> Element { ... }
-         subscript(_ range: Range<Int>) -> SubSequence { ... }
-         subscript(_ range: ClosedRange<Int>) -> SubSequence { ... }
-         subscript(_ range: PartialRangeThrough<Int>) -> SubSequence { ... }
-         subscript(_ range: PartialRangeUpTo<Int>) -> SubSequence { ... }
-         subscript(_ range: PartialRangeFrom<Int>) -> SubSequence { ... }
+         subscript(_ offset: Int) -> Element {
+             ...
+         }
+         subscript(_ range: Range<Int>) -> SubSequence {
+             ...
+         }
+         subscript(_ range: ClosedRange<Int>) -> SubSequence {
+             ...
+         }
+         subscript(_ range: PartialRangeThrough<Int>) -> SubSequence {
+             ...
+         }
+         subscript(_ range: PartialRangeUpTo<Int>) -> SubSequence {
+             ...
+         }
+         subscript(_ range: PartialRangeFrom<Int>) -> SubSequence {
+             ...
+         }
      }
      */
 
     /// Returns the character at a zero-based character offset.
-    public subscript(_ offset: Int) -> Element { self[index(at: offset, allowingEndIndex: false)] }
+    public subscript(_ offset: Int) -> Element {
+        self[index(at: offset, allowingEndIndex: false)]
+    }
 
     /// Returns a substring using zero-based, upper-bound-exclusive
     /// character offsets.
@@ -240,7 +270,9 @@ extension StringProtocol {
     }
 
     /// Returns a substring up to, but excluding, a zero-based character offset.
-    public subscript(_ range: PartialRangeUpTo<Int>) -> SubSequence { self[0..<range.upperBound] }
+    public subscript(_ range: PartialRangeUpTo<Int>) -> SubSequence {
+        self[0..<range.upperBound]
+    }
 
     /// Returns a substring beginning at a zero-based character offset.
     public subscript(_ range: PartialRangeFrom<Int>) -> SubSequence {
@@ -254,7 +286,9 @@ extension StringProtocol {
 
         guard let result = index(startIndex, offsetBy: offset, limitedBy: endIndex),
             allowingEndIndex || result != endIndex
-        else { preconditionFailure("String offset \(offset) is outside the valid bounds.") }
+        else {
+            preconditionFailure("String offset \(offset) is outside the valid bounds.")
+        }
 
         return result
     }
@@ -262,7 +296,9 @@ extension StringProtocol {
 
 extension Substring {
     @discardableResult mutating func scanUntil(_ character: Character) -> Substring? {
-        guard let index = firstIndex(of: character) else { return nil }
+        guard let index = firstIndex(of: character) else {
+            return nil
+        }
 
         let result = self[..<index]
         self = self[index...]
@@ -271,13 +307,17 @@ extension Substring {
     }
 
     @discardableResult mutating func scanThrough(_ character: Character) -> Character? {
-        guard first == character else { return nil }
+        guard first == character else {
+            return nil
+        }
 
         return removeFirst()
     }
 
     @discardableResult mutating func skip(_ count: Int) -> Substring? {
-        guard self.count >= count else { return nil }
+        guard self.count >= count else {
+            return nil
+        }
 
         let skipped = prefix(count)
         removeFirst(count)
@@ -286,7 +326,9 @@ extension Substring {
     }
 
     @discardableResult mutating func skipThrough(_ delimiter: Character) -> Bool {
-        guard let index = firstIndex(of: delimiter) else { return false }
+        guard let index = firstIndex(of: delimiter) else {
+            return false
+        }
 
         self = self[self.index(after: index)...]
 

@@ -25,12 +25,16 @@ extension Double {
     ) -> Double {
         precondition(fractionDigits >= 0, "fractionDigits must be non-negative")
 
-        guard isFinite else { return self }
+        guard isFinite else {
+            return self
+        }
 
         let multiplier = pow(10.0, Double(fractionDigits))
         let scaledValue = self * multiplier
 
-        guard multiplier.isFinite, scaledValue.isFinite else { return self }
+        guard multiplier.isFinite, scaledValue.isFinite else {
+            return self
+        }
 
         return scaledValue.rounded(rule) / multiplier
     }
