@@ -174,18 +174,6 @@ struct BioSwiftTests {
         #expect(sum.moverz(for: 2).monoisotopicMass.rounded(scale: 4) == decimal("358.6916"))
 
         // https://www.chemcalc.org/peptides?digestion=%5Bobject%20Object%5D&filter=%5Bobject%20Object%5D&fragmentation=a%3Dfalse%26b%3Dfalse%26c%3Dfalse%26i%3Dfalse%26n%3Dfalse%26x%3Dfalse%26y%3Dfalse%26ya%3Dfalse%26yb%3Dfalse%26z%3Dfalse&ionizations=H%2B.%28H%2B%292.%28H%2B%293&protonation=false&sequence=SAMPLER%0A%0A
-
-        //        var aas: [AminoAcid] = []
-        //
-        //        for c in string {
-        //            if let aa = aminoAcidLibrary.first(where: { $0.oneLetterCode == String(c)}) {
-        //                aas.append(aa)
-        //
-        //            }
-        //        }
-        //
-        //        let testPeptide = Peptide(residues: aas)
-        //        #expect(testPeptide.masses.moverz(for: 1).monoisotopicMass.rounded(scale: 4) == decimal("803.4080"))
     }
 
     @Test mutating func peptideMonoisotopicMass() {
@@ -415,23 +403,18 @@ struct BioSwiftTests {
         #expect(testPeptide.sequenceString == "DWGPPSSD")
     }
 
-    @Test func parseFasta() async {
-        do {
-            let fastaRecords = try await FastaParser().parseBundleFile("ecoli")
-            #expect(fastaRecords.count == 4392)
+    @Test func parseFasta() async throws {
+        let fastaRecords = try await FastaParser().parseBundleFile("ecoli")
+        #expect(fastaRecords.count == 4392)
 
-            if let record = fastaRecords.first(where: { $0.accession == "P02919" }) {
-                #expect(record.shortName == "PBPB_ECOLI")
-                #expect(record.fullName == "Penicillin-binding protein 1B")
-                #expect(record.organism == "Escherichia coli (strain K12)")
-                #expect(
-                    record.sequence
-                        == "MAGNDREPIGRKGKPTRPVKQKVSRRRYEDDDDYDDYDDYEDEEPMPRKGKGKGKGRKPRGKRGWLWLLLKLAIVFAVLIAIYGVYLDQKIRSRIDGKVWQLPAAVYGRMVNLEPDMTISKNEMVKLLEATQYRQVSKMTRPGEFTVQANSIEMIRRPFDFPDSKEGQVRARLTFDGDHLATIVNMENNRQFGFFRLDPRLITMISSPNGEQRLFVPRSGFPDLLVDTLLATEDRHFYEHDGISLYSIGRAVLANLTAGRTVQGASTLTQQLVKNLFLSSERSYWRKANEAYMALIMDARYSKDRILELYMNEVYLGQSGDNEIRGFPLASLYYFGRPVEELSLDQQALLVGMVKGASIYNPWRNPKLALERRNLVLRLLQQQQIIDQELYDMLSARPLGVQPRGGVISPQPAFMQLVRQELQAKLGDKVKDLSGVKIFTTFDSVAQDAAEKAAVEGIPALKKQRKLSDLETAIVVVDRFSGEVRAMVGGSEPQFAGYNRAMQARRSIGSLAKPATYLTALSQPKIYRLNTWIADAPIALRQPNGQVWSPQNDDRRYSESGRVMLVDALTRSMNVPTVNLGMALGLPAVTETWIKLGVPKDQLHPVPAMLLGALNLTPIEVAQAFQTIASGGNRAPLSALRSVIAEDGKVLYQSFPQAERAVPAQAAYLTLWTMQQVVQRGTGRQLGAKYPNLHLAGKTGTTNNNVDTWFAGIDGSTVTITWVGRDNNQPTKLYGASGAMSIYQRYLANQTPTPLNLVPPEDIADMGVDYDGNFVCSGGMRILPVWTSDPQSLCQQSEMQQQPSGNPFDQSSQPQQQPQQQPAQQEQKDSDGVAGWIKDMFGSN"
-                )
-            }
-        } catch {
-            debugPrint(error.localizedDescription)
-        }
+        let record = try #require(fastaRecords.first(where: { $0.accession == "P02919" }))
+        #expect(record.shortName == "PBPB_ECOLI")
+        #expect(record.fullName == "Penicillin-binding protein 1B")
+        #expect(record.organism == "Escherichia coli (strain K12)")
+        #expect(
+            record.sequence
+                == "MAGNDREPIGRKGKPTRPVKQKVSRRRYEDDDDYDDYDDYEDEEPMPRKGKGKGKGRKPRGKRGWLWLLLKLAIVFAVLIAIYGVYLDQKIRSRIDGKVWQLPAAVYGRMVNLEPDMTISKNEMVKLLEATQYRQVSKMTRPGEFTVQANSIEMIRRPFDFPDSKEGQVRARLTFDGDHLATIVNMENNRQFGFFRLDPRLITMISSPNGEQRLFVPRSGFPDLLVDTLLATEDRHFYEHDGISLYSIGRAVLANLTAGRTVQGASTLTQQLVKNLFLSSERSYWRKANEAYMALIMDARYSKDRILELYMNEVYLGQSGDNEIRGFPLASLYYFGRPVEELSLDQQALLVGMVKGASIYNPWRNPKLALERRNLVLRLLQQQQIIDQELYDMLSARPLGVQPRGGVISPQPAFMQLVRQELQAKLGDKVKDLSGVKIFTTFDSVAQDAAEKAAVEGIPALKKQRKLSDLETAIVVVDRFSGEVRAMVGGSEPQFAGYNRAMQARRSIGSLAKPATYLTALSQPKIYRLNTWIADAPIALRQPNGQVWSPQNDDRRYSESGRVMLVDALTRSMNVPTVNLGMALGLPAVTETWIKLGVPKDQLHPVPAMLLGALNLTPIEVAQAFQTIASGGNRAPLSALRSVIAEDGKVLYQSFPQAERAVPAQAAYLTLWTMQQVVQRGTGRQLGAKYPNLHLAGKTGTTNNNVDTWFAGIDGSTVTITWVGRDNNQPTKLYGASGAMSIYQRYLANQTPTPLNLVPPEDIADMGVDYDGNFVCSGGMRILPVWTSDPQSLCQQSEMQQQPSGNPFDQSSQPQQQPQQQPAQQEQKDSDGVAGWIKDMFGSN"
+        )
     }
 
     @Test func subChain() {
@@ -1363,42 +1346,4 @@ struct BioSwiftTests {
 
         #expect(property.displayName == "Charged Positive")
     }
-
-    /*
-     @Test
-     func filteringItemsByProperty() {
-     let items = [
-     Item(name: "First", properties: [.foo, .bar]),
-     Item(name: "Second", properties: [.bar]),
-     Item(name: "Third", properties: [.foo, .baz])
-     ]
-
-     let fooItems = items.filter {
-         $0.properties.contains(.foo)
-     }
-
-     #expect(fooItems.map(\.name) == [
-     "First",
-     "Third"
-     ])
-     }
-
-     @Test
-     func commaSeparatedFooItemNames() {
-     let items = [
-     Item(name: "First", properties: [.foo]),
-     Item(name: "Second", properties: [.bar]),
-     Item(name: "Third", properties: [.foo, .baz])
-     ]
-
-     let names = items
-     .filter {
-         $0.properties.contains(.foo)
-     }
-     .map(\.name)
-     .joined(separator: ", ")
-
-     #expect(names == "First, Third")
-     }
-     */
 }

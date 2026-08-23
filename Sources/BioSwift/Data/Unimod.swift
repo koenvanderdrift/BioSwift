@@ -125,6 +125,13 @@ public final class UnimodXMLParser: NSObject {
 
         return XMLReferenceLibraries(aminoAcids: parsedAminoAcids, modifications: parsedModifications)
     }
+
+    private func resetModificationState() {
+        modificationTitle.removeAll()
+        modificationFullName.removeAll()
+        modificationElements.removeAll()
+        modificationSpecificities.removeAll()
+    }
 }
 
 // MARK: XML Parser Delegate
@@ -144,6 +151,7 @@ extension UnimodXMLParser: XMLParserDelegate {
             isElement = true
         } else if xmlElementName == modification {
             isModification = true
+            resetModificationState()
 
             if let title = attributeDict[titleAttributeKey],
                 skipTitleStrings.contains(where: title.contains) == false
@@ -235,14 +243,10 @@ extension UnimodXMLParser: XMLParserDelegate {
                     elementReferences: elementReferences)
 
                 parsedModifications.append(mod)
-
-                modificationTitle.removeAll()
-                modificationFullName.removeAll()
-                modificationElements.removeAll()
-                modificationSpecificities.removeAll()
-
-                isModification = false
             }
+
+            resetModificationState()
+            isModification = false
         } else if xmlElementName == aminoAcid {
             if aminoAcidName.isEmpty == false {
                 let aa = AminoAcid(
