@@ -41,6 +41,13 @@ struct BioSwiftTests {
         #expect(!libraries.hydropathyValues.isEmpty)
     }
 
+    @Test func bundledHydropathyReferencesCacheNumericValues() {
+        let pKaValues = HydropathyReferenceDefaults.bundled.numericHydropathyValues(named: "pKa")
+
+        #expect(pKaValues["CTerminal"] != nil)
+        #expect(pKaValues["NTerminal"] != nil)
+    }
+
     @Test func xmlResourceExistsAndLoads() throws {
         let data = try loadData(from: "unimod", withExtension: "xml", in: .module)
 
@@ -141,6 +148,26 @@ struct BioSwiftTests {
 
         #expect(group.averageMass.rounded(scale: 3) == decimal("608.555"))
     }  // 608.5556
+
+    @Test func completeSequenceMassMatchesExplicitResidueSum() {
+        let peptide = Peptide(sequence: "SAMPLER")
+        let explicitMasses = peptide.residues.reduce(zeroMass) {
+            $0 + $1.masses
+        } + peptide.terminalMasses()
+
+        #expect(peptide.calculateMasses() == explicitMasses)
+    }
+
+    @Test func modifiedCompleteSequenceMassMatchesExplicitResidueSum() throws {
+        var peptide = Peptide(sequence: "DWSSD")
+        let phos = try #require(modificationLibrary.first(where: { $0.name == "Phospho" }))
+        peptide.addModification(phos, at: 3)
+        let explicitMasses = peptide.residues.reduce(zeroMass) {
+            $0 + $1.masses
+        } + peptide.terminalMasses()
+
+        #expect(peptide.calculateMasses() == explicitMasses)
+    }
 
     @Test func chainMassesForIndividualResidues() {
         var peptide = Peptide(sequence: "SAMPLER")
@@ -471,6 +498,35 @@ struct BioSwiftTests {
 
     @Test func emptySelection() {
         #expect(testProtein.selectionMass(zeroRange) == zeroMass)
+    }
+
+    @Test func selectionMassRangeMatchesSubChain() throws {
+        let chain = try #require(testProtein.chains.first)
+        let range = 10..<200
+
+        #expect(testProtein.selectionMass(range) == chain.subChain(range: range).pseudomolecularIon())
+    }
+
+    @Test mutating func chargedSelectionMassRangeMatchesSubChain() throws {
+        let chain = try #require(testProtein.chains.first)
+        let range = 10..<200
+        testProtein.setAdducts(type: protonAdduct, count: 2)
+        var subChain = chain.subChain(range: range)
+        subChain.setAdducts(type: protonAdduct, count: testProtein.charge)
+
+        #expect(testProtein.selectionMass(range) == subChain.pseudomolecularIon())
+    }
+
+    @Test func isoelectricPointRangeMatchesSubChain() throws {
+        let chain = try #require(testProtein.chains.first)
+        let range = 10..<200
+
+        #expect(testProtein.isoelectricPoint(range: range) == chain.subChain(range: range).isoelectricPoint())
+    }
+
+    @Test func isoelectricPointInvalidRangeReturnsZero() {
+        #expect(testProtein.isoelectricPoint(range: -1..<2) == 0.0)
+        #expect(Peptide(sequence: "").isoelectricPoint() == 0.0)
     }
 
     @Test func digest() {

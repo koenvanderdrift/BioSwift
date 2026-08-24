@@ -101,6 +101,16 @@ extension MassContainer {
 
         return self
     }
+
+    func selectionMassOverCharge(for charge: Charge) -> Self {
+        guard charge > 0 else {
+            return self
+        }
+
+        let protonatedMass = (self + (charge * (protonAdduct.group.masses - electronMass))) / charge
+
+        return protonatedMass.moverz(for: charge)
+    }
 }
 
 extension MassContainer: Equatable {

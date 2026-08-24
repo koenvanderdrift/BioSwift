@@ -103,13 +103,61 @@ extension Chain {
     }
 
     func residueMasses() -> MassContainer {
-        residues.reduce(zeroMass) {
+        residueMasses(in: residues.startIndex..<residues.endIndex)
+    }
+
+    func residueMasses(in range: Range<Int>) -> MassContainer {
+        let validRange = range.clamped(toSequenceLength: residues.count)
+
+        guard validRange.isValidRange, !validRange.isEmpty else {
+            return zeroMass
+        }
+
+        return residues[validRange].reduce(zeroMass) {
             $0 + $1.masses
         }
     }
 }
 
 extension AminoAcidChain {
+    func aminoAcidResidueMasses() -> MassContainer {
+        aminoAcidResidueMasses(in: residues.startIndex..<residues.endIndex)
+    }
+
+    func aminoAcidResidueMasses(in range: Range<Int>) -> MassContainer {
+        let validRange = range.clamped(toSequenceLength: residues.count)
+
+        guard validRange.isValidRange, !validRange.isEmpty else {
+            return zeroMass
+        }
+
+        var residueCounts: [String: Int] = [:]
+        var unmodifiedMassesByResidue: [String: MassContainer] = [:]
+        var modificationMasses = zeroMass
+
+        for residue in residues[validRange] {
+            let identifier = residue.oneLetterCode
+            residueCounts[identifier, default: 0] += 1
+
+            if unmodifiedMassesByResidue[identifier] == nil {
+                unmodifiedMassesByResidue[identifier] = residue.formula.masses
+            }
+
+            if let modification = residue.modification {
+                modificationMasses += modification.masses
+            }
+        }
+
+        return residueCounts.reduce(modificationMasses) { result, item in
+            let (identifier, count) = item
+            guard let residueMasses = unmodifiedMassesByResidue[identifier] else {
+                return result
+            }
+
+            return result + (count * residueMasses)
+        }
+    }
+
     public var formula: Formula {
         var f = zeroFormula
 
@@ -147,7 +195,7 @@ extension Chain where ResidueType == AminoAcid {
 
     public func isoelectricPoint(
         hydropathyReferences: HydropathyReferences = HydropathyReferenceDefaults.bundled) -> Double {
-        Hydropathy(residues: residues, hydropathyReferences: hydropathyReferences).isoElectricPoint()
+        Hydropathy.isoElectricPoint(for: residues, hydropathyReferences: hydropathyReferences)
     }
 }
 

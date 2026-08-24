@@ -49,7 +49,7 @@ extension Peptide: Ionizable {
             return zeroMass
         }
 
-        return residueMasses() + terminalMasses()
+        return aminoAcidResidueMasses() + terminalMasses()
     }
 
 }

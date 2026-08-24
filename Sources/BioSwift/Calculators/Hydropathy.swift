@@ -28,14 +28,15 @@ public class Hydropathy {
     }
 
     public func isoElectricPoint() -> Double {
+        Self.isoElectricPoint(for: residues, hydropathyReferences: hydropathyReferences)
+    }
+
+    public static func isoElectricPoint<Residues: Sequence>(
+        for residues: Residues,
+        hydropathyReferences: HydropathyReferences = HydropathyReferenceDefaults.bundled
+    ) -> Double where Residues.Element == AminoAcid {
         // http://isoelectric.org/www_old/files/practise-isoelectric-point.html
-        // https://stackoverflow.com/questions/30545518/how-to-count-occurrences-of-an-element-in-a-swift-array
-
-        if residues.isEmpty {
-            return 0.0
-        }
-
-        let pKaValues = hydropathyValues(for: "pKa")
+        let pKaValues = hydropathyValues(for: "pKa", hydropathyReferences: hydropathyReferences)
 
         guard let cTerminalpKa = pKaValues["CTerminal"], let nTerminalpKa = pKaValues["NTerminal"],
             let asparticAcidpKa = pKaValues["D"], let glutamicAcidpKa = pKaValues["E"],
@@ -46,27 +47,41 @@ public class Hydropathy {
             return 0.0
         }
 
-        let numberOfAsparticAcid = Double(residues.count {
-            $0.oneLetterCode == "D"
-        })
-        let numberOfGlutamicAcid = Double(residues.count {
-            $0.oneLetterCode == "E"
-        })
-        let numberOfCysteine = Double(residues.count {
-            $0.oneLetterCode == "C"
-        })
-        let numberOfTyrosine = Double(residues.count {
-            $0.oneLetterCode == "Y"
-        })
-        let numberOfHistidine = Double(residues.count {
-            $0.oneLetterCode == "H"
-        })
-        let numberOfLysine = Double(residues.count {
-            $0.oneLetterCode == "K"
-        })
-        let numberOfArginine = Double(residues.count {
-            $0.oneLetterCode == "R"
-        })
+        var residueCount = 0
+        var numberOfAsparticAcid = 0.0
+        var numberOfGlutamicAcid = 0.0
+        var numberOfCysteine = 0.0
+        var numberOfTyrosine = 0.0
+        var numberOfHistidine = 0.0
+        var numberOfLysine = 0.0
+        var numberOfArginine = 0.0
+
+        for residue in residues {
+            residueCount += 1
+
+            switch residue.oneLetterCode {
+            case "D":
+                numberOfAsparticAcid += 1
+            case "E":
+                numberOfGlutamicAcid += 1
+            case "C":
+                numberOfCysteine += 1
+            case "Y":
+                numberOfTyrosine += 1
+            case "H":
+                numberOfHistidine += 1
+            case "K":
+                numberOfLysine += 1
+            case "R":
+                numberOfArginine += 1
+            default:
+                continue
+            }
+        }
+
+        guard residueCount > 0 else {
+            return 0.0
+        }
 
         // starting point pI = 6.5 - theoretically it should be 7, but average protein pI is 6.5 so we increase the probability of finding the solution
         var pH = 6.5
@@ -111,12 +126,10 @@ public class Hydropathy {
     }
 
     public func hydropathyValues(for name: String) -> [String: Double] {
-        guard let values = hydropathyReferences.hydropathy(named: name)?.values else {
-            return [:]
-        }
+        Self.hydropathyValues(for: name, hydropathyReferences: hydropathyReferences)
+    }
 
-        return values.mapValues {
-            Double($0)!
-        }
+    private static func hydropathyValues(for name: String, hydropathyReferences: HydropathyReferences) -> [String: Double] {
+        hydropathyReferences.numericHydropathyValues(named: name)
     }
 }

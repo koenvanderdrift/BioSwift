@@ -123,15 +123,22 @@ extension BioMolecule where ChainType.ResidueType == AminoAcid {
             return 0.0
         }
 
-        let chain = range.map {
-            chains[index].subChain(range: $0)
-        } ?? chains[index]
+        let chain = chains[index]
 
-        guard chain.numberOfResidues > 0 else {
+        guard let range else {
+            return chain.isoelectricPoint(hydropathyReferences: hydropathyReferences)
+        }
+
+        let validRange = range.clamped(toSequenceLength: chain.residues.count)
+
+        guard validRange.isValidRange, !validRange.isEmpty else {
             return 0.0
         }
 
-        return chain.isoelectricPoint(hydropathyReferences: hydropathyReferences)
+        return Hydropathy.isoElectricPoint(
+            for: chain.residues[validRange],
+            hydropathyReferences: hydropathyReferences
+        )
     }
 
     public func selectedIsoelectricPoint(chainIndex index: Int = 0, _ range: Range<Int>) -> Double {
@@ -194,7 +201,22 @@ extension BioMolecule where Self: Ionizable, ChainType: Ionizable {
             return zeroMass
         }
 
-        var sub = chains[index].subChain(range: range)
+        let chain = chains[index]
+        let validRange = range.clamped(toSequenceLength: chain.residues.count)
+
+        guard validRange.isValidRange, !validRange.isEmpty else {
+            return zeroMass
+        }
+
+        if let aminoAcidChain = chain as? any AminoAcidChain {
+            let selectedMasses = aminoAcidChain.aminoAcidResidueMasses(in: validRange)
+                + aminoAcidChain.nTerminal.masses
+                + aminoAcidChain.cTerminal.masses
+
+            return selectedMasses.selectionMassOverCharge(for: charge)
+        }
+
+        var sub = chain.subChain(range: validRange)
 
         if charge > 0 {
             sub.setAdducts(type: protonAdduct, count: charge)

@@ -179,6 +179,7 @@ public struct HydropathyReferences: Sendable {
     public let hydropathyValues: [Hydro]
 
     private let hydropathyValuesByName: [String: Hydro]
+    private let numericHydropathyValuesByName: [String: [String: Double]]
 
     public init(hydropathyValues: [Hydro]) {
         self.hydropathyValues = hydropathyValues
@@ -186,10 +187,20 @@ public struct HydropathyReferences: Sendable {
             uniqueKeysWithValues: hydropathyValues.map {
                 ($0.name, $0)
             })
+        self.numericHydropathyValuesByName = Dictionary(
+            uniqueKeysWithValues: hydropathyValues.map { hydro in
+                let numericValues = hydro.values.compactMapValues(Double.init)
+
+                return (hydro.name, numericValues)
+            })
     }
 
     public func hydropathy(named name: String) -> Hydro? {
         hydropathyValuesByName[name]
+    }
+
+    public func numericHydropathyValues(named name: String) -> [String: Double] {
+        numericHydropathyValuesByName[name] ?? [:]
     }
 }
 
