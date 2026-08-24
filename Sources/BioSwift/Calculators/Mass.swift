@@ -83,6 +83,12 @@ public struct MassContainer: Codable, Sendable {
     public var monoisotopicMass = Dalton(0.0)
     public var averageMass = Dalton(0.0)
     public var nominalMass = Int(0)
+    
+    public init(monoisotopicMass: Dalton = Dalton(0.0), averageMass: Dalton = Dalton(0.0), nominalMass: Int = Int(0)) {
+        self.monoisotopicMass = monoisotopicMass
+        self.averageMass = averageMass
+        self.nominalMass = nominalMass
+    }
 }
 
 extension MassContainer {
@@ -144,6 +150,11 @@ extension MassContainer: Comparable {
 public struct Adduct: Codable, Equatable, Sendable {
     public var group: FunctionalGroup
     public var charge: Charge
+    
+    public init(group: FunctionalGroup, charge: Charge) {
+        self.group = group
+        self.charge = charge
+    }
 }
 
 public let protonAdduct = Adduct(group: hydrogen, charge: 1)

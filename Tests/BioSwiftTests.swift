@@ -48,10 +48,10 @@ struct BioSwiftTests {
     }
 
     @Test func xmlReferenceLibrariesLoadProperly() throws {
-        let xmlLibraries = try XMLReferenceLibraryLoader.load()
+        let unimodLibraries = try UnimodReferenceLibraryLoader.load()
 
-        #expect(!xmlLibraries.aminoAcids.isEmpty)
-        #expect(!xmlLibraries.modifications.isEmpty)
+        #expect(!unimodLibraries.aminoAcids.isEmpty)
+        #expect(!unimodLibraries.modifications.isEmpty)
     }
 
     @Test func jsonReferenceLibrariesLoadProperly() throws {
@@ -61,14 +61,14 @@ struct BioSwiftTests {
         #expect(!jsonLibraries.hydropathyValues.isEmpty)
     }
 
-    @Test func xmlReferenceLibrariesLoadDebug() throws {
-        let xmlLibraries = try XMLReferenceLibraryLoader.load()
+    @Test func unimodReferenceLibrariesLoadDebug() throws {
+        let unimodLibraries = try UnimodReferenceLibraryLoader.load()
 
-        debugPrint("aminoAcids:", xmlLibraries.aminoAcids.count)
-        debugPrint("modifications:", xmlLibraries.modifications.count)
+        debugPrint("aminoAcids:", unimodLibraries.aminoAcids.count)
+        debugPrint("modifications:", unimodLibraries.modifications.count)
 
-        #expect(!xmlLibraries.aminoAcids.isEmpty)
-        #expect(!xmlLibraries.modifications.isEmpty)
+        #expect(!unimodLibraries.aminoAcids.isEmpty)
+        #expect(!unimodLibraries.modifications.isEmpty)
     }
 
     @Test func sequenceLength() {

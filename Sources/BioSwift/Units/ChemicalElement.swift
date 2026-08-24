@@ -12,6 +12,12 @@ public struct Isotope: Codable, Sendable {
     public let mass: String
     public let ordinalNumber: String
     public let abundance: String
+    
+    public init(mass: String, ordinalNumber: String, abundance: String) {
+        self.mass = mass
+        self.ordinalNumber = ordinalNumber
+        self.abundance = abundance
+    }
 }
 
 /// ChemicalElement conforms to ``Symbol`` and is the building block for every chemical structure

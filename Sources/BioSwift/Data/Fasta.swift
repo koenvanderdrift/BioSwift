@@ -43,12 +43,13 @@ public struct FastaRecord: Codable, Hashable, Identifiable, Sendable {
 /// FastaParser takes a text file as input and produces a``FastaRecord`` array.
 /// Currently, it can process SwissProt, UPS, IPI, and Ensemble files
 public final class FastaParser {
-    public struct RawRecord {
+    struct RawRecord {
         let info: String
         let sequence: String
     }
 
-    public init() {}
+    public init() {
+    }
 
     public func parse(_ fileName: String) async throws -> [FastaRecord] {
         let fastaText = try loadText(from: fileName, withExtension: "fasta")

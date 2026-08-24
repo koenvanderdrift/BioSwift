@@ -58,12 +58,12 @@ enum ReferenceLibraryLoader {
         let elements = try JSONReferenceLibraryLoader.loadElements()
         let jsonLibraries = try JSONReferenceLibraryLoader.loadOtherLibraries()
         let elementReferences = ElementReferences(elements: elements)
-        let xmlLibraries = try XMLReferenceLibraryLoader.load(elements: elementReferences)
+        let unimodLibraries = try UnimodReferenceLibraryLoader.load(elements: elementReferences)
 
         return ReferenceLibraries(
             elements: elements,
-            aminoAcids: xmlLibraries.aminoAcids,
-            modifications: xmlLibraries.modifications,
+            aminoAcids: unimodLibraries.aminoAcids,
+            modifications: unimodLibraries.modifications,
             enzymes: jsonLibraries.enzymes,
             hydropathyValues: jsonLibraries.hydropathyValues
         )

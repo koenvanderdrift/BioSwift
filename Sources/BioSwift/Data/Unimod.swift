@@ -12,21 +12,21 @@ public var loadElementsFromUnimod: Bool = false
 
 // MARK: - Partial XML result
 
-struct XMLReferenceLibraries {
+struct UnimodReferenceLibraries {
     let aminoAcids: [AminoAcid]
     let modifications: [Modification]
 }
 
 // MARK: - XML loader
 
-enum XMLReferenceLibraryLoader {
-    static func load() throws -> XMLReferenceLibraries {
+enum UnimodReferenceLibraryLoader {
+    static func load() throws -> UnimodReferenceLibraries {
         let elements = ElementReferences(elements: ElementsLibraryDefaults.bundled)
 
         return try load(elements: elements)
     }
 
-    static func load(elements: ElementReferences) throws -> XMLReferenceLibraries {
+    static func load(elements: ElementReferences) throws -> UnimodReferenceLibraries {
         let data = try loadData(from: "unimod", withExtension: "xml", in: .module)
 
         let parser = UnimodXMLParser(elements: elements)
@@ -34,7 +34,7 @@ enum XMLReferenceLibraryLoader {
     }
 
     /// Handy for tests with custom XML data.
-    static func parse(data: Data) throws -> XMLReferenceLibraries {
+    static func parse(data: Data) throws -> UnimodReferenceLibraries {
         let elements = ElementReferences(elements: ElementsLibraryDefaults.bundled)
 
         let parser = UnimodXMLParser(elements: elements)
@@ -42,7 +42,7 @@ enum XMLReferenceLibraryLoader {
     }
 }
 
-public final class UnimodXMLParser: NSObject {
+final class UnimodXMLParser: NSObject {
     private let elementReferences: ElementReferences
     private var parseError: Error?
 
@@ -100,12 +100,12 @@ public final class UnimodXMLParser: NSObject {
 
     let rightArrow = "\u{2192}"
 
-    public init(elements: ElementReferences = ElementReferenceDefaults.bundled) {
+    init(elements: ElementReferences = ElementReferenceDefaults.bundled) {
         self.elementReferences = elements
         super.init()
     }
 
-    func parse(data: Data) throws -> XMLReferenceLibraries {
+    func parse(data: Data) throws -> UnimodReferenceLibraries {
         skipTitleStrings = [cation, unknown, xlink, atypeion, "2H", "13C", "15N"]
 
         parseError = nil
@@ -123,7 +123,7 @@ public final class UnimodXMLParser: NSObject {
                 ?? LoadError.fileParsingFailed(name: "unimod.xml", underlyingError: nil)
         }
 
-        return XMLReferenceLibraries(aminoAcids: parsedAminoAcids, modifications: parsedModifications)
+        return UnimodReferenceLibraries(aminoAcids: parsedAminoAcids, modifications: parsedModifications)
     }
 
     private func resetModificationState() {
@@ -137,13 +137,13 @@ public final class UnimodXMLParser: NSObject {
 // MARK: XML Parser Delegate
 
 extension UnimodXMLParser: XMLParserDelegate {
-    public func parserDidStartDocument(_: XMLParser) {
+    func parserDidStartDocument(_: XMLParser) {
         #if DEBUG
             BioSwiftDiagnostics.log("Started parsing unimod.xml")
         #endif
     }
 
-    public func parser(
+    func parser(
         _: XMLParser, didStartElement xmlElementName: String, namespaceURI _: String?,
         qualifiedName _: String?, attributes attributeDict: [String: String] = [:]
     ) {
@@ -213,7 +213,7 @@ extension UnimodXMLParser: XMLParserDelegate {
         }
     }
 
-    public func parser(
+    func parser(
         _: XMLParser, didEndElement xmlElementName: String, namespaceURI _: String?,
         qualifiedName _: String?
     ) {
@@ -266,13 +266,13 @@ extension UnimodXMLParser: XMLParserDelegate {
         }
     }
 
-    public func parserDidEndDocument(_: XMLParser) {
+    func parserDidEndDocument(_: XMLParser) {
         #if DEBUG
             BioSwiftDiagnostics.log("Finished parsing unimod.xml")
         #endif
     }
 
-    public func parser(_: XMLParser, parseErrorOccurred parseError: Error) {
+    func parser(_: XMLParser, parseErrorOccurred parseError: Error) {
         self.parseError = parseError
     }
 }

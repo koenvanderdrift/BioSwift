@@ -11,6 +11,11 @@ import Foundation
 public struct Hydro: Codable, Sendable {
     public let name: String
     public let values: [String: String]
+    
+    public init(name: String, values: [String : String]) {
+        self.name = name
+        self.values = values
+    }
 }
 
 public class Hydropathy {
