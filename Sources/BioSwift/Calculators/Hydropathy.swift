@@ -29,7 +29,7 @@ public class Hydropathy {
 
     public func isoElectricPoint() -> Double {
         Self.isoElectricPoint(for: residues, hydropathyReferences: hydropathyReferences)
-    }
+    } 
 
     public static func isoElectricPoint<Residues: Sequence>(
         for residues: Residues,

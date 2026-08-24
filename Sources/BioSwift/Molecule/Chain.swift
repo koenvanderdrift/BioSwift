@@ -159,19 +159,26 @@ extension AminoAcidChain {
     }
 
     public var formula: Formula {
-        var f = zeroFormula
+        var countedElements: [ChemicalElement: Int] = [:]
 
-        for residue in residues {
-            f += residue.formula
-
-            if let mod = residue.modification {
-                f += mod.formula
+        func add(_ formula: Formula) {
+            for (element, count) in formula.countedElements {
+                countedElements[element, default: 0] += count
             }
         }
 
-        f += nTerminal.formula + cTerminal.formula
+        for residue in residues {
+            add(residue.formula)
 
-        return f
+            if let mod = residue.modification {
+                add(mod.formula)
+            }
+        }
+
+        add(nTerminal.formula)
+        add(cTerminal.formula)
+
+        return Formula(with: countedElements)
     }
 
     func terminalMasses() -> MassContainer {

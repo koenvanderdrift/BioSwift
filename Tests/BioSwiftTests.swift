@@ -116,6 +116,23 @@ struct BioSwiftTests {
         #expect(testProtein.formula.countFor(element: "C") == 2112)
     }  // C2112H3313N539O629S13
 
+    @Test func proteinFormulaMatchesExplicitResidueFormulaSum() throws {
+        let chain = try #require(testProtein.chains.first)
+        var explicitFormula = zeroFormula
+
+        for residue in chain.residues {
+            explicitFormula += residue.formula
+
+            if let modification = residue.modification {
+                explicitFormula += modification.formula
+            }
+        }
+
+        explicitFormula += chain.nTerminal.formula + chain.cTerminal.formula
+
+        #expect(chain.formula == explicitFormula)
+    }
+
     @Test func peptideFormula() {
         let peptide = Peptide(sequence: "DWSSD")
         #expect(peptide.formula.countFor(element: "C") == 25)
