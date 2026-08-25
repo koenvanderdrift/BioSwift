@@ -37,16 +37,6 @@ public protocol Chain {
     init(residues: [ResidueType])
 }
 
-public protocol AminoAcidChain: Chain, Structure where ResidueType == AminoAcid {
-    var nTerminal: Modification {
-        get set
-    }
-
-    var cTerminal: Modification {
-        get set
-    }
-}
-
 extension Chain {
     public static func == (lhs: Self, rhs: Self) -> Bool {
         lhs.sequenceString == rhs.sequenceString && lhs.name == rhs.name
@@ -116,6 +106,16 @@ extension Chain {
         return residues[validRange].reduce(zeroMass) {
             $0 + $1.masses
         }
+    }
+}
+
+public protocol AminoAcidChain: Chain, Structure where ResidueType == AminoAcid {
+    var nTerminal: Modification {
+        get set
+    }
+
+    var cTerminal: Modification {
+        get set
     }
 }
 
@@ -192,8 +192,8 @@ extension AminoAcidChain {
 }
 
 extension Chain where ResidueType == AminoAcid {
-    public func hydropathyValues(for hydropathyType: String, hydropathyReferences: HydropathyReferences = HydropathyReferenceDefaults.bundled) -> [Double] {
-        let values = Hydropathy(residues: residues, hydropathyReferences: hydropathyReferences).hydropathyValues(for: hydropathyType)
+    public func hydrophobicityValues(for hydrophobicityScale: String, hydrophobicityReferences: HydrophobicityReferences = HydrophobicityReferenceDefaults.bundled) -> [Double] {
+        let values = hydrophobicityReferences.numericHydrophobicityValues(named: hydrophobicityScale)
 
         return residues.compactMap {
             values[$0.oneLetterCode]
@@ -201,8 +201,8 @@ extension Chain where ResidueType == AminoAcid {
     }
 
     public func isoelectricPoint(
-        hydropathyReferences: HydropathyReferences = HydropathyReferenceDefaults.bundled) -> Double {
-        Hydropathy.isoElectricPoint(for: residues, hydropathyReferences: hydropathyReferences)
+        hydrophobicityReferences: HydrophobicityReferences = HydrophobicityReferenceDefaults.bundled) -> Double {
+        IsoelectricPointCalculator.isoElectricPoint(for: residues, hydrophobicityReferences: hydrophobicityReferences)
     }
 }
 

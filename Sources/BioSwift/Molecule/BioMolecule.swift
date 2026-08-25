@@ -118,7 +118,7 @@ extension BioMolecule {
 }
 
 extension BioMolecule where ChainType.ResidueType == AminoAcid {
-    public func isoelectricPoint(chainIndex index: Int = 0, range: Range<Int>? = nil, hydropathyReferences: HydropathyReferences = HydropathyReferenceDefaults.bundled) -> Double {
+    public func isoelectricPoint(chainIndex index: Int = 0, range: Range<Int>? = nil, hydrophobicityReferences: HydrophobicityReferences = HydrophobicityReferenceDefaults.bundled) -> Double {
         guard chains.indices.contains(index) else {
             return 0.0
         }
@@ -126,7 +126,7 @@ extension BioMolecule where ChainType.ResidueType == AminoAcid {
         let chain = chains[index]
 
         guard let range else {
-            return chain.isoelectricPoint(hydropathyReferences: hydropathyReferences)
+            return chain.isoelectricPoint(hydrophobicityReferences: hydrophobicityReferences)
         }
 
         let validRange = range.clamped(toSequenceLength: chain.residues.count)
@@ -135,9 +135,9 @@ extension BioMolecule where ChainType.ResidueType == AminoAcid {
             return 0.0
         }
 
-        return Hydropathy.isoElectricPoint(
+        return IsoelectricPointCalculator.isoElectricPoint(
             for: chain.residues[validRange],
-            hydropathyReferences: hydropathyReferences
+            hydrophobicityReferences: hydrophobicityReferences
         )
     }
 
@@ -145,14 +145,13 @@ extension BioMolecule where ChainType.ResidueType == AminoAcid {
         isoelectricPoint(chainIndex: index, range: range)
     }
 
-    public func hydropathyValues(chainIndex index: Int = 0, for hydropathyType: String, hydropathyReferences: HydropathyReferences = HydropathyReferenceDefaults.bundled) -> [Double] {
+    public func hydrophobicityValues(chainIndex index: Int = 0, for hydrophobicityScale: String, hydrophobicityReferences: HydrophobicityReferences = HydrophobicityReferenceDefaults.bundled) -> [Double] {
         guard chains.indices.contains(index) else {
             return []
         }
 
-        return chains[index].hydropathyValues(for: hydropathyType, hydropathyReferences: hydropathyReferences)
+        return chains[index].hydrophobicityValues(for: hydrophobicityScale, hydrophobicityReferences: hydrophobicityReferences)
     }
-    
 }
 
 extension BioMolecule where ChainType: MassRepresentable {

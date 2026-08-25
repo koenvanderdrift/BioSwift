@@ -8,7 +8,7 @@
 
 import Foundation
 
-public struct Hydro: Codable, Sendable {
+public struct HydrophobicityScale: Codable, Sendable {
     public let name: String
     public let values: [String: String]
     
@@ -18,25 +18,25 @@ public struct Hydro: Codable, Sendable {
     }
 }
 
-public class Hydropathy {
+public class IsoelectricPointCalculator {
     public var residues: [AminoAcid] = []
-    public var hydropathyReferences: HydropathyReferences
+    public var hydrophobicityReferences: HydrophobicityReferences
 
-    public init(residues: [AminoAcid], hydropathyReferences: HydropathyReferences = HydropathyReferenceDefaults.bundled) {
+    public init(residues: [AminoAcid], hydrophobicityReferences: HydrophobicityReferences = HydrophobicityReferenceDefaults.bundled) {
         self.residues = residues
-        self.hydropathyReferences = hydropathyReferences
+        self.hydrophobicityReferences = hydrophobicityReferences
     }
 
     public func isoElectricPoint() -> Double {
-        Self.isoElectricPoint(for: residues, hydropathyReferences: hydropathyReferences)
+        Self.isoElectricPoint(for: residues, hydrophobicityReferences: hydrophobicityReferences)
     } 
 
     public static func isoElectricPoint<Residues: Sequence>(
         for residues: Residues,
-        hydropathyReferences: HydropathyReferences = HydropathyReferenceDefaults.bundled
+        hydrophobicityReferences: HydrophobicityReferences = HydrophobicityReferenceDefaults.bundled
     ) -> Double where Residues.Element == AminoAcid {
         // http://isoelectric.org/www_old/files/practise-isoelectric-point.html
-        let pKaValues = hydropathyValues(for: "pKa", hydropathyReferences: hydropathyReferences)
+        let pKaValues = hydrophobicityReferences.numericHydrophobicityValues(named: "pKa")
 
         guard let cTerminalpKa = pKaValues["CTerminal"], let nTerminalpKa = pKaValues["NTerminal"],
             let asparticAcidpKa = pKaValues["D"], let glutamicAcidpKa = pKaValues["E"],
@@ -123,13 +123,5 @@ public class Hydropathy {
         }
 
         return pH
-    }
-
-    public func hydropathyValues(for name: String) -> [String: Double] {
-        Self.hydropathyValues(for: name, hydropathyReferences: hydropathyReferences)
-    }
-
-    private static func hydropathyValues(for name: String, hydropathyReferences: HydropathyReferences) -> [String: Double] {
-        hydropathyReferences.numericHydropathyValues(named: name)
     }
 }

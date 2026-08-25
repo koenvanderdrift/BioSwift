@@ -25,8 +25,8 @@ public var enzymeLibrary: [Enzyme] {
     ReferenceLibraryDefaults.bundled.enzymes + [unspecifiedEnzyme]
 }
 
-public var hydropathyLibrary: [Hydro] {
-    ReferenceLibraryDefaults.bundled.hydropathyValues
+public var hydrophobicityLibrary: [HydrophobicityScale] {
+    ReferenceLibraryDefaults.bundled.hydrophobicityScales
 }
 
 public enum ElementsLibraryDefaults {
@@ -65,7 +65,7 @@ enum ReferenceLibraryLoader {
             aminoAcids: unimodLibraries.aminoAcids,
             modifications: unimodLibraries.modifications,
             enzymes: jsonLibraries.enzymes,
-            hydropathyValues: jsonLibraries.hydropathyValues
+            hydrophobicityScales: jsonLibraries.hydrophobicityScales
         )
     }
 }
@@ -92,9 +92,9 @@ public enum EnzymeReferenceDefaults {
     }
 }
 
-public enum HydropathyReferenceDefaults {
-    public static var bundled: HydropathyReferences {
-        ReferenceLibraryDefaults.bundled.hydropathyReferences
+public enum HydrophobicityReferenceDefaults {
+    public static var bundled: HydrophobicityReferences {
+        ReferenceLibraryDefaults.bundled.hydrophobicityReferences
     }
 }
 
@@ -175,32 +175,32 @@ public struct EnzymeReferences: Sendable {
     }
 }
 
-public struct HydropathyReferences: Sendable {
-    public let hydropathyValues: [Hydro]
+public struct HydrophobicityReferences: Sendable {
+    public let hydrophobicityScales: [HydrophobicityScale]
 
-    private let hydropathyValuesByName: [String: Hydro]
-    private let numericHydropathyValuesByName: [String: [String: Double]]
+    private let hydrophobicityScalesByName: [String: HydrophobicityScale]
+    private let numericHydrophobicityValuesByName: [String: [String: Double]]
 
-    public init(hydropathyValues: [Hydro]) {
-        self.hydropathyValues = hydropathyValues
-        self.hydropathyValuesByName = Dictionary(
-            uniqueKeysWithValues: hydropathyValues.map {
+    public init(hydrophobicityScales: [HydrophobicityScale]) {
+        self.hydrophobicityScales = hydrophobicityScales
+        self.hydrophobicityScalesByName = Dictionary(
+            uniqueKeysWithValues: hydrophobicityScales.map {
                 ($0.name, $0)
             })
-        self.numericHydropathyValuesByName = Dictionary(
-            uniqueKeysWithValues: hydropathyValues.map { hydro in
-                let numericValues = hydro.values.compactMapValues(Double.init)
+        self.numericHydrophobicityValuesByName = Dictionary(
+            uniqueKeysWithValues: hydrophobicityScales.map { scale in
+                let numericValues = scale.values.compactMapValues(Double.init)
 
-                return (hydro.name, numericValues)
+                return (scale.name, numericValues)
             })
     }
 
-    public func hydropathy(named name: String) -> Hydro? {
-        hydropathyValuesByName[name]
+    public func hydrophobicityScale(named name: String) -> HydrophobicityScale? {
+        hydrophobicityScalesByName[name]
     }
 
-    public func numericHydropathyValues(named name: String) -> [String: Double] {
-        numericHydropathyValuesByName[name] ?? [:]
+    public func numericHydrophobicityValues(named name: String) -> [String: Double] {
+        numericHydrophobicityValuesByName[name] ?? [:]
     }
 }
 
@@ -209,32 +209,32 @@ public struct ReferenceLibraries: Sendable {
     public let aminoAcids: [AminoAcid]
     public let modifications: [Modification]
     public let enzymes: [Enzyme]
-    public let hydropathyValues: [Hydro]
+    public let hydrophobicityScales: [HydrophobicityScale]
 
     public let elementReferences: ElementReferences
     public let aminoAcidReferences: AminoAcidReferences
     public let modificationReferences: ModificationReferences
     public let enzymeReferences: EnzymeReferences
-    public let hydropathyReferences: HydropathyReferences
+    public let hydrophobicityReferences: HydrophobicityReferences
 
     public init(
         elements: [ChemicalElement],
         aminoAcids: [AminoAcid],
         modifications: [Modification],
         enzymes: [Enzyme],
-        hydropathyValues: [Hydro]
+        hydrophobicityScales: [HydrophobicityScale]
     ) {
         self.elements = elements
         self.aminoAcids = aminoAcids
         self.modifications = modifications
         self.enzymes = enzymes
-        self.hydropathyValues = hydropathyValues
+        self.hydrophobicityScales = hydrophobicityScales
 
         self.elementReferences = ElementReferences(elements: elements)
         self.aminoAcidReferences = AminoAcidReferences(aminoAcids: aminoAcids)
         self.modificationReferences = ModificationReferences(modifications: modifications)
         self.enzymeReferences = EnzymeReferences(enzymes: enzymes)
-        self.hydropathyReferences = HydropathyReferences(hydropathyValues: hydropathyValues)
+        self.hydrophobicityReferences = HydrophobicityReferences(hydrophobicityScales: hydrophobicityScales)
     }
 
     public func element(symbol: String) -> ChemicalElement? {
@@ -253,8 +253,8 @@ public struct ReferenceLibraries: Sendable {
         enzymeReferences.enzyme(named: name)
     }
 
-    public func hydropathy(named name: String) -> Hydro? {
-        hydropathyReferences.hydropathy(named: name)
+    public func hydrophobicityScale(named name: String) -> HydrophobicityScale? {
+        hydrophobicityReferences.hydrophobicityScale(named: name)
     }
 
     public func modifications(applicableTo residueIdentifier: String) -> [Modification] {

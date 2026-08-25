@@ -36,7 +36,7 @@ public func parseJSONDataFromBundle<A: Decodable>(_: A.Type, from fileName: Stri
 
 struct JSONReferenceLibraries {
     let enzymes: [Enzyme]
-    let hydropathyValues: [Hydro]
+    let hydrophobicityScales: [HydrophobicityScale]
 }
 
 // MARK: - JSON loader
@@ -49,8 +49,8 @@ enum JSONReferenceLibraryLoader {
     static func loadOtherLibraries() throws -> JSONReferenceLibraries {
         let enzymes = try parseJSONDataFromBundle(Enzyme.self, from: "enzymes")
 
-        let hydropathyValues = try parseJSONDataFromBundle(Hydro.self, from: "hydropathy")
+        let hydrophobicityScales = try parseJSONDataFromBundle(HydrophobicityScale.self, from: "hydropathy")
 
-        return JSONReferenceLibraries(enzymes: enzymes, hydropathyValues: hydropathyValues)
+        return JSONReferenceLibraries(enzymes: enzymes, hydrophobicityScales: hydrophobicityScales)
     }
 }

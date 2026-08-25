@@ -28,7 +28,7 @@ struct BioSwiftTests {
         #expect(!libraries.modifications.isEmpty)
         #expect(!libraries.aminoAcids.isEmpty)
         #expect(!libraries.enzymes.isEmpty)
-        #expect(!libraries.hydropathyValues.isEmpty)
+        #expect(!libraries.hydrophobicityScales.isEmpty)
     }
 
     @Test func bundledDefaultsAreAvailable() {
@@ -38,11 +38,11 @@ struct BioSwiftTests {
         #expect(!libraries.modifications.isEmpty)
         #expect(!libraries.aminoAcids.isEmpty)
         #expect(!libraries.enzymes.isEmpty)
-        #expect(!libraries.hydropathyValues.isEmpty)
+        #expect(!libraries.hydrophobicityScales.isEmpty)
     }
 
-    @Test func bundledHydropathyReferencesCacheNumericValues() {
-        let pKaValues = HydropathyReferenceDefaults.bundled.numericHydropathyValues(named: "pKa")
+    @Test func bundledHydrophobicityReferencesCacheNumericValues() {
+        let pKaValues = HydrophobicityReferenceDefaults.bundled.numericHydrophobicityValues(named: "pKa")
 
         #expect(pKaValues["CTerminal"] != nil)
         #expect(pKaValues["NTerminal"] != nil)
@@ -65,7 +65,7 @@ struct BioSwiftTests {
         let jsonLibraries = try JSONReferenceLibraryLoader.loadOtherLibraries()
 
         #expect(!jsonLibraries.enzymes.isEmpty)
-        #expect(!jsonLibraries.hydropathyValues.isEmpty)
+        #expect(!jsonLibraries.hydrophobicityScales.isEmpty)
     }
 
     @Test func unimodReferenceLibrariesLoadDebug() throws {
