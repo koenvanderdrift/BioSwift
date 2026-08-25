@@ -8,14 +8,22 @@
 
 import Foundation
 
-/// BioMolecule is a protocol that contains a ``Chain`` array
-public protocol BioMolecule {
-    associatedtype ChainType: Chain
+/// BioMolecule contains one or more typed ``Chain`` values.
+public struct BioMolecule<ChainType: Chain> {
+    public var adducts: [Adduct]
+    public var chains: [ChainType]
 
-    var chains: [ChainType] {
-        get set
+    public init(chains: [ChainType], adducts: [Adduct] = []) {
+        self.chains = chains
+        self.adducts = adducts
     }
 }
+
+extension BioMolecule: Codable where ChainType: Codable {}
+
+extension BioMolecule: Equatable where ChainType: Equatable {}
+
+extension BioMolecule: Sendable where ChainType: Sendable {}
 
 extension BioMolecule where ChainType: Structure {
     public var formula: Formula {
@@ -162,7 +170,7 @@ extension BioMolecule where ChainType: MassRepresentable {
     }
 }
 
-extension BioMolecule where Self: Ionizable, ChainType: Ionizable {
+extension BioMolecule: MassRepresentable where ChainType: Ionizable {
     public var masses: MassContainer {
         massOverCharge()
     }
@@ -232,3 +240,5 @@ extension BioMolecule where Self: Ionizable, ChainType: Ionizable {
         adducts = Array(repeating: type, count: count)
     }
 }
+
+extension BioMolecule: Ionizable where ChainType: Ionizable {}

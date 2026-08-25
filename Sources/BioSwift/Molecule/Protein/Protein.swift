@@ -8,22 +8,16 @@
 
 import Foundation
 
-/// Protein can contain one or more ``Peptide`` chains and conforms to the ``BioMolecule`` protocol
-///
-public struct Protein: BioMolecule, Ionizable, Codable, Equatable, Sendable {
-    public var adducts: [Adduct] = []
-    public var chains: [Peptide]
+/// Protein contains one or more ``Peptide`` chains.
+public typealias Protein = BioMolecule<Peptide>
 
-    public init(chains: [Peptide]) {
-        self.chains = chains
-    }
-
+extension BioMolecule where ChainType == Peptide {
     public init(sequence: String) {
         self.init(sequence: sequence, aminoAcids: AminoAcidReferenceDefaults.bundled)
     }
 
     public init(sequence: String, aminoAcids: AminoAcidReferences) {
-        chains = [Peptide(sequence: sequence, aminoAcids: aminoAcids)]
+        self.init(chains: [Peptide(sequence: sequence, aminoAcids: aminoAcids)])
     }
 
     public init(sequences: [String]) {
@@ -31,13 +25,13 @@ public struct Protein: BioMolecule, Ionizable, Codable, Equatable, Sendable {
     }
 
     public init(sequences: [String], aminoAcids: AminoAcidReferences) {
-        chains = sequences.map {
+        self.init(chains: sequences.map {
             Peptide(sequence: $0, aminoAcids: aminoAcids)
-        }
+        })
     }
 
     public init(residues: [AminoAcid]) {
-        chains = [Peptide(residues: residues)]
+        self.init(chains: [Peptide(residues: residues)])
     }
 
     public func truncate(by range: Range<Int>) -> Protein {
