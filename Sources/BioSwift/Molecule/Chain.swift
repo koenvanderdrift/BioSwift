@@ -200,6 +200,13 @@ extension Chain where ResidueType == AminoAcid {
         }
     }
 
+    public func hydrophobicityValues(for hydrophobicityScale: HydrophobicityScaleName, hydrophobicityReferences: HydrophobicityReferences = HydrophobicityReferenceDefaults.bundled) -> [Double] {
+        hydrophobicityValues(
+            for: hydrophobicityScale.rawValue,
+            hydrophobicityReferences: hydrophobicityReferences
+        )
+    }
+
     public func isoelectricPoint(
         hydrophobicityReferences: HydrophobicityReferences = HydrophobicityReferenceDefaults.bundled) -> Double {
         IsoelectricPointCalculator.isoElectricPoint(for: residues, hydrophobicityReferences: hydrophobicityReferences)

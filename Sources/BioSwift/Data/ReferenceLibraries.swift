@@ -199,8 +199,16 @@ public struct HydrophobicityReferences: Sendable {
         hydrophobicityScalesByName[name]
     }
 
+    public func hydrophobicityScale(named name: HydrophobicityScaleName) -> HydrophobicityScale? {
+        hydrophobicityScale(named: name.rawValue)
+    }
+
     public func numericHydrophobicityValues(named name: String) -> [String: Double] {
         numericHydrophobicityValuesByName[name] ?? [:]
+    }
+
+    public func numericHydrophobicityValues(named name: HydrophobicityScaleName) -> [String: Double] {
+        numericHydrophobicityValues(named: name.rawValue)
     }
 }
 
@@ -254,6 +262,10 @@ public struct ReferenceLibraries: Sendable {
     }
 
     public func hydrophobicityScale(named name: String) -> HydrophobicityScale? {
+        hydrophobicityReferences.hydrophobicityScale(named: name)
+    }
+
+    public func hydrophobicityScale(named name: HydrophobicityScaleName) -> HydrophobicityScale? {
         hydrophobicityReferences.hydrophobicityScale(named: name)
     }
 

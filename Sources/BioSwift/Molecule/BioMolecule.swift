@@ -160,6 +160,14 @@ extension BioMolecule where ChainType.ResidueType == AminoAcid {
 
         return chains[index].hydrophobicityValues(for: hydrophobicityScale, hydrophobicityReferences: hydrophobicityReferences)
     }
+
+    public func hydrophobicityValues(chainIndex index: Int = 0, for hydrophobicityScale: HydrophobicityScaleName, hydrophobicityReferences: HydrophobicityReferences = HydrophobicityReferenceDefaults.bundled) -> [Double] {
+        hydrophobicityValues(
+            chainIndex: index,
+            for: hydrophobicityScale.rawValue,
+            hydrophobicityReferences: hydrophobicityReferences
+        )
+    }
 }
 
 extension BioMolecule where ChainType: MassRepresentable {

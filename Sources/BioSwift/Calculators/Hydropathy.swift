@@ -18,6 +18,16 @@ public struct HydrophobicityScale: Codable, Sendable {
     }
 }
 
+public enum HydrophobicityScaleName: String, CaseIterable, Codable, Identifiable, Sendable {
+    case bullBreese = "Bull-Breese"
+    case hoppWoods = "Hopp-Woods"
+    case kyteDoolittle = "Kyte-Doolittle"
+
+    public var id: Self {
+        self
+    }
+}
+
 public class IsoelectricPointCalculator {
     public var residues: [AminoAcid] = []
     public var hydrophobicityReferences: HydrophobicityReferences
