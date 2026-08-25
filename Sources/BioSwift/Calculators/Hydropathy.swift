@@ -8,7 +8,7 @@
 
 import Foundation
 
-public struct HydrophobicityScale: Codable, Sendable {
+public struct HydrophobicityScale: Codable, Sendable, Equatable {
     public let name: String
     public let values: [String: String]
     
