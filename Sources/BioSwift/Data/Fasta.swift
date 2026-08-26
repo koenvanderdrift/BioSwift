@@ -35,6 +35,16 @@ public func fastaRecords(from fileName: String, in bundle: Bundle = .main) async
     try await FastaParser().parse(fileName, in: bundle)
 }
 
+public func fastaRecord(from fileName: String, in bundle: Bundle = .main) async throws -> FastaRecord {
+    let records = try await fastaRecords(from: fileName, in: bundle)
+
+    guard let record = records.first else {
+        throw LoadError.fileParsingFailed(name: "\(fileName).fasta", underlyingError: nil)
+    }
+
+    return record
+}
+
 public func fastaRecords(from data: Data) async throws -> [FastaRecord] {
     try await FastaParser().parse(data)
 }
@@ -49,6 +59,12 @@ public func proteins(fromFastaFile fileName: String, in bundle: Bundle = .main) 
     return records.map {
         Protein(fastaRecord: $0)
     }
+}
+
+public func protein(fromFastaFile fileName: String, in bundle: Bundle = .main) async throws -> Protein {
+    let record = try await fastaRecord(from: fileName, in: bundle)
+
+    return Protein(fastaRecord: record)
 }
 
 /// FastaParser takes a text file as input and produces a ``FastaRecord`` array.
