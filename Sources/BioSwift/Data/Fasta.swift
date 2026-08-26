@@ -39,7 +39,7 @@ public func fastaRecords(from data: Data) async throws -> [FastaRecord] {
     try await FastaParser().parse(data)
 }
 
-public func fastaRecords(from text: String) async throws -> [FastaRecord] {
+public func fastaRecords(fromText text: String) async throws -> [FastaRecord] {
     try await FastaParser().parseFasta(text)
 }
 
