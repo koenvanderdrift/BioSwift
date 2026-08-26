@@ -123,12 +123,8 @@ public struct PeptideFragment: AminoAcidChain, Codable, Fragmenting, Sendable {
     public var index = -1
 
     public init(sequence: String) {
-        self.init(sequence: sequence, aminoAcids: AminoAcidReferenceDefaults.bundled)
-    }
-
-    public init(sequence: String, aminoAcids: AminoAcidReferences) {
         self.sequence = sequence
-        residues = Self.createResidues(from: sequence, aminoAcids: aminoAcids)
+        residues = Self.createResidues(from: sequence)
     }
 
     public init(residues: [AminoAcid]) {
@@ -143,12 +139,6 @@ public struct PeptideFragment: AminoAcidChain, Codable, Fragmenting, Sendable {
         self.nTerminal = nTerm
         self.cTerminal = cTerm
         self.parentLength = parentLength
-    }
-
-    private static func createResidues(from string: String, aminoAcids: AminoAcidReferences) -> [AminoAcid] {
-        string.compactMap {
-            char in aminoAcids.aminoAcid(identifier: String(char))
-        }
     }
 }
 

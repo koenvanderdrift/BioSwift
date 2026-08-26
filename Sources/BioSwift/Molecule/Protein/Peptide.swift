@@ -20,24 +20,13 @@ public struct Peptide: AminoAcidChain, Codable, Equatable, Sendable {
     public var parentLength: Int = 0
 
     public init(sequence: String) {
-        self.init(sequence: sequence, aminoAcids: AminoAcidReferenceDefaults.bundled)
-    }
-
-    public init(sequence: String, aminoAcids: AminoAcidReferences) {
-        residues = Self.createResidues(from: sequence, aminoAcids: aminoAcids)
+        residues = Self.createResidues(from: sequence)
     }
 
     public init(residues: [AminoAcid]) {
         self.residues = residues
     }
-
-    private static func createResidues(from string: String, aminoAcids: AminoAcidReferences) -> [AminoAcid] {
-        string.compactMap {
-            char in aminoAcids.aminoAcid(identifier: String(char))
-        }
-    }
 }
-
 
 extension Peptide: Ionizable {
     public var masses: MassContainer {

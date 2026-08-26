@@ -30,23 +30,20 @@ public enum HydrophobicityScaleName: String, CaseIterable, Codable, Identifiable
 
 public class IsoelectricPointCalculator {
     public var residues: [AminoAcid] = []
-    public var hydrophobicityReferences: HydrophobicityReferences
 
-    public init(residues: [AminoAcid], hydrophobicityReferences: HydrophobicityReferences = HydrophobicityReferenceDefaults.bundled) {
+    public init(residues: [AminoAcid]) {
         self.residues = residues
-        self.hydrophobicityReferences = hydrophobicityReferences
     }
 
     public func isoElectricPoint() -> Double {
-        Self.isoElectricPoint(for: residues, hydrophobicityReferences: hydrophobicityReferences)
-    } 
+        Self.isoElectricPoint(for: residues)
+    }
 
     public static func isoElectricPoint<Residues: Sequence>(
-        for residues: Residues,
-        hydrophobicityReferences: HydrophobicityReferences = HydrophobicityReferenceDefaults.bundled
+        for residues: Residues
     ) -> Double where Residues.Element == AminoAcid {
         // http://isoelectric.org/www_old/files/practise-isoelectric-point.html
-        let pKaValues = hydrophobicityReferences.numericHydrophobicityValues(named: "pKa")
+        let pKaValues = HydrophobicityReferenceDefaults.bundled.numericHydrophobicityValues(named: "pKa")
 
         guard let cTerminalpKa = pKaValues["CTerminal"], let nTerminalpKa = pKaValues["NTerminal"],
             let asparticAcidpKa = pKaValues["D"], let glutamicAcidpKa = pKaValues["E"],

@@ -13,20 +13,12 @@ public typealias Protein = BioMolecule<Peptide>
 
 extension BioMolecule where ChainType == Peptide {
     public init(sequence: String) {
-        self.init(sequence: sequence, aminoAcids: AminoAcidReferenceDefaults.bundled)
-    }
-
-    public init(sequence: String, aminoAcids: AminoAcidReferences) {
-        self.init(chains: [Peptide(sequence: sequence, aminoAcids: aminoAcids)])
+        self.init(chains: [Peptide(sequence: sequence)])
     }
 
     public init(sequences: [String]) {
-        self.init(sequences: sequences, aminoAcids: AminoAcidReferenceDefaults.bundled)
-    }
-
-    public init(sequences: [String], aminoAcids: AminoAcidReferences) {
         self.init(chains: sequences.map {
-            Peptide(sequence: $0, aminoAcids: aminoAcids)
+            Peptide(sequence: $0)
         })
     }
 
@@ -43,12 +35,8 @@ extension BioMolecule where ChainType == Peptide {
     }
 
     public func nTermModifications() -> [Modification] {
-        nTermModifications(modifications: ModificationReferenceDefaults.bundled)
-    }
-
-    public func nTermModifications(modifications: ModificationReferences) -> [Modification] {
         if let nTermAA = residues().first {
-            var nTermGroups = modifications.modifications.filter { mod in
+            var nTermGroups = ModificationReferenceDefaults.bundled.modifications.filter { mod in
                 mod.specificities.contains { spec in
                     spec.position.contains("Protein N-term") && spec.site == nTermAA.oneLetterCode
                 }
@@ -63,12 +51,8 @@ extension BioMolecule where ChainType == Peptide {
     }
 
     public func cTermModifications() -> [Modification] {
-        cTermModifications(modifications: ModificationReferenceDefaults.bundled)
-    }
-
-    public func cTermModifications(modifications: ModificationReferences) -> [Modification] {
         if let cTermAA = residues().last {
-            var cTermGroups = modifications.modifications.filter { mod in
+            var cTermGroups = ModificationReferenceDefaults.bundled.modifications.filter { mod in
                 mod.specificities.contains { spec in
                     spec.position.contains("Protein C-term") && spec.site == cTermAA.oneLetterCode
                 }

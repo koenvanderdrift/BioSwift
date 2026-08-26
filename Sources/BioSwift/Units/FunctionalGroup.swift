@@ -27,20 +27,14 @@ public struct FunctionalGroup: Structure, Codable, Sendable {
     public let name: String
     public let formula: Formula
 
-    public init(
-        name: String, formula: String,
-        elements: ElementReferences = ElementReferenceDefaults.bundled
-    ) {
+    public init(name: String, formula: String) {
         self.name = name
-        self.formula = Formula(formula, elements: elements)
+        self.formula = Formula(formula)
     }
 
-    public init(
-        name: String, elements: [String: Int],
-        elementReferences: ElementReferences = ElementReferenceDefaults.bundled
-    ) {
+    public init(name: String, elements: [String: Int]) {
         self.name = name
-        formula = Formula(from: elements, elements: elementReferences)
+        formula = Formula(from: elements)
     }
 
     public var masses: MassContainer {

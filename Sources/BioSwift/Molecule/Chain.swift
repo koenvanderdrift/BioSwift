@@ -120,6 +120,12 @@ public protocol AminoAcidChain: Chain, Structure where ResidueType == AminoAcid 
 }
 
 extension AminoAcidChain {
+    static func createResidues(from sequence: String) -> [AminoAcid] {
+        sequence.compactMap {
+            AminoAcidReferenceDefaults.bundled.aminoAcid(identifier: String($0))
+        }
+    }
+
     func aminoAcidResidueMasses() -> MassContainer {
         aminoAcidResidueMasses(in: residues.startIndex..<residues.endIndex)
     }
@@ -192,24 +198,20 @@ extension AminoAcidChain {
 }
 
 extension Chain where ResidueType == AminoAcid {
-    public func hydrophobicityValues(for hydrophobicityScale: String, hydrophobicityReferences: HydrophobicityReferences = HydrophobicityReferenceDefaults.bundled) -> [Double] {
-        let values = hydrophobicityReferences.numericHydrophobicityValues(named: hydrophobicityScale)
+    public func hydrophobicityValues(for hydrophobicityScale: String) -> [Double] {
+        let values = HydrophobicityReferenceDefaults.bundled.numericHydrophobicityValues(named: hydrophobicityScale)
 
         return residues.compactMap {
             values[$0.oneLetterCode]
         }
     }
 
-    public func hydrophobicityValues(for hydrophobicityScale: HydrophobicityScaleName, hydrophobicityReferences: HydrophobicityReferences = HydrophobicityReferenceDefaults.bundled) -> [Double] {
-        hydrophobicityValues(
-            for: hydrophobicityScale.rawValue,
-            hydrophobicityReferences: hydrophobicityReferences
-        )
+    public func hydrophobicityValues(for hydrophobicityScale: HydrophobicityScaleName) -> [Double] {
+        hydrophobicityValues(for: hydrophobicityScale.rawValue)
     }
 
-    public func isoelectricPoint(
-        hydrophobicityReferences: HydrophobicityReferences = HydrophobicityReferenceDefaults.bundled) -> Double {
-        IsoelectricPointCalculator.isoElectricPoint(for: residues, hydrophobicityReferences: hydrophobicityReferences)
+    public func isoelectricPoint() -> Double {
+        IsoelectricPointCalculator.isoElectricPoint(for: residues)
     }
 }
 

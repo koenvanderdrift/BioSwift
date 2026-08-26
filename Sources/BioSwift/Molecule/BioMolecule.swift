@@ -126,7 +126,7 @@ extension BioMolecule {
 }
 
 extension BioMolecule where ChainType.ResidueType == AminoAcid {
-    public func isoelectricPoint(chainIndex index: Int = 0, range: Range<Int>? = nil, hydrophobicityReferences: HydrophobicityReferences = HydrophobicityReferenceDefaults.bundled) -> Double {
+    public func isoelectricPoint(chainIndex index: Int = 0, range: Range<Int>? = nil) -> Double {
         guard chains.indices.contains(index) else {
             return 0.0
         }
@@ -134,7 +134,7 @@ extension BioMolecule where ChainType.ResidueType == AminoAcid {
         let chain = chains[index]
 
         guard let range else {
-            return chain.isoelectricPoint(hydrophobicityReferences: hydrophobicityReferences)
+            return chain.isoelectricPoint()
         }
 
         let validRange = range.clamped(toSequenceLength: chain.residues.count)
@@ -143,30 +143,23 @@ extension BioMolecule where ChainType.ResidueType == AminoAcid {
             return 0.0
         }
 
-        return IsoelectricPointCalculator.isoElectricPoint(
-            for: chain.residues[validRange],
-            hydrophobicityReferences: hydrophobicityReferences
-        )
+        return IsoelectricPointCalculator.isoElectricPoint(for: chain.residues[validRange])
     }
 
     public func selectedIsoelectricPoint(chainIndex index: Int = 0, _ range: Range<Int>) -> Double {
         isoelectricPoint(chainIndex: index, range: range)
     }
 
-    public func hydrophobicityValues(chainIndex index: Int = 0, for hydrophobicityScale: String, hydrophobicityReferences: HydrophobicityReferences = HydrophobicityReferenceDefaults.bundled) -> [Double] {
+    public func hydrophobicityValues(chainIndex index: Int = 0, for hydrophobicityScale: String) -> [Double] {
         guard chains.indices.contains(index) else {
             return []
         }
 
-        return chains[index].hydrophobicityValues(for: hydrophobicityScale, hydrophobicityReferences: hydrophobicityReferences)
+        return chains[index].hydrophobicityValues(for: hydrophobicityScale)
     }
 
-    public func hydrophobicityValues(chainIndex index: Int = 0, for hydrophobicityScale: HydrophobicityScaleName, hydrophobicityReferences: HydrophobicityReferences = HydrophobicityReferenceDefaults.bundled) -> [Double] {
-        hydrophobicityValues(
-            chainIndex: index,
-            for: hydrophobicityScale.rawValue,
-            hydrophobicityReferences: hydrophobicityReferences
-        )
+    public func hydrophobicityValues(chainIndex index: Int = 0, for hydrophobicityScale: HydrophobicityScaleName) -> [Double] {
+        hydrophobicityValues(chainIndex: index, for: hydrophobicityScale.rawValue)
     }
 }
 

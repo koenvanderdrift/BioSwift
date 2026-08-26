@@ -42,11 +42,7 @@ extension Residue {
     }
 
     public func allowedModifications() -> [Modification] {
-        allowedModifications(modifications: ModificationReferenceDefaults.bundled)
-    }
-
-    public func allowedModifications(modifications: ModificationReferences) -> [Modification] {
-        modifications.modifications(applicableTo: identifier)
+        ModificationReferenceDefaults.bundled.modifications(applicableTo: identifier)
     }
 }
 

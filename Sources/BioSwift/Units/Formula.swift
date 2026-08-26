@@ -22,11 +22,9 @@ public struct FormulaParser: Sendable {
         case invalidCount
     }
 
-    public let elements: ElementReferences
+    private let elements = ElementReferenceDefaults.bundled
 
-    public init(elements: ElementReferences = ElementReferenceDefaults.bundled) {
-        self.elements = elements
-    }
+    public init() {}
 
     public func parse(_ string: String) throws -> Formula {
         let countedElements = try parseElements(from: string)
@@ -200,21 +198,20 @@ public struct Formula: Codable, Sendable {
 
     public init(
         _ string: String = "", with countedElements: [ChemicalElement: Int] = [:],
-        from elementsDictionary: [String: Int] = [:],
-        elements: ElementReferences = ElementReferenceDefaults.bundled
+        from elementsDictionary: [String: Int] = [:]
     ) {
         if countedElements.isEmpty == false {
             self.init(resolvedString: string, countedElements: countedElements)
         } else if elementsDictionary.isEmpty == false {
             do {
-                self = try FormulaParser(elements: elements).parse(elements: elementsDictionary)
+                self = try FormulaParser().parse(elements: elementsDictionary)
             } catch {
                 BioSwiftDiagnostics.log(error)
                 self.init(resolvedString: "", countedElements: [:])
             }
         } else if string.isEmpty == false {
             do {
-                self = try FormulaParser(elements: elements).parse(string)
+                self = try FormulaParser().parse(string)
             } catch {
                 BioSwiftDiagnostics.log(error)
                 self.init(resolvedString: string, countedElements: [:])

@@ -110,8 +110,7 @@ public struct Modification: Codable, Sendable {
 
     public init(
         name: String, fullName: String = "", elements: [String: Int],
-        specificities: [ModificationSpecificity] = [],
-        elementReferences: ElementReferences = ElementReferenceDefaults.bundled
+        specificities: [ModificationSpecificity] = []
     ) {
         // TODO: switch to [ChemicalElement: Int] ?
 
@@ -121,8 +120,7 @@ public struct Modification: Codable, Sendable {
             $0.value < 0
         }
         if negativeElements.count > 0 {
-            let group = FunctionalGroup(
-                name: name, elements: negativeElements, elementReferences: elementReferences)
+            let group = FunctionalGroup(name: name, elements: negativeElements)
             reactions.append(Reaction.remove(group))
         }
 
@@ -130,8 +128,7 @@ public struct Modification: Codable, Sendable {
             $0.value > 0
         }
         if postiveElements.count > 0 {
-            let group = FunctionalGroup(
-                name: name, elements: postiveElements, elementReferences: elementReferences)
+            let group = FunctionalGroup(name: name, elements: postiveElements)
             reactions.append(Reaction.add(group))
         }
 

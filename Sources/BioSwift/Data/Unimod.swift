@@ -239,8 +239,7 @@ extension UnimodXMLParser: XMLParserDelegate {
             if modificationTitle.isEmpty == false {
                 let mod = Modification(
                     name: modificationTitle, fullName: modificationFullName,
-                    elements: modificationElements, specificities: modificationSpecificities,
-                    elementReferences: elementReferences)
+                    elements: modificationElements, specificities: modificationSpecificities)
 
                 parsedModifications.append(mod)
             }
@@ -251,8 +250,7 @@ extension UnimodXMLParser: XMLParserDelegate {
             if aminoAcidName.isEmpty == false {
                 let aa = AminoAcid(
                     name: aminoAcidName, oneLetterCode: aminoAcidOneLetterCode,
-                    threeLetterCode: aminoAcidThreeLetterCode, elements: aminoAcidElements,
-                    elementReferences: elementReferences)
+                    threeLetterCode: aminoAcidThreeLetterCode, elements: aminoAcidElements)
 
                 parsedAminoAcids.append(aa)
 
