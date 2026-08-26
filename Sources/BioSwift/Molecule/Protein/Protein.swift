@@ -22,6 +22,13 @@ extension BioMolecule where ChainType == Peptide {
         })
     }
 
+    public init(fastaRecord: FastaRecord) {
+        var peptide = Peptide(sequence: fastaRecord.sequence)
+        peptide.name = fastaRecord.shortName.isEmpty ? fastaRecord.fullName : fastaRecord.shortName
+
+        self.init(chains: [peptide])
+    }
+
     public init(residues: [AminoAcid]) {
         self.init(chains: [Peptide(residues: residues)])
     }

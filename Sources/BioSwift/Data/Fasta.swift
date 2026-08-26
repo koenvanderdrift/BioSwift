@@ -31,16 +31,27 @@ public struct FastaRecord: Codable, Hashable, Identifiable, Sendable {
     }
 }
 
-/*
- API:
+public func fastaRecords(from fileName: String, in bundle: Bundle = .main) async throws -> [FastaRecord] {
+    try await FastaParser().parse(fileName, in: bundle)
+}
 
- let records = try FastaParser().parse(data: data)
- let records = try FastaParser().parse(text: text)
- let records = try FastaParser().parseBundleFile(named: "records")
+public func fastaRecords(from data: Data) async throws -> [FastaRecord] {
+    try await FastaParser().parse(data)
+}
 
- */
+public func fastaRecords(from text: String) async throws -> [FastaRecord] {
+    try await FastaParser().parseFasta(text)
+}
 
-/// FastaParser takes a text file as input and produces a``FastaRecord`` array.
+public func proteins(fromFastaFile fileName: String, in bundle: Bundle = .main) async throws -> [Protein] {
+    let records = try await fastaRecords(from: fileName, in: bundle)
+
+    return records.map {
+        Protein(fastaRecord: $0)
+    }
+}
+
+/// FastaParser takes a text file as input and produces a ``FastaRecord`` array.
 /// Currently, it can process SwissProt, UPS, IPI, and Ensemble files
 public final class FastaParser {
     struct RawRecord {
@@ -51,8 +62,8 @@ public final class FastaParser {
     public init() {
     }
 
-    public func parse(_ fileName: String) async throws -> [FastaRecord] {
-        let fastaText = try loadText(from: fileName, withExtension: "fasta")
+    public func parse(_ fileName: String, in bundle: Bundle = .main) async throws -> [FastaRecord] {
+        let fastaText = try loadText(from: fileName, withExtension: "fasta", in: bundle)
         let fullName = "\(fileName).fasta"
 
         do {
@@ -71,14 +82,7 @@ public final class FastaParser {
     }
 
     public func parseBundleFile(_ fileName: String) async throws -> [FastaRecord] {
-        let fastaText = try loadText(from: fileName, withExtension: "fasta", in: .module)
-        let fullName = "\(fileName).fasta"
-
-        do {
-            return try await parseFasta(fastaText)
-        } catch {
-            throw LoadError.fileDecodingFailed(name: fullName, underlyingError: error)
-        }
+        try await parse(fileName, in: .module)
     }
 
     public func parseFasta(_ fastaText: String) async throws -> [FastaRecord] {
