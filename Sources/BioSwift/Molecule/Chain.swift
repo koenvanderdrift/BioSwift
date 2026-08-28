@@ -11,9 +11,13 @@ import Foundation
 // https://medium.com/swift2go/mastering-generics-with-protocols-the-specification-pattern-5e2e303af4ca
 
 /// Chain is a protocol that describes ``Residue`` array
-public protocol Chain {
+public protocol Chain: Identifiable {
     associatedtype ResidueType: Residue
 
+    var id: UUID {
+        get
+    }
+    
     var name: String {
         get set
     }

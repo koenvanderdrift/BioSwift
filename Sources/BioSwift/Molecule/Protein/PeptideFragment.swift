@@ -111,6 +111,7 @@ public protocol Fragmenting {
 
 /// PeptideFragment is generated from a ``Peptide`` by ``PeptideFragmenter``
 public struct PeptideFragment: AminoAcidChain, Codable, Fragmenting, Sendable {
+    public let id: UUID
     public var name: String = ""
     public var sequence: String = ""
     public var residues: [AminoAcid] = []
@@ -123,15 +124,26 @@ public struct PeptideFragment: AminoAcidChain, Codable, Fragmenting, Sendable {
     public var index = -1
 
     public init(sequence: String) {
+        self.init(sequence: sequence, id: UUID())
+    }
+
+    public init(sequence: String, id: UUID) {
+        self.id = id
         self.sequence = sequence
         residues = Self.createResidues(from: sequence)
     }
 
     public init(residues: [AminoAcid]) {
+        self.init(residues: residues, id: UUID())
+    }
+
+    public init(residues: [AminoAcid], id: UUID) {
+        self.id = id
         self.residues = residues
     }
 
-    public init(residues: [AminoAcid], type: PeptideFragmentType, index: Int = -1, adducts: [Adduct], nTerm: Modification = zeroModification, cTerm: Modification = zeroModification, parentLength: Int = 0) {
+    public init(residues: [AminoAcid], type: PeptideFragmentType, index: Int = -1, adducts: [Adduct], nTerm: Modification = zeroModification, cTerm: Modification = zeroModification, parentLength: Int = 0, id: UUID = UUID()) {
+        self.id = id
         self.residues = residues
         self.fragmentType = type
         self.index = index

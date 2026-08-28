@@ -11,6 +11,7 @@ import Foundation
 /// Peptide conforms to ``Chain`` using an ``AminoAcid`` array
 
 public struct Peptide: AminoAcidChain, Codable, Equatable, Sendable {
+    public let id: UUID
     public var name: String = ""
     public var residues: [AminoAcid] = []
     public var nTerminal: Modification = hydrogenModification
@@ -20,10 +21,20 @@ public struct Peptide: AminoAcidChain, Codable, Equatable, Sendable {
     public var parentLength: Int = 0
 
     public init(sequence: String) {
+        self.init(sequence: sequence, id: UUID())
+    }
+
+    public init(sequence: String, id: UUID) {
+        self.id = id
         residues = Self.createResidues(from: sequence)
     }
 
     public init(residues: [AminoAcid]) {
+        self.init(residues: residues, id: UUID())
+    }
+
+    public init(residues: [AminoAcid], id: UUID) {
+        self.id = id
         self.residues = residues
     }
 }
