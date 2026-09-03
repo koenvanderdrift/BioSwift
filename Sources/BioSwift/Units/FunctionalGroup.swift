@@ -44,10 +44,6 @@ public struct FunctionalGroup: Structure, Codable, Sendable {
     public var description: String {
         name
     }
-
-    public var chemicalString: String {
-        formula.chemicalString
-    }
 }
 
 extension FunctionalGroup: Hashable {

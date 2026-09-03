@@ -46,10 +46,6 @@ public struct AminoAcid: Residue, Codable, Sendable {
 
     public var adducts: [Adduct]
 
-    public var chemicalString: String {
-        formula.chemicalString
-    }
-
     public init(
         name: String, oneLetterCode: String, threeLetterCode: String = "", formula: Formula,
         represents: [String] = [], representedBy: [String] = []
