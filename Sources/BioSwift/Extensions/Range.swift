@@ -12,13 +12,13 @@ import Foundation
 
 public let zeroRange: Range<Int> = 0..<0
 
-/// UIRange is one-based wrapper around ClosedRange<Int> to be used in views, etc
+/// BiologicalRange is one-based wrapper around ClosedRange<Int> to be used in views, etc
 
-public struct UIRange: Equatable {
+public struct BiologicalRange: Equatable {
     public let value: ClosedRange<Int>
 
     public init(_ value: ClosedRange<Int>) {
-        precondition(value.lowerBound >= 1, "UIRange must be one-based.")
+        precondition(value.lowerBound >= 1, "BiologicalRange must be one-based.")
 
         self.value = value
     }
@@ -48,7 +48,7 @@ public struct UIRange: Equatable {
         }
 
         /*
-         UIRange is 1-based and inclusive.
+         BiologicalRange is 1-based and inclusive.
          Ignore ranges that do not intersect the current text.
          */guard upperBound >= 1, lowerBound <= textLength else {
              return nil
@@ -91,7 +91,7 @@ public struct UIRange: Equatable {
     }
 }
 
-extension UIRange: CustomStringConvertible {
+extension BiologicalRange: CustomStringConvertible {
     public var description: String {
         locationString
     }
@@ -143,12 +143,12 @@ extension Range where Bound == Int {
         return sourceIndex - lowerBound
     }
 
-    public var uiRange: UIRange? {
+    public var biologicalRange: BiologicalRange? {
         guard !isEmpty else {
             return nil
         }
 
-        return UIRange((lowerBound + 1)...upperBound)
+        return BiologicalRange((lowerBound + 1)...upperBound)
     }
 
     public var endPoints: (from: Int, to: Int)? {

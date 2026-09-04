@@ -1354,40 +1354,40 @@ struct BioSwiftTests {
         #expect(result == 3...7)
     }
 
-    @Test("Convert UIRange to zero-based Range") func uiRangeToRange() {
-        let uiRange = UIRange(1...4)
+    @Test("Convert BiologicalRange to zero-based Range") func biologicalRangeToRange() {
+        let biologicalRange = BiologicalRange(1...4)
 
-        let result = uiRange.zeroBasedRange
+        let result = biologicalRange.zeroBasedRange
 
         #expect(result == 0..<4)
     }
 
-    @Test("Convert zero-based Range to UIRange") func rangeToUIRange() {
+    @Test("Convert zero-based Range to BiologicalRange") func rangeToBiologicalRange() {
         let range: Range<Int> = 0..<4
 
-        let result = range.uiRange
+        let result = range.biologicalRange
 
-        #expect(result == UIRange(1...4))
+        #expect(result == BiologicalRange(1...4))
     }
 
-    @Test("Round-trip Range through UIRange") func rangeUIRangeRoundTrip() {
+    @Test("Round-trip Range through BiologicalRange") func rangeBiologicalRangeRoundTrip() {
         let original: Range<Int> = 25..<33
 
-        let uiRange = original.uiRange
-        let convertedBack = uiRange?.zeroBasedRange
+        let biologicalRange = original.biologicalRange
+        let convertedBack = biologicalRange?.zeroBasedRange
 
-        #expect(uiRange == UIRange(26...33))
+        #expect(biologicalRange == BiologicalRange(26...33))
         #expect(convertedBack == original)
     }
 
-    @Test("Empty Range cannot convert to UIRange") func emptyRangeToUIRange() {
+    @Test("Empty Range cannot convert to BiologicalRange") func emptyRangeToBiologicalRange() {
         let emptyRange: Range<Int> = 0..<0
 
-        #expect(emptyRange.uiRange == nil)
+        #expect(emptyRange.biologicalRange == nil)
     }
 
-    @Test("UIRange rejects a zero-based ClosedRange") func invalidUIRange() {
-        let result = UIRange(validating: 0...4)
+    @Test("BiologicalRange rejects a zero-based ClosedRange") func invalidBiologicalRange() {
+        let result = BiologicalRange(validating: 0...4)
 
         #expect(result == nil)
     }
