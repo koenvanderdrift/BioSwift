@@ -1338,22 +1338,6 @@ struct BioSwiftTests {
         #expect(!nsError.localizedDescription.isEmpty)
     }
 
-    @Test("ClosedRange to Range") func closedRangeToRange() {
-        let input: ClosedRange<Int> = 3...7
-
-        let result = range(from: input)
-
-        #expect(result == 3..<8)
-    }
-
-    @Test("Range to ClosedRange") func rangeToClosedRange() {
-        let input: Range<Int> = 3..<8
-
-        let result = closedRange(from: input)
-
-        #expect(result == 3...7)
-    }
-
     @Test("Convert BiologicalRange to zero-based Range") func biologicalRangeToRange() {
         let biologicalRange = BiologicalRange(1...4)
 

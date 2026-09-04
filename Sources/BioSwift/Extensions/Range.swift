@@ -91,6 +91,30 @@ public struct BiologicalRange: Equatable {
     }
 }
 
+public struct BiologicalPosition: Equatable, Comparable, Codable {
+    public let value: Int
+
+    public init?(_ value: Int?) {
+        guard let value, value >= 1 else {
+            return nil
+        }
+
+        self.value = value
+    }
+
+    public var zeroBasedIndex: Int {
+        value - 1
+    }
+
+    public var range: BiologicalRange {
+        BiologicalRange(value...value)
+    }
+
+    public static func < (lhs: BiologicalPosition, rhs: BiologicalPosition) -> Bool {
+        lhs.value < rhs.value
+    }
+}
+
 extension BiologicalRange: CustomStringConvertible {
     public var description: String {
         locationString
@@ -160,18 +184,3 @@ extension Range where Bound == Int {
     }
 }
 
-// MARK: - ClosedRange<Int> conversions
-
-public func range(from closedRange: ClosedRange<Int>) -> Range<Int> {
-    closedRange.lowerBound..<(closedRange.upperBound + 1)
-}
-
-// MARK: - Range<Int> conversions
-
-public func closedRange(from range: Range<Int>) -> ClosedRange<Int>? {
-    guard !range.isEmpty else {
-        return nil
-    }
-
-    return range.lowerBound...(range.upperBound - 1)
-}
