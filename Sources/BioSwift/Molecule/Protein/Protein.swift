@@ -43,7 +43,7 @@ extension BioMolecule where ChainType == Peptide {
 
     public func nTermModifications() -> [Modification] {
         if let nTermAA = residues().first {
-            var nTermGroups = ModificationReferenceDefaults.bundled.modifications.filter { mod in
+            var nTermGroups = UnimodModificationReferenceDefaults.bundled.modifications.filter { mod in
                 mod.specificities.contains { spec in
                     spec.position.contains("Protein N-term") && spec.site == nTermAA.oneLetterCode
                 }
@@ -59,7 +59,7 @@ extension BioMolecule where ChainType == Peptide {
 
     public func cTermModifications() -> [Modification] {
         if let cTermAA = residues().last {
-            var cTermGroups = ModificationReferenceDefaults.bundled.modifications.filter { mod in
+            var cTermGroups = UnimodModificationReferenceDefaults.bundled.modifications.filter { mod in
                 mod.specificities.contains { spec in
                     spec.position.contains("Protein C-term") && spec.site == cTermAA.oneLetterCode
                 }

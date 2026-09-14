@@ -8,6 +8,49 @@
 
 import Foundation
 
+public enum ModificationVocabulary: String, Codable, Sendable {
+    case unimod
+    case psiMod
+}
+
+public struct ModificationLibrary: Sendable {
+    public let vocabulary: ModificationVocabulary
+    public let version: String
+    public let modifications: [Modification]
+    public let rejectedTermCount: Int
+
+    private let references: ModificationReferences
+
+    public init(
+        vocabulary: ModificationVocabulary,
+        version: String,
+        modifications: [Modification],
+        rejectedTermCount: Int = 0
+    ) {
+        self.vocabulary = vocabulary
+        self.version = version
+        self.modifications = modifications
+        self.rejectedTermCount = rejectedTermCount
+        self.references = ModificationReferences(modifications: modifications)
+    }
+
+    public func modification(named name: String) -> Modification? {
+        references.modification(named: name)
+    }
+
+    public func modification(accession: String) -> Modification? {
+        references.modification(accession: accession)
+    }
+
+    public func modifications(matching query: String, applicableTo residue: String? = nil) -> [Modification] {
+        references.modifications(matching: query, applicableTo: residue)
+    }
+
+    public func modifications(applicableTo residueIdentifier: String) -> [Modification] {
+        references.modifications(applicableTo: residueIdentifier)
+    }
+}
+
 // MARK: - Public compatibility globals
 
 public var aminoAcidLibrary: [AminoAcid] {
@@ -15,7 +58,7 @@ public var aminoAcidLibrary: [AminoAcid] {
 }
 
 public var modificationLibrary: [Modification] {
-    ReferenceLibraryDefaults.bundled.modifications + [zeroModification]
+    ReferenceLibraryDefaults.bundled.unimodLibrary.modifications + [zeroModification]
 }
 
 public var elementLibrary: [ChemicalElement] {
@@ -60,13 +103,20 @@ enum ReferenceLibraryLoader {
         let jsonLibraries = try JSONReferenceLibraryLoader.loadOtherLibraries()
         let elementReferences = ElementReferences(elements: elements)
         let unimodLibraries = try UnimodReferenceLibraryLoader.load(elements: elementReferences)
+        let psiModLibrary = try PSIModReferenceLibraryLoader.load(elements: elementReferences)
+        let unimodLibrary = ModificationLibrary(
+            vocabulary: .unimod,
+            version: "2.0",
+            modifications: unimodLibraries.modifications
+        )
 
         return ReferenceLibraries(
             elements: elements,
             aminoAcids: unimodLibraries.aminoAcids,
-            modifications: unimodLibraries.modifications,
+            unimodLibrary: unimodLibrary,
             enzymes: jsonLibraries.enzymes,
-            hydrophobicityScales: jsonLibraries.hydrophobicityScales
+            hydrophobicityScales: jsonLibraries.hydrophobicityScales,
+            psiModLibrary: psiModLibrary
         )
     }
 }
@@ -81,9 +131,9 @@ public enum AminoAcidReferenceDefaults {
     }
 }
 
-public enum ModificationReferenceDefaults {
-    public static var bundled: ModificationReferences {
-        ReferenceLibraryDefaults.bundled.modificationReferences
+public enum UnimodModificationReferenceDefaults {
+    public static var bundled: ModificationLibrary {
+        ReferenceLibraryDefaults.bundled.unimodLibrary
     }
 }
 
@@ -138,16 +188,44 @@ public struct ModificationReferences: Sendable {
     public let modifications: [Modification]
 
     private let modificationsByName: [String: Modification]
+    private let modificationsByAccession: [String: Modification]
 
     public init(modifications: [Modification]) {
         self.modifications = modifications
-        self.modificationsByName = Dictionary(uniqueKeysWithValues: modifications.map {
-            ($0.name, $0)
-        })
+        self.modificationsByName = Dictionary(
+            modifications.map { ($0.name, $0) }, uniquingKeysWith: { first, _ in first })
+        self.modificationsByAccession = Dictionary(
+            modifications.compactMap { modification in
+                modification.accession.map { ($0, modification) }
+            },
+            uniquingKeysWith: { first, _ in first }
+        )
     }
 
     public func modification(named name: String) -> Modification? {
         modificationsByName[name]
+    }
+
+    public func modification(accession: String) -> Modification? {
+        modificationsByAccession[accession]
+    }
+
+    public func modifications(matching query: String, applicableTo residue: String? = nil) -> [Modification] {
+        let normalizedQuery = query.folding(
+            options: [.caseInsensitive, .diacriticInsensitive], locale: .current)
+
+        return modifications.filter { modification in
+            let searchableNames = [modification.name, modification.fullName] + modification.synonyms
+            let matchesName = searchableNames.contains { name in
+                name.folding(options: [.caseInsensitive, .diacriticInsensitive], locale: .current)
+                    .contains(normalizedQuery)
+            }
+            let matchesResidue = residue == nil || modification.specificities.contains {
+                $0.site == residue || $0.site == "X"
+            }
+
+            return matchesName && matchesResidue
+        }
     }
 
     public func modifications(applicableTo residueIdentifier: String) -> [Modification] {
@@ -216,32 +294,33 @@ public struct HydrophobicityReferences: Sendable {
 public struct ReferenceLibraries: Sendable {
     public let elements: [ChemicalElement]
     public let aminoAcids: [AminoAcid]
-    public let modifications: [Modification]
+    public let unimodLibrary: ModificationLibrary
     public let enzymes: [Enzyme]
     public let hydrophobicityScales: [HydrophobicityScale]
+    public let psiModLibrary: ModificationLibrary
 
     public let elementReferences: ElementReferences
     public let aminoAcidReferences: AminoAcidReferences
-    public let modificationReferences: ModificationReferences
     public let enzymeReferences: EnzymeReferences
     public let hydrophobicityReferences: HydrophobicityReferences
 
     public init(
         elements: [ChemicalElement],
         aminoAcids: [AminoAcid],
-        modifications: [Modification],
+        unimodLibrary: ModificationLibrary,
         enzymes: [Enzyme],
-        hydrophobicityScales: [HydrophobicityScale]
+        hydrophobicityScales: [HydrophobicityScale],
+        psiModLibrary: ModificationLibrary
     ) {
         self.elements = elements
         self.aminoAcids = aminoAcids
-        self.modifications = modifications
+        self.unimodLibrary = unimodLibrary
         self.enzymes = enzymes
         self.hydrophobicityScales = hydrophobicityScales
+        self.psiModLibrary = psiModLibrary
 
         self.elementReferences = ElementReferences(elements: elements)
         self.aminoAcidReferences = AminoAcidReferences(aminoAcids: aminoAcids)
-        self.modificationReferences = ModificationReferences(modifications: modifications)
         self.enzymeReferences = EnzymeReferences(enzymes: enzymes)
         self.hydrophobicityReferences = HydrophobicityReferences(hydrophobicityScales: hydrophobicityScales)
     }
@@ -252,10 +331,6 @@ public struct ReferenceLibraries: Sendable {
 
     public func aminoAcid(identifier: String) -> AminoAcid? {
         aminoAcidReferences.aminoAcid(identifier: identifier)
-    }
-
-    public func modification(named name: String) -> Modification? {
-        modificationReferences.modification(named: name)
     }
 
     public func enzyme(named name: String) -> Enzyme? {
@@ -270,7 +345,4 @@ public struct ReferenceLibraries: Sendable {
         hydrophobicityReferences.hydrophobicityScale(named: name)
     }
 
-    public func modifications(applicableTo residueIdentifier: String) -> [Modification] {
-        modificationReferences.modifications(applicableTo: residueIdentifier)
-    }
 }

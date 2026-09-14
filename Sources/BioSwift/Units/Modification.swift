@@ -93,23 +93,29 @@ public struct ModificationSpecificity: Codable, Sendable {
 }
 
 public struct Modification: Codable, Sendable {
+    public let accession: String?
     public let name: String
     public let fullName: String
+    public let synonyms: [String]
     public let reactions: [Reaction]
     public let specificities: [ModificationSpecificity]
 
     public init(
-        name: String, fullName: String = "", reactions: [Reaction],
+        accession: String? = nil, name: String, fullName: String = "", synonyms: [String] = [],
+        reactions: [Reaction],
         specificities: [ModificationSpecificity] = []
     ) {
+        self.accession = accession
         self.name = name
         self.fullName = fullName
+        self.synonyms = synonyms
         self.specificities = specificities
         self.reactions = reactions
     }
 
     public init(
-        name: String, fullName: String = "", elements: [String: Int],
+        accession: String? = nil, name: String, fullName: String = "", synonyms: [String] = [],
+        elements: [String: Int],
         specificities: [ModificationSpecificity] = []
     ) {
         // TODO: switch to [ChemicalElement: Int] ?
@@ -133,12 +139,15 @@ public struct Modification: Codable, Sendable {
         }
 
         self.init(
-            name: name, fullName: fullName, reactions: reactions, specificities: specificities)
+            accession: accession, name: name, fullName: fullName, synonyms: synonyms,
+            reactions: reactions, specificities: specificities)
     }
 
     public init(_ modification: Modification) {
+        accession = modification.accession
         name = modification.name
         fullName = modification.fullName
+        synonyms = modification.synonyms
         specificities = modification.specificities
         reactions = modification.reactions
     }
@@ -146,11 +155,18 @@ public struct Modification: Codable, Sendable {
 
 extension Modification: Hashable {
     public static func == (lhs: Modification, rhs: Modification) -> Bool {
-        lhs.name == rhs.name
+        switch (lhs.accession, rhs.accession) {
+        case (.some(let lhsAccession), .some(let rhsAccession)):
+            return lhsAccession == rhsAccession
+        case (.none, .none):
+            return lhs.name == rhs.name
+        default:
+            return false
+        }
     }
 
     public func hash(into hasher: inout Hasher) {
-        hasher.combine(name)
+        hasher.combine(accession ?? name)
     }
 }
 
@@ -163,4 +179,3 @@ extension Modification: MassRepresentable {
 
     public func calculateMasses() -> MassContainer { reactions.reduce(zeroMass) { $0 + $1.masses } }
 }
-

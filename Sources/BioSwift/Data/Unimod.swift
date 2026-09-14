@@ -52,6 +52,7 @@ final class UnimodXMLParser: NSObject {
     private let element = "umod:element"
 
     private let titleAttributeKey = "title"
+    private let recordIDAttributeKey = "record_id"
     private let siteAttributeKey = "site"
     private let positionAttributeKey = "position"
     private let classificationAttributeKey = "classification"
@@ -84,6 +85,7 @@ final class UnimodXMLParser: NSObject {
     var elementAverageMass = ""
 
     var modificationTitle = ""
+    var modificationAccession: String?
     var modificationFullName = ""
     var modificationElements = [String: Int]()
     var modificationSpecificities = [ModificationSpecificity]()
@@ -128,6 +130,7 @@ final class UnimodXMLParser: NSObject {
 
     private func resetModificationState() {
         modificationTitle.removeAll()
+        modificationAccession = nil
         modificationFullName.removeAll()
         modificationElements.removeAll()
         modificationSpecificities.removeAll()
@@ -152,6 +155,10 @@ extension UnimodXMLParser: XMLParserDelegate {
         } else if xmlElementName == modification {
             isModification = true
             resetModificationState()
+
+            if let recordID = attributeDict[recordIDAttributeKey] {
+                modificationAccession = "UNIMOD:\(recordID)"
+            }
 
             if let title = attributeDict[titleAttributeKey],
                 skipTitleStrings.contains(where: title.contains) == false
@@ -238,7 +245,8 @@ extension UnimodXMLParser: XMLParserDelegate {
         } else if xmlElementName == modification {
             if modificationTitle.isEmpty == false {
                 let mod = Modification(
-                    name: modificationTitle, fullName: modificationFullName,
+                    accession: modificationAccession, name: modificationTitle,
+                    fullName: modificationFullName,
                     elements: modificationElements, specificities: modificationSpecificities)
 
                 parsedModifications.append(mod)

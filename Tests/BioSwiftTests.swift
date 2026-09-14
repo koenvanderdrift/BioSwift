@@ -26,7 +26,7 @@ struct BioSwiftTests {
         let libraries = try ReferenceLibraryDefaults.loadBundled()
 
         #expect(!libraries.elements.isEmpty)
-        #expect(!libraries.modifications.isEmpty)
+        #expect(!libraries.unimodLibrary.modifications.isEmpty)
         #expect(!libraries.aminoAcids.isEmpty)
         #expect(!libraries.enzymes.isEmpty)
         #expect(!libraries.hydrophobicityScales.isEmpty)
@@ -36,7 +36,7 @@ struct BioSwiftTests {
         let libraries = ReferenceLibraryDefaults.bundled
 
         #expect(!libraries.elements.isEmpty)
-        #expect(!libraries.modifications.isEmpty)
+        #expect(!libraries.unimodLibrary.modifications.isEmpty)
         #expect(!libraries.aminoAcids.isEmpty)
         #expect(!libraries.enzymes.isEmpty)
         #expect(!libraries.hydrophobicityScales.isEmpty)
@@ -53,6 +53,103 @@ struct BioSwiftTests {
         let data = try loadData(from: "unimod", withExtension: "xml", in: .module)
 
         #expect(!data.isEmpty)
+    }
+
+    @Test func psiModResourceExistsAndHasExpectedVersion() throws {
+        let data = try loadData(from: "PSI-MOD", withExtension: "obo", in: .module)
+        let contents = try #require(String(data: data, encoding: .utf8))
+
+        #expect(contents.contains("ontology: mod"))
+        #expect(contents.contains("data-version: 1.038.0"))
+    }
+
+    @Test func psiModReferenceLibraryLoadsSeparatelyFromUnimod() throws {
+        let libraries = try ReferenceLibraryDefaults.loadBundled()
+
+        #expect(libraries.psiModLibrary.version == "1.038.0")
+        #expect(!libraries.psiModLibrary.modifications.isEmpty)
+        #expect(libraries.psiModLibrary.modifications.allSatisfy { $0.accession != nil })
+        #expect(libraries.psiModLibrary.modification(accession: "MOD:00007") != nil)
+    }
+
+    @Test func modificationLibrariesHaveAnExchangeableAPI() throws {
+        let libraries = try ReferenceLibraryDefaults.loadBundled()
+
+        func validate(_ library: ModificationLibrary) {
+            #expect(!library.modifications.isEmpty)
+            #expect(!library.modifications(matching: "oxid", applicableTo: "M").isEmpty)
+        }
+
+        validate(libraries.unimodLibrary)
+        validate(libraries.psiModLibrary)
+        #expect(libraries.unimodLibrary.modification(accession: "UNIMOD:1") != nil)
+    }
+
+    @Test func psiModParserRejectsUnsupportedTerms() {
+        let text = """
+            format-version: 1.2
+            data-version: test
+
+            [Term]
+            id: MOD:10001
+            name: accepted modification
+            xref: DiffFormula: "H 2 O 1"
+            xref: Origin: "S"
+            xref: Source: "natural"
+            xref: TermSpec: "none"
+
+            [Term]
+            id: MOD:10002
+            name: obsolete modification
+            is_obsolete: true
+            xref: DiffFormula: "H 1"
+            xref: Origin: "S"
+
+            [Term]
+            id: MOD:10003
+            name: missing formula
+            xref: Origin: "S"
+
+            [Term]
+            id: MOD:10004
+            name: abstract modification
+            xref: DiffFormula: "none"
+            xref: Origin: "S"
+
+            [Term]
+            id: MOD:10005
+            name: cross-link
+            xref: DiffFormula: "H -2"
+            xref: Origin: "C, C"
+
+            [Term]
+            id: MOD:10006
+            name: ontology origin
+            xref: DiffFormula: "H 1"
+            xref: Origin: "MOD:00047"
+
+            [Term]
+            id: MOD:10007
+            name: isotope label
+            xref: DiffFormula: "(13)C 1 C -1"
+            xref: Origin: "K"
+
+            [Term]
+            id: MOD:10008
+            name: unknown element
+            xref: DiffFormula: "Qq 1"
+            xref: Origin: "M"
+            """
+
+        let result = PSIModReferenceLibraryLoader.parse(
+            text,
+            elements: ElementReferenceDefaults.bundled
+        )
+
+        #expect(result.version == "test")
+        #expect(result.modifications.count == 1)
+        #expect(result.modifications.first?.accession == "MOD:10001")
+        #expect(result.rejectedTermCount == 7)
     }
 
     @Test func xmlReferenceLibrariesLoadProperly() throws {
