@@ -11,6 +11,46 @@ import Foundation
 public enum ModificationVocabulary: String, Codable, Sendable {
     case unimod
     case psiMod
+    case uniProtPTM
+}
+
+public struct TaxonomicRange: Codable, Hashable, Sendable {
+    public let name: String
+    public let taxonIdentifier: Int
+
+    public init(name: String, taxonIdentifier: Int) {
+        self.name = name
+        self.taxonIdentifier = taxonIdentifier
+    }
+}
+
+public struct ModificationCrossReference: Codable, Hashable, Sendable {
+    public let database: String
+    public let identifier: String
+
+    public init(database: String, identifier: String) {
+        self.database = database
+        self.identifier = identifier
+    }
+}
+
+public struct ModificationMetadata: Codable, Sendable {
+    public let taxonomicRanges: [TaxonomicRange]
+    public let keywords: [String]
+    public let cellularLocations: [String]
+    public let crossReferences: [ModificationCrossReference]
+
+    public init(
+        taxonomicRanges: [TaxonomicRange] = [],
+        keywords: [String] = [],
+        cellularLocations: [String] = [],
+        crossReferences: [ModificationCrossReference] = []
+    ) {
+        self.taxonomicRanges = taxonomicRanges
+        self.keywords = keywords
+        self.cellularLocations = cellularLocations
+        self.crossReferences = crossReferences
+    }
 }
 
 public struct ModificationLibrary: Sendable {
@@ -19,16 +59,19 @@ public struct ModificationLibrary: Sendable {
     public let modifications: [Modification]
 
     private let references: ModificationReferences
+    private let metadataByAccession: [String: ModificationMetadata]
 
     public init(
         vocabulary: ModificationVocabulary,
         version: String,
-        modifications: [Modification]
+        modifications: [Modification],
+        metadataByAccession: [String: ModificationMetadata] = [:]
     ) {
         self.vocabulary = vocabulary
         self.version = version
         self.modifications = modifications
         self.references = ModificationReferences(modifications: modifications)
+        self.metadataByAccession = metadataByAccession
     }
 
     public func modification(named name: String) -> Modification? {
@@ -45,6 +88,18 @@ public struct ModificationLibrary: Sendable {
 
     public func modifications(applicableTo residueIdentifier: String) -> [Modification] {
         references.modifications(applicableTo: residueIdentifier)
+    }
+
+    public func metadata(for modification: Modification) -> ModificationMetadata? {
+        modification.accession.flatMap { metadataByAccession[$0] }
+    }
+
+    public func modifications(taxonIdentifier: Int) -> [Modification] {
+        modifications.filter { modification in
+            metadata(for: modification)?.taxonomicRanges.contains {
+                $0.taxonIdentifier == taxonIdentifier
+            } == true
+        }
     }
 }
 
@@ -101,6 +156,11 @@ enum ReferenceLibraryLoader {
         let elementReferences = ElementReferences(elements: elements)
         let unimodLibraries = try UnimodReferenceLibraryLoader.load(elements: elementReferences)
         let psiModLibrary = try PSIModReferenceLibraryLoader.load(elements: elementReferences)
+        let aminoAcidReferences = AminoAcidReferences(aminoAcids: unimodLibraries.aminoAcids)
+        let uniProtPTMLibrary = try UniProtPTMReferenceLibraryLoader.load(
+            elements: elementReferences,
+            aminoAcids: aminoAcidReferences
+        )
         let unimodLibrary = ModificationLibrary(
             vocabulary: .unimod,
             version: "2.0",
@@ -113,7 +173,8 @@ enum ReferenceLibraryLoader {
             unimodLibrary: unimodLibrary,
             enzymes: jsonLibraries.enzymes,
             hydrophobicityScales: jsonLibraries.hydrophobicityScales,
-            psiModLibrary: psiModLibrary
+            psiModLibrary: psiModLibrary,
+            uniProtPTMLibrary: uniProtPTMLibrary
         )
     }
 }
@@ -295,6 +356,7 @@ public struct ReferenceLibraries: Sendable {
     public let enzymes: [Enzyme]
     public let hydrophobicityScales: [HydrophobicityScale]
     public let psiModLibrary: ModificationLibrary
+    public let uniProtPTMLibrary: ModificationLibrary
 
     public let elementReferences: ElementReferences
     public let aminoAcidReferences: AminoAcidReferences
@@ -307,7 +369,8 @@ public struct ReferenceLibraries: Sendable {
         unimodLibrary: ModificationLibrary,
         enzymes: [Enzyme],
         hydrophobicityScales: [HydrophobicityScale],
-        psiModLibrary: ModificationLibrary
+        psiModLibrary: ModificationLibrary,
+        uniProtPTMLibrary: ModificationLibrary
     ) {
         self.elements = elements
         self.aminoAcids = aminoAcids
@@ -315,6 +378,7 @@ public struct ReferenceLibraries: Sendable {
         self.enzymes = enzymes
         self.hydrophobicityScales = hydrophobicityScales
         self.psiModLibrary = psiModLibrary
+        self.uniProtPTMLibrary = uniProtPTMLibrary
 
         self.elementReferences = ElementReferences(elements: elements)
         self.aminoAcidReferences = AminoAcidReferences(aminoAcids: aminoAcids)

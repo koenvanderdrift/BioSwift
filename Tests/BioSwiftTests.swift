@@ -22,14 +22,24 @@ struct BioSwiftTests {
     var serine = AminoAcid(
         name: "Serine", oneLetterCode: "S", threeLetterCode: "Ser", formula: Formula("C3H5NO2"))
 
-    private func modifications(unimodName: String, psiModAccession: String) throws -> [Modification] {
+    private func modifications(
+        unimodName: String,
+        psiModAccession: String,
+        uniProtPTMAccession: String? = nil
+    ) throws -> [Modification] {
         let libraries = ReferenceLibraryDefaults.bundled
         let unimodModification = try #require(
             libraries.unimodLibrary.modification(named: unimodName))
         let psiModModification = try #require(
             libraries.psiModLibrary.modification(accession: psiModAccession))
+        var result = [unimodModification, psiModModification]
 
-        return [unimodModification, psiModModification]
+        if let uniProtPTMAccession {
+            result.append(try #require(
+                libraries.uniProtPTMLibrary.modification(accession: uniProtPTMAccession)))
+        }
+
+        return result
     }
 
     @Test func bundledReferenceLibrariesLoadProperly() throws {
@@ -73,6 +83,12 @@ struct BioSwiftTests {
         #expect(contents.contains("data-version: 1.038.0"))
     }
 
+    @Test func uniProtPTMResourceExistsAndHasExpectedVersion() throws {
+        let text = try loadText(from: "ptmlist", withExtension: "txt", in: .module)
+
+        #expect(text.contains("Release:     2026_03"))
+    }
+
     @Test func psiModReferenceLibraryLoadsSeparatelyFromUnimod() throws {
         let libraries = try ReferenceLibraryDefaults.loadBundled()
 
@@ -87,12 +103,76 @@ struct BioSwiftTests {
 
         func validate(_ library: ModificationLibrary) {
             #expect(!library.modifications.isEmpty)
-            #expect(!library.modifications(matching: "oxid", applicableTo: "M").isEmpty)
+            #expect(!library.modifications(applicableTo: "M").isEmpty)
         }
 
         validate(libraries.unimodLibrary)
         validate(libraries.psiModLibrary)
+        validate(libraries.uniProtPTMLibrary)
         #expect(libraries.unimodLibrary.modification(accession: "UNIMOD:1") != nil)
+    }
+
+    @Test func uniProtPTMLibraryLoadsMetadata() throws {
+        let library = ReferenceLibraryDefaults.bundled.uniProtPTMLibrary
+        let modification = try #require(library.modification(accession: "PTM-0369"))
+        let metadata = try #require(library.metadata(for: modification))
+
+        #expect(library.version == "2026_03")
+        #expect(modification.specificities.first?.site == "N")
+        #expect(metadata.taxonomicRanges.contains {
+            $0.taxonIdentifier == 40674 && $0.name == "Eukaryota"
+        })
+        #expect(metadata.crossReferences.contains {
+            $0.database == "PSI-MOD" && $0.identifier == "MOD:00035"
+        })
+        #expect(library.modifications(taxonIdentifier: 40674).contains(modification))
+    }
+
+    @Test func uniProtPTMParserPreservesRepeatedFieldsRejectsUnsupportedRecordsAndIgnoresProvidedMasses() {
+        let text = """
+            Release:     test_release of 01-Jan-2026
+
+            ID   Hydroxyasparagine
+            AC   PTM-TEST1
+            FT   MOD_RES
+            TG   Asparagine.
+            PP   Anywhere.
+            CF   O1
+            MM   999.999999
+            TR   Eukaryota; taxId:2759 (Eukaryota).
+            TR   Mammalia; taxId:40674 (Mammalia).
+            KW   Hydroxylation.
+            DR   PSI-MOD; MOD:00035.
+            DR   Unimod; 35.
+            //
+            ID   Unsupported element
+            AC   PTM-TEST2
+            FT   MOD_RES
+            TG   Asparagine.
+            CF   Qq1
+            //
+            ID   Cross-link
+            AC   PTM-TEST3
+            FT   CROSSLNK
+            TG   Asparagine-Glycine.
+            CF   H-3 N-1
+            //
+            """
+
+        let library = UniProtPTMReferenceLibraryLoader.parse(
+            text,
+            elements: ElementReferenceDefaults.bundled,
+            aminoAcids: AminoAcidReferenceDefaults.bundled
+        )
+        let modification = library.modification(accession: "PTM-TEST1")
+        let metadata = modification.flatMap(library.metadata)
+
+        #expect(library.version == "test_release")
+        #expect(library.modifications.count == 1)
+        #expect(modification?.monoisotopicMass.rounded(scale: 6) == decimal("15.994915"))
+        #expect(metadata?.taxonomicRanges.count == 2)
+        #expect(metadata?.crossReferences.count == 2)
+        #expect(metadata?.keywords == ["Hydroxylation"])
     }
 
     @Test func psiModParserRejectsUnsupportedTerms() {
@@ -240,7 +320,9 @@ struct BioSwiftTests {
     }
 
     @Test func modifiedPeptideFormula() throws {
-        for modification in try modifications(unimodName: "Phospho", psiModAccession: "MOD:00046") {
+        for modification in try modifications(
+            unimodName: "Phospho", psiModAccession: "MOD:00046",
+            uniProtPTMAccession: "PTM-0253") {
             var peptide = Peptide(sequence: "DWSSD")
             peptide.addModification(modification, at: 3)
             #expect(peptide.formula.countFor(element: "P") == 1)
@@ -276,7 +358,9 @@ struct BioSwiftTests {
     }
 
     @Test func modifiedCompleteSequenceMassMatchesExplicitResidueSum() throws {
-        for modification in try modifications(unimodName: "Phospho", psiModAccession: "MOD:00046") {
+        for modification in try modifications(
+            unimodName: "Phospho", psiModAccession: "MOD:00046",
+            uniProtPTMAccession: "PTM-0253") {
             var peptide = Peptide(sequence: "DWSSD")
             peptide.addModification(modification, at: 3)
             let explicitMasses = peptide.residues.reduce(zeroMass) {
@@ -338,7 +422,9 @@ struct BioSwiftTests {
     }
 
     @Test func peptideSerinePhosphorylationMonoisotopicMass() throws {
-        for modification in try modifications(unimodName: "Phospho", psiModAccession: "MOD:00046") {
+        for modification in try modifications(
+            unimodName: "Phospho", psiModAccession: "MOD:00046",
+            uniProtPTMAccession: "PTM-0253") {
             var peptide = testPeptide
             peptide.addModification(modification, at: 3)
 
@@ -355,7 +441,9 @@ struct BioSwiftTests {
     }
 
     @Test func peptideReplaceModificationMonoisotopicMass() throws {
-        let phosphorylations = try modifications(unimodName: "Phospho", psiModAccession: "MOD:00046")
+        let phosphorylations = try modifications(
+            unimodName: "Phospho", psiModAccession: "MOD:00046",
+            uniProtPTMAccession: "PTM-0253")
         let oxidations = try modifications(unimodName: "Oxidation", psiModAccession: "MOD:00425")
 
         for (phosphorylation, oxidation) in zip(phosphorylations, oxidations) {
@@ -430,7 +518,9 @@ struct BioSwiftTests {
     }  // 46737.0703
 
     @Test func proteinSerinePhosphorylationMonoisotopicMass() throws {
-        for modification in try modifications(unimodName: "Phospho", psiModAccession: "MOD:00046") {
+        for modification in try modifications(
+            unimodName: "Phospho", psiModAccession: "MOD:00046",
+            uniProtPTMAccession: "PTM-0253") {
             var protein = testProtein
             protein.addModification(mod: modification, at: 3)
             protein.setAdducts(type: protonAdduct, count: 1)
@@ -824,7 +914,9 @@ struct BioSwiftTests {
     }
 
     @Test func massSearchWithModification() throws {
-        for modification in try modifications(unimodName: "Phospho", psiModAccession: "MOD:00046") {
+        for modification in try modifications(
+            unimodName: "Phospho", psiModAccession: "MOD:00046",
+            uniProtPTMAccession: "PTM-0253") {
             var chain = try #require(testProtein.chains.first)
             chain.addModification(modification, at: 76)
 
@@ -1064,7 +1156,9 @@ struct BioSwiftTests {
     }
 
     @Test func fragmentMass3() throws {
-        for modification in try modifications(unimodName: "Oxidation", psiModAccession: "MOD:00719") {
+        for modification in try modifications(
+            unimodName: "Oxidation", psiModAccession: "MOD:00719",
+            uniProtPTMAccession: "PTM-0469") {
             var peptide = Peptide(sequence: "SAMPLEVAMAAGQTHR")
             peptide.setAdducts(type: protonAdduct, count: 1)
             peptide.addModification(modification, at: 8)
