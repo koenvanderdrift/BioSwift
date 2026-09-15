@@ -22,6 +22,16 @@ struct BioSwiftTests {
     var serine = AminoAcid(
         name: "Serine", oneLetterCode: "S", threeLetterCode: "Ser", formula: Formula("C3H5NO2"))
 
+    private func modifications(unimodName: String, psiModAccession: String) throws -> [Modification] {
+        let libraries = ReferenceLibraryDefaults.bundled
+        let unimodModification = try #require(
+            libraries.unimodLibrary.modification(named: unimodName))
+        let psiModModification = try #require(
+            libraries.psiModLibrary.modification(accession: psiModAccession))
+
+        return [unimodModification, psiModModification]
+    }
+
     @Test func bundledReferenceLibrariesLoadProperly() throws {
         let libraries = try ReferenceLibraryDefaults.loadBundled()
 
@@ -149,7 +159,6 @@ struct BioSwiftTests {
         #expect(result.version == "test")
         #expect(result.modifications.count == 1)
         #expect(result.modifications.first?.accession == "MOD:10001")
-        #expect(result.rejectedTermCount == 7)
     }
 
     @Test func xmlReferenceLibrariesLoadProperly() throws {
@@ -230,10 +239,10 @@ struct BioSwiftTests {
         #expect(peptide.formula.countFor(element: "P") == 0)
     }
 
-    @Test func modifiedPeptideFormula() {
-        var peptide = Peptide(sequence: "DWSSD")
-        if let ser = modificationLibrary.first(where: { $0.name == "Phospho" }) {
-            peptide.addModification(ser, at: 3)
+    @Test func modifiedPeptideFormula() throws {
+        for modification in try modifications(unimodName: "Phospho", psiModAccession: "MOD:00046") {
+            var peptide = Peptide(sequence: "DWSSD")
+            peptide.addModification(modification, at: 3)
             #expect(peptide.formula.countFor(element: "P") == 1)
         }
     }
@@ -267,14 +276,15 @@ struct BioSwiftTests {
     }
 
     @Test func modifiedCompleteSequenceMassMatchesExplicitResidueSum() throws {
-        var peptide = Peptide(sequence: "DWSSD")
-        let phos = try #require(modificationLibrary.first(where: { $0.name == "Phospho" }))
-        peptide.addModification(phos, at: 3)
-        let explicitMasses = peptide.residues.reduce(zeroMass) {
-            $0 + $1.masses
-        } + peptide.terminalMasses()
+        for modification in try modifications(unimodName: "Phospho", psiModAccession: "MOD:00046") {
+            var peptide = Peptide(sequence: "DWSSD")
+            peptide.addModification(modification, at: 3)
+            let explicitMasses = peptide.residues.reduce(zeroMass) {
+                $0 + $1.masses
+            } + peptide.terminalMasses()
 
-        #expect(peptide.calculateMasses() == explicitMasses)
+            #expect(peptide.calculateMasses() == explicitMasses)
+        }
     }
 
     @Test func chainMassesForIndividualResidues() {
@@ -327,41 +337,41 @@ struct BioSwiftTests {
         #expect(testPeptide.averageMass.rounded(scale: 4) == decimal("305.2903"))  // 305.2852
     }
 
-    @Test mutating func peptideSerinePhosphorylationMonoisotopicMass() {
-        if let phos = modificationLibrary.first(where: { $0.name == "Phospho" }) {
-            testPeptide.addModification(phos, at: 3)
+    @Test func peptideSerinePhosphorylationMonoisotopicMass() throws {
+        for modification in try modifications(unimodName: "Phospho", psiModAccession: "MOD:00046") {
+            var peptide = testPeptide
+            peptide.addModification(modification, at: 3)
 
-            testPeptide.setAdducts(type: protonAdduct, count: 1)
-            #expect(testPeptide.monoisotopicMass.rounded(scale: 4) == decimal("689.1814"))
+            peptide.setAdducts(type: protonAdduct, count: 1)
+            #expect(peptide.monoisotopicMass.rounded(scale: 4) == decimal("689.1814"))
 
-            testPeptide.setAdducts(type: protonAdduct, count: 2)
-            #expect(testPeptide.monoisotopicMass.rounded(scale: 4) == decimal("345.0944"))
+            peptide.setAdducts(type: protonAdduct, count: 2)
+            #expect(peptide.monoisotopicMass.rounded(scale: 4) == decimal("345.0944"))
 
-            testPeptide.removeModification(at: 3)
-            testPeptide.setAdducts(type: protonAdduct, count: 1)
-            #expect(testPeptide.monoisotopicMass.rounded(scale: 4) == decimal("609.2151"))
+            peptide.removeModification(at: 3)
+            peptide.setAdducts(type: protonAdduct, count: 1)
+            #expect(peptide.monoisotopicMass.rounded(scale: 4) == decimal("609.2151"))
         }
     }
 
-    @Test mutating func peptideReplaceModificationMonoisotopicMass() {
-        if let phos = modificationLibrary.first(where: {
-            $0.name == "Phospho"
-        }),
-            let methylmalonylation = modificationLibrary.first(where: {
-                $0.name == "Methylmalonylation"
-            })
-        {
-            testPeptide.addModification(phos, at: 3)
+    @Test func peptideReplaceModificationMonoisotopicMass() throws {
+        let phosphorylations = try modifications(unimodName: "Phospho", psiModAccession: "MOD:00046")
+        let oxidations = try modifications(unimodName: "Oxidation", psiModAccession: "MOD:00425")
 
-            testPeptide.setAdducts(type: protonAdduct, count: 1)
-            #expect(testPeptide.monoisotopicMass.rounded(scale: 4) == decimal("689.1814"))
+        for (phosphorylation, oxidation) in zip(phosphorylations, oxidations) {
+            var peptide = testPeptide
+            peptide.addModification(phosphorylation, at: 3)
 
-            testPeptide.setAdducts(type: protonAdduct, count: 2)
-            #expect(testPeptide.monoisotopicMass.rounded(scale: 4) == decimal("345.0944"))
+            peptide.setAdducts(type: protonAdduct, count: 1)
+            #expect(peptide.monoisotopicMass.rounded(scale: 4) == decimal("689.1814"))
 
-            testPeptide.addModification(methylmalonylation, at: 3)
-            testPeptide.setAdducts(type: protonAdduct, count: 1)
-            #expect(testPeptide.monoisotopicMass.rounded(scale: 4) == decimal("709.2311"))
+            peptide.setAdducts(type: protonAdduct, count: 2)
+            #expect(peptide.monoisotopicMass.rounded(scale: 4) == decimal("345.0944"))
+
+            peptide.addModification(oxidation, at: 3)
+            #expect(peptide.modification(at: 3) == oxidation)
+            peptide.setAdducts(type: protonAdduct, count: 1)
+            #expect(peptide.monoisotopicMass.rounded(scale: 4) == decimal("625.2100"))
         }
     }
 
@@ -419,37 +429,40 @@ struct BioSwiftTests {
             testProtein.averageMass.formatted(fractionDigits: 1) == decimal("46737.9568").formatted(fractionDigits: 1))
     }  // 46737.0703
 
-    @Test mutating func proteinSerinePhosphorylationMonoisotopicMass() {
-        if let phos = modificationLibrary.first(where: { $0.name == "Phospho" }) {
-            testProtein.addModification(mod: phos, at: 3)
-            testProtein.setAdducts(type: protonAdduct, count: 1)
-            #expect(phos.fullName == "Phosphorylation")
+    @Test func proteinSerinePhosphorylationMonoisotopicMass() throws {
+        for modification in try modifications(unimodName: "Phospho", psiModAccession: "MOD:00046") {
+            var protein = testProtein
+            protein.addModification(mod: modification, at: 3)
+            protein.setAdducts(type: protonAdduct, count: 1)
             #expect(
-                testProtein.monoisotopicMass.formatted(fractionDigits: 1)
+                protein.monoisotopicMass.formatted(fractionDigits: 1)
                     == decimal("46787.9931").formatted(fractionDigits: 1))  // 46787.9930
 
-            testProtein.setAdducts(type: protonAdduct, count: 2)
+            protein.setAdducts(type: protonAdduct, count: 2)
             #expect(
-                testProtein.monoisotopicMass.formatted(fractionDigits: 1)
+                protein.monoisotopicMass.formatted(fractionDigits: 1)
                     == decimal("23394.5002").formatted(fractionDigits: 1))
         }
     }
 
-    @Test func modificationFullName() {
-        if let pnTAG = modificationLibrary.first(where: { $0.name == "PnTAG" }) {
+    @Test func unimodModificationFullName() {
+        let unimodModifications = ReferenceLibraryDefaults.bundled.unimodLibrary.modifications
+
+        if let pnTAG = unimodModifications.first(where: { $0.name == "PnTAG" }) {
             #expect(pnTAG.fullName == "6-Phosphonohexanoylation")
         }
 
-        if let TMTpro = modificationLibrary.first(where: { $0.name == "Label:13C(6)15N(2)+TMTpro" }) {
+        if let TMTpro = unimodModifications.first(where: { $0.name == "Label:13C(6)15N(2)+TMTpro" }) {
             #expect(TMTpro.fullName == "TMTpro Tandem Mass Tag 13C(6) 15N(2) Silac label")
         }
     }
 
-    @Test mutating func modifyResidues() {
-        if let cam = modificationLibrary.first(where: { $0.name == "Carbamidomethyl" }) {
-            testProtein.modifyResidues(for: "C", with: cam)
+    @Test func modifyResidues() throws {
+        for modification in try modifications(unimodName: "Carbamidomethyl", psiModAccession: "MOD:01060") {
+            var protein = testProtein
+            protein.modifyResidues(for: "C", with: modification)
 
-            #expect(testProtein.countOneResidue(with: "C") == 3)
+            #expect(protein.countOneResidue(with: "C") == 3)
         }
     }
 
@@ -580,13 +593,19 @@ struct BioSwiftTests {
         }
     }
 
-    @Test func subChainWithModification() {
-        var peptide = Peptide(sequence: "SAMPLEVCAAAGQTHR")
-        peptide.setAdducts(type: protonAdduct, count: 1)
-        #expect(peptide.monoisotopicMass.rounded(scale: 4) == decimal("1641.7836"))
+    @Test func subChainWithModification() throws {
+        let carboxymethylModifications = try modifications(
+            unimodName: "Carboxymethyl",
+            psiModAccession: "MOD:01061"
+        )
 
-        if let cysMod = modificationLibrary.first(where: { $0.name == "Carboxymethyl" }) {
-            #expect(cysMod.fullName == "Iodoacetic acid derivative")
+        #expect(carboxymethylModifications.first?.fullName == "Iodoacetic acid derivative")
+
+        for cysMod in carboxymethylModifications {
+            var peptide = Peptide(sequence: "SAMPLEVCAAAGQTHR")
+            peptide.setAdducts(type: protonAdduct, count: 1)
+            #expect(peptide.monoisotopicMass.rounded(scale: 4) == decimal("1641.7836"))
+
             peptide.addModification(cysMod, at: 8)
             #expect(peptide.monoisotopicMass.rounded(scale: 4) == decimal("1699.7891"))
 
@@ -804,13 +823,10 @@ struct BioSwiftTests {
         }
     }
 
-    @Test func massSearchWithModification() {
-        if var chain = testProtein.chains.first,
-            let phos = modificationLibrary.first(where: {
-                $0.name == "Phospho"
-            })
-        {
-            chain.addModification(phos, at: 76)
+    @Test func massSearchWithModification() throws {
+        for modification in try modifications(unimodName: "Phospho", psiModAccession: "MOD:00046") {
+            var chain = try #require(testProtein.chains.first)
+            chain.addModification(modification, at: 76)
 
             let searchParameters = MassSearchParameters(
                 searchValue: 689.28, tolerance: MassTolerance(type: .ppm, value: 10),
@@ -1047,13 +1063,11 @@ struct BioSwiftTests {
         }
     }
 
-    @Test func fragmentMass3() {
-        var peptide = Peptide(sequence: "SAMPLEVAMAAGQTHR")
-        peptide.setAdducts(type: protonAdduct, count: 1)
-
-        if let ox = modificationLibrary.first(where: { $0.name == "Oxidation" }) {
-            #expect(ox.fullName == "Oxidation or Hydroxylation")
-            peptide.addModification(ox, at: 8)
+    @Test func fragmentMass3() throws {
+        for modification in try modifications(unimodName: "Oxidation", psiModAccession: "MOD:00719") {
+            var peptide = Peptide(sequence: "SAMPLEVAMAAGQTHR")
+            peptide.setAdducts(type: protonAdduct, count: 1)
+            peptide.addModification(modification, at: 8)
             #expect(peptide.monoisotopicMass.rounded(scale: 4) == decimal("1685.8098"))
 
             let fragmenter = PeptideFragmenter(peptide: peptide)

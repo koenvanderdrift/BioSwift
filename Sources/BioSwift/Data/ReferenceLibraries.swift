@@ -17,20 +17,17 @@ public struct ModificationLibrary: Sendable {
     public let vocabulary: ModificationVocabulary
     public let version: String
     public let modifications: [Modification]
-    public let rejectedTermCount: Int
 
     private let references: ModificationReferences
 
     public init(
         vocabulary: ModificationVocabulary,
         version: String,
-        modifications: [Modification],
-        rejectedTermCount: Int = 0
+        modifications: [Modification]
     ) {
         self.vocabulary = vocabulary
         self.version = version
         self.modifications = modifications
-        self.rejectedTermCount = rejectedTermCount
         self.references = ModificationReferences(modifications: modifications)
     }
 

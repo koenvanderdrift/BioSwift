@@ -7,26 +7,13 @@
 
 import Foundation
 
-struct PSIModParseResult {
-    let version: String
-    let modifications: [Modification]
-    let rejectedTermCount: Int
-}
-
 enum PSIModReferenceLibraryLoader {
     static func load(elements: ElementReferences) throws -> ModificationLibrary {
         let text = try loadText(from: "PSI-MOD", withExtension: "obo", in: .module)
-        let result = PSIModParser(elements: elements).parse(text)
-
-        return ModificationLibrary(
-            vocabulary: .psiMod,
-            version: result.version,
-            modifications: result.modifications,
-            rejectedTermCount: result.rejectedTermCount
-        )
+        return PSIModParser(elements: elements).parse(text)
     }
 
-    static func parse(_ text: String, elements: ElementReferences) -> PSIModParseResult {
+    static func parse(_ text: String, elements: ElementReferences) -> ModificationLibrary {
         PSIModParser(elements: elements).parse(text)
     }
 }
@@ -52,17 +39,17 @@ private struct PSIModParser {
         self.elements = elements
     }
 
-    func parse(_ text: String) -> PSIModParseResult {
+    func parse(_ text: String) -> ModificationLibrary {
         let normalizedText = text.replacingOccurrences(of: "\r\n", with: "\n")
         let sections = normalizedText.components(separatedBy: "[Term]")
         let version = headerValue(named: "data-version", in: sections.first ?? "") ?? ""
         let terms = sections.dropFirst().compactMap(parseTerm)
         let modifications = terms.compactMap(makeModification)
 
-        return PSIModParseResult(
+        return ModificationLibrary(
+            vocabulary: .psiMod,
             version: version,
-            modifications: modifications,
-            rejectedTermCount: terms.count - modifications.count
+            modifications: modifications
         )
     }
 
