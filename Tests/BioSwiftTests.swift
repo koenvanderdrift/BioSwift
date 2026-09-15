@@ -128,6 +128,32 @@ struct BioSwiftTests {
         #expect(library.modifications(taxonIdentifier: 40674).contains(modification))
     }
 
+    @Test func bundledUniProtPTMLibraryResolvesAspartateAndGlutamateAliases() throws {
+        let library = ReferenceLibraryDefaults.bundled.uniProtPTMLibrary
+        let aspartateModification = try #require(
+            library.modification(accession: "PTM-0371"))
+        let glutamateModification = try #require(
+            library.modification(accession: "PTM-0039"))
+
+        #expect(aspartateModification.specificities.first?.site == "D")
+        #expect(glutamateModification.specificities.first?.site == "E")
+        #expect(library.modifications(applicableTo: "D").contains(aspartateModification))
+        #expect(library.modifications(applicableTo: "E").contains(glutamateModification))
+    }
+
+    @Test func bundledUniProtPTMLibraryIncludesLipidAndCarbohydrateFeatures() throws {
+        let library = ReferenceLibraryDefaults.bundled.uniProtPTMLibrary
+        let lipidModification = try #require(
+            library.modification(accession: "PTM-0776"))
+        let carbohydrateModification = try #require(
+            library.modification(accession: "PTM-0540"))
+
+        #expect(lipidModification.name == "Cholesterol aspartate ester")
+        #expect(lipidModification.specificities.first?.site == "D")
+        #expect(carbohydrateModification.name == "N-linked (Hex) asparagine")
+        #expect(carbohydrateModification.specificities.first?.site == "N")
+    }
+
     @Test func uniProtPTMParserPreservesRepeatedFieldsRejectsUnsupportedRecordsAndIgnoresProvidedMasses() {
         let text = """
             Release:     test_release of 01-Jan-2026
@@ -144,6 +170,34 @@ struct BioSwiftTests {
             KW   Hydroxylation.
             DR   PSI-MOD; MOD:00035.
             DR   Unimod; 35.
+            //
+            ID   Hydroxyaspartate
+            AC   PTM-TEST-D
+            FT   MOD_RES
+            TG   Aspartate.
+            PP   Anywhere.
+            CF   O1
+            //
+            ID   Hydroxyglutamate
+            AC   PTM-TEST-E
+            FT   MOD_RES
+            TG   Glutamate.
+            PP   Anywhere.
+            CF   O1
+            //
+            ID   Lipidated aspartate
+            AC   PTM-TEST-LIPID
+            FT   LIPID
+            TG   Aspartate.
+            PP   Anywhere.
+            CF   C2 H2
+            //
+            ID   Glycosylated asparagine
+            AC   PTM-TEST-CARBOHYD
+            FT   CARBOHYD
+            TG   Asparagine.
+            PP   Anywhere.
+            CF   C6 H10 O5
             //
             ID   Unsupported element
             AC   PTM-TEST2
@@ -168,8 +222,12 @@ struct BioSwiftTests {
         let metadata = modification.flatMap(library.metadata)
 
         #expect(library.version == "test_release")
-        #expect(library.modifications.count == 1)
+        #expect(library.modifications.count == 5)
         #expect(modification?.monoisotopicMass.rounded(scale: 6) == decimal("15.994915"))
+        #expect(library.modification(accession: "PTM-TEST-D")?.specificities.first?.site == "D")
+        #expect(library.modification(accession: "PTM-TEST-E")?.specificities.first?.site == "E")
+        #expect(library.modification(accession: "PTM-TEST-LIPID")?.specificities.first?.site == "D")
+        #expect(library.modification(accession: "PTM-TEST-CARBOHYD")?.specificities.first?.site == "N")
         #expect(metadata?.taxonomicRanges.count == 2)
         #expect(metadata?.crossReferences.count == 2)
         #expect(metadata?.keywords == ["Hydroxylation"])

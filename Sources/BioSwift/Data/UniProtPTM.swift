@@ -39,14 +39,25 @@ private struct UniProtPTMRecord {
 
 private struct UniProtPTMParser {
     private let elements: ElementReferences
-    private let aminoAcidsByName: [String: AminoAcid]
+    private let aminoAcidsByIdentifier: [String: AminoAcid]
 
     init(elements: ElementReferences, aminoAcids: AminoAcidReferences) {
         self.elements = elements
-        self.aminoAcidsByName = Dictionary(
-            aminoAcids.aminoAcids.map { ($0.name.lowercased(), $0) },
-            uniquingKeysWith: { first, _ in first }
-        )
+        var aminoAcidsByIdentifier: [String: AminoAcid] = [:]
+
+        for aminoAcid in aminoAcids.aminoAcids {
+            let identifiers = [
+                aminoAcid.name,
+                aminoAcid.oneLetterCode,
+                aminoAcid.threeLetterCode,
+            ] + aminoAcid.represents
+
+            for identifier in identifiers {
+                aminoAcidsByIdentifier[Self.normalizedAminoAcidIdentifier(identifier)] = aminoAcid
+            }
+        }
+
+        self.aminoAcidsByIdentifier = aminoAcidsByIdentifier
     }
 
     func parse(_ text: String) -> ModificationLibrary {
@@ -98,11 +109,14 @@ private struct UniProtPTMParser {
     private func convert(
         _ record: UniProtPTMRecord
     ) -> (modification: Modification, metadata: ModificationMetadata)? {
-        guard record.value(for: "FT") == "MOD_RES",
+        guard let feature = record.value(for: "FT"),
+            feature != "CROSSLNK",
             let accession = record.value(for: "AC"),
             let name = record.value(for: "ID"),
             let target = record.value(for: "TG").map(removeTrailingPeriod),
-            let aminoAcid = aminoAcidsByName[target.lowercased()],
+            let aminoAcid = aminoAcidsByIdentifier[
+                Self.normalizedAminoAcidIdentifier(target)
+            ],
             let correctionFormula = record.value(for: "CF"),
             let elementCounts = parseCorrectionFormula(correctionFormula),
             !elementCounts.isEmpty
@@ -161,6 +175,16 @@ private struct UniProtPTMParser {
 
         return result
     }
+
+    private static func normalizedAminoAcidIdentifier(_ identifier: String) -> String {
+        let normalizedIdentifier = identifier.lowercased().filter(\.isLetter)
+        return uniProtTargetAliases[normalizedIdentifier] ?? normalizedIdentifier
+    }
+
+    private static let uniProtTargetAliases = [
+        "aspartate": "asparticacid",
+        "glutamate": "glutamicacid",
+    ]
 
     private func parseTaxonomicRange(_ value: String) -> TaxonomicRange? {
         let cleanedValue = removeTrailingPeriod(value)
