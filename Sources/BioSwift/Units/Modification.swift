@@ -28,6 +28,14 @@ public let lossOfAmmonia = Modification(
         ModificationSpecificity(site: "N"), ModificationSpecificity(site: "K"),
     ])
 
+public let disulfideBond = Modification(
+    name: "Disulfide bond",
+    reactions: [
+        .remove(hydrogen),
+        .remove(hydrogen),
+    ]
+)
+
 public indirect enum Reaction: Codable, Sendable {
     case add(FunctionalGroup)
     case remove(FunctionalGroup)

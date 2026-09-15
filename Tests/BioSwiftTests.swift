@@ -1366,6 +1366,40 @@ struct BioSwiftTests {
         #expect(mass.rounded(scale: 4) == (mass3 + mass4).rounded(scale: 4))
     }
 
+    @Test func crossLinkWithinOneChainContributesItsModificationOnce() throws {
+        var protein = Protein(sequence: "ACDC")
+        let unlinkedFormula = protein.formula
+        let unlinkedMasses = protein.neutralMasses()
+
+        let crossLink = try protein.addCrossLink(
+            modification: disulfideBond,
+            between: 1,
+            and: 3)
+
+        #expect(protein.crossLinks == [crossLink])
+        #expect(protein.formula.countFor(element: "H") == unlinkedFormula.countFor(element: "H") - 2)
+        #expect(protein.neutralMasses() == unlinkedMasses + disulfideBond.masses)
+    }
+
+    @Test func crossLinkCanConnectDifferentProteinChainsAndRoundTripThroughCodable() throws {
+        var protein = Protein(chains: [Peptide(sequence: "AC"), Peptide(sequence: "CA")])
+
+        let crossLink = try protein.addCrossLink(
+            modification: disulfideBond,
+            between: 1,
+            inChain: 0,
+            and: 0,
+            inChain: 1)
+
+        #expect(crossLink.firstSite.chainID == protein.chains[0].id)
+        #expect(crossLink.secondSite.chainID == protein.chains[1].id)
+        #expect(protein.crossLinks(at: crossLink.firstSite) == [crossLink])
+
+        let encoded = try JSONEncoder().encode(protein)
+        let decoded = try JSONDecoder().decode(Protein.self, from: encoded)
+        #expect(decoded == protein)
+    }
+
     @Test func checkRegex() {
         let data = """
             BEGIN PEPTIDE

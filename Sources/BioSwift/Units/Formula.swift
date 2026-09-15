@@ -170,7 +170,7 @@ public struct FormulaParser: Sendable {
 
         for (element, count) in countedElements {
             result += element.symbol
-            if count > 1 {
+            if count != 1 {
                 result += String(count)
             }
         }
@@ -250,7 +250,7 @@ extension Formula {
 
         for (element, count) in countedElements {
             result += element.symbol
-            if count > 1 {
+            if count != 1 {
                 result += String(count)
             }
         }
@@ -278,10 +278,14 @@ extension Formula: Equatable {
     }
 
     static func - (lhs: Formula, rhs: Formula) -> Formula {
-        let result = lhs.countedElements.merging(
-            rhs.countedElements, uniquingKeysWith: {
-                left, right in abs(left - right)
-            })
+        var result = lhs.countedElements
+
+        for (element, count) in rhs.countedElements {
+            result[element, default: 0] -= count
+            if result[element] == 0 {
+                result.removeValue(forKey: element)
+            }
+        }
 
         return Formula(with: result)
     }

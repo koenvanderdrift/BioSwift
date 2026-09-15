@@ -12,14 +12,36 @@ import Foundation
 public struct BioMolecule<ChainType: Chain> {
     public var adducts: [Adduct]
     public var chains: [ChainType]
+    public var crossLinks: [CrossLink]
 
-    public init(chains: [ChainType], adducts: [Adduct] = []) {
+    public init(chains: [ChainType], adducts: [Adduct] = [], crossLinks: [CrossLink] = []) {
         self.chains = chains
         self.adducts = adducts
+        self.crossLinks = crossLinks
     }
 }
 
-extension BioMolecule: Codable where ChainType: Codable {}
+extension BioMolecule: Codable where ChainType: Codable {
+    private enum CodingKeys: String, CodingKey {
+        case adducts
+        case chains
+        case crossLinks
+    }
+
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        adducts = try container.decode([Adduct].self, forKey: .adducts)
+        chains = try container.decode([ChainType].self, forKey: .chains)
+        crossLinks = try container.decodeIfPresent([CrossLink].self, forKey: .crossLinks) ?? []
+    }
+
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(adducts, forKey: .adducts)
+        try container.encode(chains, forKey: .chains)
+        try container.encode(crossLinks, forKey: .crossLinks)
+    }
+}
 
 extension BioMolecule: Equatable where ChainType: Equatable {}
 
@@ -27,13 +49,64 @@ extension BioMolecule: Sendable where ChainType: Sendable {}
 
 extension BioMolecule where ChainType: Structure {
     public var formula: Formula {
-        chains.reduce(zeroFormula) {
+        let chainFormula = chains.reduce(zeroFormula) {
             $0 + $1.formula
+        }
+
+        return crossLinks.reduce(chainFormula) {
+            $0 + $1.modification.formula
         }
     }
 }
 
 extension BioMolecule {
+    /// Creates and adds a validated cross-link between two residues.
+    @discardableResult
+    public mutating func addCrossLink(
+        modification: Modification,
+        between firstResidueIndex: Int,
+        inChain firstChainIndex: Int = 0,
+        and secondResidueIndex: Int,
+        inChain secondChainIndex: Int = 0
+    ) throws -> CrossLink {
+        guard chains.indices.contains(firstChainIndex) else {
+            throw CrossLinkError.invalidChainIndex(firstChainIndex)
+        }
+        guard chains.indices.contains(secondChainIndex) else {
+            throw CrossLinkError.invalidChainIndex(secondChainIndex)
+        }
+        guard chains[firstChainIndex].residues.indices.contains(firstResidueIndex) else {
+            throw CrossLinkError.invalidResidueIndex(
+                chainIndex: firstChainIndex, residueIndex: firstResidueIndex)
+        }
+        guard chains[secondChainIndex].residues.indices.contains(secondResidueIndex) else {
+            throw CrossLinkError.invalidResidueIndex(
+                chainIndex: secondChainIndex, residueIndex: secondResidueIndex)
+        }
+
+        let firstSite = CrossLinkSite(
+            chainID: chains[firstChainIndex].id, residueIndex: firstResidueIndex)
+        let secondSite = CrossLinkSite(
+            chainID: chains[secondChainIndex].id, residueIndex: secondResidueIndex)
+
+        guard firstSite != secondSite else {
+            throw CrossLinkError.identicalSites
+        }
+
+        let crossLink = CrossLink(
+            modification: modification, firstSite: firstSite, secondSite: secondSite)
+        crossLinks.append(crossLink)
+        return crossLink
+    }
+
+    public mutating func removeCrossLink(id: UUID) {
+        crossLinks.removeAll { $0.id == id }
+    }
+
+    public func crossLinks(at site: CrossLinkSite) -> [CrossLink] {
+        crossLinks.filter { $0.firstSite == site || $0.secondSite == site }
+    }
+
     public func sequenceLength(for chainIndex: Int = 0) -> Int {
         guard chains.indices.contains(chainIndex) else {
             return 0
@@ -165,8 +238,12 @@ extension BioMolecule where ChainType.ResidueType == AminoAcid {
 
 extension BioMolecule where ChainType: MassRepresentable {
     public func neutralMasses() -> MassContainer {
-        chains.reduce(zeroMass) {
+        let chainMasses = chains.reduce(zeroMass) {
             $0 + $1.masses
+        }
+
+        return crossLinks.reduce(chainMasses) {
+            $0 + $1.modification.masses
         }
     }
 }
@@ -183,8 +260,12 @@ extension BioMolecule: MassRepresentable where ChainType: Ionizable {
     }
 
     public func calculateMasses() -> MassContainer {
-        chains.reduce(zeroMass) {
+        let chainMasses = chains.reduce(zeroMass) {
             $0 + $1.massOverCharge()
+        }
+
+        return crossLinks.reduce(chainMasses) {
+            $0 + $1.modification.masses
         }
     }
 
