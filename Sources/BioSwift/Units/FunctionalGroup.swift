@@ -53,6 +53,6 @@ extension FunctionalGroup: Hashable {
 
     public func hash(into hasher: inout Hasher) {
         hasher.combine(name)
-        hasher.combine(formula.string)
+        hasher.combine(formula.formulaString)
     }
 }

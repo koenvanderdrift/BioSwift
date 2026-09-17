@@ -307,10 +307,29 @@ import Testing
         let formula2 = Formula("C2H2O2")
         let formula3 = formula1 + formula2
 
-        debugPrint(formula3.string)
+        debugPrint(formula3.formulaString)
 
         #expect(formula3.countFor(element: "C") == 14)
         #expect(formula3.countFor(element: "N") == 5)
+    }
+
+    @Test func formulaStringUsesHillSystemWithCarbon() {
+        let formula = Formula(from: ["O": 6, "H": 12, "C": 6, "N": 1])
+
+        #expect(formula.formulaString == "C6H12NO6")
+    }
+
+    @Test func formulaStringUsesHillSystemWithoutCarbon() {
+        let formula = Formula(from: ["S": 1, "O": 4, "H": 2])
+
+        #expect(formula.formulaString == "H2O4S")
+    }
+
+    @Test func formulaPreservesInputString() {
+        let formula = Formula("CH3(CH2)4CH3")
+
+        #expect(formula.inputString == "CH3(CH2)4CH3")
+        #expect(formula.formulaString == "C6H14")
     }
 
     @Test func subtractFormulas() {
@@ -318,7 +337,7 @@ import Testing
         let formula2 = Formula("C2H2O2")
         let formula3 = formula1 - formula2
 
-        debugPrint(formula3.string)
+        debugPrint(formula3.formulaString)
 
         #expect(formula3.countFor(element: "C") == 10)
         #expect(formula3.countFor(element: "N") == 5)

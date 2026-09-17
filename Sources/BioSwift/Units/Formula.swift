@@ -29,7 +29,7 @@ public struct FormulaParser: Sendable {
     public func parse(_ string: String) throws -> Formula {
         let countedElements = try parseElements(from: string)
 
-        return Formula(resolvedString: string, countedElements: countedElements)
+        return Formula(inputString: string, countedElements: countedElements)
     }
 
     public func parse(elements elementsDictionary: [String: Int]) throws -> Formula {
@@ -48,7 +48,7 @@ public struct FormulaParser: Sendable {
             countedElements[element] = (countedElements[element] ?? 0) + absCount
         }
 
-        return Formula(resolvedString: Self.formulaString(from: countedElements), countedElements: countedElements)
+        return Formula(inputString: "", countedElements: countedElements)
     }
 
     private func parseElements(from string: String) throws -> [ChemicalElement: Int] {
@@ -165,24 +165,12 @@ public struct FormulaParser: Sendable {
         ")}]>".contains(char)
     }
 
-    private static func formulaString(from countedElements: [ChemicalElement: Int]) -> String {
-        var result = ""
-
-        for (element, count) in countedElements {
-            result += element.symbol
-            if count != 1 {
-                result += String(count)
-            }
-        }
-
-        return result
-    }
 }
 
 /// Formula is used in every Chemical Structure.
 ///
 public struct Formula: Codable, Sendable {
-    public var string: String
+    public private(set) var inputString: String
     public var countedElements: [ChemicalElement: Int]
     public var cachedMasses: MassContainer = zeroMass
 
@@ -191,34 +179,30 @@ public struct Formula: Codable, Sendable {
         from elementsDictionary: [String: Int] = [:]
     ) {
         if countedElements.isEmpty == false {
-            self.init(resolvedString: string, countedElements: countedElements)
+            self.init(inputString: string, countedElements: countedElements)
         } else if elementsDictionary.isEmpty == false {
             do {
                 self = try FormulaParser().parse(elements: elementsDictionary)
             } catch {
                 BioSwiftDiagnostics.log(error)
-                self.init(resolvedString: "", countedElements: [:])
+                self.init(inputString: "", countedElements: [:])
             }
         } else if string.isEmpty == false {
             do {
                 self = try FormulaParser().parse(string)
             } catch {
                 BioSwiftDiagnostics.log(error)
-                self.init(resolvedString: string, countedElements: [:])
+                self.init(inputString: string, countedElements: [:])
             }
         } else {
-            self.init(resolvedString: "", countedElements: [:])
+            self.init(inputString: "", countedElements: [:])
         }
     }
 
-    init(resolvedString: String, countedElements: [ChemicalElement: Int]) {
-        self.string = resolvedString
+    init(inputString: String, countedElements: [ChemicalElement: Int]) {
+        self.inputString = inputString
         self.countedElements = countedElements
         self.cachedMasses = zeroMass
-
-        if self.string.isEmpty {
-            self.string = formulaString()
-        }
 
         cachedMasses = calculateMasses()
     }
@@ -243,12 +227,31 @@ public struct Formula: Codable, Sendable {
 }
 
 extension Formula {
-    public func formulaString() -> String {
+    public var formulaString: String {
         var result = ""
+        let containsCarbon = countedElements.keys.contains { $0.symbol == "C" }
+        let sortedElements = countedElements.sorted { lhs, rhs in
+            func priority(of symbol: String) -> Int {
+                guard containsCarbon else { return 0 }
 
-        // TODO: put elements in C H O N order
+                switch symbol {
+                case "C": return 0
+                case "H": return 1
+                default: return 2
+                }
+            }
 
-        for (element, count) in countedElements {
+            let lhsPriority = priority(of: lhs.key.symbol)
+            let rhsPriority = priority(of: rhs.key.symbol)
+
+            if lhsPriority != rhsPriority {
+                return lhsPriority < rhsPriority
+            }
+
+            return lhs.key.symbol < rhs.key.symbol
+        }
+
+        for (element, count) in sortedElements {
             result += element.symbol
             if count != 1 {
                 result += String(count)
