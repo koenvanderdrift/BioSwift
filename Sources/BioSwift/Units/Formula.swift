@@ -10,7 +10,7 @@ import Foundation
 
 public let zeroFormula = Formula("")
 
-public struct FormulaParser: Sendable {
+public enum FormulaParser: Sendable {
     public enum ParseError: Error {
         case missingClosingBracket
         case missingOpeningBracket
@@ -22,17 +22,15 @@ public struct FormulaParser: Sendable {
         case invalidCount
     }
 
-    private let elements = ElementReferenceDefaults.bundled
+    private static let elements = ElementReferenceDefaults.bundled
 
-    public init() {}
-
-    public func parse(_ string: String) throws -> Formula {
+    public static func parse(_ string: String) throws -> Formula {
         let countedElements = try parseElements(from: string)
 
         return Formula(inputString: string, countedElements: countedElements)
     }
 
-    public func parse(elements elementsDictionary: [String: Int]) throws -> Formula {
+    public static func parse(elements elementsDictionary: [String: Int]) throws -> Formula {
         var countedElements: [ChemicalElement: Int] = [:]
 
         for (symbol, count) in elementsDictionary {
@@ -51,7 +49,7 @@ public struct FormulaParser: Sendable {
         return Formula(inputString: "", countedElements: countedElements)
     }
 
-    private func parseElements(from string: String) throws -> [ChemicalElement: Int] {
+    private static func parseElements(from string: String) throws -> [ChemicalElement: Int] {
         let characters = Array(string)
         var i = characters.count
 
@@ -159,9 +157,9 @@ public struct FormulaParser: Sendable {
         return countedElements
     }
 
-    private func isOpeningBracket(_ char: Character) -> Bool { "({[<".contains(char) }
+    private static func isOpeningBracket(_ char: Character) -> Bool { "({[<".contains(char) }
 
-    private func isClosingBracket(_ char: Character) -> Bool {
+    private static func isClosingBracket(_ char: Character) -> Bool {
         ")}]>".contains(char)
     }
 
@@ -169,7 +167,7 @@ public struct FormulaParser: Sendable {
 
 /// Formula is used in every Chemical Structure.
 ///
-public struct Formula: Codable, Sendable {
+public struct Formula: Codable {
     public private(set) var inputString: String
     public var countedElements: [ChemicalElement: Int]
     public var cachedMasses: MassContainer = zeroMass
@@ -182,14 +180,14 @@ public struct Formula: Codable, Sendable {
             self.init(inputString: string, countedElements: countedElements)
         } else if elementsDictionary.isEmpty == false {
             do {
-                self = try FormulaParser().parse(elements: elementsDictionary)
+                self = try FormulaParser.parse(elements: elementsDictionary)
             } catch {
                 BioSwiftDiagnostics.log(error)
                 self.init(inputString: "", countedElements: [:])
             }
         } else if string.isEmpty == false {
             do {
-                self = try FormulaParser().parse(string)
+                self = try FormulaParser.parse(string)
             } catch {
                 BioSwiftDiagnostics.log(error)
                 self.init(inputString: string, countedElements: [:])
