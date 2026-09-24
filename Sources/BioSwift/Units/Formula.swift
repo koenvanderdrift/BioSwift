@@ -10,7 +10,7 @@ import Foundation
 
 public let zeroFormula = Formula("")
 
-public enum FormulaParser: Sendable {
+public enum FormulaParser {
     public enum ParseError: Error {
         case missingClosingBracket
         case missingOpeningBracket
@@ -167,7 +167,7 @@ public enum FormulaParser: Sendable {
 
 /// Formula is used in every Chemical Structure.
 ///
-public struct Formula: Codable {
+public struct Formula: Codable, Sendable {
     public private(set) var inputString: String
     public var countedElements: [ChemicalElement: Int]
     public var cachedMasses: MassContainer = zeroMass
