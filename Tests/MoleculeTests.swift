@@ -511,6 +511,48 @@ import Testing
         #expect(Peptide(sequence: "").isoelectricPoint() == 0.0)
     }
 
+    @Test func isoelectricPointSupportsTerminalIonization() {
+        let alanine = Peptide(sequence: "A")
+        #expect(abs(alanine.isoelectricPoint() - 5.925) < 0.01)
+
+        let customTermini = alanine.isoelectricPoint(
+            nTerminalIonization: .custom(pKa: 6.0),
+            cTerminalIonization: .custom(pKa: 8.0)
+        )
+
+        #expect(abs(customTermini - 7.0) < 0.01)
+
+        let lysine = Peptide(sequence: "K")
+        let blockedNTerminal = lysine.isoelectricPoint(nTerminalIonization: .blocked)
+        #expect(abs(blockedNTerminal - 7.22) < 0.01)
+
+        let asparticAcid = Peptide(sequence: "D")
+        let blockedCTerminal = asparticAcid.isoelectricPoint(cTerminalIonization: .blocked)
+        #expect(abs(blockedCTerminal - 6.055) < 0.01)
+    }
+
+    @Test func hydrophobicityProfileUsesCenteredWindows() throws {
+        let peptide = Peptide(sequence: "AVIL")
+        let profile = peptide.hydrophobicityProfile(for: .kyteDoolittle, windowSize: 3)
+
+        #expect(profile.count == 2)
+        let firstPoint = try #require(profile.first)
+        let lastPoint = try #require(profile.last)
+        #expect(firstPoint.position == 2.0)
+        #expect(abs(firstPoint.value - 3.5) < 0.000_001)
+        #expect(lastPoint.position == 3.0)
+        #expect(abs(lastPoint.value - (12.5 / 3.0)) < 0.000_001)
+    }
+
+    @Test func hydrophobicityProfileRejectsInvalidInputs() {
+        let peptide = Peptide(sequence: "AVIL")
+
+        #expect(peptide.hydrophobicityProfile(for: .kyteDoolittle, windowSize: 0).isEmpty)
+        #expect(peptide.hydrophobicityProfile(for: .kyteDoolittle, windowSize: 2).isEmpty)
+        #expect(peptide.hydrophobicityProfile(for: .kyteDoolittle, windowSize: 5).isEmpty)
+        #expect(peptide.hydrophobicityProfile(for: "Unknown").isEmpty)
+    }
+
     @Test func biomolecule() {
         var peptide1 = Peptide(residues: [alanine, alanine, serine, alanine, serine])
         #expect(peptide1.sequenceLength == 5)

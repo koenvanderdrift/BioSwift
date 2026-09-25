@@ -18,6 +18,16 @@ public struct HydrophobicityScale: Codable, Sendable, Equatable {
     }
 }
 
+public struct HydrophobicityProfilePoint: Sendable, Equatable {
+    public let position: Double
+    public let value: Double
+
+    public init(position: Double, value: Double) {
+        self.position = position
+        self.value = value
+    }
+}
+
 public enum HydrophobicityScaleName: String, CaseIterable, Codable, Identifiable, Sendable {
     case bullBreese = "Bull-Breese"
     case hoppWoods = "Hopp-Woods"
@@ -28,6 +38,12 @@ public enum HydrophobicityScaleName: String, CaseIterable, Codable, Identifiable
     }
 }
 
+public enum TerminalIonization: Sendable, Equatable {
+    case free
+    case blocked
+    case custom(pKa: Double)
+}
+
 public class IsoelectricPointCalculator {
     public var residues: [AminoAcid] = []
 
@@ -35,12 +51,17 @@ public class IsoelectricPointCalculator {
         self.residues = residues
     }
 
-    public func isoElectricPoint() -> Double {
-        Self.isoElectricPoint(for: residues)
+    public func isoElectricPoint(
+        nTerminal: TerminalIonization = .free,
+        cTerminal: TerminalIonization = .free
+    ) -> Double {
+        Self.isoElectricPoint(for: residues, nTerminal: nTerminal, cTerminal: cTerminal)
     }
 
     public static func isoElectricPoint<Residues: Sequence>(
-        for residues: Residues
+        for residues: Residues,
+        nTerminal: TerminalIonization = .free,
+        cTerminal: TerminalIonization = .free
     ) -> Double where Residues.Element == AminoAcid {
         // http://isoelectric.org/www_old/files/practise-isoelectric-point.html
         let pKaValues = HydrophobicityReferenceDefaults.bundled.numericHydrophobicityValues(named: "pKa")
@@ -101,7 +122,16 @@ public class IsoelectricPointCalculator {
                 break
             }
 
-            let cTerminalCharge = -1 * (1 / (1 + pow(10, cTerminalpKa - pH)))
+            let cTerminalCharge: Double
+            switch cTerminal {
+            case .free:
+                cTerminalCharge = -1 / (1 + pow(10, cTerminalpKa - pH))
+            case .blocked:
+                cTerminalCharge = 0
+            case .custom(let pKa):
+                cTerminalCharge = -1 / (1 + pow(10, pKa - pH))
+            }
+
             let asparticAcidCharge =
                 -1 * (numberOfAsparticAcid / (1 + pow(10, asparticAcidpKa - pH)))
             let glutamicAcidCharge =
@@ -109,7 +139,16 @@ public class IsoelectricPointCalculator {
             let cysteineCharge = -1 * (numberOfCysteine / (1 + pow(10, cystinepKa - pH)))
             let tyrosineCharge = -1 * (numberOfTyrosine / (1 + pow(10, tyrosinepKa - pH)))
 
-            let nTerminalCharge = 1 / (1 + pow(10, pH - nTerminalpKa))
+            let nTerminalCharge: Double
+            switch nTerminal {
+            case .free:
+                nTerminalCharge = 1 / (1 + pow(10, pH - nTerminalpKa))
+            case .blocked:
+                nTerminalCharge = 0
+            case .custom(let pKa):
+                nTerminalCharge = 1 / (1 + pow(10, pH - pKa))
+            }
+
             let histidineCharge = numberOfHistidine / (1 + pow(10, pH - histidinepKa))
             let lysineCharge = numberOfLysine / (1 + pow(10, pH - lysinepKa))
             let arginineCharge = numberOfArginine / (1 + pow(10, pH - argininepKa))

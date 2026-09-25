@@ -214,8 +214,54 @@ extension Chain where ResidueType == AminoAcid {
         hydrophobicityValues(for: hydrophobicityScale.rawValue)
     }
 
+    public func hydrophobicityProfile(
+        for hydrophobicityScale: String,
+        windowSize: Int = 1
+    ) -> [HydrophobicityProfilePoint] {
+        guard windowSize > 0, windowSize.isMultiple(of: 2) == false, windowSize <= residues.count else {
+            return []
+        }
+
+        let values = hydrophobicityValues(for: hydrophobicityScale)
+
+        guard values.count == residues.count else {
+            return []
+        }
+
+        let firstCenterPosition = (Double(windowSize) + 1) / 2
+
+        return values.consecutiveGroups(ofSize: windowSize)
+            .enumerated()
+            .map { index, window in
+                HydrophobicityProfilePoint(
+                    position: Double(index) + firstCenterPosition,
+                    value: window.reduce(0, +) / Double(windowSize)
+                )
+            }
+    }
+
+    public func hydrophobicityProfile(
+        for hydrophobicityScale: HydrophobicityScaleName,
+        windowSize: Int = 1
+    ) -> [HydrophobicityProfilePoint] {
+        hydrophobicityProfile(for: hydrophobicityScale.rawValue, windowSize: windowSize)
+    }
+
     public func isoelectricPoint() -> Double {
         IsoelectricPointCalculator.isoElectricPoint(for: residues)
+    }
+}
+
+extension AminoAcidChain {
+    public func isoelectricPoint(
+        nTerminalIonization: TerminalIonization = .free,
+        cTerminalIonization: TerminalIonization = .free
+    ) -> Double {
+        IsoelectricPointCalculator.isoElectricPoint(
+            for: residues,
+            nTerminal: nTerminalIonization,
+            cTerminal: cTerminalIonization
+        )
     }
 }
 
