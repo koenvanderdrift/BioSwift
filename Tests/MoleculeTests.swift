@@ -83,15 +83,17 @@ import Testing
     }
 
     @Test func methylAverageMass() {  // CH3
-        #expect(methyl.averageMass.rounded(scale: 4) == decimal("15.0345"))  // 15.0346
+        // Expected values use isotope-abundance-weighted masses from the bundled NIST data.
+        #expect(methyl.averageMass.rounded(scale: 4) == decimal("15.0346"))
     }
 
     @Test func formulaAverageMass() {  // C4H5NO3 + C11H10N2O + C3H5NO2 + C3H5NO2 + C4H5NO3 + H2O
+        // Expected values use isotope-abundance-weighted masses from the bundled NIST data.
         let group = FunctionalGroup(
             name: "", formula: "C4H5NO3" + "C11H10N2O" + "C3H5NO2" + "C3H5NO2" + "C4H5NO3" + "H2O")
 
-        #expect(group.averageMass.rounded(scale: 3) == decimal("608.555"))
-    }  // 608.5556
+        #expect(group.averageMass.rounded(scale: 3) == decimal("608.556"))
+    }
 
     @Test func completeSequenceMassMatchesExplicitResidueSum() {
         let peptide = Peptide(sequence: "SAMPLER")
@@ -159,11 +161,12 @@ import Testing
     }
 
     @Test mutating func peptideAverageMass() {
+        // Expected values use isotope-abundance-weighted masses from the bundled NIST data.
         testPeptide.setAdducts(type: protonAdduct, count: 1)
-        #expect(testPeptide.averageMass.rounded(scale: 4) == decimal("609.5731"))  // 609.5630
+        #expect(testPeptide.averageMass.rounded(scale: 4) == decimal("609.5630"))
 
         testPeptide.setAdducts(type: protonAdduct, count: 2)
-        #expect(testPeptide.averageMass.rounded(scale: 4) == decimal("305.2903"))  // 305.2852
+        #expect(testPeptide.averageMass.rounded(scale: 4) == decimal("305.2852"))
     }
 
     @Test func peptideSerinePhosphorylationMonoisotopicMass() throws {
@@ -259,8 +262,8 @@ import Testing
     @Test mutating func proteinAverageMass() {
         testProtein.setAdducts(type: protonAdduct, count: 1)
         #expect(
-            testProtein.averageMass.formatted(fractionDigits: 1) == decimal("46737.9568").formatted(fractionDigits: 1))
-    }  // 46737.0703
+            testProtein.averageMass.formatted(fractionDigits: 1) == decimal("46737.0703").formatted(fractionDigits: 1))
+    }
 
     @Test func proteinSerinePhosphorylationMonoisotopicMass() throws {
         for modification in try modifications(
