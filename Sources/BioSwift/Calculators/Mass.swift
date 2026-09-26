@@ -16,7 +16,7 @@ public typealias Dalton = Decimal
 public typealias MassRange = ClosedRange<Dalton>
 
 extension MassRange {
-    public func contains(_ masses: MassContainer, for type: MassType) -> Bool {
+    func contains(_ masses: MassContainer, for type: MassType) -> Bool {
         switch type {
         case .monoisotopic:
             return contains(masses.monoisotopicMass)
@@ -29,15 +29,15 @@ extension MassRange {
         }
     }
 
-    public func lowerLimit(excludes masses: MassContainer) -> Bool {
+    func lowerLimit(excludes masses: MassContainer) -> Bool {
         masses.monoisotopicMass < 0.99 * lowerBound
     }
 
-    public func upperLimit(excludes masses: MassContainer) -> Bool {
+    func upperLimit(excludes masses: MassContainer) -> Bool {
         masses.averageMass > 1.01 * upperBound
     }
 
-    public func isBelow(_ value: MassContainer, for type: MassType) -> Bool {
+    func isBelow(_ value: MassContainer, for type: MassType) -> Bool {
         switch type {
         case .monoisotopic:
             return value.monoisotopicMass < lowerBound
@@ -50,7 +50,7 @@ extension MassRange {
         }
     }
 
-    public func isAbove(_ value: MassContainer, for type: MassType) -> Bool {
+    func isAbove(_ value: MassContainer, for type: MassType) -> Bool {
         switch type {
         case .monoisotopic:
             return value.monoisotopicMass > upperBound
@@ -75,16 +75,14 @@ public enum MassType: String, CaseIterable, Codable, Identifiable, Equatable, Se
     }
 }
 
-/// MassContainer is a wrapper around the calculated ``MassRepresentable`` values for each ``MassType``
-/// Monoisotopic and average masses are calculated and stored as Dalton, a Decimal typealias. The nominal mass is calculated and store as an
-/// Int.
+/// Internal storage for monoisotopic, average, and nominal mass calculations.
 
-public struct MassContainer: Codable, Sendable {
-    public var monoisotopicMass = Dalton(0.0)
-    public var averageMass = Dalton(0.0)
-    public var nominalMass = Int(0)
+struct MassContainer: Codable, Sendable {
+    var monoisotopicMass = Dalton(0.0)
+    var averageMass = Dalton(0.0)
+    var nominalMass = Int(0)
     
-    public init(monoisotopicMass: Dalton = Dalton(0.0), averageMass: Dalton = Dalton(0.0), nominalMass: Int = Int(0)) {
+    init(monoisotopicMass: Dalton = Dalton(0.0), averageMass: Dalton = Dalton(0.0), nominalMass: Int = Int(0)) {
         self.monoisotopicMass = monoisotopicMass
         self.averageMass = averageMass
         self.nominalMass = nominalMass
@@ -92,57 +90,51 @@ public struct MassContainer: Codable, Sendable {
 }
 
 extension MassContainer {
-    public func moverz(for charge: Int, with adduct: Adduct = protonAdduct) -> Self {
-        if charge > 0 {
-            let totalMass = self + (charge * (adduct.group.masses - electronMass))
-
-            return totalMass / charge
-        }
-
-        return self
-    }
-
-    func selectionMassOverCharge(for charge: Charge) -> Self {
+    func applying(adducts: [Adduct]) -> Self {
+        let charge = adducts.reduce(0) { $0 + $1.charge }
         guard charge > 0 else {
             return self
         }
 
-        let protonatedMass = (self + (charge * (protonAdduct.group.masses - electronMass))) / charge
+        let adductMasses = adducts.reduce(zeroMass) {
+            $0 + $1.group.neutralMasses - ($1.charge * electronMass)
+        }
 
-        return protonatedMass.moverz(for: charge)
+        return (self + adductMasses) / charge
     }
+
 }
 
 extension MassContainer: Equatable {
-    public static func + (lhs: MassContainer, rhs: MassContainer) -> MassContainer {
+    static func + (lhs: MassContainer, rhs: MassContainer) -> MassContainer {
         MassContainer(
             monoisotopicMass: lhs.monoisotopicMass + rhs.monoisotopicMass,
             averageMass: lhs.averageMass + rhs.averageMass,
             nominalMass: lhs.nominalMass + rhs.nominalMass)
     }
 
-    public static func += (lhs: inout MassContainer, rhs: MassContainer) {
+    static func += (lhs: inout MassContainer, rhs: MassContainer) {
         lhs = lhs + rhs
     }
 
-    public static func - (lhs: MassContainer, rhs: MassContainer) -> MassContainer {
+    static func - (lhs: MassContainer, rhs: MassContainer) -> MassContainer {
         MassContainer(
             monoisotopicMass: lhs.monoisotopicMass - rhs.monoisotopicMass,
             averageMass: lhs.averageMass - rhs.averageMass,
             nominalMass: lhs.nominalMass - rhs.nominalMass)
     }
 
-    public static func -= (lhs: inout MassContainer, rhs: MassContainer) {
+    static func -= (lhs: inout MassContainer, rhs: MassContainer) {
         lhs = lhs - rhs
     }
 
-    public static func * (lhs: Int, rhs: MassContainer) -> MassContainer {
+    static func * (lhs: Int, rhs: MassContainer) -> MassContainer {
         MassContainer(
             monoisotopicMass: Dalton(lhs) * rhs.monoisotopicMass,
             averageMass: Dalton(lhs) * rhs.averageMass, nominalMass: lhs * rhs.nominalMass)
     }
 
-    public static func / (lhs: MassContainer, rhs: Int) -> MassContainer {
+    static func / (lhs: MassContainer, rhs: Int) -> MassContainer {
         MassContainer(
             monoisotopicMass: lhs.monoisotopicMass / Dalton(rhs),
             averageMass: lhs.averageMass / Dalton(rhs), nominalMass: Int(lhs.nominalMass / rhs))
@@ -150,12 +142,12 @@ extension MassContainer: Equatable {
 }
 
 extension MassContainer: Comparable {
-    public static func < (lhs: MassContainer, rhs: MassContainer) -> Bool {
+    static func < (lhs: MassContainer, rhs: MassContainer) -> Bool {
         return lhs.averageMass < rhs.averageMass
     }
 }
 
-/// Adducts can be added to any ``Ionizable`` type.
+/// An adduct and its associated charge.
 
 public struct Adduct: Codable, Equatable, Sendable {
     public var group: FunctionalGroup
@@ -175,42 +167,53 @@ public let potassiumAdduct = Adduct(group: potassium, charge: 1)
 public let negativeProtonAdduct = Adduct(group: hydrogen, charge: -1)
 public let chlorineAdduct = Adduct(group: chloride, charge: -1)
 
-public let zeroMass = MassContainer(monoisotopicMass: 0.0, averageMass: 0.0, nominalMass: 0)
-public let electronMass = MassContainer(
+let zeroMass = MassContainer(monoisotopicMass: 0.0, averageMass: 0.0, nominalMass: 0)
+let electronMass = MassContainer(
     monoisotopicMass: Dalton(0.000549), averageMass: Dalton(0.000549), nominalMass: 0)
 
-/// Types conforming to ``MassRepresentable`` must provide ``calculateMasses()``.
-/// All calculations use the values provided in https://physics.nist.gov/cgi-bin/Compositions/stand_alone.pl
-public protocol MassRepresentable {
-    var masses: MassContainer {
-        get
-    }
-
-    func calculateMasses() -> MassContainer
+/// Internal common interface for calculating neutral molecular masses.
+/// Elemental masses use the bundled NIST isotope data.
+protocol MassRepresentable {
+    var neutralMasses: MassContainer { get }
 }
 
 extension MassRepresentable {
     public var monoisotopicMass: Dalton {
-        masses.monoisotopicMass
+        neutralMasses.monoisotopicMass
     }
 
     public var averageMass: Dalton {
-        masses.averageMass
+        neutralMasses.averageMass
     }
 
     public var nominalMass: Int {
-        masses.nominalMass
+        neutralMasses.nominalMass
     }
 }
 
-/// Types conforming to ``Ionizable`` can carry adducts and be represented as m/z values.
-public protocol Ionizable: MassRepresentable, Codable {
+/// Internal common interface for structures that can carry adducts.
+protocol Ionizable: MassRepresentable {
     var adducts: [Adduct] {
         get set
     }
 }
 
 extension Ionizable {
+    /// The monoisotopic mass for a neutral molecule, or m/z when adducts give it a charge.
+    public var monoisotopicMass: Dalton {
+        neutralMasses.applying(adducts: adducts).monoisotopicMass
+    }
+
+    /// The average mass for a neutral molecule, or m/z when adducts give it a charge.
+    public var averageMass: Dalton {
+        neutralMasses.applying(adducts: adducts).averageMass
+    }
+
+    /// The nominal mass for a neutral molecule, or nominal m/z when adducts give it a charge.
+    public var nominalMass: Int {
+        neutralMasses.applying(adducts: adducts).nominalMass
+    }
+
     public var charge: Charge {
         adducts.reduce(0) {
             $0 + $1.charge
@@ -226,27 +229,6 @@ extension Ionizable {
         setAdducts(adducts)
     }
 
-    public func pseudomolecularIon() -> MassContainer {
-        masses.moverz(for: charge)
-    }
-
-    public func massOverCharge() -> MassContainer {
-        let masses = calculateMasses()
-
-        if charge > 0 {
-            return (masses + adductMasses()) / charge
-        }
-
-        return masses
-    }
-
-    public func adductMasses() -> MassContainer {
-        return adducts.map {
-            $0.group.masses - ($0.charge * electronMass)
-        }.reduce(zeroMass) {
-            $0 + $1
-        }
-    }
 }
 
 extension Dalton {
@@ -255,8 +237,8 @@ extension Dalton {
     }
 }
 
-extension Array where Element: Chain & Ionizable {
-    public func charge(with range: ClosedRange<Charge>) -> [Element] {
+extension Array where Element: Chain {
+    func charge(with range: ClosedRange<Charge>) -> [Element] {
         flatMap { sequence in
             range.map { charge in
                 var chargedSequence = sequence

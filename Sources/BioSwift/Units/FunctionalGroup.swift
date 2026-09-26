@@ -37,10 +37,6 @@ public struct FunctionalGroup: Structure, Codable, Sendable {
         formula = Formula(from: elements)
     }
 
-    public var masses: MassContainer {
-        calculateMasses()
-    }
-
     public var description: String {
         name
     }

@@ -236,45 +236,39 @@ extension BioMolecule where ChainType.ResidueType == AminoAcid {
     }
 }
 
-extension BioMolecule where ChainType: MassRepresentable {
-    public func neutralMasses() -> MassContainer {
+extension BioMolecule {
+    var neutralMasses: MassContainer {
         let chainMasses = chains.reduce(zeroMass) {
-            $0 + $1.masses
+            $0 + $1.calculatedNeutralMasses()
         }
 
         return crossLinks.reduce(chainMasses) {
-            $0 + $1.modification.masses
+            $0 + $1.modification.neutralMasses
         }
     }
 }
 
-extension BioMolecule: MassRepresentable where ChainType: Ionizable {
-    public var masses: MassContainer {
-        massOverCharge()
-    }
-
+extension BioMolecule: MassRepresentable {
     public var charge: Charge {
-        chains.reduce(0) {
+        adducts.reduce(0) {
             $0 + $1.charge
         }
     }
 
-    public func calculateMasses() -> MassContainer {
-        let chainMasses = chains.reduce(zeroMass) {
-            $0 + $1.massOverCharge()
-        }
-
-        return crossLinks.reduce(chainMasses) {
-            $0 + $1.modification.masses
-        }
+    public var monoisotopicMass: Dalton {
+        resolvedMasses.monoisotopicMass
     }
 
-    public func monoIsotopicMass() -> Dalton {
-        return pseudomolecularIon().monoisotopicMass
+    public var averageMass: Dalton {
+        resolvedMasses.averageMass
     }
 
-    public func averageMass() -> Dalton {
-        return pseudomolecularIon().averageMass
+    public var nominalMass: Int {
+        resolvedMasses.nominalMass
+    }
+
+    private var resolvedMasses: MassContainer {
+        neutralMasses.applying(adducts: adducts)
     }
 
     public func selectedMonoIsotopicMass(chainIndex index: Int = 0, _ range: Range<Int>) -> Dalton {
@@ -285,7 +279,7 @@ extension BioMolecule: MassRepresentable where ChainType: Ionizable {
         return selectionMass(chainIndex: index, range).averageMass
     }
 
-    public func selectionMass(chainIndex index: Int = 0, _ range: Range<Int>) -> MassContainer {
+    func selectionMass(chainIndex index: Int = 0, _ range: Range<Int>) -> MassContainer {
         guard chains.indices.contains(index) else {
             return zeroMass
         }
@@ -299,19 +293,16 @@ extension BioMolecule: MassRepresentable where ChainType: Ionizable {
 
         if let aminoAcidChain = chain as? any AminoAcidChain {
             let selectedMasses = aminoAcidChain.aminoAcidResidueMasses(in: validRange)
-                + aminoAcidChain.nTerminal.masses
-                + aminoAcidChain.cTerminal.masses
+                + aminoAcidChain.nTerminal.neutralMasses
+                + aminoAcidChain.cTerminal.neutralMasses
 
-            return selectedMasses.selectionMassOverCharge(for: charge)
+            let adducts = Array(repeating: protonAdduct, count: max(0, charge))
+            return selectedMasses.applying(adducts: adducts)
         }
 
-        var sub = chain.subChain(range: validRange)
-
-        if charge > 0 {
-            sub.setAdducts(type: protonAdduct, count: charge)
-        }
-
-        return sub.pseudomolecularIon()
+        let sub = chain.subChain(range: validRange)
+        let adducts = Array(repeating: protonAdduct, count: max(0, charge))
+        return sub.calculatedNeutralMasses().applying(adducts: adducts)
     }
 
     public mutating func setAdducts(type: Adduct, count: Int, for chainIndex: Int = 0) {
@@ -323,4 +314,4 @@ extension BioMolecule: MassRepresentable where ChainType: Ionizable {
     }
 }
 
-extension BioMolecule: Ionizable where ChainType: Ionizable {}
+extension BioMolecule: Ionizable {}

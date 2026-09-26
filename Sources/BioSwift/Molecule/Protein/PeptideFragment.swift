@@ -50,49 +50,49 @@ public enum PeptideFragmentType: CaseIterable, Codable, Identifiable, Sendable {
         [.yIon, .yIonMinusWater, .yIonMinusAmmonia, .xIon, .zIon].contains(self)
     }
 
-    public var masses: MassContainer {
+    var neutralMasses: MassContainer {
         switch self {
         case .precursorIon:
-            return water.masses
+            return water.neutralMasses
 
         case .precursorIonMinusAmmonia:
-            return water.masses - ammonia.masses
+            return water.neutralMasses - ammonia.neutralMasses
 
         case .aIon:
-            return zeroMass - carbonyl.masses
+            return zeroMass - carbonyl.neutralMasses
 
         case .aIonMinusWater:
-            return zeroMass - carbonyl.masses + water.masses
+            return zeroMass - carbonyl.neutralMasses + water.neutralMasses
 
         case .aIonMinusAmmonia:
-            return zeroMass - carbonyl.masses + ammonia.masses
+            return zeroMass - carbonyl.neutralMasses + ammonia.neutralMasses
 
         case .bIon:
-            return zeroMass - hydrogen.masses
+            return zeroMass - hydrogen.neutralMasses
 
         case .bIonMinusWater:
-            return zeroMass - water.masses - hydrogen.masses
+            return zeroMass - water.neutralMasses - hydrogen.neutralMasses
 
         case .bIonMinusAmmonia:
-            return zeroMass - ammonia.masses - hydrogen.masses
+            return zeroMass - ammonia.neutralMasses - hydrogen.neutralMasses
 
         case .cIon:
-            return ammonia.masses - hydrogen.masses
+            return ammonia.neutralMasses - hydrogen.neutralMasses
 
         case .yIon:
-            return hydrogen.masses
+            return hydrogen.neutralMasses
 
         case .yIonMinusWater:
-            return hydrogen.masses - water.masses
+            return hydrogen.neutralMasses - water.neutralMasses
 
         case .yIonMinusAmmonia:
-            return hydrogen.masses - ammonia.masses
+            return hydrogen.neutralMasses - ammonia.neutralMasses
 
         case .xIon:
-            return carbonyl.masses - hydrogen.masses
+            return carbonyl.neutralMasses - hydrogen.neutralMasses
 
         case .zIon:
-            return zeroMass - ammonia.masses + 2 * hydrogen.masses
+            return zeroMass - ammonia.neutralMasses + 2 * hydrogen.neutralMasses
 
         default: return zeroMass
         }
@@ -155,16 +155,24 @@ public struct PeptideFragment: AminoAcidChain, Codable, Fragmenting, Sendable {
 }
 
 extension PeptideFragment: Ionizable {
-    public var masses: MassContainer {
-        massOverCharge()
+    public var monoisotopicMass: Dalton {
+        neutralMasses.applying(adducts: adducts).monoisotopicMass
     }
 
-    public func calculateMasses() -> MassContainer {
+    public var averageMass: Dalton {
+        neutralMasses.applying(adducts: adducts).averageMass
+    }
+
+    public var nominalMass: Int {
+        neutralMasses.applying(adducts: adducts).nominalMass
+    }
+
+    var neutralMasses: MassContainer {
         if residues.isEmpty {
             return zeroMass
         }
 
-        return residueMasses() + terminalMasses() + fragmentType.masses  // + modificationMasses()
+        return residueMasses() + terminalMasses() + fragmentType.neutralMasses
     }
 
 }

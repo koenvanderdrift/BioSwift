@@ -40,11 +40,19 @@ public struct Peptide: AminoAcidChain, Codable, Equatable, Sendable {
 }
 
 extension Peptide: Ionizable {
-    public var masses: MassContainer {
-        massOverCharge()
+    public var monoisotopicMass: Dalton {
+        neutralMasses.applying(adducts: adducts).monoisotopicMass
     }
 
-    public func calculateMasses() -> MassContainer {
+    public var averageMass: Dalton {
+        neutralMasses.applying(adducts: adducts).averageMass
+    }
+
+    public var nominalMass: Int {
+        neutralMasses.applying(adducts: adducts).nominalMass
+    }
+
+    var neutralMasses: MassContainer {
         if residues.isEmpty {
             return zeroMass
         }

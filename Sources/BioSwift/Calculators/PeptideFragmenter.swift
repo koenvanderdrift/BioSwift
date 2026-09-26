@@ -84,8 +84,8 @@ public class PeptideFragmenter {
                 if z == 1 {
                     result.append(cIon)
                 } else {
-                    if cIon.pseudomolecularIon().monoisotopicMass
-                        > peptide.pseudomolecularIon().monoisotopicMass
+                    if cIon.monoisotopicMass
+                        > peptide.monoisotopicMass
                     {
                         result.append(cIon)
                     }

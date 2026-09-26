@@ -96,6 +96,19 @@ extension Chain {
         return count
     }
 
+    func calculatedNeutralMasses() -> MassContainer {
+        if let massRepresentable = self as? any MassRepresentable {
+            return massRepresentable.neutralMasses
+        }
+
+        var masses = residueMasses()
+        if let aminoAcidChain = self as? any AminoAcidChain {
+            masses += aminoAcidChain.terminalMasses()
+        }
+
+        return masses
+    }
+
     func residueMasses() -> MassContainer {
         residueMasses(in: residues.startIndex..<residues.endIndex)
     }
@@ -108,7 +121,7 @@ extension Chain {
         }
 
         return residues[validRange].reduce(zeroMass) {
-            $0 + $1.masses
+            $0 + $1.neutralMasses
         }
     }
 }
@@ -150,11 +163,11 @@ extension AminoAcidChain {
             residueCounts[identifier, default: 0] += 1
 
             if unmodifiedMassesByResidue[identifier] == nil {
-                unmodifiedMassesByResidue[identifier] = residue.formula.masses
+                unmodifiedMassesByResidue[identifier] = residue.formula.neutralMasses
             }
 
             if let modification = residue.modification {
-                modificationMasses += modification.masses
+                modificationMasses += modification.neutralMasses
             }
         }
 
@@ -192,7 +205,7 @@ extension AminoAcidChain {
     }
 
     func terminalMasses() -> MassContainer {
-        nTerminal.masses + cTerminal.masses
+        nTerminal.neutralMasses + cTerminal.neutralMasses
     }
 
     public mutating func setTermini(nTerm: Modification, cTerm: Modification) {
@@ -415,12 +428,12 @@ extension Chain {
         return result
     }
 
-    public func searchMass(params: MassSearchParameters) -> [Range<Int>] where Self: Ionizable {
+    public func searchMass(params: MassSearchParameters) -> [Range<Int>] {
         // prefixValues[i] is the sum of items[0..<i].
         var prefixValues = Array(repeating: zeroMass, count: residues.count + 1)
 
         for index in residues.indices {
-            prefixValues[index + 1] = prefixValues[index] + residues[index].masses
+            prefixValues[index + 1] = prefixValues[index] + residues[index].neutralMasses
         }
 
         var candidateCount = 0
@@ -430,7 +443,8 @@ extension Chain {
 
             candidateCount += 1
 
-            return (water.masses + itemSum).moverz(for: params.charge)
+            let adducts = Array(repeating: protonAdduct, count: max(0, params.charge))
+            return (water.neutralMasses + itemSum).applying(adducts: adducts)
         }
 
         let count = residues.count
@@ -487,7 +501,7 @@ extension Chain {
         return results
     }
 
-    public func searchMassBruteForce(params: MassSearchParameters) -> [Self] where Self: Ionizable {
+    public func searchMassBruteForce(params: MassSearchParameters) -> [Self] {
         var result: [Self] = []
 
         for start in residues.indices {
@@ -496,15 +510,15 @@ extension Chain {
                 var sub = subChain(range: subRange)
 
                 sub.range = subRange
-                sub.setAdducts(type: protonAdduct, count: params.charge)
+                sub.adducts = Array(repeating: protonAdduct, count: max(0, params.charge))
 
-                let moverz = sub.massOverCharge()
+                let candidateMass = sub.calculatedNeutralMasses().applying(adducts: sub.adducts)
 
-                if params.massRange.upperLimit(excludes: moverz) {
+                if params.massRange.upperLimit(excludes: candidateMass) {
                     break
                 }
 
-                if params.massRange.contains(moverz, for: params.massType) {
+                if params.massRange.contains(candidateMass, for: params.massType) {
                     if (start..<end).isValidRange {
                         result.append(sub)
                     }

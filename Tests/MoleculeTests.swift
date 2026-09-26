@@ -98,10 +98,10 @@ import Testing
     @Test func completeSequenceMassMatchesExplicitResidueSum() {
         let peptide = Peptide(sequence: "SAMPLER")
         let explicitMasses = peptide.residues.reduce(zeroMass) {
-            $0 + $1.masses
+            $0 + $1.neutralMasses
         } + peptide.terminalMasses()
 
-        #expect(peptide.calculateMasses() == explicitMasses)
+        #expect(peptide.neutralMasses == explicitMasses)
     }
 
     @Test func modifiedCompleteSequenceMassMatchesExplicitResidueSum() throws {
@@ -111,10 +111,10 @@ import Testing
             var peptide = Peptide(sequence: "DWSSD")
             peptide.addModification(modification, at: 3)
             let explicitMasses = peptide.residues.reduce(zeroMass) {
-                $0 + $1.masses
+                $0 + $1.neutralMasses
             } + peptide.terminalMasses()
 
-            #expect(peptide.calculateMasses() == explicitMasses)
+            #expect(peptide.neutralMasses == explicitMasses)
         }
     }
 
@@ -123,31 +123,33 @@ import Testing
         debugPrint(peptide.monoisotopicMass)
 
         #expect(peptide.monoisotopicMass.rounded(scale: 5) == decimal("802.40072"))
+        #expect(peptide.nominalMass == 802)
         #expect(
-            peptide.masses.moverz(for: 1).monoisotopicMass.rounded(scale: 4) == decimal("803.4080"))
+            peptide.neutralMasses.applying(adducts: [protonAdduct]).monoisotopicMass.rounded(scale: 4) == decimal("803.4080"))
 
         peptide.setAdducts(type: protonAdduct, count: 2)
         #expect(peptide.monoisotopicMass.rounded(scale: 4) == decimal("402.2076"))
+        #expect(peptide.nominalMass == 402)
 
-        var sum = water.masses
+        var sum = water.neutralMasses
 
         for aa in peptide.residues {
-            sum += aa.masses
+            sum += aa.neutralMasses
         }
         debugPrint(sum.monoisotopicMass)
 
         #expect(sum.monoisotopicMass.rounded(scale: 5) == decimal("802.40072"))
-        #expect(sum.moverz(for: 2).monoisotopicMass.rounded(scale: 4) == decimal("402.2076"))
+        #expect(sum.applying(adducts: [protonAdduct, protonAdduct]).monoisotopicMass.rounded(scale: 4) == decimal("402.2076"))
 
-        sum = water.masses
+        sum = water.neutralMasses
 
         for aa in peptide.residues[1..<7] {
-            sum += aa.masses
+            sum += aa.neutralMasses
         }
         debugPrint(sum.monoisotopicMass)
 
         #expect(sum.monoisotopicMass.rounded(scale: 5) == decimal("715.36870"))
-        #expect(sum.moverz(for: 2).monoisotopicMass.rounded(scale: 4) == decimal("358.6916"))
+        #expect(sum.applying(adducts: [protonAdduct, protonAdduct]).monoisotopicMass.rounded(scale: 4) == decimal("358.6916"))
 
         // https://www.chemcalc.org/peptides?digestion=%5Bobject%20Object%5D&filter=%5Bobject%20Object%5D&fragmentation=a%3Dfalse%26b%3Dfalse%26c%3Dfalse%26i%3Dfalse%26n%3Dfalse%26x%3Dfalse%26y%3Dfalse%26ya%3Dfalse%26yb%3Dfalse%26z%3Dfalse&ionizations=H%2B.%28H%2B%292.%28H%2B%293&protonation=false&sequence=SAMPLER%0A%0A
     }
@@ -158,6 +160,16 @@ import Testing
 
         testPeptide.setAdducts(type: protonAdduct, count: 2)
         #expect(testPeptide.monoisotopicMass.rounded(scale: 4) == decimal("305.1112"))
+    }
+
+    @Test func massPropertiesApplyAdductsOnce() {
+        var peptide = Peptide(sequence: "DWSSD")
+
+        peptide.setAdducts(type: protonAdduct, count: 1)
+        #expect(peptide.monoisotopicMass.rounded(scale: 4) == decimal("609.2151"))
+
+        peptide.setAdducts(type: protonAdduct, count: 2)
+        #expect(peptide.monoisotopicMass.rounded(scale: 4) == decimal("305.1112"))
     }
 
     @Test mutating func peptideAverageMass() {
@@ -478,7 +490,7 @@ import Testing
 
     @Test func emptySequence() {
         let peptide = Peptide(sequence: "")
-        #expect(peptide.masses == zeroMass)
+        #expect(peptide.neutralMasses == zeroMass)
     }
 
     @Test func emptySelection() {
@@ -489,7 +501,8 @@ import Testing
         let chain = try #require(testProtein.chains.first)
         let range = 10..<200
 
-        #expect(testProtein.selectionMass(range) == chain.subChain(range: range).pseudomolecularIon())
+        let subChain = chain.subChain(range: range)
+        #expect(testProtein.selectionMass(range) == subChain.neutralMasses.applying(adducts: subChain.adducts))
     }
 
     @Test mutating func chargedSelectionMassRangeMatchesSubChain() throws {
@@ -499,7 +512,14 @@ import Testing
         var subChain = chain.subChain(range: range)
         subChain.setAdducts(type: protonAdduct, count: testProtein.charge)
 
-        #expect(testProtein.selectionMass(range) == subChain.pseudomolecularIon())
+        #expect(testProtein.selectionMass(range) == subChain.neutralMasses.applying(adducts: subChain.adducts))
+    }
+
+    @Test func chargedSelectionAppliesAdductsOnce() {
+        var protein = Protein(sequence: "DWSSD")
+        protein.setAdducts(type: protonAdduct, count: 2)
+
+        #expect(protein.selectionMass(0..<5).monoisotopicMass.rounded(scale: 4) == decimal("305.1112"))
     }
 
     @Test func isoelectricPointRangeMatchesSubChain() throws {
@@ -583,28 +603,18 @@ import Testing
                 "A", "A", "S", "A", "S", "S", "S", "A",
             ])
 
-        protein.setAdducts(type: protonAdduct, count: 1, for: 0)
-        let peptide3 = protein.chains[0]
-        let mass3 = peptide3.monoisotopicMass
-        #expect(mass3.rounded(scale: 4) == decimal("406.1932"))
+        protein.setAdducts(type: protonAdduct, count: 2)
+        let expectedNeutralMasses = peptide1.neutralMasses + peptide2.neutralMasses
+        let expectedMasses = expectedNeutralMasses.applying(adducts: [protonAdduct, protonAdduct])
 
-        protein.setAdducts(type: protonAdduct, count: 0, for: 1)
-        let peptide4 = protein.chains[1]
-        let mass4 = peptide4.monoisotopicMass
-        #expect(mass4.rounded(scale: 4) == decimal("326.1508"))
-
-        protein.chains[0] = peptide3
-        protein.chains[1] = peptide4
-
-        let mass = protein.monoisotopicMass
-        #expect(mass == mass3 + mass4)
-        #expect(mass.rounded(scale: 4) == (mass3 + mass4).rounded(scale: 4))
+        #expect(protein.neutralMasses == expectedNeutralMasses)
+        #expect(protein.neutralMasses.applying(adducts: protein.adducts) == expectedMasses)
     }
 
     @Test func crossLinkWithinOneChainContributesItsModificationOnce() throws {
         var protein = Protein(sequence: "ACDC")
         let unlinkedFormula = protein.formula
-        let unlinkedMasses = protein.neutralMasses()
+        let unlinkedMasses = protein.neutralMasses
 
         let crossLink = try protein.addCrossLink(
             modification: disulfideBond,
@@ -613,7 +623,7 @@ import Testing
 
         #expect(protein.crossLinks == [crossLink])
         #expect(protein.formula.countFor(element: "H") == unlinkedFormula.countFor(element: "H") - 2)
-        #expect(protein.neutralMasses() == unlinkedMasses + disulfideBond.masses)
+        #expect(protein.neutralMasses == unlinkedMasses + disulfideBond.neutralMasses)
     }
 
     @Test func crossLinkCanConnectDifferentProteinChainsAndRoundTripThroughCodable() throws {

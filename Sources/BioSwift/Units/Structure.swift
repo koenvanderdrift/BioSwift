@@ -10,7 +10,7 @@ import Foundation
 
 // Structure is the basic building block with a name and ``Formula``
 
-public protocol Structure: MassRepresentable {
+public protocol Structure {
     var name: String {
         get
     }
@@ -21,7 +21,19 @@ public protocol Structure: MassRepresentable {
 }
 
 extension Structure {
-    public func calculateMasses() -> MassContainer {
-        formula.masses
+    var neutralMasses: MassContainer {
+        formula.neutralMasses
+    }
+
+    public var monoisotopicMass: Dalton {
+        neutralMasses.monoisotopicMass
+    }
+
+    public var averageMass: Dalton {
+        neutralMasses.averageMass
+    }
+
+    public var nominalMass: Int {
+        neutralMasses.nominalMass
     }
 }

@@ -170,7 +170,7 @@ public enum FormulaParser {
 public struct Formula: Codable, Sendable {
     public private(set) var inputString: String
     public var countedElements: [ChemicalElement: Int]
-    public var cachedMasses: MassContainer = zeroMass
+    var cachedMasses: MassContainer = zeroMass
 
     public init(
         _ string: String = "", with countedElements: [ChemicalElement: Int] = [:],
@@ -202,7 +202,7 @@ public struct Formula: Codable, Sendable {
         self.countedElements = countedElements
         self.cachedMasses = zeroMass
 
-        cachedMasses = calculateMasses()
+        cachedMasses = calculateNeutralMasses()
     }
 
     public func countFor(element: String) -> Int {
@@ -297,15 +297,15 @@ extension Formula: Equatable {
 }
 
 extension Formula: MassRepresentable {
-    public var masses: MassContainer {
+    var neutralMasses: MassContainer {
         cachedMasses
     }
 
-    public func calculateMasses() -> MassContainer {
+    private func calculateNeutralMasses() -> MassContainer {
         var result = zeroMass
 
         for (element, count) in countedElements {
-            result += count * element.masses
+            result += count * element.neutralMasses
         }
 
         return result

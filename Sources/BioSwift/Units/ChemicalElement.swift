@@ -25,7 +25,7 @@ public struct ChemicalElement: Codable, Symbol, Sendable {
     public let name: String
     public let symbol: String
     public let isotopes: [Isotope]
-    public var cachedMasses: MassContainer = zeroMass
+    var cachedMasses: MassContainer = zeroMass
 
     public init(name: String, symbol: String, isotopes: [Isotope]) {
         self.name = name
@@ -55,7 +55,7 @@ public struct ChemicalElement: Codable, Symbol, Sendable {
     }
 
     private mutating func setUp() {
-        cachedMasses = calculateMasses()
+        cachedMasses = calculateNeutralMasses()
     }
 
     public var identifier: String {
@@ -78,18 +78,18 @@ extension ChemicalElement: Equatable, Hashable {
 }
 
 extension ChemicalElement: MassRepresentable {
-    public var masses: MassContainer {
+    var neutralMasses: MassContainer {
         cachedMasses
     }
 
-    public func calculateMasses() -> MassContainer {
+    private func calculateNeutralMasses() -> MassContainer {
         var currentAbundance = Decimal(0.0)
         var monoisotopicMass = Dalton(0.0)
         var averageMass = Dalton(0.0)
 
         // The nominal mass for an element is the mass number of its most abundant naturally occurring stable isotope
         for i in isotopes {
-            if let abundance = Decimal(string: i.abundance), let mass = Decimal(string: i.mass) {
+            if let abundance = Decimal(string: i.abundance), let mass = Dalton(string: i.mass) {
                 if abundance > currentAbundance {
                     monoisotopicMass = mass
                     currentAbundance = abundance
