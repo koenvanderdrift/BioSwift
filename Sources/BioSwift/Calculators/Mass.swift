@@ -77,12 +77,12 @@ public enum MassType: String, CaseIterable, Codable, Identifiable, Equatable, Se
 
 /// Internal storage for monoisotopic, average, and nominal mass calculations.
 
-struct MassContainer: Codable, Sendable {
-    var monoisotopicMass = Dalton(0.0)
-    var averageMass = Dalton(0.0)
-    var nominalMass = Int(0)
+public struct MassContainer: Codable, Sendable, Equatable {
+    public private(set) var monoisotopicMass = Dalton(0.0)
+    public private(set) var averageMass = Dalton(0.0)
+    public private(set) var nominalMass = Int(0)
     
-    init(monoisotopicMass: Dalton = Dalton(0.0), averageMass: Dalton = Dalton(0.0), nominalMass: Int = Int(0)) {
+    public init(monoisotopicMass: Dalton = Dalton(0.0), averageMass: Dalton = Dalton(0.0), nominalMass: Int = Int(0)) {
         self.monoisotopicMass = monoisotopicMass
         self.averageMass = averageMass
         self.nominalMass = nominalMass
@@ -105,7 +105,7 @@ extension MassContainer {
 
 }
 
-extension MassContainer: Equatable {
+extension MassContainer {
     static func + (lhs: MassContainer, rhs: MassContainer) -> MassContainer {
         MassContainer(
             monoisotopicMass: lhs.monoisotopicMass + rhs.monoisotopicMass,
@@ -138,12 +138,6 @@ extension MassContainer: Equatable {
         MassContainer(
             monoisotopicMass: lhs.monoisotopicMass / Dalton(rhs),
             averageMass: lhs.averageMass / Dalton(rhs), nominalMass: Int(lhs.nominalMass / rhs))
-    }
-}
-
-extension MassContainer: Comparable {
-    static func < (lhs: MassContainer, rhs: MassContainer) -> Bool {
-        return lhs.averageMass < rhs.averageMass
     }
 }
 
@@ -212,21 +206,6 @@ extension Ionizable {
     /// The nominal mass for a neutral molecule, or nominal m/z when adducts give it a charge.
     public var nominalMass: Int {
         masses.applying(adducts: adducts).nominalMass
-    }
-
-    public var charge: Charge {
-        adducts.reduce(0) {
-            $0 + $1.charge
-        }
-    }
-
-    public mutating func setAdducts(_ adducts: [Adduct]) {
-        self.adducts = adducts
-    }
-
-    public mutating func setAdducts(type: Adduct, count: Int) {
-        let adducts = Array(repeating: type, count: count)
-        setAdducts(adducts)
     }
 
 }

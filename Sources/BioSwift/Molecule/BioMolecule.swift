@@ -256,18 +256,18 @@ extension BioMolecule: MassRepresentable {
     }
 
     public var monoisotopicMass: Dalton {
-        resolvedMasses.monoisotopicMass
+        massContainer.monoisotopicMass
     }
 
     public var averageMass: Dalton {
-        resolvedMasses.averageMass
+        massContainer.averageMass
     }
 
     public var nominalMass: Int {
-        resolvedMasses.nominalMass
+        massContainer.nominalMass
     }
 
-    private var resolvedMasses: MassContainer {
+    public var massContainer: MassContainer {
         masses.applying(adducts: adducts)
     }
 

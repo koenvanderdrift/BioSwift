@@ -42,6 +42,18 @@ public protocol Chain: Identifiable {
 }
 
 extension Chain {
+    public var charge: Charge {
+        adducts.reduce(0) { $0 + $1.charge }
+    }
+
+    public mutating func setAdducts(_ adducts: [Adduct]) {
+        self.adducts = adducts
+    }
+
+    public mutating func setAdducts(type: Adduct, count: Int) {
+        setAdducts(Array(repeating: type, count: count))
+    }
+
     public static func == (lhs: Self, rhs: Self) -> Bool {
         lhs.sequenceString == rhs.sequenceString && lhs.name == rhs.name
     }

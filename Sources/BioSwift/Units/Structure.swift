@@ -25,15 +25,19 @@ extension Structure {
         formula.masses
     }
 
+    public var massContainer: MassContainer {
+        masses
+    }
+
     public var monoisotopicMass: Dalton {
-        masses.monoisotopicMass
+        massContainer.monoisotopicMass
     }
 
     public var averageMass: Dalton {
-        masses.averageMass
+        massContainer.averageMass
     }
 
     public var nominalMass: Int {
-        masses.nominalMass
+        massContainer.nominalMass
     }
 }

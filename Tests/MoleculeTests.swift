@@ -166,9 +166,14 @@ import Testing
         var peptide = Peptide(sequence: "DWSSD")
 
         peptide.setAdducts(type: protonAdduct, count: 1)
+        #expect(peptide.charge == 1)
+        #expect(peptide.massContainer.monoisotopicMass == peptide.monoisotopicMass)
         #expect(peptide.monoisotopicMass.rounded(scale: 4) == decimal("609.2151"))
 
         peptide.setAdducts(type: protonAdduct, count: 2)
+        #expect(peptide.charge == 2)
+        #expect(peptide.massContainer.averageMass == peptide.averageMass)
+        #expect(peptide.massContainer.nominalMass == peptide.nominalMass)
         #expect(peptide.monoisotopicMass.rounded(scale: 4) == decimal("305.1112"))
     }
 

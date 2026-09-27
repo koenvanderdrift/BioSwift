@@ -40,16 +40,20 @@ public struct Peptide: AminoAcidChain, Codable, Equatable, Sendable {
 }
 
 extension Peptide: Ionizable {
+    public var massContainer: MassContainer {
+        masses.applying(adducts: adducts)
+    }
+
     public var monoisotopicMass: Dalton {
-        masses.applying(adducts: adducts).monoisotopicMass
+        massContainer.monoisotopicMass
     }
 
     public var averageMass: Dalton {
-        masses.applying(adducts: adducts).averageMass
+        massContainer.averageMass
     }
 
     public var nominalMass: Int {
-        masses.applying(adducts: adducts).nominalMass
+        massContainer.nominalMass
     }
 
     var masses: MassContainer {
