@@ -271,15 +271,10 @@ extension BioMolecule: MassRepresentable {
         masses.applying(adducts: adducts)
     }
 
-    public func selectedMonoIsotopicMass(chainIndex index: Int = 0, _ range: Range<Int>) -> Dalton {
-        return selectionMass(chainIndex: index, range).monoisotopicMass
-    }
-
-    public func selectedAverageMass(chainIndex index: Int = 0, _ range: Range<Int>) -> Dalton {
-        return selectionMass(chainIndex: index, range).averageMass
-    }
-
-    func selectionMass(chainIndex index: Int = 0, _ range: Range<Int>) -> MassContainer {
+    public func selectionMass(
+        chainIndex index: Int = 0,
+        _ range: Range<Int>
+    ) -> MassContainer {
         guard chains.indices.contains(index) else {
             return zeroMass
         }
