@@ -113,6 +113,34 @@ import Testing
         #expect(sequence.sequenceRanges(of: "").isEmpty)
     }
 
+    @Test func integerRangeLengthUsesUpperExclusiveBounds() {
+        #expect((2..<5).length == 3)
+        #expect((0..<0).length == 0)
+    }
+
+    @Test func substringUsesZeroBasedUpperExclusiveRange() {
+        let text = "PEPTIDE"
+
+        #expect(text.substring(in: 0..<3) == "PEP")
+        #expect(text.substring(in: 3..<7) == "TIDE")
+        #expect(text.substring(in: 2..<2).isEmpty)
+        #expect(text.substring(in: 0..<8).isEmpty)
+    }
+
+    @Test func substringUsesCharacterOffsets() {
+        #expect("A🧬BC".substring(in: 1..<3) == "🧬B")
+    }
+
+    @Test func removingUsesZeroBasedUpperExclusiveRange() {
+        let text = "PEPTIDE"
+
+        #expect(text.removing(range: 0..<3) == "TIDE")
+        #expect(text.removing(range: 3..<7) == "PEP")
+        #expect(text.removing(range: 2..<2) == text)
+        #expect(text.removing(range: 0..<8) == text)
+        #expect("A🧬BC".removing(range: 1..<3) == "AC")
+    }
+
     @Test func identifiesAnyProhibitedCharacter() {
         let allowedCharacters = CharacterSet(charactersIn: "ACDEFGHIKLMNPQRSTVWY")
 

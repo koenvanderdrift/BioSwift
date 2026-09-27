@@ -291,12 +291,10 @@ extension BioMolecule: MassRepresentable {
                 + aminoAcidChain.nTerminal.masses
                 + aminoAcidChain.cTerminal.masses
 
-            let adducts = Array(repeating: protonAdduct, count: max(0, charge))
             return selectedMasses.applying(adducts: adducts)
         }
 
         let sub = chain.subChain(range: validRange)
-        let adducts = Array(repeating: protonAdduct, count: max(0, charge))
         return sub.calculatedMasses().applying(adducts: adducts)
     }
 

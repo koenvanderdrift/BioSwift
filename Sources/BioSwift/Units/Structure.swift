@@ -18,6 +18,10 @@ public protocol Structure {
     var formula: Formula {
         get
     }
+
+    var massContainer: MassContainer {
+        get
+    }
 }
 
 extension Structure {

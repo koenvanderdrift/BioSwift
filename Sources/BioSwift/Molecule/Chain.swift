@@ -109,6 +109,10 @@ extension Chain {
     }
 
     func calculatedMasses() -> MassContainer {
+        if let ionizable = self as? any Ionizable {
+            return ionizable.masses
+        }
+
         if let massRepresentable = self as? any MassRepresentable {
             return massRepresentable.masses
         }
@@ -511,34 +515,6 @@ extension Chain {
         BioSwiftDiagnostics.log("Candidates tested: \(candidateCount)")
 
         return results
-    }
-
-    public func searchMassBruteForce(params: MassSearchParameters) -> [Self] {
-        var result: [Self] = []
-
-        for start in residues.indices {
-            for end in (start + 1)..<residues.count {
-                let subRange = start..<end
-                var sub = subChain(range: subRange)
-
-                sub.range = subRange
-                sub.adducts = Array(repeating: protonAdduct, count: max(0, params.charge))
-
-                let candidateMass = sub.calculatedMasses().applying(adducts: sub.adducts)
-
-                if params.massRange.upperLimit(excludes: candidateMass) {
-                    break
-                }
-
-                if params.massRange.contains(candidateMass, for: params.massType) {
-                    if (start..<end).isValidRange {
-                        result.append(sub)
-                    }
-                }
-            }
-        }
-
-        return result
     }
 
     public func digest(using enzyme: Enzyme, with missedCleavages: Int = 0) -> [Self] {

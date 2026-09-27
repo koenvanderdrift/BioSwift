@@ -44,7 +44,7 @@ import Testing
 
         let emptyFragmenter = PeptideFragmenter(peptide: emptyPeptide)
         #expect(emptyFragmenter.fragments.filter {
-            $0.isNterminal() || $0.isCterminal()
+            $0.isNTerminal || $0.isCTerminal
         }.isEmpty)
         #expect(emptyFragmenter.fragment(at: 1, for: .cIon) == nil)
 
@@ -53,7 +53,7 @@ import Testing
 
         let singleResidueFragmenter = PeptideFragmenter(peptide: singleResiduePeptide)
         #expect(singleResidueFragmenter.fragments.filter {
-            $0.isCterminal()
+            $0.isCTerminal
         }.isEmpty)
         #expect(singleResidueFragmenter.fragment(at: 1, for: .cIon) != nil)
     }
@@ -71,7 +71,7 @@ import Testing
         let fragments = fragmenter.fragments
 
         let precursors = fragments.filter {
-            $0.isPrecursor()
+            $0.isPrecursor
         }
         #expect(precursors[0].monoisotopicMass.rounded(scale: 4) == decimal("803.4080"))
         #expect(precursors[1].monoisotopicMass.rounded(scale: 4) == decimal("785.3974"))

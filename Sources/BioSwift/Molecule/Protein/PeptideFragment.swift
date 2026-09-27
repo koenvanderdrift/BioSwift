@@ -32,22 +32,35 @@ public enum PeptideFragmentType: CaseIterable, Codable, Identifiable, Sendable {
     }
 
     public var isPrecursor: Bool {
-        [.precursorIon, .precursorIonMinusWater, .precursorIonMinusAmmonia].contains(self)
+        switch self {
+        case .precursorIon, .precursorIonMinusWater, .precursorIonMinusAmmonia:
+            true
+        default:
+            false
+        }
     }
 
     public var isImmonium: Bool {
-        [.immoniumIon].contains(self)
+        self == .immoniumIon
     }
 
     public var isNTerminal: Bool {
-        [
-            .aIon, .aIonMinusWater, .aIonMinusAmmonia, .bIon, .bIonMinusWater, .bIonMinusAmmonia,
-            .cIon,
-        ].contains(self)
+        switch self {
+        case .aIon, .aIonMinusWater, .aIonMinusAmmonia,
+            .bIon, .bIonMinusWater, .bIonMinusAmmonia, .cIon:
+            true
+        default:
+            false
+        }
     }
 
     public var isCTerminal: Bool {
-        [.yIon, .yIonMinusWater, .yIonMinusAmmonia, .xIon, .zIon].contains(self)
+        switch self {
+        case .yIon, .yIonMinusWater, .yIonMinusAmmonia, .xIon, .zIon:
+            true
+        default:
+            false
+        }
     }
 
     var masses: MassContainer {
@@ -109,11 +122,28 @@ public protocol Fragmenting {
     }
 }
 
+extension Fragmenting {
+    public var isPrecursor: Bool {
+        fragmentType.isPrecursor
+    }
+
+    public var isImmonium: Bool {
+        fragmentType.isImmonium
+    }
+
+    public var isNTerminal: Bool {
+        fragmentType.isNTerminal
+    }
+
+    public var isCTerminal: Bool {
+        fragmentType.isCTerminal
+    }
+}
+
 /// PeptideFragment is generated from a ``Peptide`` by ``PeptideFragmenter``
 public struct PeptideFragment: AminoAcidChain, Codable, Fragmenting, Sendable {
     public let id: UUID
     public var name: String = ""
-    public var sequence: String = ""
     public var residues: [AminoAcid] = []
     public var nTerminal: Modification = zeroModification
     public var cTerminal: Modification = zeroModification
@@ -129,7 +159,6 @@ public struct PeptideFragment: AminoAcidChain, Codable, Fragmenting, Sendable {
 
     public init(sequence: String, id: UUID) {
         self.id = id
-        self.sequence = sequence
         residues = Self.createResidues(from: sequence)
     }
 
@@ -159,18 +188,6 @@ extension PeptideFragment: Ionizable {
         masses.applying(adducts: adducts)
     }
 
-    public var monoisotopicMass: Dalton {
-        massContainer.monoisotopicMass
-    }
-
-    public var averageMass: Dalton {
-        massContainer.averageMass
-    }
-
-    public var nominalMass: Int {
-        massContainer.nominalMass
-    }
-
     var masses: MassContainer {
         if residues.isEmpty {
             return zeroMass
@@ -196,22 +213,6 @@ extension PeptideFragment {
 
     public func canLoseAmmonia() -> Bool {
         return sequenceString.containsAnyCharacter(in: "RQNK")
-    }
-
-    public func isPrecursor() -> Bool {
-        return fragmentType.isPrecursor
-    }
-
-    public func isImmonium() -> Bool {
-        return fragmentType.isImmonium
-    }
-
-    public func isNterminal() -> Bool {
-        return fragmentType.isNTerminal
-    }
-
-    public func isCterminal() -> Bool {
-        return fragmentType.isCTerminal
     }
 
     public func maxNumberOfCharges() -> Int {

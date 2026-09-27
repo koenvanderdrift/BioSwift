@@ -169,8 +169,13 @@ public enum FormulaParser {
 ///
 public struct Formula: Codable, Sendable {
     public private(set) var inputString: String
-    public var countedElements: [ChemicalElement: Int]
+    public private(set) var countedElements: [ChemicalElement: Int]
     var masses: MassContainer = zeroMass
+
+    private enum CodingKeys: String, CodingKey {
+        case inputString
+        case countedElements
+    }
 
     public init(
         _ string: String = "", with countedElements: [ChemicalElement: Int] = [:],
@@ -200,8 +205,14 @@ public struct Formula: Codable, Sendable {
     init(inputString: String, countedElements: [ChemicalElement: Int]) {
         self.inputString = inputString
         self.countedElements = countedElements
-        self.masses = zeroMass
+        masses = calculateMasses()
+    }
 
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+
+        inputString = try container.decode(String.self, forKey: .inputString)
+        countedElements = try container.decode([ChemicalElement: Int].self, forKey: .countedElements)
         masses = calculateMasses()
     }
 

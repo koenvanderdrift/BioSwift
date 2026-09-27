@@ -44,18 +44,6 @@ extension Peptide: Ionizable {
         masses.applying(adducts: adducts)
     }
 
-    public var monoisotopicMass: Dalton {
-        massContainer.monoisotopicMass
-    }
-
-    public var averageMass: Dalton {
-        massContainer.averageMass
-    }
-
-    public var nominalMass: Int {
-        massContainer.nominalMass
-    }
-
     var masses: MassContainer {
         if residues.isEmpty {
             return zeroMass

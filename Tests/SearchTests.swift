@@ -122,44 +122,21 @@ import Testing
         }
     }
 
-    @Test func moverzSearchBruteForce() {
-        if let chain = testProtein.chains.first {
-            let searchParameters = MassSearchParameters(
-                searchValue: 890.3877, tolerance: MassTolerance(type: .ppm, value: 10),
-                searchType: .sequential, massType: .monoisotopic, charge: 2)
+    @Test func nominalMassSearch() throws {
+        let chain = try #require(testProtein.chains.first)
+        let targetSequence = "IFFSP"
+        let targetMass = Dalton(Peptide(sequence: targetSequence).nominalMass)
+        let searchParameters = MassSearchParameters(
+            searchValue: targetMass,
+            tolerance: MassTolerance(type: .dalton, value: 0),
+            searchType: .sequential,
+            massType: .nominal,
+            charge: 0)
 
-            let peptides: [Peptide] = chain.searchMassBruteForce(params: searchParameters)
+        let ranges = chain.searchMass(params: searchParameters)
+        let optimizedSequences = ranges.map { String(chain.sequenceString[$0]) }
 
-            #expect(peptides.contains(where: {
-                $0.sequenceString == "TDTSHHDQDHPTFNK"
-            }))
-            #expect(!peptides.contains(where: {
-                $0.sequenceString == "NIFFS"
-            }))
-        }
-    }
-
-    @Test func compareSearchImplementations() {
-        if let chain = testProtein.chains.first {
-            let searchParameters = MassSearchParameters(
-                searchValue: 890.3877, tolerance: MassTolerance(type: .ppm, value: 10),
-                searchType: .sequential, massType: .monoisotopic, charge: 2)
-
-            let result1 = measure("Original Brute Force method") {
-                let peptides: [Peptide] = chain.searchMassBruteForce(params: searchParameters)
-                return peptides.map(\.range)
-            }
-
-            let result2 = measure("Sliding Window") {
-                let ranges: [Range<Int>] = chain.searchMass(params: searchParameters)
-                return ranges
-            }
-
-            debugPrint(result1)
-            debugPrint(result2)
-
-            #expect(result1 == result2)
-        }
+        #expect(optimizedSequences.contains(targetSequence))
     }
 
     @Test func checkMassDifferences() {

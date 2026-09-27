@@ -135,7 +135,7 @@ extension Range<Int> {
             return 0
         }
 
-        return upperBound - lowerBound + 1
+        return upperBound - lowerBound
     }
 
     public func offset(by amount: Int) -> Range<Int> {
@@ -183,4 +183,3 @@ extension Range where Bound == Int {
         return (from: lowerBound, to: upperBound - 1)
     }
 }
-

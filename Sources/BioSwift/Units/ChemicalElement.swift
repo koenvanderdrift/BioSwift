@@ -50,8 +50,10 @@ public struct ChemicalElement: Codable, Symbol, Sendable {
         self.name = name
         self.symbol = symbol
         isotopes = []
-
-        setUp()
+        masses = MassContainer(
+            monoisotopicMass: monoisotopicMass,
+            averageMass: averageMass,
+            nominalMass: monoisotopicMass.roundedInt() ?? 0)
     }
 
     private mutating func setUp() {

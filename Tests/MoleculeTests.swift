@@ -64,6 +64,26 @@ import Testing
         #expect(peptide.formula.countFor(element: "P") == 0)
     }
 
+    @Test func elementInitializedWithExplicitMassesRetainsThem() {
+        let element = ChemicalElement(
+            name: "Test", symbol: "T", monoisotopicMass: decimal("12.6"),
+            averageMass: decimal("12.75"))
+
+        #expect(element.monoisotopicMass == decimal("12.6"))
+        #expect(element.averageMass == decimal("12.75"))
+        #expect(element.nominalMass == 13)
+    }
+
+    @Test func decodedFormulaRecalculatesMasses() throws {
+        let formula = Formula("H2O")
+        let data = try JSONEncoder().encode(formula)
+        let decodedFormula = try JSONDecoder().decode(Formula.self, from: data)
+
+        #expect(decodedFormula.monoisotopicMass == formula.monoisotopicMass)
+        #expect(decodedFormula.averageMass == formula.averageMass)
+        #expect(decodedFormula.nominalMass == formula.nominalMass)
+    }
+
     @Test func modifiedPeptideFormula() throws {
         for modification in try modifications(
             unimodName: "Phospho", psiModAccession: "MOD:00046",
@@ -535,6 +555,19 @@ import Testing
         protein.setAdducts(type: protonAdduct, count: 2)
 
         #expect(protein.selectionMass(0..<5).monoisotopicMass.rounded(scale: 4) == decimal("305.1112"))
+    }
+
+    @Test func selectionMassUsesActualAdducts() throws {
+        var protein = Protein(sequence: "DWSSD")
+        protein.adducts = [sodiumAdduct]
+        let chain = try #require(protein.chains.first)
+
+        let selectionMass = protein.selectionMass(0..<5)
+        let expectedMass = chain.masses.applying(adducts: [sodiumAdduct])
+        let protonatedMass = chain.masses.applying(adducts: [protonAdduct])
+
+        #expect(selectionMass == expectedMass)
+        #expect(selectionMass != protonatedMass)
     }
 
     @Test func isoelectricPointRangeMatchesSubChain() throws {

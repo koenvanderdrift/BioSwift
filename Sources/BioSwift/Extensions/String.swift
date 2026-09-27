@@ -189,9 +189,8 @@ extension String {
             return ""
         }
 
-        let start = index(startIndex, offsetBy: validRange.lowerBound - 1)
-
-        let end = index(start, offsetBy: validRange.length)
+        let start = index(startIndex, offsetBy: validRange.lowerBound)
+        let end = index(startIndex, offsetBy: validRange.upperBound)
 
         return String(self[start..<end])
     }
@@ -205,9 +204,8 @@ extension String {
 
         var result = self
 
-        let start = result.index(result.startIndex, offsetBy: validRange.lowerBound - 1)
-
-        let end = result.index(start, offsetBy: validRange.length)
+        let start = result.index(result.startIndex, offsetBy: validRange.lowerBound)
+        let end = result.index(result.startIndex, offsetBy: validRange.upperBound)
 
         result.removeSubrange(start..<end)
 

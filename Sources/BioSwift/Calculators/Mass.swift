@@ -17,50 +17,19 @@ public typealias MassRange = ClosedRange<Dalton>
 
 extension MassRange {
     func contains(_ masses: MassContainer, for type: MassType) -> Bool {
-        switch type {
-        case .monoisotopic:
-            return contains(masses.monoisotopicMass)
-
-        case .average:
-            return contains(masses.averageMass)
-
-        case .nominal:
-            return false
-        }
+        contains(masses.value(for: type))
     }
 
-    func lowerLimit(excludes masses: MassContainer) -> Bool {
-        masses.monoisotopicMass < 0.99 * lowerBound
-    }
-
-    func upperLimit(excludes masses: MassContainer) -> Bool {
-        masses.averageMass > 1.01 * upperBound
+    func upperLimit(excludes masses: MassContainer, for type: MassType) -> Bool {
+        masses.value(for: type) > upperBound
     }
 
     func isBelow(_ value: MassContainer, for type: MassType) -> Bool {
-        switch type {
-        case .monoisotopic:
-            return value.monoisotopicMass < lowerBound
-
-        case .average:
-            return value.averageMass < lowerBound
-
-        case .nominal:
-            return false
-        }
+        value.value(for: type) < lowerBound
     }
 
     func isAbove(_ value: MassContainer, for type: MassType) -> Bool {
-        switch type {
-        case .monoisotopic:
-            return value.monoisotopicMass > upperBound
-
-        case .average:
-            return value.averageMass > upperBound
-
-        case .nominal:
-            return false
-        }
+        value.value(for: type) > upperBound
     }
 }
 
@@ -75,7 +44,7 @@ public enum MassType: String, CaseIterable, Codable, Identifiable, Equatable, Se
     }
 }
 
-/// Internal storage for monoisotopic, average, and nominal mass calculations.
+/// Storage for monoisotopic, average, and nominal mass calculations.
 
 public struct MassContainer: Codable, Sendable, Equatable {
     public private(set) var monoisotopicMass = Dalton(0.0)
@@ -90,7 +59,21 @@ public struct MassContainer: Codable, Sendable, Equatable {
 }
 
 extension MassContainer {
+    func value(for type: MassType) -> Dalton {
+        switch type {
+        case .monoisotopic:
+            monoisotopicMass
+        case .average:
+            averageMass
+        case .nominal:
+            Dalton(nominalMass)
+        }
+    }
+
     func applying(adducts: [Adduct]) -> Self {
+    
+    // TODO: Negative-ion calculations are not yet supported.
+    
         let charge = adducts.reduce(0) { $0 + $1.charge }
         guard charge > 0 else {
             return self
@@ -186,28 +169,12 @@ extension MassRepresentable {
 }
 
 /// Internal common interface for structures that can carry adducts.
-protocol Ionizable: MassRepresentable {
+protocol Ionizable {
+    var masses: MassContainer { get }
+
     var adducts: [Adduct] {
         get set
     }
-}
-
-extension Ionizable {
-    /// The monoisotopic mass for a neutral molecule, or m/z when adducts give it a charge.
-    public var monoisotopicMass: Dalton {
-        masses.applying(adducts: adducts).monoisotopicMass
-    }
-
-    /// The average mass for a neutral molecule, or m/z when adducts give it a charge.
-    public var averageMass: Dalton {
-        masses.applying(adducts: adducts).averageMass
-    }
-
-    /// The nominal mass for a neutral molecule, or nominal m/z when adducts give it a charge.
-    public var nominalMass: Int {
-        masses.applying(adducts: adducts).nominalMass
-    }
-
 }
 
 extension Dalton {
