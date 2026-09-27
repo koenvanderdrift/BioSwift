@@ -25,7 +25,7 @@ public struct ChemicalElement: Codable, Symbol, Sendable {
     public let name: String
     public let symbol: String
     public let isotopes: [Isotope]
-    var cachedMasses: MassContainer = zeroMass
+    var masses: MassContainer = zeroMass
 
     public init(name: String, symbol: String, isotopes: [Isotope]) {
         self.name = name
@@ -55,7 +55,7 @@ public struct ChemicalElement: Codable, Symbol, Sendable {
     }
 
     private mutating func setUp() {
-        cachedMasses = calculateNeutralMasses()
+        masses = calculateMasses()
     }
 
     public var identifier: String {
@@ -78,11 +78,7 @@ extension ChemicalElement: Equatable, Hashable {
 }
 
 extension ChemicalElement: MassRepresentable {
-    var neutralMasses: MassContainer {
-        cachedMasses
-    }
-
-    private func calculateNeutralMasses() -> MassContainer {
+    private func calculateMasses() -> MassContainer {
         var currentAbundance = Decimal(0.0)
         var monoisotopicMass = Dalton(0.0)
         var averageMass = Dalton(0.0)

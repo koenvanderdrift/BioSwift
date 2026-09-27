@@ -237,13 +237,13 @@ extension BioMolecule where ChainType.ResidueType == AminoAcid {
 }
 
 extension BioMolecule {
-    var neutralMasses: MassContainer {
+    var masses: MassContainer {
         let chainMasses = chains.reduce(zeroMass) {
-            $0 + $1.calculatedNeutralMasses()
+            $0 + $1.calculatedMasses()
         }
 
         return crossLinks.reduce(chainMasses) {
-            $0 + $1.modification.neutralMasses
+            $0 + $1.modification.masses
         }
     }
 }
@@ -268,7 +268,7 @@ extension BioMolecule: MassRepresentable {
     }
 
     private var resolvedMasses: MassContainer {
-        neutralMasses.applying(adducts: adducts)
+        masses.applying(adducts: adducts)
     }
 
     public func selectedMonoIsotopicMass(chainIndex index: Int = 0, _ range: Range<Int>) -> Dalton {
@@ -293,8 +293,8 @@ extension BioMolecule: MassRepresentable {
 
         if let aminoAcidChain = chain as? any AminoAcidChain {
             let selectedMasses = aminoAcidChain.aminoAcidResidueMasses(in: validRange)
-                + aminoAcidChain.nTerminal.neutralMasses
-                + aminoAcidChain.cTerminal.neutralMasses
+                + aminoAcidChain.nTerminal.masses
+                + aminoAcidChain.cTerminal.masses
 
             let adducts = Array(repeating: protonAdduct, count: max(0, charge))
             return selectedMasses.applying(adducts: adducts)
@@ -302,7 +302,7 @@ extension BioMolecule: MassRepresentable {
 
         let sub = chain.subChain(range: validRange)
         let adducts = Array(repeating: protonAdduct, count: max(0, charge))
-        return sub.calculatedNeutralMasses().applying(adducts: adducts)
+        return sub.calculatedMasses().applying(adducts: adducts)
     }
 
     public mutating func setAdducts(type: Adduct, count: Int, for chainIndex: Int = 0) {

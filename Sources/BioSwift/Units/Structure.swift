@@ -21,19 +21,19 @@ public protocol Structure {
 }
 
 extension Structure {
-    var neutralMasses: MassContainer {
-        formula.neutralMasses
+    var masses: MassContainer {
+        formula.masses
     }
 
     public var monoisotopicMass: Dalton {
-        neutralMasses.monoisotopicMass
+        masses.monoisotopicMass
     }
 
     public var averageMass: Dalton {
-        neutralMasses.averageMass
+        masses.averageMass
     }
 
     public var nominalMass: Int {
-        neutralMasses.nominalMass
+        masses.nominalMass
     }
 }

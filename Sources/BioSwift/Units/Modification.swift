@@ -43,14 +43,14 @@ public indirect enum Reaction: Codable, Sendable {
 }
 
 extension Reaction: MassRepresentable {
-    var neutralMasses: MassContainer {
+    var masses: MassContainer {
         var result = zeroMass
 
         switch self {
         case .add(let group):
-            result += group.neutralMasses
+            result += group.masses
         case .remove(let group):
-            result -= group.neutralMasses
+            result -= group.masses
         case .undefined:
             break
         }
@@ -175,7 +175,7 @@ extension Modification: Hashable {
 }
 
 extension Modification: MassRepresentable {
-    var neutralMasses: MassContainer { reactions.reduce(zeroMass) { $0 + $1.neutralMasses } }
+    var masses: MassContainer { reactions.reduce(zeroMass) { $0 + $1.masses } }
 
     public var formula: Formula { reactions.reduce(zeroFormula) { $0 + $1.formula } }
 

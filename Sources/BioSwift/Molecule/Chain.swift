@@ -96,9 +96,9 @@ extension Chain {
         return count
     }
 
-    func calculatedNeutralMasses() -> MassContainer {
+    func calculatedMasses() -> MassContainer {
         if let massRepresentable = self as? any MassRepresentable {
-            return massRepresentable.neutralMasses
+            return massRepresentable.masses
         }
 
         var masses = residueMasses()
@@ -121,7 +121,7 @@ extension Chain {
         }
 
         return residues[validRange].reduce(zeroMass) {
-            $0 + $1.neutralMasses
+            $0 + $1.masses
         }
     }
 }
@@ -163,11 +163,11 @@ extension AminoAcidChain {
             residueCounts[identifier, default: 0] += 1
 
             if unmodifiedMassesByResidue[identifier] == nil {
-                unmodifiedMassesByResidue[identifier] = residue.formula.neutralMasses
+                unmodifiedMassesByResidue[identifier] = residue.formula.masses
             }
 
             if let modification = residue.modification {
-                modificationMasses += modification.neutralMasses
+                modificationMasses += modification.masses
             }
         }
 
@@ -205,7 +205,7 @@ extension AminoAcidChain {
     }
 
     func terminalMasses() -> MassContainer {
-        nTerminal.neutralMasses + cTerminal.neutralMasses
+        nTerminal.masses + cTerminal.masses
     }
 
     public mutating func setTermini(nTerm: Modification, cTerm: Modification) {
@@ -433,7 +433,7 @@ extension Chain {
         var prefixValues = Array(repeating: zeroMass, count: residues.count + 1)
 
         for index in residues.indices {
-            prefixValues[index + 1] = prefixValues[index] + residues[index].neutralMasses
+            prefixValues[index + 1] = prefixValues[index] + residues[index].masses
         }
 
         var candidateCount = 0
@@ -444,7 +444,7 @@ extension Chain {
             candidateCount += 1
 
             let adducts = Array(repeating: protonAdduct, count: max(0, params.charge))
-            return (water.neutralMasses + itemSum).applying(adducts: adducts)
+            return (water.masses + itemSum).applying(adducts: adducts)
         }
 
         let count = residues.count
@@ -512,7 +512,7 @@ extension Chain {
                 sub.range = subRange
                 sub.adducts = Array(repeating: protonAdduct, count: max(0, params.charge))
 
-                let candidateMass = sub.calculatedNeutralMasses().applying(adducts: sub.adducts)
+                let candidateMass = sub.calculatedMasses().applying(adducts: sub.adducts)
 
                 if params.massRange.upperLimit(excludes: candidateMass) {
                     break

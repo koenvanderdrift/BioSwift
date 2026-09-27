@@ -33,12 +33,12 @@ extension Residue {
         threeLetterCode
     }
 
-    var neutralMasses: MassContainer {
-        formula.neutralMasses + modificationMasses()
+    var masses: MassContainer {
+        formula.masses + modificationMasses()
     }
 
     func modificationMasses() -> MassContainer {
-        modification?.neutralMasses ?? zeroMass
+        modification?.masses ?? zeroMass
     }
 
     public func allowedModifications() -> [Modification] {

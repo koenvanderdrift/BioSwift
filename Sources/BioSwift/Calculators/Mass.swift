@@ -97,7 +97,7 @@ extension MassContainer {
         }
 
         let adductMasses = adducts.reduce(zeroMass) {
-            $0 + $1.group.neutralMasses - ($1.charge * electronMass)
+            $0 + $1.group.masses - ($1.charge * electronMass)
         }
 
         return (self + adductMasses) / charge
@@ -174,20 +174,20 @@ let electronMass = MassContainer(
 /// Internal common interface for calculating neutral molecular masses.
 /// Elemental masses use the bundled NIST isotope data.
 protocol MassRepresentable {
-    var neutralMasses: MassContainer { get }
+    var masses: MassContainer { get }
 }
 
 extension MassRepresentable {
     public var monoisotopicMass: Dalton {
-        neutralMasses.monoisotopicMass
+        masses.monoisotopicMass
     }
 
     public var averageMass: Dalton {
-        neutralMasses.averageMass
+        masses.averageMass
     }
 
     public var nominalMass: Int {
-        neutralMasses.nominalMass
+        masses.nominalMass
     }
 }
 
@@ -201,17 +201,17 @@ protocol Ionizable: MassRepresentable {
 extension Ionizable {
     /// The monoisotopic mass for a neutral molecule, or m/z when adducts give it a charge.
     public var monoisotopicMass: Dalton {
-        neutralMasses.applying(adducts: adducts).monoisotopicMass
+        masses.applying(adducts: adducts).monoisotopicMass
     }
 
     /// The average mass for a neutral molecule, or m/z when adducts give it a charge.
     public var averageMass: Dalton {
-        neutralMasses.applying(adducts: adducts).averageMass
+        masses.applying(adducts: adducts).averageMass
     }
 
     /// The nominal mass for a neutral molecule, or nominal m/z when adducts give it a charge.
     public var nominalMass: Int {
-        neutralMasses.applying(adducts: adducts).nominalMass
+        masses.applying(adducts: adducts).nominalMass
     }
 
     public var charge: Charge {
