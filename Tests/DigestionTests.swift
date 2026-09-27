@@ -101,7 +101,7 @@ import Testing
 
         if let enzyme = trypsin {
             let peptides: [Peptide] = digester.peptides(using: enzyme, with: missedCleavages)
-                .charge(with: 1...1)
+                .protonated(chargeStates: 1...1)
             #expect(peptides[0].monoisotopicMass.rounded(scale: 4) == decimal("3468.7575"))  // 3467.7503
             #expect(peptides[2].monoisotopicMass.rounded(scale: 4) == decimal("1779.7681"))  // 1778.7608
         }

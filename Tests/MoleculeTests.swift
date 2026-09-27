@@ -177,6 +177,16 @@ import Testing
         #expect(peptide.monoisotopicMass.rounded(scale: 4) == decimal("305.1112"))
     }
 
+    @Test func protonatedCreatesExactChargeStates() {
+        var peptide = Peptide(sequence: "DWSSD")
+        peptide.setAdducts(type: protonAdduct, count: 3)
+
+        let chargedPeptides = [peptide].protonated(chargeStates: -1...2)
+
+        #expect(chargedPeptides.map(\.charge) == [0, 1, 2])
+        #expect(chargedPeptides.allSatisfy { $0.adducts.allSatisfy { $0 == protonAdduct } })
+    }
+
     @Test mutating func peptideAverageMass() {
         // Expected values use isotope-abundance-weighted masses from the bundled NIST data.
         testPeptide.setAdducts(type: protonAdduct, count: 1)

@@ -217,12 +217,15 @@ extension Dalton {
 }
 
 extension Array where Element: Chain {
-    func charge(with range: ClosedRange<Charge>) -> [Element] {
+    public func protonated(chargeStates: ClosedRange<Charge>) -> [Element] {
         flatMap { sequence in
-            range.map { charge in
+            chargeStates.compactMap { charge -> Element? in
+                guard charge >= 0 else {
+                    return nil
+                }
+
                 var chargedSequence = sequence
-                chargedSequence.adducts.append(
-                    contentsOf: repeatElement(protonAdduct, count: charge))
+                chargedSequence.adducts = [Adduct](repeating: protonAdduct, count: charge)
 
                 return chargedSequence
             }
