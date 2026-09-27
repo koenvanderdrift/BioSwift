@@ -30,7 +30,7 @@ import Testing
         #expect(!libraries.hydrophobicityScales.isEmpty)
     }
 
-    @Test func bundledHydrophobicityReferencesCacheNumericValues() {
+    @Test func bundledHydrophobicityReferencesProvideNumericValues() {
         let pKaValues = HydrophobicityReferenceDefaults.bundled.numericHydrophobicityValues(named: "pKa")
 
         #expect(pKaValues["CTerminal"] != nil)

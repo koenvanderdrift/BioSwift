@@ -153,11 +153,11 @@ public class IsoelectricPointCalculator {
             let lysineCharge = numberOfLysine / (1 + pow(10, pH - lysinepKa))
             let arginineCharge = numberOfArginine / (1 + pow(10, pH - argininepKa))
 
-            let neutralCharge =
+            let netCharge =
                 cTerminalCharge + asparticAcidCharge + glutamicAcidCharge + cysteineCharge
                 + tyrosineCharge + nTerminalCharge + histidineCharge + lysineCharge + arginineCharge
 
-            if neutralCharge < 0 {  // we are out of range, thus the new pH value must be smaller
+            if netCharge < 0 {  // we are out of range, thus the new pH value must be smaller
                 let temp = pH
                 pH = pH - ((pH - minpH) / 2)
                 maxpH = temp
