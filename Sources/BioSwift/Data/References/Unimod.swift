@@ -1,5 +1,5 @@
 //
-//  UnimodXMLParser.swift
+//  Unimod.swift
 //  BioSwift
 //
 //  Created by Koen van der Drift on 3/14/20.

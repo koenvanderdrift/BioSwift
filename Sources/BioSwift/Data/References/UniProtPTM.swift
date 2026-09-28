@@ -12,7 +12,7 @@ enum UniProtPTMReferenceLibraryLoader {
         elements: ElementReferences,
         aminoAcids: AminoAcidReferences
     ) throws -> ModificationLibrary {
-        let text = try loadText(from: "ptmlist", withExtension: "txt", in: .module)
+        let text = try loadText(from: "uniprot-ptm-list", withExtension: "txt", in: .module)
         return UniProtPTMParser(elements: elements, aminoAcids: aminoAcids).parse(text)
     }
 

@@ -42,13 +42,16 @@ struct JSONReferenceLibraries {
 
 enum JSONReferenceLibraryLoader {
     static func loadElements() throws -> [ChemicalElement] {
-        try parseJSONDataFromBundle(ChemicalElement.self, from: "elements")
+        try parseJSONDataFromBundle(ChemicalElement.self, from: "chemical-elements")
     }
 
     static func loadOtherLibraries() throws -> JSONReferenceLibraries {
-        let enzymes = try parseJSONDataFromBundle(Enzyme.self, from: "enzymes")
+        let enzymes = try parseJSONDataFromBundle(Enzyme.self, from: "proteolytic-enzymes")
 
-        let hydrophobicityScales = try parseJSONDataFromBundle(HydrophobicityScale.self, from: "hydropathy")
+        let hydrophobicityScales = try parseJSONDataFromBundle(
+            HydrophobicityScale.self,
+            from: "amino-acid-hydrophobicity-scales"
+        )
 
         return JSONReferenceLibraries(enzymes: enzymes, hydrophobicityScales: hydrophobicityScales)
     }

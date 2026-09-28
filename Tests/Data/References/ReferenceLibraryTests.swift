@@ -52,7 +52,7 @@ import Testing
     }
 
     @Test func uniProtPTMResourceExistsAndHasExpectedVersion() throws {
-        let text = try loadText(from: "ptmlist", withExtension: "txt", in: .module)
+        let text = try loadText(from: "uniprot-ptm-list", withExtension: "txt", in: .module)
 
         #expect(text.contains("Release:     2026_03"))
     }

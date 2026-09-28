@@ -1,5 +1,5 @@
 //
-//  BioSwiftTests.swift
+//  BioSwiftTestFixtures.swift
 //  BioSwift
 //
 //  Created by Koen van der Drift on 26.12.2025.
