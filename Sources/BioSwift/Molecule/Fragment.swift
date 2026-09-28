@@ -9,10 +9,14 @@
 import Foundation
 
 /// A fragment of a molecular chain together with its fragmentation metadata.
-public struct Fragment<ChainType: Chain, FragmentType> {
+public struct Fragment<ChainType: Chain, FragmentType>: Identifiable {
     public var chain: ChainType
     public var fragmentType: FragmentType
     public var index: Int
+
+    public var id: ChainType.ID {
+        chain.id
+    }
 
     public var sequenceString: String {
         chain.sequenceString

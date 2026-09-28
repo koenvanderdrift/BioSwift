@@ -23,6 +23,7 @@ struct FragmentTests {
         )
 
         #expect(fragment.chain.sequenceString == "PEPTIDE")
+        #expect(fragment.id == peptide.id)
         #expect(fragment.sequenceString == "PEPTIDE")
         #expect(fragment.fragmentType == .internalFragment)
         #expect(fragment.index == 3)
