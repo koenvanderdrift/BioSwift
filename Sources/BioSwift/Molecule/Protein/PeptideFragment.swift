@@ -63,7 +63,7 @@ public enum PeptideFragmentType: CaseIterable, Codable, Identifiable, Sendable {
         }
     }
 
-    var masses: MassContainer {
+    var massAdjustment: MassContainer {
         switch self {
         case .precursorIon:
             return water.masses
@@ -72,13 +72,13 @@ public enum PeptideFragmentType: CaseIterable, Codable, Identifiable, Sendable {
             return water.masses - ammonia.masses
 
         case .aIon:
-            return zeroMass - carbonyl.masses
+            return zeroMass - carbonyl.masses - hydrogen.masses
 
         case .aIonMinusWater:
-            return zeroMass - carbonyl.masses + water.masses
+            return zeroMass - carbonyl.masses - hydrogen.masses - water.masses
 
         case .aIonMinusAmmonia:
-            return zeroMass - carbonyl.masses + ammonia.masses
+            return zeroMass - carbonyl.masses - hydrogen.masses - ammonia.masses
 
         case .bIon:
             return zeroMass - hydrogen.masses
@@ -139,7 +139,7 @@ extension Fragment where ChainType == Peptide, FragmentType == PeptideFragmentTy
     public init(sequence: String, id: UUID) {
         var peptide = Peptide(sequence: sequence, id: id)
         peptide.setTermini(nTerm: zeroModification, cTerm: zeroModification)
-        self.init(chain: peptide, fragmentType: .undefined)
+        self.init(chain: peptide, fragmentType: .undefined, id: id)
     }
 
     public init(residues: [AminoAcid]) {
@@ -149,15 +149,25 @@ extension Fragment where ChainType == Peptide, FragmentType == PeptideFragmentTy
     public init(residues: [AminoAcid], id: UUID) {
         var peptide = Peptide(residues: residues, id: id)
         peptide.setTermini(nTerm: zeroModification, cTerm: zeroModification)
-        self.init(chain: peptide, fragmentType: .undefined)
+        self.init(chain: peptide, fragmentType: .undefined, id: id)
     }
 
-    public init(residues: [AminoAcid], type: PeptideFragmentType, index: Int = -1, adducts: [Adduct], nTerm: Modification = zeroModification, cTerm: Modification = zeroModification, parentLength: Int = 0, id: UUID = UUID()) {
+    public init(residues: [AminoAcid], fragmentType: PeptideFragmentType, index: Int = -1, adducts: [Adduct], nTerm: Modification = zeroModification, cTerm: Modification = zeroModification, parentLength: Int = 0, id: UUID = UUID()) {
         var peptide = Peptide(residues: residues, id: id)
         peptide.adducts = adducts
         peptide.parentLength = parentLength
         peptide.setTermini(nTerm: nTerm, cTerm: cTerm)
-        self.init(chain: peptide, fragmentType: type, index: index)
+        self.init(chain: peptide, fragmentType: fragmentType, index: index, id: id)
+    }
+
+    public var nTerminal: Modification {
+        get { chain.nTerminal }
+        set { chain.nTerminal = newValue }
+    }
+
+    public var cTerminal: Modification {
+        get { chain.cTerminal }
+        set { chain.cTerminal = newValue }
     }
 
     public var massContainer: MassContainer {
@@ -181,7 +191,7 @@ extension Fragment where ChainType == Peptide, FragmentType == PeptideFragmentTy
             return zeroMass
         }
 
-        return chain.masses + fragmentType.masses
+        return chain.masses + fragmentType.massAdjustment
     }
 
     public func canLoseWater() -> Bool {

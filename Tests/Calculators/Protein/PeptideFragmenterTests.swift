@@ -58,7 +58,7 @@ import Testing
         #expect(singleResidueFragmenter.fragment(at: 1, for: .cIon) != nil)
     }
 
-    @Test func fragmentMass1() {
+    @Test func fragmentMass1() throws {
         // theoretical masses via https://prospector.ucsf.edu/prospector/cgi-bin/msform.cgi?form=msproduct
 
         var peptide = Peptide(sequence: "SAMPLER")
@@ -77,40 +77,51 @@ import Testing
         #expect(precursors[1].monoisotopicMass.rounded(scale: 4) == decimal("785.3974"))
         #expect(precursors[2].monoisotopicMass.rounded(scale: 4) == decimal("786.3815"))
 
-        if let a1 = fragmenter.fragment(at: 1, for: .aIon) {
-            #expect(a1.monoisotopicMass.rounded(scale: 4) == decimal("131.0815"))  // a1
-        }
+        let a2 = try #require(fragmenter.fragment(at: 2, for: .aIon))
+        #expect(a2.monoisotopicMass.rounded(scale: 4) == decimal("131.0815"))  // a2
 
-        if let b2 = fragmenter.fragment(at: 2, for: .bIon) {
-            #expect(b2.monoisotopicMass.rounded(scale: 4) == decimal("159.0764"))  // b2
-        }
+        let b2 = try #require(fragmenter.fragment(at: 2, for: .bIon))
+        #expect(b2.monoisotopicMass.rounded(scale: 4) == decimal("159.0764"))  // b2
 
-        if let b2minH2O = fragmenter.fragment(at: 2, for: .bIonMinusWater) {
-            #expect(b2minH2O.monoisotopicMass.rounded(scale: 4) == decimal("141.0659"))  // b2-H2O
-        }
+        let b2minH2O = try #require(fragmenter.fragment(at: 2, for: .bIonMinusWater))
+        #expect(b2minH2O.monoisotopicMass.rounded(scale: 4) == decimal("141.0659"))  // b2-H2O
 
-        if let b3minH2O = fragmenter.fragment(at: 3, for: .bIonMinusWater) {
-            #expect(b3minH2O.monoisotopicMass.rounded(scale: 4) == decimal("272.1063"))  // b3-H2O
-        }
+        let b3minH2O = try #require(fragmenter.fragment(at: 3, for: .bIonMinusWater))
+        #expect(b3minH2O.monoisotopicMass.rounded(scale: 4) == decimal("272.1063"))  // b3-H2O
 
-        if let x1 = fragmenter.fragment(at: 1, for: .xIon) {
-            #expect(x1.monoisotopicMass.rounded(scale: 4) == decimal("201.0982"))  // x1
-        }
+        let x1 = try #require(fragmenter.fragment(at: 1, for: .xIon))
+        #expect(x1.monoisotopicMass.rounded(scale: 4) == decimal("201.0982"))  // x1
 
-        if let y1 = fragmenter.fragment(at: 1, for: .yIon) {
-            #expect(y1.monoisotopicMass.rounded(scale: 4) == decimal("175.1190"))  // y1
-        }
+        let y1 = try #require(fragmenter.fragment(at: 1, for: .yIon))
+        #expect(y1.monoisotopicMass.rounded(scale: 4) == decimal("175.1190"))  // y1
 
-        if let y1minNH3 = fragmenter.fragment(at: 1, for: .yIonMinusAmmonia) {
-            #expect(y1minNH3.monoisotopicMass.rounded(scale: 4) == decimal("158.0924"))  // y1-NH3
-        }
+        let y1minNH3 = try #require(fragmenter.fragment(at: 1, for: .yIonMinusAmmonia))
+        #expect(y1minNH3.monoisotopicMass.rounded(scale: 4) == decimal("158.0924"))  // y1-NH3
 
-        if let y2minH2O = fragmenter.fragment(at: 2, for: .yIonMinusWater) {
-            #expect(y2minH2O.monoisotopicMass.rounded(scale: 4) == decimal("286.1510"))  // y2-H2O
-        }
+        let y2minH2O = try #require(fragmenter.fragment(at: 2, for: .yIonMinusWater))
+        #expect(y2minH2O.monoisotopicMass.rounded(scale: 4) == decimal("286.1510"))  // y2-H2O
     }
 
-    @Test func fragmentMass2() {
+    @Test func aIonNeutralLossMasses() throws {
+        var peptide = Peptide(sequence: "SQA")
+        peptide.setAdducts(type: protonAdduct, count: 1)
+        let fragmenter = PeptideFragmenter(peptide: peptide)
+
+        let a2 = try #require(fragmenter.fragment(at: 2, for: .aIon))
+        let waterLoss = try #require(fragmenter.fragment(at: 2, for: .aIonMinusWater))
+        let ammoniaLoss = try #require(fragmenter.fragment(at: 2, for: .aIonMinusAmmonia))
+
+        #expect(
+            (a2.monoisotopicMass - waterLoss.monoisotopicMass).rounded(scale: 4)
+                == water.monoisotopicMass.rounded(scale: 4)
+        )
+        #expect(
+            (a2.monoisotopicMass - ammoniaLoss.monoisotopicMass).rounded(scale: 4)
+                == ammonia.monoisotopicMass.rounded(scale: 4)
+        )
+    }
+
+    @Test func fragmentMass2() throws {
         var peptide = Peptide(sequence: "SAMPLEVAAAGQTHR")
         peptide.setAdducts(type: protonAdduct, count: 1)
 
@@ -124,21 +135,17 @@ import Testing
         }
         #expect(bIons.count == 13)
 
-        if let b2 = fragmenter.fragment(at: 2, for: .bIon) {
-            #expect(b2.monoisotopicMass.rounded(scale: 4) == decimal("159.0764"))  // b2
-        }
+        let b2 = try #require(fragmenter.fragment(at: 2, for: .bIon))
+        #expect(b2.monoisotopicMass.rounded(scale: 4) == decimal("159.0764"))  // b2
 
-        if let b12 = fragmenter.fragment(at: 12, for: .bIon) {
-            #expect(b12.monoisotopicMass.rounded(scale: 4) == decimal("1126.5561"))  // b12
-        }
+        let b12 = try #require(fragmenter.fragment(at: 12, for: .bIon))
+        #expect(b12.monoisotopicMass.rounded(scale: 4) == decimal("1126.5561"))  // b12
 
-        if let b12minH2O = fragmenter.fragment(at: 12, for: .bIonMinusWater) {
-            #expect(b12minH2O.monoisotopicMass.rounded(scale: 4) == decimal("1108.5456"))  // b12 - H2O
-        }
+        let b12minH2O = try #require(fragmenter.fragment(at: 12, for: .bIonMinusWater))
+        #expect(b12minH2O.monoisotopicMass.rounded(scale: 4) == decimal("1108.5456"))  // b12 - H2O
 
-        if let b12minNH3 = fragmenter.fragment(at: 12, for: .bIonMinusAmmonia) {
-            #expect(b12minNH3.monoisotopicMass.rounded(scale: 4) == decimal("1109.5296"))  // b12 - NH3
-        }
+        let b12minNH3 = try #require(fragmenter.fragment(at: 12, for: .bIonMinusAmmonia))
+        #expect(b12minNH3.monoisotopicMass.rounded(scale: 4) == decimal("1109.5296"))  // b12 - NH3
 
 
         let zIons = fragments.filter {
@@ -151,9 +158,8 @@ import Testing
         }
         #expect(cIons.count == 13)
 
-        if let c1 = fragmenter.fragment(at: 1, for: .cIon) {
-            #expect(c1.monoisotopicMass.rounded(scale: 4) == decimal("105.0659"))  // c1
-        }
+        let c1 = try #require(fragmenter.fragment(at: 1, for: .cIon))
+        #expect(c1.monoisotopicMass.rounded(scale: 4) == decimal("105.0659"))  // c1
     }
 
     @Test func fragmentMass3() throws {
@@ -195,17 +201,14 @@ import Testing
                 $0.index == 2
             }))
 
-            if let b8 = fragmenter.fragment(at: 8, for: .bIon) {
-                #expect(b8.monoisotopicMass.rounded(scale: 4) == decimal("799.4019"))  // b8 M-ox
-            }
+            let b8 = try #require(fragmenter.fragment(at: 8, for: .bIon))
+            #expect(b8.monoisotopicMass.rounded(scale: 4) == decimal("799.4019"))  // b8 M-ox
 
-            if let y9 = fragmenter.fragment(at: 9, for: .yIon) {
-                #expect(y9.monoisotopicMass.rounded(scale: 4) == decimal("958.4523"))  // y9 M-ox
-            }
+            let y9 = try #require(fragmenter.fragment(at: 9, for: .yIon))
+            #expect(y9.monoisotopicMass.rounded(scale: 4) == decimal("958.4523"))  // y9 M-ox
 
-            if let x9 = fragmenter.fragment(at: 9, for: .xIon) {
-                #expect(x9.monoisotopicMass.rounded(scale: 4) == decimal("984.4316"))  // x9 M-ox
-            }
+            let x9 = try #require(fragmenter.fragment(at: 9, for: .xIon))
+            #expect(x9.monoisotopicMass.rounded(scale: 4) == decimal("984.4316"))  // x9 M-ox
 
             let zIons = fragments.filter {
                 $0.fragmentType == .zIon
@@ -214,13 +217,12 @@ import Testing
                 $0.index == 13
             }))
 
-            if let z12 = fragmenter.fragment(at: 12, for: .zIon) {
-                #expect(z12.monoisotopicMass.rounded(scale: 4) == decimal("1283.6287"))  // z12 M-ox
-            }
+            let z12 = try #require(fragmenter.fragment(at: 12, for: .zIon))
+            #expect(z12.monoisotopicMass.rounded(scale: 4) == decimal("1283.6287"))  // z12 M-ox
         }
     }
 
-    @Test func fragmentMass4() {
+    @Test func fragmentMass4() throws {
         var peptide = Peptide(sequence: "AWRKQNWSTEDWWSTEDWQPRTYSAMPLER")
         peptide.setAdducts(type: protonAdduct, count: 1)
 
@@ -255,12 +257,11 @@ import Testing
             $0.index == 8
         }))
 
-        if let b8MinusWater = fragmenter.fragment(at: 8, for: .bIonMinusWater) {
-            #expect(b8MinusWater.monoisotopicMass.rounded(scale: 4) == decimal("1039.5221"))  // b8-H20
-        }
+        let b8MinusWater = try #require(fragmenter.fragment(at: 8, for: .bIonMinusWater))
+        #expect(b8MinusWater.monoisotopicMass.rounded(scale: 4) == decimal("1039.5221"))  // b8-H20
     }
 
-    @Test func fragmentMass5() {
+    @Test func fragmentMass5() throws {
         var peptide = Peptide(sequence: "SAMPLEVAAAGQTHR")
         peptide.setAdducts(type: protonAdduct, count: 2)
 
@@ -274,26 +275,22 @@ import Testing
         }
         #expect(bIons.count == 14)
 
-        if let b2 = fragmenter.fragment(at: 2, for: .bIon) {
-            #expect(b2.monoisotopicMass.rounded(scale: 4) == decimal("159.0764"))  // b2
-        }
+        let b2 = try #require(fragmenter.fragment(at: 2, for: .bIon))
+        #expect(b2.monoisotopicMass.rounded(scale: 4) == decimal("159.0764"))  // b2
 
-        if let b12 = fragmenter.fragment(at: 12, for: .bIon) {
-            #expect(b12.monoisotopicMass.rounded(scale: 4) == decimal("1126.5561"))  // b12
-        }
+        let b12 = try #require(fragmenter.fragment(at: 12, for: .bIon))
+        #expect(b12.monoisotopicMass.rounded(scale: 4) == decimal("1126.5561"))  // b12
 
         let bIonsMinusWater = fragments.filter {
             $0.fragmentType == .bIonMinusWater
         }
         #expect(bIonsMinusWater.count == 14)
 
-        if let b12MinusWater = fragmenter.fragment(at: 12, for: .bIonMinusWater) {
-            #expect(b12MinusWater.monoisotopicMass.rounded(scale: 4) == decimal("1108.5456"))  // b12 - H2O
-        }
+        let b12MinusWater = try #require(fragmenter.fragment(at: 12, for: .bIonMinusWater))
+        #expect(b12MinusWater.monoisotopicMass.rounded(scale: 4) == decimal("1108.5456"))  // b12 - H2O
 
-        if let b12MinusAmmonia = fragmenter.fragment(at: 12, for: .bIonMinusAmmonia) {
-            #expect(b12MinusAmmonia.monoisotopicMass.rounded(scale: 4) == decimal("1109.5296"))  // b12 - NH3
-        }
+        let b12MinusAmmonia = try #require(fragmenter.fragment(at: 12, for: .bIonMinusAmmonia))
+        #expect(b12MinusAmmonia.monoisotopicMass.rounded(scale: 4) == decimal("1109.5296"))  // b12 - NH3
 
         let zIons = fragments.filter {
             $0.fragmentType == .zIon
@@ -305,9 +302,8 @@ import Testing
         }
         #expect(cIons.count == 14)
 
-        if let c1 = fragmenter.fragment(at: 1, for: .cIon) {
-            #expect(c1.monoisotopicMass.rounded(scale: 4) == decimal("105.0659"))  // c1
-        }
+        let c1 = try #require(fragmenter.fragment(at: 1, for: .cIon))
+        #expect(c1.monoisotopicMass.rounded(scale: 4) == decimal("105.0659"))  // c1
     }
 
     @Test func chargedResidues() {
@@ -320,7 +316,7 @@ import Testing
     @Test func fragmentComposesPeptideStorage() {
         let fragment = PeptideFragment(
             residues: Peptide(sequence: "SAM").residues,
-            type: .bIon,
+            fragmentType: .bIon,
             index: 3,
             adducts: [protonAdduct]
         )
@@ -328,8 +324,8 @@ import Testing
         #expect(fragment.sequenceString == "SAM")
         #expect(fragment.residues.count == 3)
         #expect(fragment.adducts == [protonAdduct])
-        #expect(fragment.chain.nTerminal == zeroModification)
-        #expect(fragment.chain.cTerminal == zeroModification)
+        #expect(fragment.nTerminal == zeroModification)
+        #expect(fragment.cTerminal == zeroModification)
     }
 
     @Test func allFragmentCases() {

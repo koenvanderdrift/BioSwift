@@ -10,13 +10,10 @@ import Foundation
 
 /// A fragment of a molecular chain together with its fragmentation metadata.
 public struct Fragment<ChainType: Chain, FragmentType>: Identifiable {
+    public let id: UUID
     public var chain: ChainType
     public var fragmentType: FragmentType
     public var index: Int
-
-    public var id: ChainType.ID {
-        chain.id
-    }
 
     public var sequenceString: String {
         chain.sequenceString
@@ -41,7 +38,13 @@ public struct Fragment<ChainType: Chain, FragmentType>: Identifiable {
         set { chain.parentLength = newValue }
     }
 
-    public init(chain: ChainType, fragmentType: FragmentType, index: Int = -1) {
+    public init(
+        chain: ChainType,
+        fragmentType: FragmentType,
+        index: Int = -1,
+        id: UUID = UUID()
+    ) {
+        self.id = id
         self.chain = chain
         self.fragmentType = fragmentType
         self.index = index

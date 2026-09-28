@@ -23,9 +23,17 @@ struct FragmentTests {
         )
 
         #expect(fragment.chain.sequenceString == "PEPTIDE")
-        #expect(fragment.id == peptide.id)
         #expect(fragment.sequenceString == "PEPTIDE")
         #expect(fragment.fragmentType == .internalFragment)
         #expect(fragment.index == 3)
+    }
+
+    @Test func fragmentsHaveIndependentIdentity() {
+        let peptide = Peptide(sequence: "PEPTIDE")
+        let first = Fragment(chain: peptide, fragmentType: TestFragmentType.internalFragment)
+        let second = Fragment(chain: peptide, fragmentType: TestFragmentType.internalFragment)
+
+        #expect(first.id != second.id)
+        #expect(first.chain.id == second.chain.id)
     }
 }
