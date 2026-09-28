@@ -317,6 +317,21 @@ import Testing
         #expect(numOfCharges == 5)
     }
 
+    @Test func fragmentComposesPeptideStorage() {
+        let fragment = PeptideFragment(
+            residues: Peptide(sequence: "SAM").residues,
+            type: .bIon,
+            index: 3,
+            adducts: [protonAdduct]
+        )
+
+        #expect(fragment.sequenceString == "SAM")
+        #expect(fragment.residues.count == 3)
+        #expect(fragment.adducts == [protonAdduct])
+        #expect(fragment.chain.nTerminal == zeroModification)
+        #expect(fragment.chain.cTerminal == zeroModification)
+    }
+
     @Test func allFragmentCases() {
         let allCases = PeptideFragmentType.allCases
         #expect(allCases.count == 17)

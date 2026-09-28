@@ -176,7 +176,8 @@ public class PeptideFragmenter {
                 }
 
                 let cIon = PeptideFragment(
-                    residues: bIon.residues, type: .cIon, index: index, adducts: bIon.adducts,
+                    residues: bIon.residues, type: .cIon, index: index,
+                    adducts: bIon.adducts,
                     nTerm: peptide.nTerminal)
 
                 if cIon.residues.last?.oneLetterCode != "P" {
@@ -234,12 +235,14 @@ public class PeptideFragmenter {
                 }
 
                 let xIon = PeptideFragment(
-                    residues: yIon.residues, type: .xIon, index: i, adducts: yIon.adducts,
+                    residues: yIon.residues, type: .xIon, index: i,
+                    adducts: yIon.adducts,
                     cTerm: peptide.cTerminal)
                 result.append(xIon)
 
                 let zIon = PeptideFragment(
-                    residues: yIon.residues, type: .zIon, index: i, adducts: yIon.adducts,
+                    residues: yIon.residues, type: .zIon, index: i,
+                    adducts: yIon.adducts,
                     cTerm: peptide.cTerminal)
 
                 if zIon.residues.first?.oneLetterCode != "P" {

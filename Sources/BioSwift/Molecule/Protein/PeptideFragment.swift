@@ -112,17 +112,10 @@ public enum PeptideFragmentType: CaseIterable, Codable, Identifiable, Sendable {
     }
 }
 
-public protocol Fragmenting {
-    var fragmentType: PeptideFragmentType {
-        get set
-    }
+/// A peptide chain annotated with its fragmentation metadata.
+public typealias PeptideFragment = Fragment<Peptide, PeptideFragmentType>
 
-    var index: Int {
-        get set
-    }
-}
-
-extension Fragmenting {
+extension Fragment where ChainType == Peptide, FragmentType == PeptideFragmentType {
     public var isPrecursor: Bool {
         fragmentType.isPrecursor
     }
@@ -138,28 +131,15 @@ extension Fragmenting {
     public var isCTerminal: Bool {
         fragmentType.isCTerminal
     }
-}
-
-/// PeptideFragment is generated from a ``Peptide`` by ``PeptideFragmenter``
-public struct PeptideFragment: AminoAcidChain, Codable, Fragmenting, Sendable {
-    public let id: UUID
-    public var name: String = ""
-    public var residues: [AminoAcid] = []
-    public var nTerminal: Modification = zeroModification
-    public var cTerminal: Modification = zeroModification
-    public var adducts: [Adduct] = []
-    public var range: Range<Int> = zeroRange
-    public var fragmentType: PeptideFragmentType = .undefined
-    public var parentLength: Int = 0
-    public var index = -1
 
     public init(sequence: String) {
         self.init(sequence: sequence, id: UUID())
     }
 
     public init(sequence: String, id: UUID) {
-        self.id = id
-        residues = Self.createResidues(from: sequence)
+        var peptide = Peptide(sequence: sequence, id: id)
+        peptide.setTermini(nTerm: zeroModification, cTerm: zeroModification)
+        self.init(chain: peptide, fragmentType: .undefined)
     }
 
     public init(residues: [AminoAcid]) {
@@ -167,25 +147,33 @@ public struct PeptideFragment: AminoAcidChain, Codable, Fragmenting, Sendable {
     }
 
     public init(residues: [AminoAcid], id: UUID) {
-        self.id = id
-        self.residues = residues
+        var peptide = Peptide(residues: residues, id: id)
+        peptide.setTermini(nTerm: zeroModification, cTerm: zeroModification)
+        self.init(chain: peptide, fragmentType: .undefined)
     }
 
     public init(residues: [AminoAcid], type: PeptideFragmentType, index: Int = -1, adducts: [Adduct], nTerm: Modification = zeroModification, cTerm: Modification = zeroModification, parentLength: Int = 0, id: UUID = UUID()) {
-        self.id = id
-        self.residues = residues
-        self.fragmentType = type
-        self.index = index
-        self.adducts = adducts
-        self.nTerminal = nTerm
-        self.cTerminal = cTerm
-        self.parentLength = parentLength
+        var peptide = Peptide(residues: residues, id: id)
+        peptide.adducts = adducts
+        peptide.parentLength = parentLength
+        peptide.setTermini(nTerm: nTerm, cTerm: cTerm)
+        self.init(chain: peptide, fragmentType: type, index: index)
     }
-}
 
-extension PeptideFragment: Ionizable {
     public var massContainer: MassContainer {
         masses.applying(adducts: adducts)
+    }
+
+    public var monoisotopicMass: Dalton {
+        massContainer.monoisotopicMass
+    }
+
+    public var averageMass: Dalton {
+        massContainer.averageMass
+    }
+
+    public var nominalMass: Int {
+        massContainer.nominalMass
     }
 
     var masses: MassContainer {
@@ -193,12 +181,9 @@ extension PeptideFragment: Ionizable {
             return zeroMass
         }
 
-        return residueMasses() + terminalMasses() + fragmentType.masses
+        return chain.masses + fragmentType.masses
     }
 
-}
-
-extension PeptideFragment {
     public func canLoseWater() -> Bool {
         return sequenceString.containsAnyCharacter(in: "STED")
 
