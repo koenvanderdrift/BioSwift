@@ -8,8 +8,6 @@
 
 import Foundation
 
-public var loadElementsFromUnimod: Bool = false
-
 // MARK: - Partial XML result
 
 struct UnimodReferenceLibraries {

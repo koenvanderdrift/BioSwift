@@ -7,9 +7,19 @@
 //
 
 import Foundation
+import Synchronization
 
 public enum BioSwiftDiagnostics {
-    public static var isDebugLoggingEnabled = false
+    private static let debugLoggingEnabled = Mutex(false)
+
+    public static var isDebugLoggingEnabled: Bool {
+        get {
+            debugLoggingEnabled.withLock { $0 }
+        }
+        set {
+            debugLoggingEnabled.withLock { $0 = newValue }
+        }
+    }
 
     public static func log(_ message: @autoclosure () -> Any) {
         guard isDebugLoggingEnabled else {
