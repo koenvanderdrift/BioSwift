@@ -41,9 +41,6 @@ extension Residue {
         modification?.masses ?? zeroMass
     }
 
-    public func allowedModifications() -> [Modification] {
-        UnimodModificationReferenceDefaults.bundled.modifications(applicableTo: identifier)
-    }
 }
 
 extension Residue {

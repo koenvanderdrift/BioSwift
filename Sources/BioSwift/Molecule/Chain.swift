@@ -587,7 +587,7 @@ extension Chain {
     }
 }
 
-extension Chain {
+extension Chain where ResidueType == AminoAcid {
     public func allowedModifications(at location: Int) -> [Modification]? {
         if let residue = residue(at: location) {
             return residue.allowedModifications()
@@ -595,7 +595,9 @@ extension Chain {
 
         return nil
     }
+}
 
+extension Chain {
     public func getModifications() -> [Modification] {
         var result: [Modification] = []
 

@@ -14,28 +14,6 @@ public let zeroModification = Modification(name: unmodifiedString, reactions: [.
 public let hydrogenModification = Modification(name: "Hydrogen", reactions: [.add(hydrogen)])
 public let hydroxylModification = Modification(name: "Hydroxyl", reactions: [.add(hydroxyl)])
 
-public let lossOfWater = Modification(
-    name: "Loss of Water", reactions: [.remove(water)],
-    specificities: [
-        ModificationSpecificity(site: "S"), ModificationSpecificity(site: "T"),
-        ModificationSpecificity(site: "E"), ModificationSpecificity(site: "D"),
-    ])
-
-public let lossOfAmmonia = Modification(
-    name: "Loss of Ammonia", reactions: [.remove(ammonia)],
-    specificities: [
-        ModificationSpecificity(site: "R"), ModificationSpecificity(site: "Q"),
-        ModificationSpecificity(site: "N"), ModificationSpecificity(site: "K"),
-    ])
-
-public let disulfideBond = Modification(
-    name: "Disulfide bond",
-    reactions: [
-        .remove(hydrogen),
-        .remove(hydrogen),
-    ]
-)
-
 public indirect enum Reaction: Codable, Sendable {
     case add(FunctionalGroup)
     case remove(FunctionalGroup)
@@ -75,7 +53,11 @@ extension Reaction: MassRepresentable {
 }
 
 public struct ModificationSpecificity: Codable, Sendable {
-    /*
+    /* Unimod-compatible applicability metadata.
+
+     These string values preserve terminology from imported modification
+     vocabularies; they do not constrain Modification to a particular molecule type.
+
      via: https://www.unimod.org/fields.html
 
      Site: Chosen from a controlled list of categories. Choose "N-term" or "C-Term" if the modification applies to a terminus independent of the identity of the terminal residue, (e.g. methylation of a carboxy terminus). Required
