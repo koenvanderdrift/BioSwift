@@ -11,7 +11,6 @@ public let zeroFastaRecord = FastaRecord(
     accession: "", shortName: "", fullName: "", organism: "", sequence: "")
 
 public struct FastaRecord: Codable, Hashable, Identifiable, Sendable {
-    // TODO: add DNA/RNA fasta parsing
     public let id: UUID
     public let accession: String
     public let shortName: String
@@ -65,6 +64,34 @@ public func protein(fromFastaFile fileName: String, in bundle: Bundle = .main) a
     let record = try await fastaRecord(from: fileName, in: bundle)
 
     return Protein(fastaRecord: record)
+}
+
+public func dnas(fromFastaFile fileName: String, in bundle: Bundle = .main) async throws -> [DNA] {
+    let records = try await fastaRecords(from: fileName, in: bundle)
+
+    return records.map {
+        DNA(fastaRecord: $0)
+    }
+}
+
+public func dna(fromFastaFile fileName: String, in bundle: Bundle = .main) async throws -> DNA {
+    let record = try await fastaRecord(from: fileName, in: bundle)
+
+    return DNA(fastaRecord: record)
+}
+
+public func rnas(fromFastaFile fileName: String, in bundle: Bundle = .main) async throws -> [RNA] {
+    let records = try await fastaRecords(from: fileName, in: bundle)
+
+    return records.map {
+        RNA(fastaRecord: $0)
+    }
+}
+
+public func rna(fromFastaFile fileName: String, in bundle: Bundle = .main) async throws -> RNA {
+    let record = try await fastaRecord(from: fileName, in: bundle)
+
+    return RNA(fastaRecord: record)
 }
 
 /// FastaParser takes a text file as input and produces a ``FastaRecord`` array.
@@ -294,4 +321,3 @@ extension FastaParser {
             accession: "", shortName: "", fullName: fullName, organism: "", sequence: "")
     }
 }
-
