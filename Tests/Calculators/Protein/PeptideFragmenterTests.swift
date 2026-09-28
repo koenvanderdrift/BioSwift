@@ -306,6 +306,31 @@ import Testing
         #expect(c1.monoisotopicMass.rounded(scale: 4) == decimal("105.0659"))  // c1
     }
 
+    @Test func fragmentsPreserveSodiumAdducts() throws {
+        var peptide = Peptide(sequence: "SAMPLER")
+        peptide.adducts = [sodiumAdduct]
+
+        let fragment = try #require(
+            PeptideFragmenter(peptide: peptide).fragment(at: 1, for: .yIon)
+        )
+
+        #expect(fragment.adducts == [sodiumAdduct])
+        #expect(fragment.charge == 1)
+    }
+
+    @Test func fragmentsUseAdductChargeRatherThanAdductCount() throws {
+        let divalentAdduct = Adduct(group: sodium, charge: 2)
+        var peptide = Peptide(sequence: "SAMPLER")
+        peptide.adducts = [divalentAdduct]
+
+        let fragment = try #require(
+            PeptideFragmenter(peptide: peptide).fragment(at: 1, for: .yIon, with: 2)
+        )
+
+        #expect(fragment.adducts == [divalentAdduct])
+        #expect(fragment.charge == 2)
+    }
+
     @Test func chargedResidues() {
         let fragment = PeptideFragment(sequence: "AWRKQNWSTEDWWSHTEDWQPRTYSAMPLER")
 

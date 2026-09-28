@@ -20,6 +20,14 @@ import Testing
         #expect(!libraries.hydrophobicityScales.isEmpty)
     }
 
+    @Test func bundledResultsExposeLoadingFailures() throws {
+        let elements = try ElementsLibraryDefaults.bundledResult.get()
+        let libraries = try ReferenceLibraryDefaults.bundledResult.get()
+
+        #expect(!elements.isEmpty)
+        #expect(!libraries.elements.isEmpty)
+    }
+
     @Test func bundledDefaultsAreAvailable() {
         let libraries = ReferenceLibraryDefaults.bundled
 

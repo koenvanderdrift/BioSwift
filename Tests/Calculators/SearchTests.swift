@@ -139,6 +139,23 @@ import Testing
         #expect(optimizedSequences.contains(targetSequence))
     }
 
+    @Test func massTolerancePreservesDecimalValue() {
+        let value = decimal("0.1000000000000000001")
+        let tolerance = MassTolerance(type: .dalton, value: value)
+
+        #expect(tolerance.value == value)
+
+        let parameters = MassSearchParameters(
+            searchValue: 100,
+            tolerance: tolerance,
+            searchType: .sequential,
+            massType: .monoisotopic,
+            charge: 0
+        )
+        #expect(parameters.massRange.lowerBound == 100 - value)
+        #expect(parameters.massRange.upperBound == 100 + value)
+    }
+
     @Test func checkMassDifferences() {
         let peptide = Peptide(sequence: "SAMPLER")
         let first = peptide.subChain(range: 0..<1)

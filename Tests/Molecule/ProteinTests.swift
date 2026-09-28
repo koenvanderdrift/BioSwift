@@ -352,6 +352,27 @@ import Testing
         }
     }
 
+    @Test func invalidFormulaIsObservable() {
+        let formula = Formula("NotAnElement")
+
+        #expect(!formula.isValid)
+        #expect(formula.validationErrorDescription != nil)
+        #expect(formula.countedElements.isEmpty)
+    }
+
+    @Test func validatingFormulaThrowsForInvalidInput() {
+        #expect(throws: FormulaParser.ParseError.self) {
+            try Formula(validating: "NotAnElement")
+        }
+    }
+
+    @Test func emptyFormulaIsValid() {
+        let formula = Formula()
+
+        #expect(formula.isValid)
+        #expect(formula.validationErrorDescription == nil)
+    }
+
     @Test func addFormulas() {
         let formula1 = Formula("C12H23O7N5")
         let formula2 = Formula("C2H2O2")
@@ -493,8 +514,8 @@ import Testing
         if let chain = testProtein.chains.first {
             #expect(chain.subSequence(range: 0..<1) == "M")
             #expect(chain.subSequence(range: 2..<9) == "SSVSWGI")
-            #expect(chain.subSequence(range: -1..<2) == "")
-            #expect(chain.subSequence(range: 0..<500) == "")
+            #expect(chain.subSequence(range: -1..<2) == "MP")
+            #expect(chain.subSequence(range: 0..<500) == chain.sequenceString)
         }
     }
 
@@ -577,8 +598,13 @@ import Testing
         #expect(testProtein.isoelectricPoint(range: range) == chain.subChain(range: range).isoelectricPoint())
     }
 
-    @Test func isoelectricPointInvalidRangeReturnsZero() {
-        #expect(testProtein.isoelectricPoint(range: -1..<2) == 0.0)
+    @Test func isoelectricPointClampsRangeToSequence() throws {
+        let chain = try #require(testProtein.chains.first)
+
+        #expect(
+            testProtein.isoelectricPoint(range: -1..<2)
+                == chain.subChain(range: 0..<2).isoelectricPoint()
+        )
         #expect(Peptide(sequence: "").isoelectricPoint() == 0.0)
     }
 

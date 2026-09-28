@@ -114,7 +114,7 @@ public var modificationLibrary: [Modification] {
 }
 
 public var elementLibrary: [ChemicalElement] {
-    ReferenceLibraryDefaults.bundled.elements
+    ElementsLibraryDefaults.bundled
 }
 
 public var enzymeLibrary: [Enzyme] {
@@ -126,26 +126,38 @@ public var hydrophobicityLibrary: [HydrophobicityScale] {
 }
 
 public enum ElementsLibraryDefaults {
-    public static let bundled: [ChemicalElement] = {
-        do {
-            return try JSONReferenceLibraryLoader.loadElements()
-        } catch {
-            fatalError("Failed to load bundled elements library: \(error)")
+    public static let bundledResult = Result { try JSONReferenceLibraryLoader.loadElements() }
+
+    public static var bundled: [ChemicalElement] {
+        switch bundledResult {
+        case .success(let elements):
+            return elements
+        case .failure(let error):
+            BioSwiftDiagnostics.log(error)
+            return []
         }
-    }()
+    }
+
+    public static func loadBundled() throws -> [ChemicalElement] {
+        try bundledResult.get()
+    }
 }
 
 public enum ReferenceLibraryDefaults {
-    public static let bundled: ReferenceLibraries = {
-        do {
-            return try ReferenceLibraryLoader.loadBundled()
-        } catch {
-            fatalError("Failed to load bundled reference libraries: \(error)")
+    public static let bundledResult = Result { try ReferenceLibraryLoader.loadBundled() }
+
+    public static var bundled: ReferenceLibraries {
+        switch bundledResult {
+        case .success(let libraries):
+            return libraries
+        case .failure(let error):
+            BioSwiftDiagnostics.log(error)
+            return .empty
         }
-    }()
+    }
 
     public static func loadBundled() throws -> ReferenceLibraries {
-        try ReferenceLibraryLoader.loadBundled()
+        try bundledResult.get()
     }
 }
 
@@ -180,7 +192,9 @@ enum ReferenceLibraryLoader {
 }
 
 public enum ElementReferenceDefaults {
-    public static let bundled = ElementReferences(elements: ElementsLibraryDefaults.bundled)
+    public static var bundled: ElementReferences {
+        ElementReferences(elements: ElementsLibraryDefaults.bundled)
+    }
 }
 
 public enum AminoAcidReferenceDefaults {
@@ -385,6 +399,16 @@ public struct ReferenceLibraries: Sendable {
         self.enzymeReferences = EnzymeReferences(enzymes: enzymes)
         self.hydrophobicityReferences = HydrophobicityReferences(hydrophobicityScales: hydrophobicityScales)
     }
+
+    static let empty = ReferenceLibraries(
+        elements: [],
+        aminoAcids: [],
+        unimodLibrary: ModificationLibrary(vocabulary: .unimod, version: "", modifications: []),
+        enzymes: [],
+        hydrophobicityScales: [],
+        psiModLibrary: ModificationLibrary(vocabulary: .psiMod, version: "", modifications: []),
+        uniProtPTMLibrary: ModificationLibrary(vocabulary: .uniProtPTM, version: "", modifications: [])
+    )
 
     public func element(symbol: String) -> ChemicalElement? {
         elementReferences.element(symbol: symbol)

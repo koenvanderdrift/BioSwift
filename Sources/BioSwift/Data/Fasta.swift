@@ -131,9 +131,7 @@ public final class FastaParser {
     public func parseFasta(_ fastaText: String) async throws -> [FastaRecord] {
         let rawRecords = try splitRawRecords(from: fastaText)
 
-        return try await rawRecords.concurrentMap {
-            rawRecord in try self.parseRecord(rawRecord)
-        }
+        return try rawRecords.map(parseRecord)
     }
 }
 

@@ -20,6 +20,42 @@ public class PeptideFragmenter {
         self.peptide = peptide
     }
 
+    /// Positive adduct combinations supported by the fragment generator, preserving
+    /// the precursor's actual adduct composition and charge.
+    private var fragmentAdductStates: [[Adduct]] {
+        let positiveAdducts = peptide.adducts.filter { $0.charge > 0 }
+        var states: [[Adduct]] = []
+
+        func addCombinations(startingAt index: Int, current: [Adduct], charge: Charge) {
+            for adductIndex in index..<positiveAdducts.count {
+                let adduct = positiveAdducts[adductIndex]
+                let updatedCharge = charge + adduct.charge
+
+                guard updatedCharge <= 2 else {
+                    continue
+                }
+
+                let combination = current + [adduct]
+                if states.contains(combination) == false {
+                    states.append(combination)
+                }
+
+                addCombinations(
+                    startingAt: adductIndex + 1,
+                    current: combination,
+                    charge: updatedCharge
+                )
+            }
+        }
+
+        addCombinations(startingAt: 0, current: [], charge: 0)
+        return states.sorted { lhs, rhs in
+            let lhsCharge = lhs.reduce(0) { $0 + $1.charge }
+            let rhsCharge = rhs.reduce(0) { $0 + $1.charge }
+            return lhsCharge < rhsCharge
+        }
+    }
+
     public lazy var fragments: [PeptideFragment] =
         precursorIons() + immoniumIons() + nTerminalIons() + cTerminalIons()
 
@@ -65,7 +101,7 @@ public class PeptideFragmenter {
     func nTerminalIons() -> [PeptideFragment] {
         var result = [PeptideFragment]()
 
-        guard peptide.adducts.count > 0 else {
+        guard fragmentAdductStates.isEmpty == false else {
             return result
         }
         guard let firstResidue = peptide.residues.first else {
@@ -74,14 +110,15 @@ public class PeptideFragmenter {
 
         let startIndex = peptide.residues.startIndex
 
-        for z in 1...min(2, peptide.adducts.count) {
+        for adducts in fragmentAdductStates {
+            let charge = adducts.reduce(0) { $0 + $1.charge }
             // add c1
             let cIon = PeptideFragment(
                 residues: [firstResidue], fragmentType: .cIon, index: 1,
-                adducts: Array(repeatElement(protonAdduct, count: z)), nTerm: peptide.nTerminal)
+                adducts: adducts, nTerm: peptide.nTerminal)
 
             if cIon.residues[0].oneLetterCode != "P" {
-                if z == 1 {
+                if charge == 1 {
                     result.append(cIon)
                 } else {
                     if cIon.monoisotopicMass
@@ -101,9 +138,9 @@ public class PeptideFragmenter {
 
                 let bIon = PeptideFragment(
                     residues: Array(peptide.residues[..<index]), fragmentType: .bIon, index: index,
-                    adducts: Array(repeatElement(protonAdduct, count: z)), nTerm: peptide.nTerminal)
+                    adducts: adducts, nTerm: peptide.nTerminal)
 
-                if z == 1 {
+                if charge == 1 {
                     result.append(bIon)
                 } else {
                     if bIon.index == peptide.residues.count - 1 {
@@ -115,7 +152,7 @@ public class PeptideFragmenter {
                     let bIonLossOfWater = PeptideFragment(
                         residues: bIon.residues, fragmentType: .bIonMinusWater, index: index,
                         adducts: bIon.adducts, nTerm: peptide.nTerminal)
-                    if z == 1 {
+                    if charge == 1 {
                         result.append(bIonLossOfWater)
                     } else {
                         if bIonLossOfWater.index == peptide.residues.count - 1 {
@@ -128,7 +165,7 @@ public class PeptideFragmenter {
                     let bIonLossOfAmmonia = PeptideFragment(
                         residues: bIon.residues, fragmentType: .bIonMinusAmmonia, index: index,
                         adducts: bIon.adducts, nTerm: peptide.nTerminal)
-                    if z == 1 {
+                    if charge == 1 {
                         result.append(bIonLossOfAmmonia)
                     } else {
                         if bIonLossOfAmmonia.index == peptide.residues.count - 1 {
@@ -141,7 +178,7 @@ public class PeptideFragmenter {
                     residues: bIon.residues, fragmentType: .aIon, index: index, adducts: bIon.adducts,
                     nTerm: peptide.nTerminal)
 
-                if z == 1 {
+                if charge == 1 {
                     result.append(aIon)
                 } else {
                     if aIon.index == peptide.residues.count - 1 {
@@ -153,7 +190,7 @@ public class PeptideFragmenter {
                     let aIonLossOfWater = PeptideFragment(
                         residues: bIon.residues, fragmentType: .aIonMinusWater, index: index,
                         adducts: bIon.adducts, nTerm: peptide.nTerminal)
-                    if z == 1 {
+                    if charge == 1 {
                         result.append(aIonLossOfWater)
                     } else {
                         if aIonLossOfWater.index == peptide.residues.count - 1 {
@@ -166,7 +203,7 @@ public class PeptideFragmenter {
                     let aIonLossOfAmmonia = PeptideFragment(
                         residues: bIon.residues, fragmentType: .aIonMinusAmmonia, index: index,
                         adducts: bIon.adducts, nTerm: peptide.nTerminal)
-                    if z == 1 {
+                    if charge == 1 {
                         result.append(aIonLossOfAmmonia)
                     } else {
                         if aIonLossOfAmmonia.index == peptide.residues.count - 1 {
@@ -181,7 +218,7 @@ public class PeptideFragmenter {
                     nTerm: peptide.nTerminal)
 
                 if cIon.residues.last?.oneLetterCode != "P" {
-                    if z == 1 {
+                    if charge == 1 {
                         result.append(cIon)
                     } else {
                         if cIon.index == peptide.residues.count - 1 {
@@ -202,7 +239,7 @@ public class PeptideFragmenter {
     func cTerminalIons() -> [PeptideFragment] {
         var result = [PeptideFragment]()
 
-        guard peptide.adducts.count > 0 else {
+        guard fragmentAdductStates.isEmpty == false else {
             return result
         }
         guard peptide.residues.count > 1 else {
@@ -211,13 +248,13 @@ public class PeptideFragmenter {
 
         let endIndex = peptide.residues.endIndex
 
-        for z in 1...min(2, peptide.adducts.count) {
+        for adducts in fragmentAdductStates {
             for i in (1...peptide.residues.count - 1).reversed() {
                 let index = peptide.residues.index(endIndex, offsetBy: -i)
 
                 let yIon = PeptideFragment(
                     residues: Array(peptide.residues[index..<endIndex]), fragmentType: .yIon, index: i,
-                    adducts: Array(repeatElement(protonAdduct, count: z)), cTerm: peptide.cTerminal)
+                    adducts: adducts, cTerm: peptide.cTerminal)
                 result.append(yIon)
 
                 if i > 1, yIon.canLoseWater() {

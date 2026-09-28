@@ -124,7 +124,7 @@ import Testing
         #expect(text.substring(in: 0..<3) == "PEP")
         #expect(text.substring(in: 3..<7) == "TIDE")
         #expect(text.substring(in: 2..<2).isEmpty)
-        #expect(text.substring(in: 0..<8).isEmpty)
+        #expect(text.substring(in: 0..<8) == text)
     }
 
     @Test func substringUsesCharacterOffsets() {
@@ -137,7 +137,7 @@ import Testing
         #expect(text.removing(range: 0..<3) == "TIDE")
         #expect(text.removing(range: 3..<7) == "PEP")
         #expect(text.removing(range: 2..<2) == text)
-        #expect(text.removing(range: 0..<8) == text)
+        #expect(text.removing(range: 0..<8).isEmpty)
         #expect("A🧬BC".removing(range: 1..<3) == "AC")
     }
 
@@ -251,6 +251,17 @@ import Testing
         let result = BiologicalRange(validating: 0...4)
 
         #expect(result == nil)
+    }
+
+    @Test func rangeClampsToSequenceBounds() {
+        #expect((-2..<3).clamped(toSequenceLength: 10) == 0..<3)
+        #expect((8..<15).clamped(toSequenceLength: 10) == 8..<10)
+        #expect((12..<15).clamped(toSequenceLength: 10) == zeroRange)
+    }
+
+    @Test func biologicalRangeIsOneBased() {
+        #expect(BiologicalRange(1...1).isValidRange)
+        #expect(BiologicalRange(validating: 0...1) == nil)
     }
 
     @Test func propertySetContainsExpectedValues() {

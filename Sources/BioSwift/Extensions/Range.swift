@@ -71,7 +71,7 @@ public struct BiologicalRange: Equatable {
     }
 
     public var isValidRange: Bool {
-        lowerBound >= 0 && upperBound >= lowerBound
+        lowerBound >= 1 && upperBound >= lowerBound
     }
 
     public var locationString: String {
@@ -143,14 +143,14 @@ extension Range<Int> {
     }
 
     public func clamped(toSequenceLength sequenceLength: Int) -> Range<Int> {
-        guard isValidRange, sequenceLength > 0, lowerBound >= 0, upperBound <= sequenceLength else {
+        guard sequenceLength > 0 else {
             return zeroRange
         }
 
-        let lower = Swift.max(0, lowerBound)
-        let upper = Swift.min(sequenceLength, upperBound)
+        let lower = Swift.max(0, Swift.min(sequenceLength, lowerBound))
+        let upper = Swift.max(0, Swift.min(sequenceLength, upperBound))
 
-        guard upper >= lower else {
+        guard upper > lower else {
             return zeroRange
         }
 

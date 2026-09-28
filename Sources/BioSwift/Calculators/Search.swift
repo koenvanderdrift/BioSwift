@@ -30,11 +30,11 @@ public enum MassToleranceType: String, CaseIterable, Codable, Identifiable, Equa
 }
 
 extension MassToleranceType {
-    public var minValue: Double {
+    public var minValue: Dalton {
         0.0
     }
 
-    public var maxValue: Double {
+    public var maxValue: Dalton {
         switch self {
         case .ppm:
             return 10000.0
@@ -53,9 +53,9 @@ extension MassToleranceType {
 
 public struct MassTolerance: Codable, Equatable, Sendable {
     public var type: MassToleranceType
-    public var value: Double
+    public var value: Dalton
 
-    public init(type: MassToleranceType, value: Double) {
+    public init(type: MassToleranceType, value: Dalton) {
         self.type = type
         self.value = value
     }
@@ -82,7 +82,7 @@ public struct MassSearchParameters: Codable, Equatable, Sendable {
     public var massRange: MassRange {
         var minMass = Dalton(0.0)
         var maxMass = Dalton(0.0)
-        let toleranceValue = Dalton(tolerance.value)
+        let toleranceValue = tolerance.value
 
         switch tolerance.type {
         case .ppm:
