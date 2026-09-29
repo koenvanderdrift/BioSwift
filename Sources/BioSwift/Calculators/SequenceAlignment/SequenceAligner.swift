@@ -9,8 +9,14 @@ import Foundation
 public enum SequenceAligner {
     /// Aligns two sequences using linear gap scoring.
     ///
-    /// Traceback resolves equal scores in this order: diagonal, deletion, insertion.
-    /// This makes alignments deterministic when several optimal paths exist.
+    /// Positive scores are rewards and negative scores are penalties. The gap score is
+    /// applied once per residue in a gap. Traceback resolves equal scores in this order:
+    /// diagonal, deletion, insertion. Smith-Waterman selects the first maximum cell in
+    /// row-major order when several cells have the same best score. These rules make the
+    /// returned alignment deterministic when several optimal paths exist.
+    ///
+    /// For input lengths `m` and `n`, this implementation uses `O(mn)` time and `O(mn)`
+    /// memory because it retains the complete score and traceback matrices.
     public static func align(
         _ first: [String],
         with second: [String],

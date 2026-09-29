@@ -1,21 +1,36 @@
-• Fragment generation treats adducts.count as charge and replaces the adducts with protons. A single divalent adduct or a sodium adduct would therefore generate incorrect fragment ions. This is separate from the deferred negative-ion work.
-PeptideFragmenter.swift
+# BioSwift TODO
 
-• clamped(toSequenceLength:) rejects out-of-bounds ranges instead of clamping them. Either the behavior or the name should change.
-Range.swift
+## Correctness and API behavior
 
-• BiologicalRange.isValidRange accepts zero even though the type is explicitly one-based.
-Range.swift
+- Review peptide-fragment adduct handling. Fragment generation currently treats
+  `adducts.count` as charge and replaces adducts with protons; divalent or non-proton
+  adducts may therefore produce incorrect fragment ions.
+- Decide whether `clamped(toSequenceLength:)` should clamp out-of-bounds ranges or be
+  renamed to describe its current rejection behavior.
+- Revisit `BiologicalRange.isValidRange`, which currently accepts zero even though the
+  type represents one-based coordinates.
+- Consider making invalid formula input consistently observable. The nonthrowing
+  `Formula` initializer currently logs an error and produces an empty formula.
+- Replace `fatalError` in bundled-reference convenience accessors with recoverable error
+  handling where practical.
 
-• MassTolerance.value remains a Double and is converted to Dalton/Decimal during calculation. That can reintroduce binary floating-point artifacts into otherwise decimal-based mass calculations.
-Search.swift
+## Precision and performance
 
-• The nonthrowing Formula initializer silently converts an invalid formula into an empty formula after only logging the error. This makes invalid user input difficult for an application to distinguish from a legitimate empty formula.
-Formula.swift
+- Keep mass-tolerance calculations decimal throughout; conversion from binary
+  floating-point values can introduce artifacts.
+- Bound FASTA parsing concurrency instead of creating one task per record for very large
+  files.
+- Add an `O(min(m,n))` memory, score-only sequence-alignment mode.
+- Explore affine gap penalties and banded alignment for long or closely related
+  sequences.
 
-• Bundled reference convenience accessors terminate the process with fatalError if resources cannot be loaded. That is fairly harsh behavior for a framework API when throwing alternatives already exist.
+## Concurrency
 
-• FASTA parsing creates one task per record through concurrentMap; a large FASTA file could create thousands of simultaneous tasks. Bounded concurrency or synchronous parsing would be safer.
+- Remove or isolate mutable global state in
+  `BioSwiftDiagnostics.isDebugLoggingEnabled` for stricter Swift 6 concurrency safety.
 
-• BioSwiftDiagnostics.isDebugLoggingEnabled is mutable global state and could become a Swift 6 concurrency issue.
+## Future capabilities
 
+- Expand UniProt import support.
+- Add more substitution matrices and alignment scoring presets.
+- Consider returning multiple equally optimal sequence alignments.

@@ -16,8 +16,9 @@ public enum AlignmentAlgorithm: String, Codable, CaseIterable, Sendable {
 
 /// Scores used when constructing a pairwise sequence alignment.
 ///
-/// Penalties are conventionally represented by negative values. Custom substitution
-/// matrices can be added without changing the alignment result model.
+/// Positive values reward an alignment, negative values penalize it, and zero is neutral.
+/// `gap` is a linear per-residue score, so a gap of length `n` contributes `n * gap`.
+/// When `substitutionMatrix` is present, its values replace `match` and `mismatch`.
 public struct AlignmentScoring: Codable, Equatable, Sendable {
     public var match: Int
     public var mismatch: Int
@@ -115,6 +116,9 @@ public enum AlignmentOperation: String, Codable, Sendable {
 }
 
 /// One column of a pairwise sequence alignment.
+///
+/// Indices are zero-based positions in the original, unaligned sequences. An index and
+/// residue are `nil` when that sequence contains a gap in this alignment column.
 public struct AlignmentColumn: Codable, Equatable, Sendable {
     public let firstResidue: String?
     public let firstIndex: Int?
@@ -138,10 +142,17 @@ public struct AlignmentColumn: Codable, Equatable, Sendable {
 }
 
 /// The result of a global or local pairwise sequence alignment.
+///
+/// `firstRange` and `secondRange` are zero-based, half-open ranges in the original,
+/// unaligned sequences. A global alignment normally spans both complete sequences,
+/// while a local alignment reports only the regions selected by Smith-Waterman.
 public struct AlignmentResult: Codable, Equatable, Sendable {
     public let algorithm: AlignmentAlgorithm
     public let score: Int
+    /// The zero-based, half-open source range aligned from the first sequence.
     public let firstRange: Range<Int>
+
+    /// The zero-based, half-open source range aligned from the second sequence.
     public let secondRange: Range<Int>
     public let columns: [AlignmentColumn]
 
