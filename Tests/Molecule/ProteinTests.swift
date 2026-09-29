@@ -24,6 +24,38 @@ import Testing
         #expect(protein.sequenceLength(chainIndex: 1) == 6)
     }
 
+    @Test func proteinPreservesSingleChainIdentityAndMetadata() throws {
+        let id = UUID()
+        var chain = ProteinChain(sequence: "MKT", name: "alpha", id: id)
+        chain.adducts = [protonAdduct]
+        chain.range = 4..<7
+        chain.parentLength = 12
+
+        let protein = Protein(chains: [chain])
+        let storedChain = try #require(protein.chains.first)
+
+        #expect(protein.chains.count == 1)
+        #expect(storedChain.id == id)
+        #expect(storedChain.name == "alpha")
+        #expect(storedChain.sequenceString == "MKT")
+        #expect(storedChain.adducts == [protonAdduct])
+        #expect(storedChain.range == 4..<7)
+        #expect(storedChain.parentLength == 12)
+    }
+
+    @Test func proteinPreservesMultipleChainsInOrder() {
+        let firstID = UUID()
+        let secondID = UUID()
+        let first = ProteinChain(sequence: "MKT", name: "alpha", id: firstID)
+        let second = ProteinChain(sequence: "SEQUENCE", name: "beta", id: secondID)
+
+        let protein = Protein(chains: [first, second])
+
+        #expect(protein.chains.map(\.id) == [firstID, secondID])
+        #expect(protein.chains.map(\.name) == ["alpha", "beta"])
+        #expect(protein.chains.map(\.sequenceString) == ["MKT", "SEQUENCE"])
+    }
+
     @Test func aminoAcidChainsAcceptNamesDuringInitialization() {
         let id = UUID()
         let proteinChain = ProteinChain(sequence: "MKT", name: "heavy chain", id: id)

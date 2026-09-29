@@ -107,16 +107,28 @@ import Testing
         }
     }
 
-    @Test func digestionProducesNamedPeptides() throws {
+    @Test func digestionRetainsSourceChainMetadata() throws {
+        let alphaID = UUID()
+        let betaID = UUID()
         let protein = Protein(chains: [
-            ProteinChain(sequence: "AKR", name: "alpha")
+            ProteinChain(sequence: "AKR", name: "alpha", id: alphaID),
+            ProteinChain(sequence: "MKR", name: "beta", id: betaID),
         ])
         let enzyme = try #require(enzymeLibrary.first { $0.name == "Trypsin" })
 
         let peptides: [Peptide] = ProteinDigester(protein: protein).peptides(using: enzyme)
+        let alphaPeptides = peptides.filter { $0.id == alphaID }
+        let betaPeptides = peptides.filter { $0.id == betaID }
 
-        #expect(!peptides.isEmpty)
-        #expect(peptides.allSatisfy { $0.name == "alpha" })
+        #expect(alphaPeptides.map(\.name) == ["alpha", "alpha"])
+        #expect(alphaPeptides.map(\.sequenceString) == ["AK", "R"])
+        #expect(alphaPeptides.map(\.range) == [0..<2, 2..<3])
+        #expect(alphaPeptides.allSatisfy { $0.parentLength == 3 })
+
+        #expect(betaPeptides.map(\.name) == ["beta", "beta"])
+        #expect(betaPeptides.map(\.sequenceString) == ["MK", "R"])
+        #expect(betaPeptides.map(\.range) == [0..<2, 2..<3])
+        #expect(betaPeptides.allSatisfy { $0.parentLength == 3 })
     }
 
 }

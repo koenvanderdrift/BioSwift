@@ -3,8 +3,9 @@
 BioSwift is a Swift package for working with proteins, peptides, DNA, RNA, molecular
 formulas, and common bioinformatics calculations.
 
-The project is educational and under active development. Its API may change, and it is
-not intended for clinical or production-critical use.
+The project is educational and under active development. 
+
+Note that the API may change, and BioSwift is not intended for clinical or production-critical use.
 
 ## Requirements
 

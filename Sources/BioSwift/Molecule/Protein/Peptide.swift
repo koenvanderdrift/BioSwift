@@ -41,7 +41,11 @@ public struct Peptide: AminoAcidChain, Codable, Equatable, Sendable {
     }
 
     public init(proteinChain: ProteinChain) {
-        id = proteinChain.id
+        self.init(proteinChain: proteinChain, id: proteinChain.id)
+    }
+
+    init(proteinChain: ProteinChain, id: UUID) {
+        self.id = id
         name = proteinChain.name
         residues = proteinChain.residues
         nTerminal = proteinChain.nTerminal
