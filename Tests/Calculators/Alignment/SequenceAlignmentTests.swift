@@ -97,6 +97,22 @@ struct SequenceAlignmentTests {
         #expect(result.gapCount == 1)
     }
 
+    @Test("Needleman-Wunsch reproduces the canonical GATTACA alignment")
+    func canonicalNeedlemanWunsch() {
+        let result = SequenceAligner.align(
+            residues("GATTACA"),
+            with: residues("GCATGCU"),
+            algorithm: .needlemanWunsch,
+            scoring: AlignmentScoring(match: 1, mismatch: -1, gap: -1)
+        )
+
+        #expect(result.score == 0)
+        #expect(result.firstAlignedSequence == "G-ATTACA")
+        #expect(result.secondAlignedSequence == "GCA-TGCU")
+        #expect(result.firstRange == 0..<7)
+        #expect(result.secondRange == 0..<7)
+    }
+
     @Test("Smith-Waterman finds the highest-scoring local regions")
     func smithWaterman() {
         let result = SequenceAligner.align(
@@ -114,6 +130,22 @@ struct SequenceAlignmentTests {
         #expect(result.identity == 1)
     }
 
+    @Test("Smith-Waterman reproduces a canonical local alignment")
+    func canonicalSmithWaterman() {
+        let result = SequenceAligner.align(
+            residues("TGTTACGG"),
+            with: residues("GGTTGACTA"),
+            algorithm: .smithWaterman,
+            scoring: AlignmentScoring(match: 3, mismatch: -3, gap: -2)
+        )
+
+        #expect(result.score == 13)
+        #expect(result.firstAlignedSequence == "GTT-AC")
+        #expect(result.secondAlignedSequence == "GTTGAC")
+        #expect(result.firstRange == 1..<6)
+        #expect(result.secondRange == 1..<7)
+    }
+
     @Test("Global alignment handles an empty sequence")
     func globalEmptySequence() {
         let result = SequenceAligner.align(
@@ -128,6 +160,42 @@ struct SequenceAlignmentTests {
         #expect(result.secondAlignedSequence == "AC")
         #expect(result.firstRange == 0..<0)
         #expect(result.secondRange == 0..<2)
+    }
+
+    @Test("Global alignment handles identical and substituted single residues")
+    func singleResidueSequences() {
+        let identical = SequenceAligner.align(
+            ["A"],
+            with: ["A"],
+            algorithm: .needlemanWunsch,
+            scoring: .nucleotide()
+        )
+        let substituted = SequenceAligner.align(
+            ["A"],
+            with: ["G"],
+            algorithm: .needlemanWunsch,
+            scoring: .nucleotide()
+        )
+
+        #expect(identical.score == 2)
+        #expect(identical.columns.map(\.operation) == [.identity])
+        #expect(substituted.score == -1)
+        #expect(substituted.columns.map(\.operation) == [.substitution])
+    }
+
+    @Test("Global alignment reports an insertion")
+    func insertion() {
+        let result = SequenceAligner.align(
+            residues("ACG"),
+            with: residues("ATCG"),
+            algorithm: .needlemanWunsch,
+            scoring: .nucleotide()
+        )
+
+        #expect(result.score == 4)
+        #expect(result.firstAlignedSequence == "A-CG")
+        #expect(result.secondAlignedSequence == "ATCG")
+        #expect(result.columns.map(\.operation) == [.identity, .insertion, .identity, .identity])
     }
 
     @Test("Local alignment returns an empty result when no positive score exists")
