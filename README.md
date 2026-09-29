@@ -147,7 +147,7 @@ residues, modifications, cross-links, and adducts:
 ```swift
 let peptide = Peptide(sequence: "PEPTIDE")
 
-print(peptide.formula.formulaString)
+print(peptide.formulaString)
 print(peptide.monoisotopicMass)
 print(peptide.averageMass)
 ```

@@ -57,6 +57,11 @@ extension BioMolecule where ChainType: Structure {
             $0 + $1.modification.formula
         }
     }
+
+    /// The molecular formula formatted using Hill-system element ordering.
+    public var formulaString: String {
+        formula.formulaString
+    }
 }
 
 extension BioMolecule {

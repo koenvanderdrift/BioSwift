@@ -29,6 +29,11 @@ extension Structure {
         formula.masses
     }
 
+    /// The molecular formula formatted using Hill-system element ordering.
+    public var formulaString: String {
+        formula.formulaString
+    }
+
     public var massContainer: MassContainer {
         masses
     }

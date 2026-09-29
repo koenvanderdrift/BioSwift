@@ -15,6 +15,14 @@ import Testing
         #expect(testPeptide.sequenceString.count == 5)
     }
 
+    @Test func structuresExposeFormulaStringsDirectly() {
+        let peptide = Peptide(sequence: "A")
+        let protein = Protein(sequence: "A")
+
+        #expect(peptide.formulaString == peptide.formula.formulaString)
+        #expect(protein.formulaString == protein.formula.formulaString)
+    }
+
     @Test func proteinResidueCount() {
         let cysCount = testProtein.countOneResidue(with: "C")
         #expect(cysCount == 3)
