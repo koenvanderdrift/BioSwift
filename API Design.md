@@ -10,35 +10,25 @@ public:
 * obtaining sequence properties
 
 
-BioMolecule2
+`BioMolecule` is generic over a concrete `Chain` type:
 
-Ideally we should have:
+```swift
+Protein = BioMolecule<ProteinChain>
+DNA = BioMolecule<DNAChain>
+RNA = BioMolecule<RNAChain>
+```
 
-Protein = BioMolecule<AminoAcid>
-DNA = BioMolecule<Nucleotide>
-etc
-
-therefore: 
-
-struct BioMolecule<T: Residue>
-
-A BioMolecule consists of at least one Chain:
-
-public struct BioMolecule<T: Residue> {
-    public var name: String = ""
-    public var chains: [Chain<T>] = []
-}
-
-But what if a BioMolecule consists of 2 different Residue chains? Eg protein with oligo?
-No problem, oligo will be a Chain as a modification
+This keeps every molecule's chain collection strongly typed. `ProteinChain` represents
+a chain belonging to a protein; `Peptide` represents standalone peptides and digestion
+products. Both conform to `AminoAcidChain`.
 
 Structure -> Residue -> Chain -> BioMolecule
 Structure -> FunctionalGroup
 Residue: AminoAcid, Nucleobase, Nucleoside, Nucleotide
 
-Protein = BioMolecule<AminoAcid>
-DNA = BioMolecule<Nucleotide>
-RNA = BioMolecule<Nucleotide>
+Protein = BioMolecule<ProteinChain>
+DNA = BioMolecule<DNAChain>
+RNA = BioMolecule<RNAChain>
 
 An oligo would be a protein modification (as a Chain)
 

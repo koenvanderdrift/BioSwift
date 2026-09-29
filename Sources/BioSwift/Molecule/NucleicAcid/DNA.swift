@@ -7,40 +7,50 @@ import Foundation
 
 public struct DNAChain: NucleicAcidChain, Ionizable, Codable, Equatable, Sendable {
     public let id: UUID
-    public var name: String = ""
+    public var name: String
     public var residues: [Nucleotide]
     public var adducts: [Adduct] = []
     public var range: Range<Int> = zeroRange
     public var parentLength: Int = 0
 
-    public init(sequence: String) {
-        self.init(sequence: sequence, id: UUID())
-    }
-
-    public init(sequence: String, id: UUID) {
+    public init(sequence: String, name: String = "", id: UUID = UUID()) {
         self.id = id
+        self.name = name
         residues = sequence.compactMap { Nucleotide.standard(code: $0, type: .dna) }
     }
 
     public init(residues: [Nucleotide]) {
-        self.init(residues: residues, id: UUID())
+        self.init(residues: residues, name: "")
     }
 
     public init(residues: [Nucleotide], id: UUID) {
+        self.init(residues: residues, name: "", id: id)
+    }
+
+    public init(residues: [Nucleotide], name: String, id: UUID = UUID()) {
         self.id = id
+        self.name = name
         self.residues = residues
     }
 
     public var complement: DNAChain {
-        DNAChain(residues: residues.map(\.complement))
+        transformed(residues: residues.map(\.complement))
     }
 
     public var reverse: DNAChain {
-        DNAChain(residues: Array(residues.reversed()))
+        transformed(residues: Array(residues.reversed()))
     }
 
     public var reverseComplement: DNAChain {
-        DNAChain(residues: residues.reversed().map(\.complement))
+        transformed(residues: residues.reversed().map(\.complement))
+    }
+
+    private func transformed(residues: [Nucleotide]) -> DNAChain {
+        var chain = DNAChain(residues: residues, name: name)
+        chain.adducts = adducts
+        chain.range = range
+        chain.parentLength = parentLength
+        return chain
     }
 }
 
@@ -65,13 +75,12 @@ extension BioMolecule where ChainType == DNAChain {
     }
 
     public init(sequences: [String]) {
-        self.init(chains: sequences.map(DNAChain.init(sequence:)))
+        self.init(chains: sequences.map { DNAChain(sequence: $0) })
     }
 
     public init(fastaRecord: FastaRecord) {
-        var chain = DNAChain(sequence: fastaRecord.sequence)
-        chain.name = fastaRecord.shortName.isEmpty ? fastaRecord.fullName : fastaRecord.shortName
-        self.init(chains: [chain])
+        let name = fastaRecord.shortName.isEmpty ? fastaRecord.fullName : fastaRecord.shortName
+        self.init(chains: [DNAChain(sequence: fastaRecord.sequence, name: name)])
     }
 
     public init(residues: [Nucleotide]) {

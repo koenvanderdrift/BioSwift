@@ -8,29 +8,27 @@
 
 import Foundation
 
-/// Protein contains one or more ``Peptide`` chains.
-public typealias Protein = BioMolecule<Peptide>
+/// Protein contains one or more ``ProteinChain`` values.
+public typealias Protein = BioMolecule<ProteinChain>
 
-extension BioMolecule where ChainType == Peptide {
+extension BioMolecule where ChainType == ProteinChain {
     public init(sequence: String) {
-        self.init(chains: [Peptide(sequence: sequence)])
+        self.init(chains: [ProteinChain(sequence: sequence)])
     }
 
     public init(sequences: [String]) {
         self.init(chains: sequences.map {
-            Peptide(sequence: $0)
+            ProteinChain(sequence: $0)
         })
     }
 
     public init(fastaRecord: FastaRecord) {
-        var peptide = Peptide(sequence: fastaRecord.sequence)
-        peptide.name = fastaRecord.shortName.isEmpty ? fastaRecord.fullName : fastaRecord.shortName
-
-        self.init(chains: [peptide])
+        let name = fastaRecord.shortName.isEmpty ? fastaRecord.fullName : fastaRecord.shortName
+        self.init(chains: [ProteinChain(sequence: fastaRecord.sequence, name: name)])
     }
 
     public init(residues: [AminoAcid]) {
-        self.init(chains: [Peptide(residues: residues)])
+        self.init(chains: [ProteinChain(residues: residues)])
     }
 
     public func truncate(by range: Range<Int>) -> Protein {

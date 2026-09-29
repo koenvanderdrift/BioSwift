@@ -10,8 +10,8 @@ extension BioMolecule where ChainType == DNAChain {
     public func transcribed() -> RNA {
         let rnaChains = chains.map { dnaChain in
             var rnaChain = RNAChain(
-                sequence: dnaChain.sequenceString.replacingOccurrences(of: "T", with: "U"))
-            rnaChain.name = dnaChain.name
+                sequence: dnaChain.sequenceString.replacingOccurrences(of: "T", with: "U"),
+                name: dnaChain.name)
             rnaChain.range = dnaChain.range
             rnaChain.parentLength = dnaChain.parentLength
             return rnaChain
@@ -30,15 +30,16 @@ extension BioMolecule where ChainType == RNAChain {
     /// Translates each RNA strand from its first nucleotide using the standard genetic code.
     /// Translation ends at the first stop codon; an incomplete trailing codon is ignored.
     public func translated() -> Protein {
-        let peptides = chains.map { rnaChain in
-            var peptide = Peptide(sequence: Self.aminoAcidSequence(from: rnaChain.sequenceString))
-            peptide.name = rnaChain.name
-            peptide.range = rnaChain.range
-            peptide.parentLength = rnaChain.parentLength
-            return peptide
+        let proteinChains = chains.map { rnaChain in
+            var proteinChain = ProteinChain(
+                sequence: Self.aminoAcidSequence(from: rnaChain.sequenceString),
+                name: rnaChain.name)
+            proteinChain.range = rnaChain.range
+            proteinChain.parentLength = rnaChain.parentLength
+            return proteinChain
         }
 
-        return Protein(chains: peptides)
+        return Protein(chains: proteinChains)
     }
 
     private static func aminoAcidSequence(from sequence: String) -> String {

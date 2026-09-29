@@ -45,12 +45,10 @@ import Testing
     }
 
     @Test func nucleicAcidsAccessChainsByName() {
-        var codingDNA = DNAChain(sequence: "GATTACA")
-        codingDNA.name = "coding"
+        let codingDNA = DNAChain(sequence: "GATTACA", name: "coding")
         let dna = DNA(chains: [codingDNA])
 
-        var messengerRNA = RNAChain(sequence: "GAUUACA")
-        messengerRNA.name = "messenger"
+        let messengerRNA = RNAChain(sequence: "GAUUACA", name: "messenger")
         let rna = RNA(chains: [messengerRNA])
 
         #expect(dna.sequence(chainName: "coding") == "GATTACA")
@@ -60,6 +58,21 @@ import Testing
         #expect(rna.nucleotides(chainName: "messenger")?.count == 7)
         #expect(rna.nucleotide(at: 2, chainName: "messenger")?.identifier == "U")
         #expect(rna.sequence(chainName: "missing") == nil)
+    }
+
+    @Test func nucleicAcidTransformationsPreserveChainNames() throws {
+        let dna = DNA(chains: [DNAChain(sequence: "ATGGCT", name: "coding")])
+        let rna = RNA(chains: [RNAChain(sequence: "AUGGCU", name: "messenger")])
+
+        #expect(dna.complement.sequence(chainName: "coding") == "TACCGA")
+        #expect(dna.reverse.sequence(chainName: "coding") == "TCGGTA")
+        #expect(dna.reverseComplement.sequence(chainName: "coding") == "AGCCAT")
+        #expect(rna.complement.sequence(chainName: "messenger") == "UACCGA")
+        #expect(rna.reverse.sequence(chainName: "messenger") == "UCGGUA")
+        #expect(rna.reverseComplement.sequence(chainName: "messenger") == "AGCCAU")
+        #expect(dna.transcribed().sequence(chainName: "coding") == "AUGGCU")
+        #expect(rna.translated().sequence(chainName: "messenger") == "MA")
+        #expect(dna.translated().sequence(chainName: "coding") == "MA")
     }
 
     @Test func transcribesDNAIntoRNA() {

@@ -61,8 +61,7 @@ The convenience properties return the first chain. For multi-chain molecules, us
 or use a chain's name:
 
 ```swift
-var chain = Peptide(sequence: "ANOTHER")
-chain.name = "light chain"
+let chain = ProteinChain(sequence: "ANOTHER", name: "light chain")
 let namedProtein = Protein(chains: [chain])
 
 print(namedProtein.sequence(chainName: "light chain") as Any) // Optional("ANOTHER")
@@ -70,6 +69,10 @@ print(namedProtein.sequence(chainName: "light chain") as Any) // Optional("ANOTH
 
 Name-based accessors return `nil` when no chain has that name. If names are duplicated,
 they deterministically select the first matching chain.
+
+`Protein` stores `ProteinChain` values, while `Peptide` represents standalone peptides
+and products of protein digestion. BioSwift does not impose an arbitrary sequence-length
+cutoff between the two concepts.
 
 ### DNA and RNA transformations
 

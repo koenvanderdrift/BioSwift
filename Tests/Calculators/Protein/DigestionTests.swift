@@ -107,4 +107,16 @@ import Testing
         }
     }
 
+    @Test func digestionProducesNamedPeptides() throws {
+        let protein = Protein(chains: [
+            ProteinChain(sequence: "AKR", name: "alpha")
+        ])
+        let enzyme = try #require(enzymeLibrary.first { $0.name == "Trypsin" })
+
+        let peptides: [Peptide] = ProteinDigester(protein: protein).peptides(using: enzyme)
+
+        #expect(!peptides.isEmpty)
+        #expect(peptides.allSatisfy { $0.name == "alpha" })
+    }
+
 }

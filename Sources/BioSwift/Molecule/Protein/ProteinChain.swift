@@ -1,19 +1,15 @@
 //
-//  Peptide.swift
+//  ProteinChain.swift
 //  BioSwift
-//
-//  Created by Koen van der Drift on 7/18/21.
-//  Copyright © 2021 - 2026 Koen van der Drift. All rights reserved.
 //
 
 import Foundation
 
-/// Peptide conforms to ``Chain`` using an ``AminoAcid`` array
-
-public struct Peptide: AminoAcidChain, Codable, Equatable, Sendable {
+/// A polypeptide chain belonging to a protein.
+public struct ProteinChain: AminoAcidChain, Codable, Equatable, Sendable {
     public let id: UUID
     public var name: String
-    public var residues: [AminoAcid] = []
+    public var residues: [AminoAcid]
     public var nTerminal: Modification = hydrogenModification
     public var cTerminal: Modification = hydroxylModification
     public var adducts: [Adduct] = []
@@ -30,39 +26,20 @@ public struct Peptide: AminoAcidChain, Codable, Equatable, Sendable {
         self.init(residues: residues, name: "")
     }
 
-    public init(residues: [AminoAcid], id: UUID) {
-        self.init(residues: residues, name: "", id: id)
-    }
-
     public init(residues: [AminoAcid], name: String, id: UUID = UUID()) {
         self.id = id
         self.name = name
         self.residues = residues
     }
-
-    public init(proteinChain: ProteinChain) {
-        id = proteinChain.id
-        name = proteinChain.name
-        residues = proteinChain.residues
-        nTerminal = proteinChain.nTerminal
-        cTerminal = proteinChain.cTerminal
-        adducts = proteinChain.adducts
-        range = proteinChain.range
-        parentLength = proteinChain.parentLength
-    }
 }
 
-extension Peptide: Ionizable {
+extension ProteinChain: Ionizable {
     public var massContainer: MassContainer {
         masses.applying(adducts: adducts)
     }
 
     var masses: MassContainer {
-        if residues.isEmpty {
-            return zeroMass
-        }
-
+        guard !residues.isEmpty else { return zeroMass }
         return aminoAcidResidueMasses() + terminalMasses()
     }
-
 }

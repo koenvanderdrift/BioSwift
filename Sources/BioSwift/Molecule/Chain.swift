@@ -396,6 +396,7 @@ extension Chain {
 
         var subChain = Self(residues: newResidues)
 
+        subChain.name = name
         subChain.range = validRange
 
         return subChain
@@ -413,6 +414,7 @@ extension Chain {
 
         var subChain = Self(residues: newResidues)
 
+        subChain.name = name
         subChain.range = validRange
 
         return subChain

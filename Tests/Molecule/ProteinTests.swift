@@ -24,11 +24,21 @@ import Testing
         #expect(protein.sequenceLength(chainIndex: 1) == 6)
     }
 
+    @Test func aminoAcidChainsAcceptNamesDuringInitialization() {
+        let id = UUID()
+        let proteinChain = ProteinChain(sequence: "MKT", name: "heavy chain", id: id)
+        let peptide = Peptide(sequence: "PEPTIDE", name: "digest product")
+
+        #expect(proteinChain.name == "heavy chain")
+        #expect(proteinChain.id == id)
+        #expect(peptide.name == "digest product")
+        #expect(ProteinChain(sequence: "MKT").name.isEmpty)
+        #expect(Peptide(sequence: "PEPTIDE").name.isEmpty)
+    }
+
     @Test func moleculeAccessesChainsByName() {
-        var first = Peptide(sequence: "PEPTIDE")
-        first.name = "alpha"
-        var second = Peptide(sequence: "SECNDS")
-        second.name = "beta"
+        let first = ProteinChain(sequence: "PEPTIDE", name: "alpha")
+        let second = ProteinChain(sequence: "SECNDS", name: "beta")
         let protein = Protein(chains: [first, second])
 
         #expect(protein.chain(named: "beta")?.sequenceString == "SECNDS")
@@ -41,10 +51,8 @@ import Testing
     }
 
     @Test func duplicateChainNamesResolveToFirstChain() {
-        var first = Peptide(sequence: "FIRST")
-        first.name = "shared"
-        var second = Peptide(sequence: "SECOND")
-        second.name = "shared"
+        let first = ProteinChain(sequence: "FIRST", name: "shared")
+        let second = ProteinChain(sequence: "SECOND", name: "shared")
 
         #expect(Protein(chains: [first, second]).sequence(chainName: "shared") == "FIRST")
     }
@@ -693,18 +701,18 @@ import Testing
     }
 
     @Test func biomolecule() {
-        var peptide1 = Peptide(residues: [alanine, alanine, serine, alanine, serine])
-        #expect(peptide1.sequenceLength == 5)
+        var chain1 = ProteinChain(residues: [alanine, alanine, serine, alanine, serine])
+        #expect(chain1.sequenceLength == 5)
 
-        peptide1.setAdducts(type: protonAdduct, count: 1)
-        #expect(peptide1.monoisotopicMass.rounded(scale: 4) == decimal("406.1932"))
-        var peptide2 = Peptide(residues: peptide1.residues + [serine, serine, alanine])
-        #expect(peptide2.sequenceLength == 8)
+        chain1.setAdducts(type: protonAdduct, count: 1)
+        #expect(chain1.monoisotopicMass.rounded(scale: 4) == decimal("406.1932"))
+        var chain2 = ProteinChain(residues: chain1.residues + [serine, serine, alanine])
+        #expect(chain2.sequenceLength == 8)
 
-        peptide2.setAdducts(type: protonAdduct, count: 2)
-        #expect(peptide2.monoisotopicMass.rounded(scale: 4) == decimal("326.1508"))
+        chain2.setAdducts(type: protonAdduct, count: 2)
+        #expect(chain2.monoisotopicMass.rounded(scale: 4) == decimal("326.1508"))
 
-        var protein = Protein(chains: [peptide1, peptide2])
+        var protein = Protein(chains: [chain1, chain2])
 
         #expect(protein.sequence(chainIndex: 0) == "AASAS")
         #expect(protein.sequence(chainIndex: 1) == "AASASSSA")
@@ -720,7 +728,7 @@ import Testing
             ])
 
         protein.setAdducts(type: protonAdduct, count: 2)
-        let combinedMasses = peptide1.masses + peptide2.masses
+        let combinedMasses = chain1.masses + chain2.masses
         let expectedChargedMasses = combinedMasses.applying(adducts: [protonAdduct, protonAdduct])
 
         #expect(protein.masses == combinedMasses)
@@ -743,7 +751,7 @@ import Testing
     }
 
     @Test func crossLinkCanConnectDifferentProteinChainsAndRoundTripThroughCodable() throws {
-        var protein = Protein(chains: [Peptide(sequence: "AC"), Peptide(sequence: "CA")])
+        var protein = Protein(chains: [ProteinChain(sequence: "AC"), ProteinChain(sequence: "CA")])
 
         let crossLink = try protein.addCrossLink(
             modification: disulfideBond,

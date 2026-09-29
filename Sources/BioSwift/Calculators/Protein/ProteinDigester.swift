@@ -20,7 +20,7 @@ public class ProteinDigester {
     
     public func peptides(using enzyme: Enzyme, with missedCleavages: Int = 0) -> [Peptide] {
         protein.chains.flatMap { chain in
-            chain.digest(using: enzyme, with: missedCleavages)
+            chain.digest(using: enzyme, with: missedCleavages).map(Peptide.init(proteinChain:))
         }
     }
 }
