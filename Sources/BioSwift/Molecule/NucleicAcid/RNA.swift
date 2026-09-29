@@ -35,6 +35,10 @@ public struct RNAChain: NucleicAcidChain, Ionizable, Codable, Equatable, Sendabl
         RNAChain(residues: residues.map(\.complement))
     }
 
+    public var reverse: RNAChain {
+        RNAChain(residues: Array(residues.reversed()))
+    }
+
     public var reverseComplement: RNAChain {
         RNAChain(residues: residues.reversed().map(\.complement))
     }
@@ -44,6 +48,18 @@ public struct RNAChain: NucleicAcidChain, Ionizable, Codable, Equatable, Sendabl
 public typealias RNA = BioMolecule<RNAChain>
 
 extension BioMolecule where ChainType == RNAChain {
+    public var complement: RNA {
+        RNA(chains: chains.map(\.complement))
+    }
+
+    public var reverse: RNA {
+        RNA(chains: chains.map(\.reverse))
+    }
+
+    public var reverseComplement: RNA {
+        RNA(chains: chains.map(\.reverseComplement))
+    }
+
     public init(sequence: String) {
         self.init(chains: [RNAChain(sequence: sequence)])
     }

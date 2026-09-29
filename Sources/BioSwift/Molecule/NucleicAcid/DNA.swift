@@ -35,6 +35,10 @@ public struct DNAChain: NucleicAcidChain, Ionizable, Codable, Equatable, Sendabl
         DNAChain(residues: residues.map(\.complement))
     }
 
+    public var reverse: DNAChain {
+        DNAChain(residues: Array(residues.reversed()))
+    }
+
     public var reverseComplement: DNAChain {
         DNAChain(residues: residues.reversed().map(\.complement))
     }
@@ -44,6 +48,18 @@ public struct DNAChain: NucleicAcidChain, Ionizable, Codable, Equatable, Sendabl
 public typealias DNA = BioMolecule<DNAChain>
 
 extension BioMolecule where ChainType == DNAChain {
+    public var complement: DNA {
+        DNA(chains: chains.map(\.complement))
+    }
+
+    public var reverse: DNA {
+        DNA(chains: chains.map(\.reverse))
+    }
+
+    public var reverseComplement: DNA {
+        DNA(chains: chains.map(\.reverseComplement))
+    }
+
     public init(sequence: String) {
         self.init(chains: [DNAChain(sequence: sequence)])
     }
