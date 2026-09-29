@@ -217,6 +217,98 @@ struct SequenceAlignmentTests {
         #expect(SubstitutionMatrix(alphabet: ["A", "B"], scores: [1, 2], unknownScore: -1) == nil)
     }
 
+    @Test("DNA chains align with nucleotide scoring by default")
+    func dnaChainAPI() {
+        let result = DNAChain(sequence: "ACG").align(with: DNAChain(sequence: "AG"))
+
+        #expect(result.score == 2)
+        #expect(result.firstAlignedSequence == "ACG")
+        #expect(result.secondAlignedSequence == "A-G")
+    }
+
+    @Test("Peptide chains align with BLOSUM62 by default")
+    func peptideChainAPI() {
+        let result = Peptide(sequence: "D").align(with: Peptide(sequence: "E"))
+
+        #expect(result.score == 2)
+        #expect(result.columns.map(\.operation) == [.similarity])
+    }
+
+    @Test("BLOSUM62 aligns similar medium-length protein sequences")
+    func similarProteinSequences() {
+        let first = Peptide(sequence: "MKTAYIAKQRQIS")
+        let second = Peptide(sequence: "MKTAYIAKQKQIS")
+
+        let result = first.align(with: second)
+
+        #expect(result.firstAlignedSequence == "MKTAYIAKQRQIS")
+        #expect(result.secondAlignedSequence == "MKTAYIAKQKQIS")
+        #expect(result.score == 59)
+        #expect(result.identityCount == 12)
+        #expect(result.similarityCount == 13)
+        #expect(result.gapCount == 0)
+        #expect(result.columns[9].operation == .similarity)
+    }
+
+    @Test("BLOSUM62 globally aligns related protein sequences with deletions")
+    func similarProteinSequencesWithDeletions() {
+        let first = Peptide(sequence: "MKTAYIAKQRQIS")
+        let second = Peptide(sequence: "KTAYIAKQQIS")
+
+        let result = first.align(with: second)
+
+        #expect(result.firstAlignedSequence == "MKTAYIAKQRQIS")
+        #expect(result.secondAlignedSequence == "-KTAYIAKQ-QIS")
+        #expect(result.score == 44)
+        #expect(result.identityCount == 11)
+        #expect(result.similarityCount == 11)
+        #expect(result.gapCount == 2)
+        #expect(result.columns[0].operation == .deletion)
+        #expect(result.columns[9].operation == .deletion)
+    }
+
+    @Test("Chain APIs accept explicit algorithms and scoring")
+    func customChainAlignment() {
+        let result = RNAChain(sequence: "CCAU").align(
+            with: RNAChain(sequence: "GGCCAUAA"),
+            algorithm: .smithWaterman,
+            scoring: AlignmentScoring(match: 3, mismatch: -2, gap: -2)
+        )
+
+        #expect(result.score == 12)
+        #expect(result.firstAlignedSequence == "CCAU")
+        #expect(result.secondAlignedSequence == "CCAU")
+        #expect(result.secondRange == 2..<6)
+    }
+
+    @Test("Molecule APIs align explicitly selected chains")
+    func moleculeChainSelection() throws {
+        let first = DNA(sequences: ["AAAA", "ACG"])
+        let second = DNA(sequences: ["TTTT", "AG"])
+        let result = try first.align(
+            with: second,
+            chainIndex: 1,
+            otherChainIndex: 1
+        )
+
+        #expect(result.score == 2)
+        #expect(result.firstAlignedSequence == "ACG")
+        #expect(result.secondAlignedSequence == "A-G")
+    }
+
+    @Test("Molecule APIs report invalid chain indices")
+    func invalidMoleculeChainIndices() {
+        let first = Protein(sequence: "A")
+        let second = Protein(sequence: "A")
+
+        #expect(throws: AlignmentError.invalidFirstChainIndex(1)) {
+            try first.align(with: second, chainIndex: 1)
+        }
+        #expect(throws: AlignmentError.invalidSecondChainIndex(2)) {
+            try first.align(with: second, otherChainIndex: 2)
+        }
+    }
+
     private func residues(_ sequence: String) -> [String] {
         sequence.map(String.init)
     }
