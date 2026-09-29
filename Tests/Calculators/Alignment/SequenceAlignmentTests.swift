@@ -159,6 +159,64 @@ struct SequenceAlignmentTests {
         #expect(result.columns.map(\.operation) == [.substitution])
     }
 
+    @Test("Built-in scoring strategies provide expected defaults")
+    func builtInScoring() {
+        #expect(AlignmentScoring.nucleotide() == AlignmentScoring(match: 2, mismatch: -1, gap: -2))
+        #expect(AlignmentScoring.proteinIdentity() == AlignmentScoring(match: 1, mismatch: -1, gap: -1))
+        #expect(AlignmentScoring.blosum62().gap == -4)
+    }
+
+    @Test("BLOSUM62 contains canonical substitution scores")
+    func blosum62Scores() {
+        let matrix = SubstitutionMatrix.blosum62
+
+        #expect(matrix.score(first: "A", second: "A") == 4)
+        #expect(matrix.score(first: "W", second: "W") == 11)
+        #expect(matrix.score(first: "D", second: "E") == 2)
+        #expect(matrix.score(first: "E", second: "D") == 2)
+        #expect(matrix.score(first: "C", second: "W") == -2)
+        #expect(matrix.score(first: "?", second: "A") == -4)
+    }
+
+    @Test("A positive BLOSUM62 substitution is reported as similarity")
+    func proteinSimilarity() {
+        let result = SequenceAligner.align(
+            ["D"],
+            with: ["E"],
+            algorithm: .needlemanWunsch,
+            scoring: .blosum62()
+        )
+
+        #expect(result.score == 2)
+        #expect(result.columns.map(\.operation) == [.similarity])
+        #expect(result.identityCount == 0)
+        #expect(result.similarityCount == 1)
+    }
+
+    @Test("Custom substitution matrices override match and mismatch scores")
+    func customSubstitutionMatrix() throws {
+        let matrix = try #require(SubstitutionMatrix(
+            alphabet: ["A", "B"],
+            scores: [3, -2, -2, 5],
+            unknownScore: -7
+        ))
+        let scoring = AlignmentScoring(
+            match: 100,
+            mismatch: 100,
+            gap: -3,
+            substitutionMatrix: matrix
+        )
+
+        #expect(scoring.score(first: "A", second: "A") == 3)
+        #expect(scoring.score(first: "A", second: "B") == -2)
+        #expect(scoring.score(first: "X", second: "A") == -7)
+    }
+
+    @Test("Substitution matrices reject malformed score tables")
+    func malformedSubstitutionMatrix() {
+        #expect(SubstitutionMatrix(alphabet: ["A", "B"], scores: [1, 2], unknownScore: -1) == nil)
+    }
+
     private func residues(_ sequence: String) -> [String] {
         sequence.map(String.init)
     }

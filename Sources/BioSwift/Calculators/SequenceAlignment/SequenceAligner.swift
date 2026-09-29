@@ -48,9 +48,10 @@ public enum SequenceAligner {
         if !first.isEmpty, !second.isEmpty {
             for firstIndex in 1...first.count {
                 for secondIndex in 1...second.count {
-                    let substitution = first[firstIndex - 1] == second[secondIndex - 1]
-                        ? scoring.match
-                        : scoring.mismatch
+                    let substitution = scoring.score(
+                        first: first[firstIndex - 1],
+                        second: second[secondIndex - 1]
+                    )
                     let diagonalScore = scores[offset(firstIndex - 1, secondIndex - 1)] + substitution
                     let deletionScore = scores[offset(firstIndex - 1, secondIndex)] + scoring.gap
                     let insertionScore = scores[offset(firstIndex, secondIndex - 1)] + scoring.gap
@@ -112,12 +113,16 @@ public enum SequenceAligner {
                 firstIndex -= 1
                 secondIndex -= 1
                 let isIdentity = first[firstIndex] == second[secondIndex]
+                let substitutionScore = scoring.score(
+                    first: first[firstIndex],
+                    second: second[secondIndex]
+                )
                 columns.append(AlignmentColumn(
                     firstResidue: first[firstIndex],
                     firstIndex: firstIndex,
                     secondResidue: second[secondIndex],
                     secondIndex: secondIndex,
-                    operation: isIdentity ? .identity : .substitution
+                    operation: isIdentity ? .identity : substitutionScore > 0 ? .similarity : .substitution
                 ))
             case .deletion:
                 firstIndex -= 1

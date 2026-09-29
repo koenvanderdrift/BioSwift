@@ -22,11 +22,82 @@ public struct AlignmentScoring: Codable, Equatable, Sendable {
     public var match: Int
     public var mismatch: Int
     public var gap: Int
+    public var substitutionMatrix: SubstitutionMatrix?
 
-    public init(match: Int, mismatch: Int, gap: Int) {
+    public init(
+        match: Int,
+        mismatch: Int,
+        gap: Int,
+        substitutionMatrix: SubstitutionMatrix? = nil
+    ) {
         self.match = match
         self.mismatch = mismatch
         self.gap = gap
+        self.substitutionMatrix = substitutionMatrix
+    }
+
+    public func score(first: String, second: String) -> Int {
+        if let substitutionMatrix {
+            return substitutionMatrix.score(first: first, second: second)
+        }
+        return first == second ? match : mismatch
+    }
+
+    public static func nucleotide(
+        match: Int = 2,
+        mismatch: Int = -1,
+        gap: Int = -2
+    ) -> AlignmentScoring {
+        AlignmentScoring(match: match, mismatch: mismatch, gap: gap)
+    }
+
+    public static func proteinIdentity(
+        match: Int = 1,
+        mismatch: Int = -1,
+        gap: Int = -1
+    ) -> AlignmentScoring {
+        AlignmentScoring(match: match, mismatch: mismatch, gap: gap)
+    }
+
+    public static func blosum62(gap: Int = -4) -> AlignmentScoring {
+        AlignmentScoring(
+            match: 1,
+            mismatch: -1,
+            gap: gap,
+            substitutionMatrix: .blosum62
+        )
+    }
+}
+
+/// A square residue substitution matrix stored in row-major order.
+public struct SubstitutionMatrix: Codable, Equatable, Sendable {
+    public let alphabet: [String]
+    public let scores: [Int]
+    public let unknownScore: Int
+
+    public init?(alphabet: [String], scores: [Int], unknownScore: Int) {
+        guard !alphabet.isEmpty, scores.count == alphabet.count * alphabet.count else {
+            return nil
+        }
+        self.alphabet = alphabet
+        self.scores = scores
+        self.unknownScore = unknownScore
+    }
+
+    init(validatedAlphabet alphabet: [String], scores: [Int], unknownScore: Int) {
+        self.alphabet = alphabet
+        self.scores = scores
+        self.unknownScore = unknownScore
+    }
+
+    public func score(first: String, second: String) -> Int {
+        guard
+            let firstIndex = alphabet.firstIndex(of: first.uppercased()),
+            let secondIndex = alphabet.firstIndex(of: second.uppercased())
+        else {
+            return unknownScore
+        }
+        return scores[firstIndex * alphabet.count + secondIndex]
     }
 }
 
