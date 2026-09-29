@@ -1,0 +1,122 @@
+//
+//  SequenceAlignment.swift
+//  BioSwift
+//
+
+import Foundation
+
+/// The strategy used to align two biological sequences.
+public enum AlignmentAlgorithm: String, Codable, CaseIterable, Sendable {
+    /// Global alignment across both complete sequences.
+    case needlemanWunsch
+
+    /// Local alignment of the highest-scoring regions of both sequences.
+    case smithWaterman
+}
+
+/// Scores used when constructing a pairwise sequence alignment.
+///
+/// Penalties are conventionally represented by negative values. Custom substitution
+/// matrices can be added without changing the alignment result model.
+public struct AlignmentScoring: Codable, Equatable, Sendable {
+    public var match: Int
+    public var mismatch: Int
+    public var gap: Int
+
+    public init(match: Int, mismatch: Int, gap: Int) {
+        self.match = match
+        self.mismatch = mismatch
+        self.gap = gap
+    }
+}
+
+/// The relationship represented by one column of a pairwise alignment.
+public enum AlignmentOperation: String, Codable, Sendable {
+    case identity
+    case similarity
+    case substitution
+
+    /// A residue in the second sequence aligned to a gap in the first sequence.
+    case insertion
+
+    /// A residue in the first sequence aligned to a gap in the second sequence.
+    case deletion
+}
+
+/// One column of a pairwise sequence alignment.
+public struct AlignmentColumn: Codable, Equatable, Sendable {
+    public let firstResidue: String?
+    public let firstIndex: Int?
+    public let secondResidue: String?
+    public let secondIndex: Int?
+    public let operation: AlignmentOperation
+
+    public init(
+        firstResidue: String?,
+        firstIndex: Int?,
+        secondResidue: String?,
+        secondIndex: Int?,
+        operation: AlignmentOperation
+    ) {
+        self.firstResidue = firstResidue
+        self.firstIndex = firstIndex
+        self.secondResidue = secondResidue
+        self.secondIndex = secondIndex
+        self.operation = operation
+    }
+}
+
+/// The result of a global or local pairwise sequence alignment.
+public struct AlignmentResult: Codable, Equatable, Sendable {
+    public let algorithm: AlignmentAlgorithm
+    public let score: Int
+    public let firstRange: Range<Int>
+    public let secondRange: Range<Int>
+    public let columns: [AlignmentColumn]
+
+    public init(
+        algorithm: AlignmentAlgorithm,
+        score: Int,
+        firstRange: Range<Int>,
+        secondRange: Range<Int>,
+        columns: [AlignmentColumn]
+    ) {
+        self.algorithm = algorithm
+        self.score = score
+        self.firstRange = firstRange
+        self.secondRange = secondRange
+        self.columns = columns
+    }
+
+    public var firstAlignedSequence: String {
+        columns.map { $0.firstResidue ?? "-" }.joined()
+    }
+
+    public var secondAlignedSequence: String {
+        columns.map { $0.secondResidue ?? "-" }.joined()
+    }
+
+    public var identityCount: Int {
+        columns.count { $0.operation == .identity }
+    }
+
+    public var similarityCount: Int {
+        columns.count { $0.operation == .identity || $0.operation == .similarity }
+    }
+
+    public var gapCount: Int {
+        columns.count { $0.operation == .insertion || $0.operation == .deletion }
+    }
+
+    /// The fraction of alignment columns containing identical residues.
+    public var identity: Double {
+        guard !columns.isEmpty else { return 0 }
+        return Double(identityCount) / Double(columns.count)
+    }
+
+    /// The fraction of alignment columns containing identical or similar residues.
+    public var similarity: Double {
+        guard !columns.isEmpty else { return 0 }
+        return Double(similarityCount) / Double(columns.count)
+    }
+}
