@@ -41,8 +41,8 @@ extension BioMolecule where ChainType == Peptide {
         return self
     }
 
-    public func nTermModifications() -> [Modification] {
-        if let nTermAA = residues().first {
+    public var nTermModifications: [Modification] {
+        if let nTermAA = residues.first {
             var nTermGroups = UnimodModificationReferenceDefaults.bundled.modifications.filter { mod in
                 mod.specificities.contains { spec in
                     spec.position.contains("Protein N-term") && spec.site == nTermAA.oneLetterCode
@@ -57,8 +57,8 @@ extension BioMolecule where ChainType == Peptide {
         return []
     }
 
-    public func cTermModifications() -> [Modification] {
-        if let cTermAA = residues().last {
+    public var cTermModifications: [Modification] {
+        if let cTermAA = residues.last {
             var cTermGroups = UnimodModificationReferenceDefaults.bundled.modifications.filter { mod in
                 mod.specificities.contains { spec in
                     spec.position.contains("Protein C-term") && spec.site == cTermAA.oneLetterCode
@@ -73,7 +73,11 @@ extension BioMolecule where ChainType == Peptide {
         return []
     }
 
-    public func nTermLocation(for chainIndex: Int = 0) -> Int? {
+    public var nTermLocation: Int? {
+        nTermLocation(chainIndex: 0)
+    }
+
+    public func nTermLocation(chainIndex: Int) -> Int? {
         guard chains.indices.contains(chainIndex), chains[chainIndex].sequenceLength > 0 else {
             return nil
         }
@@ -81,7 +85,18 @@ extension BioMolecule where ChainType == Peptide {
         return 0
     }
 
-    public func cTermLocation(for chainIndex: Int = 0) -> Int? {
+    public func nTermLocation(chainName: String) -> Int? {
+        guard let chain = chain(named: chainName), chain.sequenceLength > 0 else {
+            return nil
+        }
+        return 0
+    }
+
+    public var cTermLocation: Int? {
+        cTermLocation(chainIndex: 0)
+    }
+
+    public func cTermLocation(chainIndex: Int) -> Int? {
         guard chains.indices.contains(chainIndex), chains[chainIndex].sequenceLength > 0 else {
             return nil
         }
@@ -89,16 +104,38 @@ extension BioMolecule where ChainType == Peptide {
         return chains[chainIndex].sequenceLength - 1
     }
 
-    public func aminoAcid(at loc: Int, for chainIndex: Int = 0) -> AminoAcid? {
-        let aminoAcids = aminoAcids(for: chainIndex)
-        guard aminoAcids.indices.contains(loc) else {
+    public func cTermLocation(chainName: String) -> Int? {
+        guard let chain = chain(named: chainName), chain.sequenceLength > 0 else {
+            return nil
+        }
+        return chain.sequenceLength - 1
+    }
+
+    public func aminoAcid(at location: Int, chainIndex: Int = 0) -> AminoAcid? {
+        let aminoAcids = aminoAcids(chainIndex: chainIndex)
+        guard aminoAcids.indices.contains(location) else {
             return nil
         }
 
-        return aminoAcids[loc]
+        return aminoAcids[location]
     }
 
-    public func aminoAcids(for chainIndex: Int = 0) -> [AminoAcid] {
-        residues(for: chainIndex) as? [AminoAcid] ?? []
+    public func aminoAcid(at location: Int, chainName: String) -> AminoAcid? {
+        guard let aminoAcids = aminoAcids(chainName: chainName), aminoAcids.indices.contains(location) else {
+            return nil
+        }
+        return aminoAcids[location]
+    }
+
+    public var aminoAcids: [AminoAcid] {
+        aminoAcids(chainIndex: 0)
+    }
+
+    public func aminoAcids(chainIndex: Int) -> [AminoAcid] {
+        residues(chainIndex: chainIndex) as? [AminoAcid] ?? []
+    }
+
+    public func aminoAcids(chainName: String) -> [AminoAcid]? {
+        chain(named: chainName)?.residues
     }
 }

@@ -65,6 +65,36 @@ extension BioMolecule where ChainType: Structure {
 }
 
 extension BioMolecule {
+    /// The sequence of the first chain, or an empty string when the molecule has no chains.
+    public var sequence: String {
+        sequence(chainIndex: 0)
+    }
+
+    /// The residue count of the first chain, or zero when the molecule has no chains.
+    public var sequenceLength: Int {
+        sequenceLength(chainIndex: 0)
+    }
+
+    /// The residues of the first chain, or an empty array when the molecule has no chains.
+    public var residues: [any Residue] {
+        residues(chainIndex: 0)
+    }
+
+    /// Residue counts for the first chain.
+    public var residueCounts: NSCountedSet {
+        residueCounts(chainIndex: 0)
+    }
+
+    /// Returns the first chain with the specified name.
+    public func chain(named name: String) -> ChainType? {
+        chains.first { $0.name == name }
+    }
+
+    /// Returns the index of the first chain with the specified name.
+    public func chainIndex(named name: String) -> Int? {
+        chains.firstIndex { $0.name == name }
+    }
+
     /// Creates and adds a validated cross-link between two residues.
     @discardableResult
     public mutating func addCrossLink(
@@ -112,15 +142,19 @@ extension BioMolecule {
         crossLinks.filter { $0.firstSite == site || $0.secondSite == site }
     }
 
-    public func sequenceLength(for chainIndex: Int = 0) -> Int {
+    public func sequenceLength(chainIndex: Int) -> Int {
         guard chains.indices.contains(chainIndex) else {
             return 0
         }
 
-        return chains[chainIndex].numberOfResidues
+        return chains[chainIndex].residueCount
     }
 
-    public func residues(for chainIndex: Int = 0) -> [any Residue] {
+    public func sequenceLength(chainName: String) -> Int? {
+        chain(named: chainName)?.residueCount
+    }
+
+    public func residues(chainIndex: Int) -> [any Residue] {
         guard chains.indices.contains(chainIndex) else {
             return []
         }
@@ -128,7 +162,11 @@ extension BioMolecule {
         return chains[chainIndex].residues
     }
 
-    public func sequence(for chainIndex: Int = 0) -> String {
+    public func residues(chainName: String) -> [any Residue]? {
+        chain(named: chainName)?.residues
+    }
+
+    public func sequence(chainIndex: Int) -> String {
         guard chains.indices.contains(chainIndex) else {
             return ""
         }
@@ -136,7 +174,11 @@ extension BioMolecule {
         return chains[chainIndex].sequenceString
     }
 
-    public func residueLocations(for chainIndex: Int = 0, with identifiers: [String]) -> [Int] {
+    public func sequence(chainName: String) -> String? {
+        chain(named: chainName)?.sequenceString
+    }
+
+    public func residueLocations(with identifiers: [String], chainIndex: Int = 0) -> [Int] {
         guard chains.indices.contains(chainIndex) else {
             return []
         }
@@ -144,20 +186,32 @@ extension BioMolecule {
         return chains[chainIndex].residueLocations(with: Set(identifiers))
     }
 
-    public func countResidues(for chainIndex: Int = 0) -> NSCountedSet {
+    public func residueLocations(with identifiers: [String], chainName: String) -> [Int]? {
+        chain(named: chainName)?.residueLocations(with: Set(identifiers))
+    }
+
+    public func residueCounts(chainIndex: Int) -> NSCountedSet {
         guard chains.indices.contains(chainIndex) else {
             return NSCountedSet()
         }
 
-        return chains[chainIndex].countAllResidues()
+        return chains[chainIndex].residueCounts
     }
 
-    public func countOneResidue(with identifier: String, for chainIndex: Int = 0) -> Int {
+    public func residueCounts(chainName: String) -> NSCountedSet? {
+        chain(named: chainName)?.residueCounts
+    }
+
+    public func residueCount(for identifier: String, chainIndex: Int = 0) -> Int {
         guard chains.indices.contains(chainIndex) else {
             return 0
         }
 
-        return chains[chainIndex].countOneResidue(with: identifier)
+        return chains[chainIndex].residueCount(for: identifier)
+    }
+
+    public func residueCount(for identifier: String, chainName: String) -> Int? {
+        chain(named: chainName)?.residueCount(for: identifier)
     }
 
     public func selectionLength(chainIndex index: Int = 0, _ range: Range<Int>) -> Int {
@@ -167,26 +221,34 @@ extension BioMolecule {
 
         let sub = chains[index].subChain(range: range)
 
-        return sub.numberOfResidues
+        return sub.residueCount
     }
 
-    public mutating func addModification(mod: Modification, at loc: Int, for chainIndex: Int = 0) {
+    public mutating func addModification(
+        _ modification: Modification,
+        at location: Int,
+        chainIndex: Int = 0
+    ) {
         guard chains.indices.contains(chainIndex) else {
             return
         }
 
-        chains[chainIndex].addModification(mod, at: loc)
+        chains[chainIndex].addModification(modification, at: location)
     }
 
-    public mutating func removeModification(at loc: Int, for chainIndex: Int = 0) {
+    public mutating func removeModification(at location: Int, chainIndex: Int = 0) {
         guard chains.indices.contains(chainIndex) else {
             return
         }
 
-        chains[chainIndex].removeModification(at: loc)
+        chains[chainIndex].removeModification(at: location)
     }
 
-    public mutating func modifyResidues(for identifier: String, with modification: Modification, for chainIndex: Int = 0) {
+    public mutating func modifyResidues(
+        for identifier: String,
+        with modification: Modification,
+        chainIndex: Int = 0
+    ) {
         guard chains.indices.contains(chainIndex) else {
             return
         }
@@ -194,7 +256,7 @@ extension BioMolecule {
         chains[chainIndex].modifyResidues(for: identifier, with: modification)
     }
 
-    public mutating func removeModifications(for identifier: String, for chainIndex: Int = 0) {
+    public mutating func removeModifications(for identifier: String, chainIndex: Int = 0) {
         guard chains.indices.contains(chainIndex) else {
             return
         }
@@ -303,11 +365,7 @@ extension BioMolecule: MassRepresentable {
         return sub.calculatedMasses().applying(adducts: adducts)
     }
 
-    public mutating func setAdducts(type: Adduct, count: Int, for chainIndex: Int = 0) {
-        guard chains.indices.contains(chainIndex) else {
-            return
-        }
-
+    public mutating func setAdducts(type: Adduct, count: Int) {
         adducts = Array(repeating: type, count: count)
     }
 }

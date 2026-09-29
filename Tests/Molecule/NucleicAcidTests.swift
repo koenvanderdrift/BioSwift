@@ -39,19 +39,37 @@ import Testing
         let dna = DNA(residues: [nucleotide])
 
         #expect(dna.nucleotide(at: 0) == nucleotide)
-        #expect(dna.nucleotides() == [nucleotide])
-        #expect(DNA(sequence: "ATCG").truncate(by: 1..<3).sequence() == "AG")
-        #expect(RNA(sequence: "AUCG").truncate(by: 1..<3).sequence() == "AG")
+        #expect(dna.nucleotides == [nucleotide])
+        #expect(DNA(sequence: "ATCG").truncate(by: 1..<3).sequence == "AG")
+        #expect(RNA(sequence: "AUCG").truncate(by: 1..<3).sequence == "AG")
+    }
+
+    @Test func nucleicAcidsAccessChainsByName() {
+        var codingDNA = DNAChain(sequence: "GATTACA")
+        codingDNA.name = "coding"
+        let dna = DNA(chains: [codingDNA])
+
+        var messengerRNA = RNAChain(sequence: "GAUUACA")
+        messengerRNA.name = "messenger"
+        let rna = RNA(chains: [messengerRNA])
+
+        #expect(dna.sequence(chainName: "coding") == "GATTACA")
+        #expect(dna.nucleotides(chainName: "coding")?.count == 7)
+        #expect(dna.nucleotide(at: 1, chainName: "coding")?.identifier == "A")
+        #expect(rna.sequence(chainName: "messenger") == "GAUUACA")
+        #expect(rna.nucleotides(chainName: "messenger")?.count == 7)
+        #expect(rna.nucleotide(at: 2, chainName: "messenger")?.identifier == "U")
+        #expect(rna.sequence(chainName: "missing") == nil)
     }
 
     @Test func transcribesDNAIntoRNA() {
-        #expect(DNA(sequence: "ATGGCTTAA").transcribed().sequence() == "AUGGCUUAA")
+        #expect(DNA(sequence: "ATGGCTTAA").transcribed().sequence == "AUGGCUUAA")
     }
 
     @Test func translatesRNAAndDNAIntoProtein() {
-        #expect(RNA(sequence: "AUGGCUUAAUGG").translated().sequence() == "MA")
-        #expect(DNA(sequence: "ATGGCTTAA").translated().sequence() == "MA")
-        #expect(RNA(sequence: "AUGGC").translated().sequence() == "M")
+        #expect(RNA(sequence: "AUGGCUUAAUGG").translated().sequence == "MA")
+        #expect(DNA(sequence: "ATGGCTTAA").translated().sequence == "MA")
+        #expect(RNA(sequence: "AUGGC").translated().sequence == "M")
     }
 
     @Test func parsesBundledDNAFasta() async throws {
@@ -68,7 +86,7 @@ import Testing
 
     @Test func transcribesBundledDNAFasta() async throws {
         let records = try await FastaParser().parseBundleFile("dna-sequences")
-        let rnaSequences = records.map { DNA(fastaRecord: $0).transcribed().sequence() }
+        let rnaSequences = records.map { DNA(fastaRecord: $0).transcribed().sequence }
 
         #expect(rnaSequences == [
             "AAGUAGGAAUAAUAUCUUAUCAUUAUAGAUAAAAACCUUCUGAAUUUGCUUAGUGUGUAUACGACUAGACAUAUAUCAGCUCGCCGAUUAUUUGGAUUAUUCCCUG",
@@ -81,7 +99,7 @@ import Testing
         let records = try await FastaParser().parseBundleFile("dna-sequences")
         let dna = records.map(DNA.init(fastaRecord:))
 
-        #expect(dna.map { $0.transcribed().translated().sequence() } == ["K", "Q", "LQLPC"])
-        #expect(dna.map { $0.translated().sequence() } == ["K", "Q", "LQLPC"])
+        #expect(dna.map { $0.transcribed().translated().sequence } == ["K", "Q", "LQLPC"])
+        #expect(dna.map { $0.translated().sequence } == ["K", "Q", "LQLPC"])
     }
 }

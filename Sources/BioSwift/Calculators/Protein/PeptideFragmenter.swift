@@ -66,13 +66,13 @@ public class PeptideFragmenter {
             residues: peptide.residues, fragmentType: .precursorIon, adducts: peptide.adducts)
         result.append(precursorIon)
 
-        if precursorIon.canLoseWater() {
+        if precursorIon.canLoseWater {
             let precursorIonLossOfWater = PeptideFragment(
                 residues: peptide.residues, fragmentType: .precursorIonMinusWater, adducts: peptide.adducts)
             result.append(precursorIonLossOfWater)
         }
 
-        if precursorIon.canLoseAmmonia() {
+        if precursorIon.canLoseAmmonia {
             let precursorIonLossOfAmmonia = PeptideFragment(
                 residues: peptide.residues, fragmentType: .precursorIonMinusAmmonia,
                 adducts: peptide.adducts)
@@ -81,7 +81,7 @@ public class PeptideFragmenter {
 
         return result.map { fragment in
             var updatedFragment = fragment
-            updatedFragment.parentLength = peptide.numberOfResidues
+            updatedFragment.parentLength = peptide.residueCount
             return updatedFragment
         }
     }
@@ -148,7 +148,7 @@ public class PeptideFragmenter {
                     }
                 }
 
-                if bIon.canLoseWater() {
+                if bIon.canLoseWater {
                     let bIonLossOfWater = PeptideFragment(
                         residues: bIon.residues, fragmentType: .bIonMinusWater, index: index,
                         adducts: bIon.adducts, nTerm: peptide.nTerminal)
@@ -161,7 +161,7 @@ public class PeptideFragmenter {
                     }
                 }
 
-                if bIon.canLoseAmmonia() {
+                if bIon.canLoseAmmonia {
                     let bIonLossOfAmmonia = PeptideFragment(
                         residues: bIon.residues, fragmentType: .bIonMinusAmmonia, index: index,
                         adducts: bIon.adducts, nTerm: peptide.nTerminal)
@@ -186,7 +186,7 @@ public class PeptideFragmenter {
                     }
                 }
 
-                if aIon.canLoseWater() {
+                if aIon.canLoseWater {
                     let aIonLossOfWater = PeptideFragment(
                         residues: bIon.residues, fragmentType: .aIonMinusWater, index: index,
                         adducts: bIon.adducts, nTerm: peptide.nTerminal)
@@ -231,7 +231,7 @@ public class PeptideFragmenter {
 
         return result.map { fragment in
             var updatedFragment = fragment
-            updatedFragment.parentLength = peptide.numberOfResidues
+            updatedFragment.parentLength = peptide.residueCount
             return updatedFragment
         }
     }
@@ -257,14 +257,14 @@ public class PeptideFragmenter {
                     adducts: adducts, cTerm: peptide.cTerminal)
                 result.append(yIon)
 
-                if i > 1, yIon.canLoseWater() {
+                if i > 1, yIon.canLoseWater {
                     let yIonLossOfWater = PeptideFragment(
                         residues: yIon.residues, fragmentType: .yIonMinusWater, index: i,
                         adducts: yIon.adducts, cTerm: peptide.cTerminal)
                     result.append(yIonLossOfWater)
                 }
 
-                if yIon.canLoseAmmonia() {
+                if yIon.canLoseAmmonia {
                     let yIonLossOfAmmonia = PeptideFragment(
                         residues: yIon.residues, fragmentType: .yIonMinusAmmonia, index: i,
                         adducts: yIon.adducts, cTerm: peptide.cTerminal)
@@ -290,7 +290,7 @@ public class PeptideFragmenter {
 
         return result.reversed().map { fragment in
             var updatedFragment = fragment
-            updatedFragment.parentLength = peptide.numberOfResidues
+            updatedFragment.parentLength = peptide.residueCount
             return updatedFragment
         }
     }

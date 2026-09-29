@@ -334,7 +334,7 @@ import Testing
     @Test func chargedResidues() {
         let fragment = PeptideFragment(sequence: "AWRKQNWSTEDWWSHTEDWQPRTYSAMPLER")
 
-        let numOfCharges = fragment.maxNumberOfCharges()
+        let numOfCharges = fragment.maximumChargeCount
         #expect(numOfCharges == 5)
     }
 

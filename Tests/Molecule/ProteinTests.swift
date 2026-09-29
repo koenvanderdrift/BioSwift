@@ -11,8 +11,42 @@ import Testing
 @Suite struct ProteinTests: BioSwiftTestSuite {
     var fixtures = BioSwiftTestFixtures()
     @Test func sequenceLength() {
-        #expect(testProtein.sequenceLength() == 418)
+        #expect(testProtein.sequenceLength == 418)
         #expect(testPeptide.sequenceString.count == 5)
+    }
+
+    @Test func moleculeExposesFirstChainSequenceProperties() {
+        let protein = Protein(sequences: ["PEPTIDE", "SECNDS"])
+
+        #expect(protein.sequence == "PEPTIDE")
+        #expect(protein.sequenceLength == 7)
+        #expect(protein.sequence(chainIndex: 1) == "SECNDS")
+        #expect(protein.sequenceLength(chainIndex: 1) == 6)
+    }
+
+    @Test func moleculeAccessesChainsByName() {
+        var first = Peptide(sequence: "PEPTIDE")
+        first.name = "alpha"
+        var second = Peptide(sequence: "SECNDS")
+        second.name = "beta"
+        let protein = Protein(chains: [first, second])
+
+        #expect(protein.chain(named: "beta")?.sequenceString == "SECNDS")
+        #expect(protein.chainIndex(named: "beta") == 1)
+        #expect(protein.sequence(chainName: "beta") == "SECNDS")
+        #expect(protein.sequenceLength(chainName: "beta") == 6)
+        #expect(protein.aminoAcids(chainName: "beta")?.count == 6)
+        #expect(protein.aminoAcid(at: 0, chainName: "beta")?.identifier == "S")
+        #expect(protein.sequence(chainName: "missing") == nil)
+    }
+
+    @Test func duplicateChainNamesResolveToFirstChain() {
+        var first = Peptide(sequence: "FIRST")
+        first.name = "shared"
+        var second = Peptide(sequence: "SECOND")
+        second.name = "shared"
+
+        #expect(Protein(chains: [first, second]).sequence(chainName: "shared") == "FIRST")
     }
 
     @Test func structuresExposeFormulaStringsDirectly() {
@@ -24,15 +58,15 @@ import Testing
     }
 
     @Test func proteinResidueCount() {
-        let cysCount = testProtein.countOneResidue(with: "C")
+        let cysCount = testProtein.residueCount(for: "C")
         #expect(cysCount == 3)
 
-        let glnCount = testProtein.countOneResidue(with: "Q")
+        let glnCount = testProtein.residueCount(for: "Q")
         #expect(glnCount == 18)
     }
 
     @Test func peptideResidueCount() {
-        let countedSet = testPeptide.countAllResidues()
+        let countedSet = testPeptide.residueCounts
 
         if let ser = aminoAcidLibrary.first(where: { $0.identifier == "S" }) {
             let aaCount = countedSet.count(for: ser)
@@ -42,11 +76,11 @@ import Testing
 
     @Test func sequenceLengthWithIllegalCharacters() {
         let protein = Protein(sequence: "D___WS83SD")
-        #expect(protein.sequenceLength() == 5)
+        #expect(protein.sequenceLength == 5)
     }
 
     @Test func proteinFormula() {
-        #expect(testProtein.formula.countFor(element: "C") == 2112)
+        #expect(testProtein.formula.elementCount(for: "C") == 2112)
     }  // C2112H3313N539O629S13
 
     @Test func proteinFormulaMatchesExplicitResidueFormulaSum() throws {
@@ -68,8 +102,8 @@ import Testing
 
     @Test func peptideFormula() {
         let peptide = Peptide(sequence: "DWSSD")
-        #expect(peptide.formula.countFor(element: "C") == 25)
-        #expect(peptide.formula.countFor(element: "P") == 0)
+        #expect(peptide.formula.elementCount(for: "C") == 25)
+        #expect(peptide.formula.elementCount(for: "P") == 0)
     }
 
     @Test func elementInitializedWithExplicitMassesRetainsThem() {
@@ -98,7 +132,7 @@ import Testing
             uniProtPTMAccession: "PTM-0253") {
             var peptide = Peptide(sequence: "DWSSD")
             peptide.addModification(modification, at: 3)
-            #expect(peptide.formula.countFor(element: "P") == 1)
+            #expect(peptide.formula.elementCount(for: "P") == 1)
         }
     }
 
@@ -274,14 +308,14 @@ import Testing
     }
 
     @Test mutating func proteinNTermMetLossMonoisotopicMass() {
-        if let metLoss = testProtein.nTermModifications().first(where: {
+        if let metLoss = testProtein.nTermModifications.first(where: {
             $0.name == "Met-loss"
         }),
-            let nTermLocation = testProtein.nTermLocation()
+            let nTermLocation = testProtein.nTermLocation
         {
             testProtein.setAdducts(type: protonAdduct, count: 1)
 
-            testProtein.addModification(mod: metLoss, at: nTermLocation)
+            testProtein.addModification(metLoss, at: nTermLocation)
             #expect(
                 testProtein.monoisotopicMass.rounded(scale: 1)
                     == (decimal("46708.0267") - decimal("131.040485)")).rounded(scale: 1))
@@ -294,14 +328,14 @@ import Testing
     }
 
     @Test mutating func proteinCTermLysLossMonoisotopicMass() {
-        if let lysLoss = testProtein.cTermModifications().first(where: {
+        if let lysLoss = testProtein.cTermModifications.first(where: {
             $0.name == "Lys-loss"
         }),
-            let cTermLocation = testProtein.cTermLocation()
+            let cTermLocation = testProtein.cTermLocation
         {
             testProtein.setAdducts(type: protonAdduct, count: 1)
 
-            testProtein.addModification(mod: lysLoss, at: cTermLocation)
+            testProtein.addModification(lysLoss, at: cTermLocation)
             #expect(testProtein.chains[0].residues.last?.modification == lysLoss)
             #expect(
                 testProtein.monoisotopicMass.formatted(fractionDigits: 1)
@@ -325,7 +359,7 @@ import Testing
             unimodName: "Phospho", psiModAccession: "MOD:00046",
             uniProtPTMAccession: "PTM-0253") {
             var protein = testProtein
-            protein.addModification(mod: modification, at: 3)
+            protein.addModification(modification, at: 3)
             protein.setAdducts(type: protonAdduct, count: 1)
             #expect(
                 protein.monoisotopicMass.formatted(fractionDigits: 1)
@@ -356,7 +390,7 @@ import Testing
             var protein = testProtein
             protein.modifyResidues(for: "C", with: modification)
 
-            #expect(protein.countOneResidue(with: "C") == 3)
+            #expect(protein.residueCount(for: "C") == 3)
         }
     }
 
@@ -388,8 +422,8 @@ import Testing
 
         debugPrint(formula3.formulaString)
 
-        #expect(formula3.countFor(element: "C") == 14)
-        #expect(formula3.countFor(element: "N") == 5)
+        #expect(formula3.elementCount(for: "C") == 14)
+        #expect(formula3.elementCount(for: "N") == 5)
     }
 
     @Test func formulaStringUsesHillSystemWithCarbon() {
@@ -418,13 +452,13 @@ import Testing
 
         debugPrint(formula3.formulaString)
 
-        #expect(formula3.countFor(element: "C") == 10)
-        #expect(formula3.countFor(element: "N") == 5)
+        #expect(formula3.elementCount(for: "C") == 10)
+        #expect(formula3.elementCount(for: "N") == 5)
     }
 
     @Test mutating func proteinAtomCount() {
         testProtein.setAdducts(type: protonAdduct, count: 1)
-        #expect(testProtein.formula.countAllElements() == 6606)
+        #expect(testProtein.formula.elementCount == 6606)
     }
 
     @Test func symbolAtIndex() {
@@ -437,13 +471,13 @@ import Testing
     @Test func proteinAminoAcidAndTermLocationsAreOptional() {
         #expect(testProtein.aminoAcid(at: 0)?.identifier == "M")
         #expect(testProtein.aminoAcid(at: -1) == nil)
-        #expect(testProtein.aminoAcid(at: 0, for: 10) == nil)
-        #expect(testProtein.nTermLocation() == 0)
-        #expect(testProtein.nTermLocation(for: 10) == nil)
-        #expect(Protein(sequence: "").nTermLocation() == nil)
-        #expect(testProtein.cTermLocation() == 417)
-        #expect(testProtein.cTermLocation(for: 10) == nil)
-        #expect(Protein(sequence: "").cTermLocation() == nil)
+        #expect(testProtein.aminoAcid(at: 0, chainIndex: 10) == nil)
+        #expect(testProtein.nTermLocation == 0)
+        #expect(testProtein.nTermLocation(chainIndex: 10) == nil)
+        #expect(Protein(sequence: "").nTermLocation == nil)
+        #expect(testProtein.cTermLocation == 417)
+        #expect(testProtein.cTermLocation(chainIndex: 10) == nil)
+        #expect(Protein(sequence: "").cTermLocation == nil)
     }
 
     @Test mutating func replaceAminoAcid() {
@@ -672,14 +706,14 @@ import Testing
 
         var protein = Protein(chains: [peptide1, peptide2])
 
-        #expect(protein.sequence(for: 0) == "AASAS")
-        #expect(protein.sequence(for: 1) == "AASASSSA")
+        #expect(protein.sequence(chainIndex: 0) == "AASAS")
+        #expect(protein.sequence(chainIndex: 1) == "AASASSSA")
 
-        #expect(protein.aminoAcids(for: 0).map {
+        #expect(protein.aminoAcids.map {
             $0.oneLetterCode
         } == ["A", "A", "S", "A", "S"])
         #expect(
-            protein.aminoAcids(for: 1).map {
+            protein.aminoAcids(chainIndex: 1).map {
                 $0.oneLetterCode
             } == [
                 "A", "A", "S", "A", "S", "S", "S", "A",
@@ -704,7 +738,7 @@ import Testing
             and: 3)
 
         #expect(protein.crossLinks == [crossLink])
-        #expect(protein.formula.countFor(element: "H") == unlinkedFormula.countFor(element: "H") - 2)
+        #expect(protein.formula.elementCount(for: "H") == unlinkedFormula.elementCount(for: "H") - 2)
         #expect(protein.masses == unlinkedMasses + disulfideBond.masses)
     }
 

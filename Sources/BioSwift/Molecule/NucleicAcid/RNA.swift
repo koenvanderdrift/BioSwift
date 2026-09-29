@@ -83,13 +83,28 @@ extension BioMolecule where ChainType == RNAChain {
         return RNA(chains: [chain])
     }
 
-    public func nucleotide(at location: Int, for chainIndex: Int = 0) -> Nucleotide? {
-        let values = nucleotides(for: chainIndex)
+    public func nucleotide(at location: Int, chainIndex: Int = 0) -> Nucleotide? {
+        let values = nucleotides(chainIndex: chainIndex)
         guard values.indices.contains(location) else { return nil }
         return values[location]
     }
 
-    public func nucleotides(for chainIndex: Int = 0) -> [Nucleotide] {
-        residues(for: chainIndex) as? [Nucleotide] ?? []
+    public func nucleotide(at location: Int, chainName: String) -> Nucleotide? {
+        guard let values = nucleotides(chainName: chainName), values.indices.contains(location) else {
+            return nil
+        }
+        return values[location]
+    }
+
+    public var nucleotides: [Nucleotide] {
+        nucleotides(chainIndex: 0)
+    }
+
+    public func nucleotides(chainIndex: Int) -> [Nucleotide] {
+        residues(chainIndex: chainIndex) as? [Nucleotide] ?? []
+    }
+
+    public func nucleotides(chainName: String) -> [Nucleotide]? {
+        chain(named: chainName)?.residues
     }
 }

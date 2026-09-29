@@ -194,7 +194,7 @@ extension Fragment where ChainType == Peptide, FragmentType == PeptideFragmentTy
         return chain.masses + fragmentType.massAdjustment
     }
 
-    public func canLoseWater() -> Bool {
+    public var canLoseWater: Bool {
         return sequenceString.containsAnyCharacter(in: "STED")
 
         //        if fragmentType == .bIon, let last = sequenceString.last {
@@ -206,11 +206,11 @@ extension Fragment where ChainType == Peptide, FragmentType == PeptideFragmentTy
         //        return result
     }
 
-    public func canLoseAmmonia() -> Bool {
+    public var canLoseAmmonia: Bool {
         return sequenceString.containsAnyCharacter(in: "RQNK")
     }
 
-    public func maxNumberOfCharges() -> Int {
+    public var maximumChargeCount: Int {
         return residues.filter { $0.properties.contains(.chargedPositive) }.count
     }
 }

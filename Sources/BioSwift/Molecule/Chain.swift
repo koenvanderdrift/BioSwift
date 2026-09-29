@@ -63,7 +63,7 @@ extension Chain {
     }
 
     public var sequenceLength: Int {
-        numberOfResidues
+        residueCount
     }
 
     public var symbolSequence: [Symbol] {
@@ -90,15 +90,15 @@ extension Chain {
         return residues[index]
     }
 
-    public var numberOfResidues: Int {
+    public var residueCount: Int {
         residues.count
     }
 
-    public func countAllResidues() -> NSCountedSet {
+    public var residueCounts: NSCountedSet {
         NSCountedSet(array: residues)
     }
 
-    public func countOneResidue(with identifier: String) -> Int {
+    public func residueCount(for identifier: String) -> Int {
         var count = 0
 
         for residue in residues where residue.oneLetterCode == identifier {
@@ -590,7 +590,7 @@ extension Chain {
 extension Chain where ResidueType == AminoAcid {
     public func allowedModifications(at location: Int) -> [Modification]? {
         if let residue = residue(at: location) {
-            return residue.allowedModifications()
+            return residue.allowedModifications
         }
 
         return nil
@@ -598,7 +598,7 @@ extension Chain where ResidueType == AminoAcid {
 }
 
 extension Chain {
-    public func getModifications() -> [Modification] {
+    public var modifications: [Modification] {
         var result: [Modification] = []
 
         for residue in residues { if let mod = residue.modification { result.append(mod) } }

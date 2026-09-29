@@ -236,7 +236,7 @@ public struct Formula: Codable, Sendable {
         masses = calculateMasses()
     }
 
-    public func countFor(element: String) -> Int {
+    public func elementCount(for element: String) -> Int {
         var result = 0
 
         for (key, value) in countedElements { if key.symbol == element { result += value } }
@@ -244,7 +244,7 @@ public struct Formula: Codable, Sendable {
         return result
     }
 
-    public func countAllElements() -> Int {
+    public var elementCount: Int {
         var result = 0
 
         for (_, value) in countedElements {

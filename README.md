@@ -49,21 +49,36 @@ let rna = RNA(sequence: "GAUUACA")
 
 let multiChainProtein = Protein(sequences: ["MPEPTIDE", "ANOTHER"])
 
-print(protein.sequence())
-print(dna.sequenceLength())
+print(protein.sequence)
+print(dna.sequenceLength)
 ```
 
 Sequence positions and ranges throughout BioSwift are zero-based. Swift ranges are
 half-open, so `2..<5` contains positions 2, 3, and 4.
+
+The convenience properties return the first chain. For multi-chain molecules, use
+`sequence(chainIndex:)` and `sequenceLength(chainIndex:)` with an explicit chain index,
+or use a chain's name:
+
+```swift
+var chain = Peptide(sequence: "ANOTHER")
+chain.name = "light chain"
+let namedProtein = Protein(chains: [chain])
+
+print(namedProtein.sequence(chainName: "light chain") as Any) // Optional("ANOTHER")
+```
+
+Name-based accessors return `nil` when no chain has that name. If names are duplicated,
+they deterministically select the first matching chain.
 
 ### DNA and RNA transformations
 
 ```swift
 let dna = DNA(sequence: "ATCG")
 
-print(dna.complement.sequence())        // TAGC
-print(dna.reverse.sequence())           // GCTA
-print(dna.reverseComplement.sequence()) // CGAT
+print(dna.complement.sequence)        // TAGC
+print(dna.reverse.sequence)           // GCTA
+print(dna.reverseComplement.sequence) // CGAT
 ```
 
 The same properties are available on `RNA`, `DNAChain`, and `RNAChain`.
@@ -75,8 +90,8 @@ let dna = DNA(sequence: "ATGGCC")
 let rna = dna.transcribed()
 let protein = dna.translated()
 
-print(rna.sequence())     // AUGGCC
-print(protein.sequence()) // MA
+print(rna.sequence)     // AUGGCC
+print(protein.sequence) // MA
 ```
 
 ## Sequence alignment
