@@ -10,21 +10,26 @@ import Foundation
 /// Calculates protein absorbance properties at 280 nm.
 ///
 /// The molar extinction coefficient is calculated as:
-/// `ε = (nW × 5500) + (nY × 1490) + (nC × 125)`.
+/// `ε = (nW × 5500) + (nY × 1490) + (disulfideCount × 125)`.
 public enum ExtinctionCoefficientCalculator {
-    public static func molarExtinctionCoefficient(for aminoAcids: [AminoAcid]) -> Double {
-        aminoAcids.reduce(into: 0.0) { coefficient, aminoAcid in
+    public static func molarExtinctionCoefficient(
+        for aminoAcids: [AminoAcid],
+        disulfideCount: Int = 0
+    ) -> Double {
+        precondition(disulfideCount >= 0, "Disulfide count cannot be negative")
+
+        let aromaticContribution = aminoAcids.reduce(into: 0.0) { coefficient, aminoAcid in
             switch aminoAcid.oneLetterCode {
             case "W":
                 coefficient += 5_500
             case "Y":
                 coefficient += 1_490
-            case "C":
-                coefficient += 125
             default:
                 break
             }
         }
+
+        return aromaticContribution + Double(disulfideCount) * 125
     }
 
     /// Returns the extinction coefficient for a 1% (10 mg/mL) solution.
@@ -72,9 +77,17 @@ public enum ExtinctionCoefficientCalculator {
 }
 
 extension AminoAcidChain {
-    /// The molar extinction coefficient at 280 nm in M⁻¹ cm⁻¹.
+    /// The molar extinction coefficient at 280 nm in M⁻¹ cm⁻¹, assuming no disulfide bonds.
     public var molarExtinctionCoefficient: Double {
-        ExtinctionCoefficientCalculator.molarExtinctionCoefficient(for: residues)
+        molarExtinctionCoefficient(disulfideCount: 0)
+    }
+
+    /// Returns the molar extinction coefficient at 280 nm in M⁻¹ cm⁻¹.
+    public func molarExtinctionCoefficient(disulfideCount: Int) -> Double {
+        ExtinctionCoefficientCalculator.molarExtinctionCoefficient(
+            for: residues,
+            disulfideCount: disulfideCount
+        )
     }
 
     /// The extinction coefficient for a 1% (10 mg/mL) solution at 280 nm.
@@ -97,11 +110,17 @@ extension AminoAcidChain {
 }
 
 extension BioMolecule where ChainType.ResidueType == AminoAcid {
-    /// The combined molar extinction coefficient at 280 nm in M⁻¹ cm⁻¹.
+    /// The combined molar extinction coefficient at 280 nm in M⁻¹ cm⁻¹, assuming no disulfide bonds.
     public var molarExtinctionCoefficient: Double {
-        chains.reduce(0) {
-            $0 + ExtinctionCoefficientCalculator.molarExtinctionCoefficient(for: $1.residues)
-        }
+        molarExtinctionCoefficient(disulfideCount: 0)
+    }
+
+    /// Returns the combined molar extinction coefficient at 280 nm in M⁻¹ cm⁻¹.
+    public func molarExtinctionCoefficient(disulfideCount: Int) -> Double {
+        ExtinctionCoefficientCalculator.molarExtinctionCoefficient(
+            for: chains.flatMap(\.residues),
+            disulfideCount: disulfideCount
+        )
     }
 
     /// The extinction coefficient for a 1% (10 mg/mL) solution at 280 nm.

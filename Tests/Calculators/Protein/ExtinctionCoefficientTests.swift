@@ -13,13 +13,22 @@ struct ExtinctionCoefficientTests {
     @Test func calculatesWeightedMolarCoefficient() {
         let peptide = Peptide(sequence: "WWYYCCC")
 
-        #expect(peptide.molarExtinctionCoefficient == 14_355)
+        #expect(peptide.molarExtinctionCoefficient == 13_980)
+        #expect(peptide.molarExtinctionCoefficient(disulfideCount: 1) == 14_105)
+    }
+
+    @Test func usesExplicitDisulfideCountForP01009Composition() {
+        let peptide = Peptide(sequence: "WWWYYYYYYCCC")
+
+        #expect(peptide.molarExtinctionCoefficient == 25_440)
+        #expect(peptide.molarExtinctionCoefficient(disulfideCount: 1) == 25_565)
     }
 
     @Test func combinesAllProteinChains() {
         let protein = Protein(sequences: ["WY", "CC"])
 
-        #expect(protein.molarExtinctionCoefficient == 7_240)
+        #expect(protein.molarExtinctionCoefficient == 6_990)
+        #expect(protein.molarExtinctionCoefficient(disulfideCount: 1) == 7_115)
     }
 
     @Test func calculatesConcentrationsUsingBeerLambertLaw() throws {
