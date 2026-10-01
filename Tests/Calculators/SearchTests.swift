@@ -153,6 +153,28 @@ import Testing
     }
 
     @Test(arguments: [
+        MassTolerance.ppm(1),
+        MassTolerance.dalton(1),
+        MassTolerance.percent(1),
+        MassTolerance.mmu(1),
+    ])
+    func massToleranceValuePreservesUnit(initialTolerance: MassTolerance) {
+        let value = decimal("0.1000000000000000001")
+        var tolerance = initialTolerance
+
+        #expect(tolerance.value == 1)
+        tolerance.value = value
+        #expect(tolerance.value == value)
+
+        switch (initialTolerance, tolerance) {
+        case (.ppm, .ppm), (.dalton, .dalton), (.percent, .percent), (.mmu, .mmu):
+            break
+        default:
+            Issue.record("Updating a tolerance value changed its unit")
+        }
+    }
+
+    @Test(arguments: [
         (MassTolerance.ppm(10), decimal("99.999"), decimal("100.001")),
         (MassTolerance.dalton(decimal("0.25")), decimal("99.75"), decimal("100.25")),
         (MassTolerance.percent(decimal("0.5")), decimal("99.5"), decimal("100.5")),

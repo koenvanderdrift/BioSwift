@@ -25,6 +25,29 @@ public enum MassTolerance: Codable, Equatable, Sendable {
     case mmu(Decimal)
 }
 
+extension MassTolerance {
+    public var value: Decimal {
+        get {
+            switch self {
+            case .ppm(let value), .dalton(let value), .percent(let value), .mmu(let value):
+                value
+            }
+        }
+        set {
+            switch self {
+            case .ppm:
+                self = .ppm(newValue)
+            case .dalton:
+                self = .dalton(newValue)
+            case .percent:
+                self = .percent(newValue)
+            case .mmu:
+                self = .mmu(newValue)
+            }
+        }
+    }
+}
+
 public struct MassSearchParameters: Codable, Equatable, Sendable {
     public var searchValue: Dalton
     public var tolerance: MassTolerance
