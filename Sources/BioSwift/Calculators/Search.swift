@@ -26,6 +26,17 @@ public enum MassTolerance: Codable, Equatable, Sendable {
 }
 
 extension MassTolerance {
+    public enum Unit: String, CaseIterable, Codable, Identifiable, Sendable {
+        case ppm
+        case dalton = "Da"
+        case percent = "%"
+        case mmu
+
+        public var id: Self {
+            self
+        }
+    }
+
     public var value: Decimal {
         get {
             switch self {
@@ -43,6 +54,33 @@ extension MassTolerance {
                 self = .percent(newValue)
             case .mmu:
                 self = .mmu(newValue)
+            }
+        }
+    }
+
+    public var unit: Unit {
+        get {
+            switch self {
+            case .ppm:
+                .ppm
+            case .dalton:
+                .dalton
+            case .percent:
+                .percent
+            case .mmu:
+                .mmu
+            }
+        }
+        set {
+            switch newValue {
+            case .ppm:
+                self = .ppm(value)
+            case .dalton:
+                self = .dalton(value)
+            case .percent:
+                self = .percent(value)
+            case .mmu:
+                self = .mmu(value)
             }
         }
     }

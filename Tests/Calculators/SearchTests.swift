@@ -174,6 +174,22 @@ import Testing
         }
     }
 
+    @Test(arguments: MassTolerance.Unit.allCases)
+    func massToleranceUnitPreservesValue(unit: MassTolerance.Unit) {
+        let value = decimal("0.1000000000000000001")
+        var tolerance = MassTolerance.ppm(value)
+
+        tolerance.unit = unit
+
+        #expect(tolerance.value == value)
+        #expect(tolerance.unit == unit)
+    }
+
+    @Test func massToleranceUnitsHaveDisplayValues() {
+        #expect(MassTolerance.Unit.allCases == [.ppm, .dalton, .percent, .mmu])
+        #expect(MassTolerance.Unit.allCases.map(\.rawValue) == ["ppm", "Da", "%", "mmu"])
+    }
+
     @Test(arguments: [
         (MassTolerance.ppm(10), decimal("99.999"), decimal("100.001")),
         (MassTolerance.dalton(decimal("0.25")), decimal("99.75"), decimal("100.25")),
