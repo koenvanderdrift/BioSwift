@@ -18,47 +18,11 @@ public enum SearchType: Int, Codable, Identifiable, Equatable, Sendable {
     }
 }
 
-public enum MassToleranceType: String, CaseIterable, Codable, Identifiable, Equatable, Sendable {
-    case ppm
-    case dalton = "Da"
-    case percent = "%"
-    case mmu
-
-    public var id: Self {
-        self
-    }
-}
-
-extension MassToleranceType {
-    public var minValue: Dalton {
-        0.0
-    }
-
-    public var maxValue: Dalton {
-        switch self {
-        case .ppm:
-            return 10000.0
-
-        case .dalton:
-            return 10.0
-
-        case .percent:
-            return 1.0
-
-        case .mmu:
-            return 10000.0
-        }
-    }
-}
-
-public struct MassTolerance: Codable, Equatable, Sendable {
-    public var type: MassToleranceType
-    public var value: Dalton
-
-    public init(type: MassToleranceType, value: Dalton) {
-        self.type = type
-        self.value = value
-    }
+public enum MassTolerance: Codable, Equatable, Sendable {
+    case ppm(Decimal)
+    case dalton(Dalton)
+    case percent(Decimal)
+    case mmu(Decimal)
 }
 
 public struct MassSearchParameters: Codable, Equatable, Sendable {
@@ -80,27 +44,26 @@ public struct MassSearchParameters: Codable, Equatable, Sendable {
     }
 
     public var massRange: MassRange {
-        var minMass = Dalton(0.0)
-        var maxMass = Dalton(0.0)
-        let toleranceValue = tolerance.value
+        let minMass: Dalton
+        let maxMass: Dalton
 
-        switch tolerance.type {
-        case .ppm:
-            let delta = toleranceValue / 1_000_000
+        switch tolerance {
+        case .ppm(let value):
+            let delta = value / 1_000_000
             minMass = (1 - delta) * searchValue
             maxMass = (1 + delta) * searchValue
 
-        case .dalton:
-            minMass = searchValue - toleranceValue
-            maxMass = searchValue + toleranceValue
+        case .dalton(let value):
+            minMass = searchValue - value
+            maxMass = searchValue + value
 
-        case .percent:
-            minMass = searchValue - (toleranceValue * searchValue) / 100
-            maxMass = searchValue + (toleranceValue * searchValue) / 100
+        case .percent(let value):
+            minMass = searchValue - (value * searchValue) / 100
+            maxMass = searchValue + (value * searchValue) / 100
 
-        case .mmu:
-            minMass = searchValue - toleranceValue / 1000
-            maxMass = searchValue + toleranceValue / 1000
+        case .mmu(let value):
+            minMass = searchValue - value / 1000
+            maxMass = searchValue + value / 1000
         }
 
         return minMass...maxMass

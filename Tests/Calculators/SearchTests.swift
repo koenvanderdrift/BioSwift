@@ -13,7 +13,7 @@ import Testing
     @Test func lowMassSearch() {
         if let chain = testProtein.chains.first {
             let searchParameters = MassSearchParameters(
-                searchValue: 1, tolerance: MassTolerance(type: .ppm, value: 10),
+                searchValue: 1, tolerance: .ppm(10),
                 searchType: .sequential, massType: .monoisotopic, charge: 0)
 
             let ranges: [Range<Int>] = chain.searchMass(params: searchParameters)
@@ -25,7 +25,7 @@ import Testing
     @Test func moverzSearch() {
         if let chain = testProtein.chains.first {
             let searchParameters = MassSearchParameters(
-                searchValue: 890.3877, tolerance: MassTolerance(type: .ppm, value: 10),
+                searchValue: 890.3877, tolerance: .ppm(10),
                 searchType: .sequential, massType: .monoisotopic, charge: 2)
 
             let ranges = measure("Sliding Window") {
@@ -56,7 +56,7 @@ import Testing
 
         if let chain = longTest.chains.first {
             let searchParameters = MassSearchParameters(
-                searchValue: 10355.6744, tolerance: MassTolerance(type: .ppm, value: 10),
+                searchValue: 10355.6744, tolerance: .ppm(10),
                 searchType: .sequential, massType: .monoisotopic, charge: 1)
 
             let ranges = measure("Sliding Window") {
@@ -88,7 +88,7 @@ import Testing
             chain.addModification(modification, at: 76)
 
             let searchParameters = MassSearchParameters(
-                searchValue: 689.28, tolerance: MassTolerance(type: .ppm, value: 10),
+                searchValue: 689.28, tolerance: .ppm(10),
                 searchType: .sequential, massType: .monoisotopic, charge: 0)
 
             let ranges: [Range<Int>] = chain.searchMass(params: searchParameters)
@@ -105,7 +105,7 @@ import Testing
     @Test func averageMassSearch() {
         if let chain = testProtein.chains.first {
             let searchParameters = MassSearchParameters(
-                searchValue: 609.71, tolerance: MassTolerance(type: .ppm, value: 10),
+                searchValue: 609.71, tolerance: .ppm(10),
                 searchType: .sequential, massType: .average, charge: 0)
 
             let ranges: [Range<Int>] = chain.searchMass(params: searchParameters)
@@ -128,7 +128,7 @@ import Testing
         let targetMass = Dalton(Peptide(sequence: targetSequence).nominalMass)
         let searchParameters = MassSearchParameters(
             searchValue: targetMass,
-            tolerance: MassTolerance(type: .dalton, value: 0),
+            tolerance: .dalton(0),
             searchType: .sequential,
             massType: .nominal,
             charge: 0)
@@ -141,10 +141,26 @@ import Testing
 
     @Test func massTolerancePreservesDecimalValue() {
         let value = decimal("0.1000000000000000001")
-        let tolerance = MassTolerance(type: .dalton, value: value)
+        let parameters = MassSearchParameters(
+            searchValue: 100,
+            tolerance: .dalton(value),
+            searchType: .sequential,
+            massType: .monoisotopic,
+            charge: 0
+        )
+        #expect(parameters.massRange.lowerBound == 100 - value)
+        #expect(parameters.massRange.upperBound == 100 + value)
+    }
 
-        #expect(tolerance.value == value)
-
+    @Test(arguments: [
+        (MassTolerance.ppm(10), decimal("99.999"), decimal("100.001")),
+        (MassTolerance.dalton(decimal("0.25")), decimal("99.75"), decimal("100.25")),
+        (MassTolerance.percent(decimal("0.5")), decimal("99.5"), decimal("100.5")),
+        (MassTolerance.mmu(250), decimal("99.75"), decimal("100.25")),
+    ])
+    func massToleranceRanges(
+        tolerance: MassTolerance, expectedLowerBound: Dalton, expectedUpperBound: Dalton
+    ) {
         let parameters = MassSearchParameters(
             searchValue: 100,
             tolerance: tolerance,
@@ -152,8 +168,9 @@ import Testing
             massType: .monoisotopic,
             charge: 0
         )
-        #expect(parameters.massRange.lowerBound == 100 - value)
-        #expect(parameters.massRange.upperBound == 100 + value)
+
+        #expect(parameters.massRange.lowerBound == expectedLowerBound)
+        #expect(parameters.massRange.upperBound == expectedUpperBound)
     }
 
     @Test func checkMassDifferences() {
