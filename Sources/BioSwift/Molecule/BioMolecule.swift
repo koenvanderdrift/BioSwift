@@ -224,6 +224,143 @@ extension BioMolecule {
         return sub.residueCount
     }
 
+    public mutating func insertResidue(
+        _ residue: ChainType.ResidueType,
+        at location: Int,
+        chainIndex: Int = 0
+    ) throws {
+        try insertResidues([residue], at: location, chainIndex: chainIndex)
+    }
+
+    public func insertingResidue(
+        _ residue: ChainType.ResidueType,
+        at location: Int,
+        chainIndex: Int = 0
+    ) throws -> Self {
+        var copy = self
+        try copy.insertResidue(residue, at: location, chainIndex: chainIndex)
+        return copy
+    }
+
+    public mutating func insertResidues(
+        _ newResidues: [ChainType.ResidueType],
+        at location: Int,
+        chainIndex: Int = 0
+    ) throws {
+        guard chains.indices.contains(chainIndex) else {
+            throw CrossLinkError.invalidChainIndex(chainIndex)
+        }
+
+        guard newResidues.isEmpty == false else {
+            return
+        }
+
+        let chainID = chains[chainIndex].id
+        try chains[chainIndex].insertResidues(newResidues, at: location)
+        remapCrossLinks(on: chainID) { site in
+            CrossLinkSite(
+                chainID: site.chainID,
+                residueIndex: site.residueIndex >= location
+                    ? site.residueIndex + newResidues.count
+                    : site.residueIndex
+            )
+        }
+    }
+
+    public func insertingResidues(
+        _ newResidues: [ChainType.ResidueType],
+        at location: Int,
+        chainIndex: Int = 0
+    ) throws -> Self {
+        var copy = self
+        try copy.insertResidues(newResidues, at: location, chainIndex: chainIndex)
+        return copy
+    }
+
+    public mutating func removeResidue(
+        at location: Int,
+        chainIndex: Int = 0
+    ) throws {
+        guard chains.indices.contains(chainIndex) else {
+            throw CrossLinkError.invalidChainIndex(chainIndex)
+        }
+
+        guard chains[chainIndex].residues.indices.contains(location) else {
+            throw ChainEditingError.indexOutOfBounds(
+                index: location,
+                residueCount: chains[chainIndex].residues.count
+            )
+        }
+
+        try removeResidues(in: location..<(location + 1), chainIndex: chainIndex)
+    }
+
+    public func removingResidue(
+        at location: Int,
+        chainIndex: Int = 0
+    ) throws -> Self {
+        var copy = self
+        try copy.removeResidue(at: location, chainIndex: chainIndex)
+        return copy
+    }
+
+    /// Removes a residue range from one chain and maintains molecule cross-links.
+    ///
+    /// Cross-links touching a removed residue are deleted. Retained endpoints on
+    /// the edited chain are shifted with ``RangeRemovalMapping``; endpoints on
+    /// other chains and retained cross-link identifiers remain unchanged.
+    public mutating func removeResidues(
+        in range: Range<Int>,
+        chainIndex: Int = 0
+    ) throws {
+        guard chains.indices.contains(chainIndex) else {
+            throw CrossLinkError.invalidChainIndex(chainIndex)
+        }
+
+        let chainID = chains[chainIndex].id
+        try chains[chainIndex].removeResidues(in: range)
+
+        let mapping = RangeRemovalMapping(removedRange: range)
+        remapCrossLinks(on: chainID) { site in
+            guard let residueIndex = mapping.map(site.residueIndex) else {
+                return nil
+            }
+
+            return CrossLinkSite(chainID: site.chainID, residueIndex: residueIndex)
+        }
+    }
+
+    public func removingResidues(
+        in range: Range<Int>,
+        chainIndex: Int = 0
+    ) throws -> Self {
+        var copy = self
+        try copy.removeResidues(in: range, chainIndex: chainIndex)
+        return copy
+    }
+
+    public mutating func replaceResidue(
+        at location: Int,
+        with residue: ChainType.ResidueType,
+        chainIndex: Int = 0
+    ) throws {
+        guard chains.indices.contains(chainIndex) else {
+            throw CrossLinkError.invalidChainIndex(chainIndex)
+        }
+
+        try chains[chainIndex].replaceResidue(at: location, with: residue)
+    }
+
+    public func replacingResidue(
+        at location: Int,
+        with residue: ChainType.ResidueType,
+        chainIndex: Int = 0
+    ) throws -> Self {
+        var copy = self
+        try copy.replaceResidue(at: location, with: residue, chainIndex: chainIndex)
+        return copy
+    }
+
     public mutating func addModification(
         _ modification: Modification,
         at location: Int,
@@ -262,6 +399,40 @@ extension BioMolecule {
         }
 
         chains[chainIndex].removeModifications(for: identifier)
+    }
+}
+
+private extension BioMolecule {
+    mutating func remapCrossLinks(
+        on chainID: UUID,
+        transform: (CrossLinkSite) -> CrossLinkSite?
+    ) {
+        crossLinks = crossLinks.compactMap { crossLink in
+            let firstSite: CrossLinkSite?
+            if crossLink.firstSite.chainID == chainID {
+                firstSite = transform(crossLink.firstSite)
+            } else {
+                firstSite = crossLink.firstSite
+            }
+
+            let secondSite: CrossLinkSite?
+            if crossLink.secondSite.chainID == chainID {
+                secondSite = transform(crossLink.secondSite)
+            } else {
+                secondSite = crossLink.secondSite
+            }
+
+            guard let firstSite, let secondSite else {
+                return nil
+            }
+
+            return CrossLink(
+                id: crossLink.id,
+                modification: crossLink.modification,
+                firstSite: firstSite,
+                secondSite: secondSite
+            )
+        }
     }
 }
 

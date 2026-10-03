@@ -41,6 +41,13 @@ public protocol Chain: Identifiable {
     init(residues: [ResidueType])
 }
 
+/// Errors produced by validated structural edits to a chain.
+public enum ChainEditingError: Error, Equatable, Sendable {
+    case indexOutOfBounds(index: Int, residueCount: Int)
+    case rangeOutOfBounds(range: Range<Int>, residueCount: Int)
+    case incompatibleResidueType
+}
+
 extension Chain {
     public var charge: Charge {
         adducts.reduce(0) { $0 + $1.charge }
@@ -52,6 +59,18 @@ extension Chain {
 
     public mutating func setAdducts(type: Adduct, count: Int) {
         setAdducts(Array(repeating: type, count: count))
+    }
+
+    public func withAdducts(_ adducts: [Adduct]) -> Self {
+        var copy = self
+        copy.setAdducts(adducts)
+        return copy
+    }
+
+    public func withAdducts(type: Adduct, count: Int) -> Self {
+        var copy = self
+        copy.setAdducts(type: type, count: count)
+        return copy
     }
 
     public static func == (lhs: Self, rhs: Self) -> Bool {
@@ -228,6 +247,12 @@ extension AminoAcidChain {
         nTerminal = nTerm
         cTerminal = cTerm
     }
+
+    public func withTermini(nTerm: Modification, cTerm: Modification) -> Self {
+        var copy = self
+        copy.setTermini(nTerm: nTerm, cTerm: cTerm)
+        return copy
+    }
 }
 
 extension Chain where ResidueType == AminoAcid {
@@ -295,72 +320,185 @@ extension AminoAcidChain {
 }
 
 extension Chain {
-    public mutating func insertResidue(_ residue: ResidueType, at location: Int) {
+    public mutating func insertResidue(_ residue: ResidueType, at location: Int) throws {
         guard residues.indices.contains(location) || location == residues.endIndex else {
-            return
+            throw ChainEditingError.indexOutOfBounds(
+                index: location,
+                residueCount: residues.count
+            )
         }
 
         residues.insert(residue, at: location)
+        normalizeEditedSequenceMetadata()
     }
 
-    public mutating func insertResidue(_ residue: any Residue, at location: Int) {
+    public mutating func insertResidue(_ residue: any Residue, at location: Int) throws {
         guard let residue = residue as? ResidueType else {
-            return
+            throw ChainEditingError.incompatibleResidueType
         }
 
-        insertResidue(residue, at: location)
+        try insertResidue(residue, at: location)
     }
 
-    public mutating func insertResidues(_ newResidues: [ResidueType], at location: Int) {
+    public mutating func insertResidues(_ newResidues: [ResidueType], at location: Int) throws {
         guard location >= residues.startIndex, location <= residues.endIndex else {
+            throw ChainEditingError.indexOutOfBounds(
+                index: location,
+                residueCount: residues.count
+            )
+        }
+
+        guard newResidues.isEmpty == false else {
             return
         }
 
         residues.insert(contentsOf: newResidues, at: location)
+        normalizeEditedSequenceMetadata()
     }
 
-    public mutating func insertResidues(_ newResidues: [any Residue], at location: Int) {
+    public mutating func insertResidues(_ newResidues: [any Residue], at location: Int) throws {
         let typedResidues = newResidues.compactMap {
             $0 as? ResidueType
         }
 
         guard typedResidues.count == newResidues.count else {
-            return
+            throw ChainEditingError.incompatibleResidueType
         }
 
-        insertResidues(typedResidues, at: location)
+        try insertResidues(typedResidues, at: location)
     }
 
-    public mutating func removeResidue(at location: Int) {
+    public mutating func removeResidue(at location: Int) throws {
         guard residues.indices.contains(location) else {
-            return
+            throw ChainEditingError.indexOutOfBounds(
+                index: location,
+                residueCount: residues.count
+            )
         }
 
         residues.remove(at: location)
+        normalizeEditedSequenceMetadata()
     }
 
-    public mutating func removeResidues(in range: Range<Int>) {
-        guard range.lowerBound >= residues.startIndex, range.upperBound <= residues.endIndex else {
+    public mutating func removeResidues(in range: Range<Int>) throws {
+        guard range.isValidRange,
+            range.lowerBound >= residues.startIndex,
+            range.upperBound <= residues.endIndex
+        else {
+            throw ChainEditingError.rangeOutOfBounds(
+                range: range,
+                residueCount: residues.count
+            )
+        }
+
+        guard range.isEmpty == false else {
             return
         }
 
         residues.removeSubrange(range)
+        normalizeEditedSequenceMetadata()
     }
 
-    public mutating func replaceResidue(at location: Int, with residue: ResidueType) {
+    public mutating func replaceResidue(at location: Int, with residue: ResidueType) throws {
         guard residues.indices.contains(location) else {
-            return
+            throw ChainEditingError.indexOutOfBounds(
+                index: location,
+                residueCount: residues.count
+            )
         }
 
         residues[location] = residue
+        normalizeEditedSequenceMetadata()
     }
 
-    public mutating func replaceResidue(at location: Int, with residue: any Residue) {
+    public mutating func replaceResidue(at location: Int, with residue: any Residue) throws {
         guard let residue = residue as? ResidueType else {
-            return
+            throw ChainEditingError.incompatibleResidueType
         }
 
-        replaceResidue(at: location, with: residue)
+        try replaceResidue(at: location, with: residue)
+    }
+
+    public func insertingResidue(_ residue: ResidueType, at location: Int) throws -> Self {
+        var copy = self
+        try copy.insertResidue(residue, at: location)
+        return copy
+    }
+
+    public func insertingResidue(_ residue: any Residue, at location: Int) throws -> Self {
+        var copy = self
+        try copy.insertResidue(residue, at: location)
+        return copy
+    }
+
+    public func insertingResidues(_ newResidues: [ResidueType], at location: Int) throws -> Self {
+        var copy = self
+        try copy.insertResidues(newResidues, at: location)
+        return copy
+    }
+
+    public func insertingResidues(_ newResidues: [any Residue], at location: Int) throws -> Self {
+        var copy = self
+        try copy.insertResidues(newResidues, at: location)
+        return copy
+    }
+
+    public func removingResidue(at location: Int) throws -> Self {
+        var copy = self
+        try copy.removeResidue(at: location)
+        return copy
+    }
+
+    /// Returns a copy with the residues in a zero-based, half-open range removed.
+    ///
+    /// This is a structural edit. Conformer-specific state that is not stored on
+    /// the removed residues is preserved, including an amino-acid chain's
+    /// N- and C-terminal modifications. Removing an endpoint can expose a new
+    /// biological terminus, so callers modeling cleavage should explicitly set
+    /// its chemistry with ``AminoAcidChain/withTermini(nTerm:cTerm:)``.
+    ///
+    /// For example, after removing an N-terminal signal peptide:
+    ///
+    /// ```swift
+    /// let matureChain = try precursor
+    ///     .removingResidues(in: signalPeptideRange)
+    ///     .withTermini(
+    ///         nTerm: hydrogenModification,
+    ///         cTerm: precursor.cTerminal
+    ///     )
+    /// ```
+    ///
+    /// After removing a C-terminal lysine:
+    ///
+    /// ```swift
+    /// let matureChain = try precursor
+    ///     .removingResidues(in: lysineRange)
+    ///     .withTermini(
+    ///         nTerm: precursor.nTerminal,
+    ///         cTerm: hydroxylModification
+    ///     )
+    /// ```
+    public func removingResidues(in range: Range<Int>) throws -> Self {
+        var copy = self
+        try copy.removeResidues(in: range)
+        return copy
+    }
+
+    public func replacingResidue(at location: Int, with residue: ResidueType) throws -> Self {
+        var copy = self
+        try copy.replaceResidue(at: location, with: residue)
+        return copy
+    }
+
+    public func replacingResidue(at location: Int, with residue: any Residue) throws -> Self {
+        var copy = self
+        try copy.replaceResidue(at: location, with: residue)
+        return copy
+    }
+
+    private mutating func normalizeEditedSequenceMetadata() {
+        range = residues.startIndex..<residues.endIndex
+        parentLength = residues.count
     }
 }
 
@@ -620,12 +758,24 @@ extension Chain {
         residues[loc].modification = mod
     }
 
+    public func addingModification(_ modification: Modification, at location: Int) -> Self {
+        var copy = self
+        copy.addModification(modification, at: location)
+        return copy
+    }
+
     public mutating func removeModification(at loc: Int) {
         guard residues.indices.contains(loc) else {
             return
         }
 
         residues[loc].modification = nil
+    }
+
+    public func removingModification(at location: Int) -> Self {
+        var copy = self
+        copy.removeModification(at: location)
+        return copy
     }
 
     public mutating func modifyResidues(for identifier: String, with modification: Modification) {
@@ -636,11 +786,26 @@ extension Chain {
         }
     }
 
+    public func modifyingResidues(
+        for identifier: String,
+        with modification: Modification
+    ) -> Self {
+        var copy = self
+        copy.modifyResidues(for: identifier, with: modification)
+        return copy
+    }
+
     public mutating func removeModifications(for identifier: String) {
         for index in residues.indices {
             if residues[index].identifier == identifier {
                 residues[index].modification = nil
             }
         }
+    }
+
+    public func removingModifications(for identifier: String) -> Self {
+        var copy = self
+        copy.removeModifications(for: identifier)
+        return copy
     }
 }

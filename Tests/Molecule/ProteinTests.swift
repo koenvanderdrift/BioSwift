@@ -520,31 +520,31 @@ import Testing
         #expect(Protein(sequence: "").cTermLocation == nil)
     }
 
-    @Test mutating func replaceAminoAcid() {
+    @Test mutating func replaceAminoAcid() throws {
         #expect(testPeptide.sequenceString == "DWSSD")
 
         if let gly = aminoAcidLibrary.first(where: { $0.identifier == "G" }) {
-            testPeptide.replaceResidue(at: 0, with: gly)
+            try testPeptide.replaceResidue(at: 0, with: gly)
             #expect(testPeptide.sequenceString == "GWSSD")
         }
     }
 
-    @Test mutating func removeAminoAcid() {
+    @Test mutating func removeAminoAcid() throws {
         #expect(testPeptide.sequenceString == "DWSSD")
-        testPeptide.removeResidue(at: 3)
+        try testPeptide.removeResidue(at: 3)
         #expect(testPeptide.sequenceString == "DWSD")
     }
 
-    @Test mutating func insertAminoAcid() {
+    @Test mutating func insertAminoAcid() throws {
         #expect(testPeptide.sequenceString == "DWSSD")
         if let gly = aminoAcidLibrary.first(where: { $0.identifier == "G" }) {
-            testPeptide.insertResidue(gly, at: 2)
+            try testPeptide.insertResidue(gly, at: 2)
         }
 
         #expect(testPeptide.sequenceString == "DWGSSD")
     }
 
-    @Test mutating func insertAminoAcids() {
+    @Test mutating func insertAminoAcids() throws {
         #expect(testPeptide.sequenceString == "DWSSD")
         if let gly = aminoAcidLibrary.first(where: {
             $0.identifier == "G"
@@ -553,7 +553,7 @@ import Testing
                 $0.identifier == "P"
             })
         {
-            testPeptide.insertResidues([gly, pro, pro], at: 2)
+            try testPeptide.insertResidues([gly, pro, pro], at: 2)
         }
 
         #expect(testPeptide.sequenceString == "DWGPPSSD")

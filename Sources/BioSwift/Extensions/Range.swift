@@ -12,6 +12,23 @@ import Foundation
 
 public let zeroRange: Range<Int> = 0..<0
 
+/// Maps positions after removing a zero-based, half-open range.
+struct RangeRemovalMapping {
+    let removedRange: Range<Int>
+
+    func map(_ position: Int) -> Int? {
+        if removedRange.contains(position) {
+            return nil
+        }
+
+        if position >= removedRange.upperBound {
+            return position - removedRange.count
+        }
+
+        return position
+    }
+}
+
 /// BiologicalRange is one-based wrapper around ClosedRange<Int> to be used in views, etc
 
 public struct BiologicalRange: Equatable {
