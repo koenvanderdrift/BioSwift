@@ -437,6 +437,11 @@ private extension BioMolecule {
 }
 
 extension BioMolecule where ChainType.ResidueType == AminoAcid {
+    /// The isoelectric point of the first chain, calculated with free N- and C-termini.
+    public var isoElectricPoint: Double {
+        isoelectricPoint()
+    }
+
     public func isoelectricPoint(chainIndex index: Int = 0, range: Range<Int>? = nil) -> Double {
         guard chains.indices.contains(index) else {
             return 0.0

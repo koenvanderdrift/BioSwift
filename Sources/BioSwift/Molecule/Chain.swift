@@ -307,6 +307,11 @@ extension Chain where ResidueType == AminoAcid {
 }
 
 extension AminoAcidChain {
+    /// The isoelectric point calculated with free N- and C-termini.
+    public var isoElectricPoint: Double {
+        isoelectricPoint()
+    }
+
     public func isoelectricPoint(
         nTerminalIonization: TerminalIonization = .free,
         cTerminalIonization: TerminalIonization = .free
