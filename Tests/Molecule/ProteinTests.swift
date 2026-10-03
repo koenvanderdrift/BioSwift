@@ -673,11 +673,11 @@ import Testing
         #expect(selectionMass != protonatedMass)
     }
 
-    @Test func isoElectricPointPropertyUsesDefaultCalculation() throws {
+    @Test func isoelectricPointPropertyUsesDefaultCalculation() throws {
         let chain = try #require(testProtein.chains.first)
 
-        #expect(chain.isoElectricPoint == chain.isoelectricPoint())
-        #expect(testProtein.isoElectricPoint == testProtein.isoelectricPoint())
+        #expect(chain.isoelectricPoint == chain.isoelectricPoint())
+        #expect(testProtein.isoelectricPoint == testProtein.isoelectricPoint())
     }
 
     @Test func isoelectricPointRangeMatchesSubChain() throws {

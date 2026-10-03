@@ -301,14 +301,11 @@ extension Chain where ResidueType == AminoAcid {
         hydrophobicityProfile(for: hydrophobicityScale.rawValue, windowSize: windowSize)
     }
 
-    public func isoelectricPoint() -> Double {
-        IsoelectricPointCalculator.isoElectricPoint(for: residues)
-    }
 }
 
 extension AminoAcidChain {
     /// The isoelectric point calculated with free N- and C-termini.
-    public var isoElectricPoint: Double {
+    public var isoelectricPoint: Double {
         isoelectricPoint()
     }
 
@@ -316,7 +313,7 @@ extension AminoAcidChain {
         nTerminalIonization: TerminalIonization = .free,
         cTerminalIonization: TerminalIonization = .free
     ) -> Double {
-        IsoelectricPointCalculator.isoElectricPoint(
+        IsoelectricPointCalculator.isoelectricPoint(
             for: residues,
             nTerminal: nTerminalIonization,
             cTerminal: cTerminalIonization

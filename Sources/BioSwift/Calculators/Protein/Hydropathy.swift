@@ -51,14 +51,14 @@ public class IsoelectricPointCalculator {
         self.residues = residues
     }
 
-    public func isoElectricPoint(
+    public func isoelectricPoint(
         nTerminal: TerminalIonization = .free,
         cTerminal: TerminalIonization = .free
     ) -> Double {
-        Self.isoElectricPoint(for: residues, nTerminal: nTerminal, cTerminal: cTerminal)
+        Self.isoelectricPoint(for: residues, nTerminal: nTerminal, cTerminal: cTerminal)
     }
 
-    public static func isoElectricPoint<Residues: Sequence>(
+    public static func isoelectricPoint<Residues: Sequence>(
         for residues: Residues,
         nTerminal: TerminalIonization = .free,
         cTerminal: TerminalIonization = .free
