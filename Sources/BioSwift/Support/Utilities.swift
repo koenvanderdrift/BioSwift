@@ -32,13 +32,13 @@ public func loadData(
     let fullName = "\(fileName).\(fileExtension)"
 
     guard let url = bundle.url(forResource: fileName, withExtension: fileExtension) else {
-        throw LoadError.fileNotFound(name: fullName)
+        throw BioSwiftDiagnostics.logged(LoadError.fileNotFound(name: fullName))
     }
 
     do {
         return try Data(contentsOf: url)
     } catch {
-        throw LoadError.fileReadFailed(name: fullName, underlyingError: error)
+        throw BioSwiftDiagnostics.logged(LoadError.fileReadFailed(name: fullName, underlyingError: error))
     }
 }
 
@@ -46,13 +46,13 @@ public func loadText(from fileName: String, withExtension fileExtension: String,
     let fullName = "\(fileName).\(fileExtension)"
 
     guard let url = bundle.url(forResource: fileName, withExtension: fileExtension) else {
-        throw LoadError.fileNotFound(name: fullName)
+        throw BioSwiftDiagnostics.logged(LoadError.fileNotFound(name: fullName))
     }
 
     do {
         return try String(contentsOf: url, encoding: encoding)
     } catch {
-        throw LoadError.fileReadFailed(name: fullName, underlyingError: error)
+        throw BioSwiftDiagnostics.logged(LoadError.fileReadFailed(name: fullName, underlyingError: error))
     }
 }
 
@@ -60,6 +60,7 @@ public func loadText(from url: URL, encoding: String.Encoding = .utf8) throws ->
     do {
         return try String(contentsOf: url, encoding: encoding)
     } catch {
-        throw LoadError.fileReadFailed(name: url.lastPathComponent, underlyingError: error)
+        throw BioSwiftDiagnostics.logged(
+            LoadError.fileReadFailed(name: url.lastPathComponent, underlyingError: error))
     }
 }

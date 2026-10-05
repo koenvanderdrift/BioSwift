@@ -8,33 +8,46 @@
 
 import Foundation
 
-public let hydrogen = FunctionalGroup(name: "hydrogen", formula: "H")
-public let oxygen = FunctionalGroup(name: "oxygen", formula: "O")
+public let hydrogen = makeBuiltInFunctionalGroup(name: "hydrogen", formula: "H")
+public let oxygen = makeBuiltInFunctionalGroup(name: "oxygen", formula: "O")
 
-public let hydroxyl = FunctionalGroup(name: "hydroxyl", formula: "OH")
-public let ammonia = FunctionalGroup(name: "ammonia", formula: "NH3")
-public let carbonyl = FunctionalGroup(name: "carbonyl", formula: "CO")
-public let water = FunctionalGroup(name: "water", formula: "H2O")
-public let methyl = FunctionalGroup(name: "methyl", formula: "CH3")
+public let hydroxyl = makeBuiltInFunctionalGroup(name: "hydroxyl", formula: "OH")
+public let ammonia = makeBuiltInFunctionalGroup(name: "ammonia", formula: "NH3")
+public let carbonyl = makeBuiltInFunctionalGroup(name: "carbonyl", formula: "CO")
+public let water = makeBuiltInFunctionalGroup(name: "water", formula: "H2O")
+public let methyl = makeBuiltInFunctionalGroup(name: "methyl", formula: "CH3")
 
-public let ammonium = FunctionalGroup(name: "ammonium", formula: "NH4")
-public let sodium = FunctionalGroup(name: "sodium", formula: "Na")
-public let potassium = FunctionalGroup(name: "potassium", formula: "K")
+public let ammonium = makeBuiltInFunctionalGroup(name: "ammonium", formula: "NH4")
+public let sodium = makeBuiltInFunctionalGroup(name: "sodium", formula: "Na")
+public let potassium = makeBuiltInFunctionalGroup(name: "potassium", formula: "K")
 
-public let chloride = FunctionalGroup(name: "chloride", formula: "Cl")
+public let chloride = makeBuiltInFunctionalGroup(name: "chloride", formula: "Cl")
+
+private func makeBuiltInFunctionalGroup(name: String, formula: String) -> FunctionalGroup {
+    do {
+        return FunctionalGroup(name: name, formula: try Formula(formula))
+    } catch {
+        preconditionFailure("Invalid built-in formula \(formula): \(error)")
+    }
+}
 
 public struct FunctionalGroup: Structure, Codable, Sendable {
     public let name: String
     public let formula: Formula
 
-    public init(name: String, formula: String) {
+    public init(name: String, formula: Formula) {
         self.name = name
-        self.formula = Formula(formula)
+        self.formula = formula
     }
 
-    public init(name: String, elements: [String: Int]) {
+    public init(name: String, formula: String) throws {
         self.name = name
-        formula = Formula(from: elements)
+        self.formula = try Formula(formula)
+    }
+
+    public init(name: String, elements: [String: Int]) throws {
+        self.name = name
+        formula = try Formula(elements: elements)
     }
 
     public var description: String {

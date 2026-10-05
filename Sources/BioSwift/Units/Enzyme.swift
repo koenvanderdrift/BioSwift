@@ -57,19 +57,19 @@ public struct CleaveRestriction: Codable, Sendable {
         )
 
         guard !characters.isEmpty else {
-            throw DecodingError.dataCorruptedError(
+            throw BioSwiftDiagnostics.logged(DecodingError.dataCorruptedError(
                 forKey: .characters,
                 in: container,
                 debugDescription: "characters must not be empty"
-            )
+            ))
         }
 
         guard position != 0 else {
-            throw DecodingError.dataCorruptedError(
+            throw BioSwiftDiagnostics.logged(DecodingError.dataCorruptedError(
                 forKey: .position,
                 in: container,
                 debugDescription: "position 0 is the cut boundary"
-            )
+            ))
         }
 
         self.characters = characters
@@ -280,4 +280,3 @@ extension Enzyme {
             .joined()
     }
 }
-

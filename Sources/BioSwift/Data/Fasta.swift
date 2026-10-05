@@ -38,7 +38,8 @@ public func fastaRecord(from fileName: String, in bundle: Bundle = .main) async 
     let records = try await fastaRecords(from: fileName, in: bundle)
 
     guard let record = records.first else {
-        throw LoadError.fileParsingFailed(name: "\(fileName).fasta", underlyingError: nil)
+        throw BioSwiftDiagnostics.logged(
+            LoadError.fileParsingFailed(name: "\(fileName).fasta", underlyingError: nil))
     }
 
     return record
@@ -112,13 +113,15 @@ public final class FastaParser {
         do {
             return try await parseFasta(fastaText)
         } catch {
-            throw LoadError.fileDecodingFailed(name: fullName, underlyingError: error)
+            throw BioSwiftDiagnostics.logged(
+                LoadError.fileDecodingFailed(name: fullName, underlyingError: error))
         }
     }
 
     public func parse(_ data: Data) async throws -> [FastaRecord] {
         guard let fastaText = String(data: data, encoding: .utf8) else {
-            throw LoadError.fileConversionFailed(name: "data", underlyingError: nil)
+            throw BioSwiftDiagnostics.logged(
+                LoadError.fileConversionFailed(name: "data", underlyingError: nil))
         }
 
         return try await parseFasta(fastaText)
@@ -156,7 +159,8 @@ extension FastaParser {
             separator: "\n", maxSplits: 1, omittingEmptySubsequences: false)
 
         guard let infoPart = parts.first else {
-            throw LoadError.fileParsingFailed(name: "records", underlyingError: nil)
+            throw BioSwiftDiagnostics.logged(
+                LoadError.fileParsingFailed(name: "records", underlyingError: nil))
         }
 
         let info = String(infoPart).trimmingCharacters(in: .whitespacesAndNewlines)
@@ -168,7 +172,8 @@ extension FastaParser {
         }
 
         guard !info.isEmpty, !data.isEmpty else {
-            throw LoadError.fileParsingFailed(name: "records", underlyingError: nil)
+            throw BioSwiftDiagnostics.logged(
+                LoadError.fileParsingFailed(name: "records", underlyingError: nil))
         }
 
         return RawRecord(info: info, sequence: data)

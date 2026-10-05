@@ -103,7 +103,7 @@ public struct Modification: Codable, Sendable {
         accession: String? = nil, name: String, fullName: String = "", synonyms: [String] = [],
         elements: [String: Int],
         specificities: [ModificationSpecificity] = []
-    ) {
+    ) throws {
         // TODO: switch to [ChemicalElement: Int] ?
 
         var reactions = [Reaction]()
@@ -112,7 +112,7 @@ public struct Modification: Codable, Sendable {
             $0.value < 0
         }
         if negativeElements.count > 0 {
-            let group = FunctionalGroup(name: name, elements: negativeElements)
+            let group = try FunctionalGroup(name: name, elements: negativeElements)
             reactions.append(Reaction.remove(group))
         }
 
@@ -120,7 +120,7 @@ public struct Modification: Codable, Sendable {
             $0.value > 0
         }
         if postiveElements.count > 0 {
-            let group = FunctionalGroup(name: name, elements: postiveElements)
+            let group = try FunctionalGroup(name: name, elements: postiveElements)
             reactions.append(Reaction.add(group))
         }
 

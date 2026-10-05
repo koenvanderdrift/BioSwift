@@ -64,10 +64,10 @@ public struct AminoAcid: Residue, Codable, Sendable {
 
     public init(
         name: String, oneLetterCode: String, threeLetterCode: String = "", elements: [String: Int]
-    ) {
+    ) throws {
         self.init(
             name: name, oneLetterCode: oneLetterCode, threeLetterCode: threeLetterCode,
-            formula: Formula(from: elements))
+            formula: try Formula(elements: elements))
 
         setProperties()
     }

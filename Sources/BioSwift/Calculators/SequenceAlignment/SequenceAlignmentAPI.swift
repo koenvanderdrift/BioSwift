@@ -56,10 +56,10 @@ extension BioMolecule {
         scoring: AlignmentScoring
     ) throws -> AlignmentResult {
         guard chains.indices.contains(chainIndex) else {
-            throw AlignmentError.invalidFirstChainIndex(chainIndex)
+            throw BioSwiftDiagnostics.logged(AlignmentError.invalidFirstChainIndex(chainIndex))
         }
         guard other.chains.indices.contains(otherChainIndex) else {
-            throw AlignmentError.invalidSecondChainIndex(otherChainIndex)
+            throw BioSwiftDiagnostics.logged(AlignmentError.invalidSecondChainIndex(otherChainIndex))
         }
 
         return chains[chainIndex].align(

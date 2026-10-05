@@ -18,9 +18,9 @@ public class ProteinDigester {
         self.protein = protein
     }
     
-    public func peptides(using enzyme: Enzyme, with missedCleavages: Int = 0) -> [Peptide] {
-        protein.chains.flatMap { chain in
-            chain.digest(using: enzyme, with: missedCleavages).map {
+    public func peptides(using enzyme: Enzyme, with missedCleavages: Int = 0) throws -> [Peptide] {
+        try protein.chains.flatMap { chain in
+            try chain.digest(using: enzyme, with: missedCleavages).map {
                 Peptide(proteinChain: $0, id: chain.id)
             }
         }

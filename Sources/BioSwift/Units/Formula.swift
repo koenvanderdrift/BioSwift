@@ -8,7 +8,7 @@
 
 import Foundation
 
-public let zeroFormula = Formula("")
+public let zeroFormula = Formula()
 
 public enum FormulaParser {
     public enum ParseError: Error {
@@ -27,25 +27,38 @@ public enum FormulaParser {
     }
 
     public static func parse(_ string: String) throws -> Formula {
-        let countedElements = try parseElements(from: string)
-
-        return Formula(inputString: string, countedElements: countedElements)
+        do {
+            let countedElements = try parseElements(from: string)
+            return Formula(inputString: string, countedElements: countedElements)
+        } catch {
+            BioSwiftDiagnostics.log(error)
+            throw error
+        }
     }
 
     public static func parse(elements elementsDictionary: [String: Int]) throws -> Formula {
+        do {
+            return try parse(elements: elementsDictionary, using: elements)
+        } catch {
+            BioSwiftDiagnostics.log(error)
+            throw error
+        }
+    }
+
+    static func parse(
+        elements elementsDictionary: [String: Int],
+        using references: ElementReferences
+    ) throws -> Formula {
         var countedElements: [ChemicalElement: Int] = [:]
 
         for (symbol, count) in elementsDictionary {
-            let absCount = abs(count)
-            guard absCount > 0 else {
-                continue
-            }
-
-            guard let element = elements.element(symbol: symbol) else {
+            guard count != 0 else { continue }
+            guard count != Int.min else { throw ParseError.invalidCount }
+            guard let element = references.element(symbol: symbol) else {
                 throw ParseError.elementNotFound(symbol)
             }
 
-            countedElements[element] = (countedElements[element] ?? 0) + absCount
+            countedElements[element] = (countedElements[element] ?? 0) + abs(count)
         }
 
         return Formula(inputString: "", countedElements: countedElements)
@@ -172,55 +185,28 @@ public enum FormulaParser {
 public struct Formula: Codable, Sendable {
     public private(set) var inputString: String
     public private(set) var countedElements: [ChemicalElement: Int]
-    public private(set) var validationErrorDescription: String?
     var masses: MassContainer = zeroMass
-
-    public var isValid: Bool {
-        validationErrorDescription == nil
-    }
 
     private enum CodingKeys: String, CodingKey {
         case inputString
         case countedElements
-        case validationErrorDescription
     }
 
-    public init(
-        _ string: String = "", with countedElements: [ChemicalElement: Int] = [:],
-        from elementsDictionary: [String: Int] = [:]
-    ) {
-        if countedElements.isEmpty == false {
-            self.init(inputString: string, countedElements: countedElements)
-        } else if elementsDictionary.isEmpty == false {
-            do {
-                self = try FormulaParser.parse(elements: elementsDictionary)
-            } catch {
-                self.init(inputString: "", countedElements: [:])
-                validationErrorDescription = String(describing: error)
-                debugPrint(error)
-            }
-        } else if string.isEmpty == false {
-            do {
-                self = try FormulaParser.parse(string)
-            } catch {
-                self.init(inputString: string, countedElements: [:])
-                validationErrorDescription = String(describing: error)
-                debugPrint(error)
-            }
-        } else {
-            self.init(inputString: "", countedElements: [:])
-        }
+    public init() {
+        self.init(inputString: "", countedElements: [:])
     }
 
-    /// Creates a formula while propagating malformed input to the caller.
-    public init(validating string: String) throws {
+    public init(_ string: String) throws {
         self = try FormulaParser.parse(string)
+    }
+
+    public init(elements: [String: Int]) throws {
+        self = try FormulaParser.parse(elements: elements)
     }
 
     init(inputString: String, countedElements: [ChemicalElement: Int]) {
         self.inputString = inputString
         self.countedElements = countedElements
-        validationErrorDescription = nil
         masses = calculateMasses()
     }
 
@@ -229,10 +215,6 @@ public struct Formula: Codable, Sendable {
 
         inputString = try container.decode(String.self, forKey: .inputString)
         countedElements = try container.decode([ChemicalElement: Int].self, forKey: .countedElements)
-        validationErrorDescription = try container.decodeIfPresent(
-            String.self,
-            forKey: .validationErrorDescription
-        )
         masses = calculateMasses()
     }
 
@@ -302,7 +284,7 @@ extension Formula: Equatable {
                 left, right in left + right
             })
 
-        return Formula(with: result)
+        return Formula(inputString: "", countedElements: result)
     }
 
     static func += (lhs: inout Formula, rhs: Formula) {
@@ -319,7 +301,7 @@ extension Formula: Equatable {
             }
         }
 
-        return Formula(with: result)
+        return Formula(inputString: "", countedElements: result)
     }
 
     static func -= (lhs: inout Formula, rhs: Formula) {

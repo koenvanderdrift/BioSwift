@@ -133,7 +133,7 @@ public enum ElementsLibraryDefaults {
         case .success(let elements):
             return elements
         case .failure(let error):
-            debugPrint(error)
+            BioSwiftDiagnostics.log(error)
             return []
         }
     }
@@ -151,7 +151,7 @@ public enum ReferenceLibraryDefaults {
         case .success(let libraries):
             return libraries
         case .failure(let error):
-            debugPrint(error)
+            BioSwiftDiagnostics.log(error)
             return .empty
         }
     }

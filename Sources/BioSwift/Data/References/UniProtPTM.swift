@@ -13,15 +13,15 @@ enum UniProtPTMReferenceLibraryLoader {
         aminoAcids: AminoAcidReferences
     ) throws -> ModificationLibrary {
         let text = try loadText(from: "uniprot-ptm-list", withExtension: "txt", in: .module)
-        return UniProtPTMParser(elements: elements, aminoAcids: aminoAcids).parse(text)
+        return try UniProtPTMParser(elements: elements, aminoAcids: aminoAcids).parse(text)
     }
 
     static func parse(
         _ text: String,
         elements: ElementReferences,
         aminoAcids: AminoAcidReferences
-    ) -> ModificationLibrary {
-        UniProtPTMParser(elements: elements, aminoAcids: aminoAcids).parse(text)
+    ) throws -> ModificationLibrary {
+        try UniProtPTMParser(elements: elements, aminoAcids: aminoAcids).parse(text)
     }
 }
 
@@ -60,12 +60,11 @@ private struct UniProtPTMParser {
         self.aminoAcidsByIdentifier = aminoAcidsByIdentifier
     }
 
-    func parse(_ text: String) -> ModificationLibrary {
+    func parse(_ text: String) throws -> ModificationLibrary {
         let normalizedText = text.replacingOccurrences(of: "\r\n", with: "\n")
         let version = parseVersion(from: normalizedText)
-        let convertedRecords = normalizedText.components(separatedBy: "\n//")
-            .compactMap(parseRecord)
-            .compactMap(convert)
+        let records = normalizedText.components(separatedBy: "\n//").compactMap(parseRecord)
+        let convertedRecords = try records.compactMap(convert)
         let modifications = convertedRecords.map(\.modification)
         let metadata = Dictionary(
             uniqueKeysWithValues: convertedRecords.map {
@@ -108,7 +107,7 @@ private struct UniProtPTMParser {
 
     private func convert(
         _ record: UniProtPTMRecord
-    ) -> (modification: Modification, metadata: ModificationMetadata)? {
+    ) throws -> (modification: Modification, metadata: ModificationMetadata)? {
         guard let feature = record.value(for: "FT"),
             feature != "CROSSLNK",
             let accession = record.value(for: "AC"),
@@ -125,7 +124,7 @@ private struct UniProtPTMParser {
         }
 
         let keywords = record.values(for: "KW").map(removeTrailingPeriod)
-        let modification = Modification(
+        let modification = try Modification(
             accession: accession,
             name: name,
             elements: elementCounts,

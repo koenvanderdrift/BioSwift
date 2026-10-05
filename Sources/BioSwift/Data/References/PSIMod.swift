@@ -10,11 +10,11 @@ import Foundation
 enum PSIModReferenceLibraryLoader {
     static func load(elements: ElementReferences) throws -> ModificationLibrary {
         let text = try loadText(from: "PSI-MOD", withExtension: "obo", in: .module)
-        return PSIModParser(elements: elements).parse(text)
+        return try PSIModParser(elements: elements).parse(text)
     }
 
-    static func parse(_ text: String, elements: ElementReferences) -> ModificationLibrary {
-        PSIModParser(elements: elements).parse(text)
+    static func parse(_ text: String, elements: ElementReferences) throws -> ModificationLibrary {
+        try PSIModParser(elements: elements).parse(text)
     }
 }
 
@@ -39,12 +39,12 @@ private struct PSIModParser {
         self.elements = elements
     }
 
-    func parse(_ text: String) -> ModificationLibrary {
+    func parse(_ text: String) throws -> ModificationLibrary {
         let normalizedText = text.replacingOccurrences(of: "\r\n", with: "\n")
         let sections = normalizedText.components(separatedBy: "[Term]")
         let version = headerValue(named: "data-version", in: sections.first ?? "") ?? ""
         let terms = sections.dropFirst().compactMap(parseTerm)
-        let modifications = terms.compactMap(makeModification)
+        let modifications = try terms.compactMap(makeModification)
 
         return ModificationLibrary(
             vocabulary: .psiMod,
@@ -84,7 +84,7 @@ private struct PSIModParser {
         return term
     }
 
-    private func makeModification(from term: PSIModTerm) -> Modification? {
+    private func makeModification(from term: PSIModTerm) throws -> Modification? {
         guard !term.isObsolete,
             let differenceFormula = term.differenceFormula,
             differenceFormula != "none",
@@ -108,7 +108,7 @@ private struct PSIModParser {
             position = "Anywhere"
         }
 
-        return Modification(
+        return try Modification(
             accession: term.accession,
             name: term.preferredLabel ?? term.name,
             fullName: term.name,

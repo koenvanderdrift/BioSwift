@@ -33,7 +33,7 @@ import Testing
             name: "Adenine",
             oneLetterCode: "A",
             threeLetterCode: "dAMP",
-            formula: Formula("C10H12N5O5P"),
+            formula: try Formula("C10H12N5O5P"),
             nucleicAcidType: .dna
         )
         let dna = DNA(residues: [nucleotide])

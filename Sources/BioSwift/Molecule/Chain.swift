@@ -236,7 +236,7 @@ extension AminoAcidChain {
         add(nTerminal.formula)
         add(cTerminal.formula)
 
-        return Formula(with: countedElements)
+        return Formula(inputString: "", countedElements: countedElements)
     }
 
     func terminalMasses() -> MassContainer {
@@ -324,10 +324,10 @@ extension AminoAcidChain {
 extension Chain {
     public mutating func insertResidue(_ residue: ResidueType, at location: Int) throws {
         guard residues.indices.contains(location) || location == residues.endIndex else {
-            throw ChainEditingError.indexOutOfBounds(
+            throw BioSwiftDiagnostics.logged(ChainEditingError.indexOutOfBounds(
                 index: location,
                 residueCount: residues.count
-            )
+            ))
         }
 
         residues.insert(residue, at: location)
@@ -336,7 +336,7 @@ extension Chain {
 
     public mutating func insertResidue(_ residue: any Residue, at location: Int) throws {
         guard let residue = residue as? ResidueType else {
-            throw ChainEditingError.incompatibleResidueType
+            throw BioSwiftDiagnostics.logged(ChainEditingError.incompatibleResidueType)
         }
 
         try insertResidue(residue, at: location)
@@ -344,10 +344,10 @@ extension Chain {
 
     public mutating func insertResidues(_ newResidues: [ResidueType], at location: Int) throws {
         guard location >= residues.startIndex, location <= residues.endIndex else {
-            throw ChainEditingError.indexOutOfBounds(
+            throw BioSwiftDiagnostics.logged(ChainEditingError.indexOutOfBounds(
                 index: location,
                 residueCount: residues.count
-            )
+            ))
         }
 
         guard newResidues.isEmpty == false else {
@@ -364,7 +364,7 @@ extension Chain {
         }
 
         guard typedResidues.count == newResidues.count else {
-            throw ChainEditingError.incompatibleResidueType
+            throw BioSwiftDiagnostics.logged(ChainEditingError.incompatibleResidueType)
         }
 
         try insertResidues(typedResidues, at: location)
@@ -372,10 +372,10 @@ extension Chain {
 
     public mutating func removeResidue(at location: Int) throws {
         guard residues.indices.contains(location) else {
-            throw ChainEditingError.indexOutOfBounds(
+            throw BioSwiftDiagnostics.logged(ChainEditingError.indexOutOfBounds(
                 index: location,
                 residueCount: residues.count
-            )
+            ))
         }
 
         residues.remove(at: location)
@@ -387,10 +387,10 @@ extension Chain {
             range.lowerBound >= residues.startIndex,
             range.upperBound <= residues.endIndex
         else {
-            throw ChainEditingError.rangeOutOfBounds(
+            throw BioSwiftDiagnostics.logged(ChainEditingError.rangeOutOfBounds(
                 range: range,
                 residueCount: residues.count
-            )
+            ))
         }
 
         guard range.isEmpty == false else {
@@ -403,10 +403,10 @@ extension Chain {
 
     public mutating func replaceResidue(at location: Int, with residue: ResidueType) throws {
         guard residues.indices.contains(location) else {
-            throw ChainEditingError.indexOutOfBounds(
+            throw BioSwiftDiagnostics.logged(ChainEditingError.indexOutOfBounds(
                 index: location,
                 residueCount: residues.count
-            )
+            ))
         }
 
         residues[location] = residue
@@ -415,7 +415,7 @@ extension Chain {
 
     public mutating func replaceResidue(at location: Int, with residue: any Residue) throws {
         guard let residue = residue as? ResidueType else {
-            throw ChainEditingError.incompatibleResidueType
+            throw BioSwiftDiagnostics.logged(ChainEditingError.incompatibleResidueType)
         }
 
         try replaceResidue(at: location, with: residue)
@@ -654,20 +654,20 @@ extension Chain {
             }
         }
 
-        debugPrint("Candidates tested: \(candidateCount)")
+        BioSwiftDiagnostics.log("Candidates tested: \(candidateCount)")
 
         return results
     }
 
-    public func digest(using enzyme: Enzyme, with missedCleavages: Int = 0) -> [Self] {
+    public func digest(using enzyme: Enzyme, with missedCleavages: Int = 0) throws -> [Self] {
         let regex = enzyme.regex()
-        debugPrint(regex)
+        BioSwiftDiagnostics.log(regex)
 
-        return digest(using: regex, with: missedCleavages)
+        return try digest(using: regex, with: missedCleavages)
     }
 
-    public func digest(using regex: String, with missedCleavages: Int = 0) -> [Self] {
-        let matches = cleavageSites(for: regex)  // site is first residue of new peptide 0-based
+    public func digest(using regex: String, with missedCleavages: Int = 0) throws -> [Self] {
+        let matches = try cleavageSites(for: regex)  // site is first residue of new peptide 0-based
 
         let baseRanges: [Range<Int>] = zip(matches, matches.dropFirst()).map { start, end in
             start..<end
@@ -710,22 +710,16 @@ extension Chain {
         return chains
     }
 
-    func cleavageSites(for regex: String) -> [Int] {
-        do {
-            let matches = try sequenceString.matches(for: regex).map(\.range.location)
+    func cleavageSites(for regex: String) throws -> [Int] {
+        let matches = try sequenceString.matches(for: regex).map(\.range.location)
 
-            let validatedSites = Array(
-                Set(matches.filter {
-                    $0 > 0 && $0 < residues.count
-                })
-            ).sorted()
+        let validatedSites = Array(
+            Set(matches.filter {
+                $0 > 0 && $0 < residues.count
+            })
+        ).sorted()
 
-            return [0] + validatedSites + [residues.count]
-        } catch {
-            debugPrint(error.localizedDescription)
-        }
-
-        return []
+        return [0] + validatedSites + [residues.count]
     }
 }
 

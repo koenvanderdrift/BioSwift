@@ -105,18 +105,18 @@ extension BioMolecule {
         inChain secondChainIndex: Int = 0
     ) throws -> CrossLink {
         guard chains.indices.contains(firstChainIndex) else {
-            throw CrossLinkError.invalidChainIndex(firstChainIndex)
+            throw BioSwiftDiagnostics.logged(CrossLinkError.invalidChainIndex(firstChainIndex))
         }
         guard chains.indices.contains(secondChainIndex) else {
-            throw CrossLinkError.invalidChainIndex(secondChainIndex)
+            throw BioSwiftDiagnostics.logged(CrossLinkError.invalidChainIndex(secondChainIndex))
         }
         guard chains[firstChainIndex].residues.indices.contains(firstResidueIndex) else {
-            throw CrossLinkError.invalidResidueIndex(
-                chainIndex: firstChainIndex, residueIndex: firstResidueIndex)
+            throw BioSwiftDiagnostics.logged(CrossLinkError.invalidResidueIndex(
+                chainIndex: firstChainIndex, residueIndex: firstResidueIndex))
         }
         guard chains[secondChainIndex].residues.indices.contains(secondResidueIndex) else {
-            throw CrossLinkError.invalidResidueIndex(
-                chainIndex: secondChainIndex, residueIndex: secondResidueIndex)
+            throw BioSwiftDiagnostics.logged(CrossLinkError.invalidResidueIndex(
+                chainIndex: secondChainIndex, residueIndex: secondResidueIndex))
         }
 
         let firstSite = CrossLinkSite(
@@ -125,7 +125,7 @@ extension BioMolecule {
             chainID: chains[secondChainIndex].id, residueIndex: secondResidueIndex)
 
         guard firstSite != secondSite else {
-            throw CrossLinkError.identicalSites
+            throw BioSwiftDiagnostics.logged(CrossLinkError.identicalSites)
         }
 
         let crossLink = CrossLink(
@@ -248,7 +248,7 @@ extension BioMolecule {
         chainIndex: Int = 0
     ) throws {
         guard chains.indices.contains(chainIndex) else {
-            throw CrossLinkError.invalidChainIndex(chainIndex)
+            throw BioSwiftDiagnostics.logged(CrossLinkError.invalidChainIndex(chainIndex))
         }
 
         guard newResidues.isEmpty == false else {
@@ -282,14 +282,14 @@ extension BioMolecule {
         chainIndex: Int = 0
     ) throws {
         guard chains.indices.contains(chainIndex) else {
-            throw CrossLinkError.invalidChainIndex(chainIndex)
+            throw BioSwiftDiagnostics.logged(CrossLinkError.invalidChainIndex(chainIndex))
         }
 
         guard chains[chainIndex].residues.indices.contains(location) else {
-            throw ChainEditingError.indexOutOfBounds(
+            throw BioSwiftDiagnostics.logged(ChainEditingError.indexOutOfBounds(
                 index: location,
                 residueCount: chains[chainIndex].residues.count
-            )
+            ))
         }
 
         try removeResidues(in: location..<(location + 1), chainIndex: chainIndex)
@@ -314,7 +314,7 @@ extension BioMolecule {
         chainIndex: Int = 0
     ) throws {
         guard chains.indices.contains(chainIndex) else {
-            throw CrossLinkError.invalidChainIndex(chainIndex)
+            throw BioSwiftDiagnostics.logged(CrossLinkError.invalidChainIndex(chainIndex))
         }
 
         let chainID = chains[chainIndex].id
@@ -345,7 +345,7 @@ extension BioMolecule {
         chainIndex: Int = 0
     ) throws {
         guard chains.indices.contains(chainIndex) else {
-            throw CrossLinkError.invalidChainIndex(chainIndex)
+            throw BioSwiftDiagnostics.logged(CrossLinkError.invalidChainIndex(chainIndex))
         }
 
         try chains[chainIndex].replaceResidue(at: location, with: residue)

@@ -10,7 +10,7 @@ import Testing
 
 @Suite struct DigestionTests: BioSwiftTestSuite {
     var fixtures = BioSwiftTestFixtures()
-    @Test func digest() {
+    @Test func digest() throws {
         let digester = ProteinDigester(protein: testProtein)
 
         let missedCleavages = 0
@@ -20,7 +20,7 @@ import Testing
         })
 
         if let enzyme = trypsin {
-            let peptides: [Peptide] = digester.peptides(using: enzyme, with: missedCleavages)
+            let peptides: [Peptide] = try digester.peptides(using: enzyme, with: missedCleavages)
 
             #expect(peptides[0].sequenceString == "MPSSVSWGILLLAGLCCLVPVSLAEDPQGDAAQK")
             #expect(peptides[1].sequenceString == "TDTSHHDQDHPTFNK")
@@ -33,7 +33,7 @@ import Testing
         })
 
         if let enzyme = lysC {
-            let peptides: [Peptide] = digester.peptides(using: enzyme, with: missedCleavages)
+            let peptides: [Peptide] = try digester.peptides(using: enzyme, with: missedCleavages)
 
             #expect(peptides[0].sequenceString == "MPSSVSWGILLLAGLCCLVPVSLAEDPQGDAAQK")
             #expect(peptides[1].sequenceString == "TDTSHHDQDHPTFNK")
@@ -46,7 +46,7 @@ import Testing
         })
 
         if let enzyme = aspN {
-            let peptides: [Peptide] = digester.peptides(using: enzyme, with: missedCleavages)
+            let peptides: [Peptide] = try digester.peptides(using: enzyme, with: missedCleavages)
 
             #expect(peptides[0].sequenceString == "MPSSVSWGILLLAGLCCLVPVSLAE")
             #expect(peptides[1].sequenceString == "DPQG")
@@ -57,7 +57,7 @@ import Testing
         })
 
         if let enzyme = pepsin1 {
-            let peptides: [Peptide] = digester.peptides(using: enzyme, with: missedCleavages)
+            let peptides: [Peptide] = try digester.peptides(using: enzyme, with: missedCleavages)
 
             #expect(peptides[0].sequenceString == "MPSSVSWGIL")
             #expect(peptides[1].sequenceString == "L")
@@ -72,7 +72,7 @@ import Testing
         })
 
         if let enzyme = pepsin2 {
-            let peptides: [Peptide] = digester.peptides(using: enzyme, with: missedCleavages)
+            let peptides: [Peptide] = try digester.peptides(using: enzyme, with: missedCleavages)
 
             #expect(peptides[0].sequenceString == "MPSSVS")
             #expect(peptides[1].sequenceString == "W")
@@ -90,7 +90,7 @@ import Testing
         #expect(unspecified?.name == "Unspecified")
     }
 
-    @Test func digestMasses() {
+    @Test func digestMasses() throws {
         let digester = ProteinDigester(protein: testProtein)
 
         let missedCleavages = 1
@@ -100,7 +100,7 @@ import Testing
         })
 
         if let enzyme = trypsin {
-            let peptides: [Peptide] = digester.peptides(using: enzyme, with: missedCleavages)
+            let peptides: [Peptide] = try digester.peptides(using: enzyme, with: missedCleavages)
                 .protonated(chargeStates: 1...1)
             #expect(peptides[0].monoisotopicMass.rounded(scale: 4) == decimal("3468.7575"))  // 3467.7503
             #expect(peptides[2].monoisotopicMass.rounded(scale: 4) == decimal("1779.7681"))  // 1778.7608
@@ -116,7 +116,7 @@ import Testing
         ])
         let enzyme = try #require(enzymeLibrary.first { $0.name == "Trypsin" })
 
-        let peptides: [Peptide] = ProteinDigester(protein: protein).peptides(using: enzyme)
+        let peptides: [Peptide] = try ProteinDigester(protein: protein).peptides(using: enzyme)
         let alphaPeptides = peptides.filter { $0.id == alphaID }
         let betaPeptides = peptides.filter { $0.id == betaID }
 
@@ -129,6 +129,14 @@ import Testing
         #expect(betaPeptides.map(\.sequenceString) == ["MK", "R"])
         #expect(betaPeptides.map(\.range) == [0..<2, 2..<3])
         #expect(betaPeptides.allSatisfy { $0.parentLength == 3 })
+    }
+
+    @Test func invalidDigestionRegexThrows() {
+        let chain = ProteinChain(sequence: "PEPTIDE")
+
+        #expect(throws: (any Error).self) {
+            try chain.digest(using: "[")
+        }
     }
 
 }

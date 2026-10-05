@@ -119,8 +119,9 @@ final class UnimodXMLParser: NSObject {
         let didParse = xmlParser.parse()
 
         guard didParse else {
-            throw parseError ?? xmlParser.parserError
+            let error = parseError ?? xmlParser.parserError
                 ?? LoadError.fileParsingFailed(name: "unimod.xml", underlyingError: nil)
+            throw BioSwiftDiagnostics.logged(error)
         }
 
         return UnimodReferenceLibraries(aminoAcids: parsedAminoAcids, modifications: parsedModifications)
@@ -133,13 +134,43 @@ final class UnimodXMLParser: NSObject {
         modificationElements.removeAll()
         modificationSpecificities.removeAll()
     }
+
+    private func makeModification() throws -> Modification {
+        var elementsBySymbol = Dictionary(
+            uniqueKeysWithValues: elementReferences.elements.map { ($0.symbol, $0) })
+        for element in parsedElements {
+            elementsBySymbol[element.symbol] = element
+        }
+        let references = ElementReferences(elements: Array(elementsBySymbol.values))
+        var reactions: [Reaction] = []
+
+        let removedElements = modificationElements.filter { $0.value < 0 }
+        if removedElements.isEmpty == false {
+            let formula = try FormulaParser.parse(elements: removedElements, using: references)
+            reactions.append(.remove(FunctionalGroup(name: modificationTitle, formula: formula)))
+        }
+
+        let addedElements = modificationElements.filter { $0.value > 0 }
+        if addedElements.isEmpty == false {
+            let formula = try FormulaParser.parse(elements: addedElements, using: references)
+            reactions.append(.add(FunctionalGroup(name: modificationTitle, formula: formula)))
+        }
+
+        return Modification(
+            accession: modificationAccession,
+            name: modificationTitle,
+            fullName: modificationFullName,
+            reactions: reactions,
+            specificities: modificationSpecificities
+        )
+    }
 }
 
 // MARK: XML Parser Delegate
 
 extension UnimodXMLParser: XMLParserDelegate {
     func parserDidStartDocument(_: XMLParser) {
-        debugPrint("Started parsing unimod.xml")
+        BioSwiftDiagnostics.log("Started parsing unimod.xml")
     }
 
     func parser(
@@ -217,7 +248,7 @@ extension UnimodXMLParser: XMLParserDelegate {
     }
 
     func parser(
-        _: XMLParser, didEndElement xmlElementName: String, namespaceURI _: String?,
+        _ parser: XMLParser, didEndElement xmlElementName: String, namespaceURI _: String?,
         qualifiedName _: String?
     ) {
         if xmlElementName == elem {
@@ -240,10 +271,14 @@ extension UnimodXMLParser: XMLParserDelegate {
             isNeutralLoss = false
         } else if xmlElementName == modification {
             if modificationTitle.isEmpty == false {
-                let mod = Modification(
-                    accession: modificationAccession, name: modificationTitle,
-                    fullName: modificationFullName,
-                    elements: modificationElements, specificities: modificationSpecificities)
+                let mod: Modification
+                do {
+                    mod = try makeModification()
+                } catch {
+                    parseError = error
+                    parser.abortParsing()
+                    return
+                }
 
                 parsedModifications.append(mod)
             }
@@ -252,9 +287,16 @@ extension UnimodXMLParser: XMLParserDelegate {
             isModification = false
         } else if xmlElementName == aminoAcid {
             if aminoAcidName.isEmpty == false {
-                let aa = AminoAcid(
-                    name: aminoAcidName, oneLetterCode: aminoAcidOneLetterCode,
-                    threeLetterCode: aminoAcidThreeLetterCode, elements: aminoAcidElements)
+                let aa: AminoAcid
+                do {
+                    aa = try AminoAcid(
+                        name: aminoAcidName, oneLetterCode: aminoAcidOneLetterCode,
+                        threeLetterCode: aminoAcidThreeLetterCode, elements: aminoAcidElements)
+                } catch {
+                    parseError = error
+                    parser.abortParsing()
+                    return
+                }
 
                 parsedAminoAcids.append(aa)
 
@@ -269,7 +311,7 @@ extension UnimodXMLParser: XMLParserDelegate {
     }
 
     func parserDidEndDocument(_: XMLParser) {
-        debugPrint("Finished parsing unimod.xml")
+        BioSwiftDiagnostics.log("Finished parsing unimod.xml")
     }
 
     func parser(_: XMLParser, parseErrorOccurred parseError: Error) {

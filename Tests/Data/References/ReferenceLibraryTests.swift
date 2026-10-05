@@ -130,7 +130,7 @@ import Testing
         #expect(carbohydrateModification.specificities.first?.site == "N")
     }
 
-    @Test func uniProtPTMParserPreservesRepeatedFieldsRejectsUnsupportedRecordsAndIgnoresProvidedMasses() {
+    @Test func uniProtPTMParserPreservesRepeatedFieldsRejectsUnsupportedRecordsAndIgnoresProvidedMasses() throws {
         let text = """
             Release:     test_release of 01-Jan-2026
 
@@ -189,7 +189,7 @@ import Testing
             //
             """
 
-        let library = UniProtPTMReferenceLibraryLoader.parse(
+        let library = try UniProtPTMReferenceLibraryLoader.parse(
             text,
             elements: ElementReferenceDefaults.bundled,
             aminoAcids: AminoAcidReferenceDefaults.bundled
@@ -209,7 +209,7 @@ import Testing
         #expect(metadata?.keywords == ["Hydroxylation"])
     }
 
-    @Test func psiModParserRejectsUnsupportedTerms() {
+    @Test func psiModParserRejectsUnsupportedTerms() throws {
         let text = """
             format-version: 1.2
             data-version: test
@@ -265,7 +265,7 @@ import Testing
             xref: Origin: "M"
             """
 
-        let result = PSIModReferenceLibraryLoader.parse(
+        let result = try PSIModReferenceLibraryLoader.parse(
             text,
             elements: ElementReferenceDefaults.bundled
         )

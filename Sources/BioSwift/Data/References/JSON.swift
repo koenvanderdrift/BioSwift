@@ -27,7 +27,8 @@ private func parseJSON<A: Decodable>(_: A.Type, from fileName: String, in bundle
     do {
         return try JSONDecoder().decode(A.self, from: data)
     } catch {
-        throw LoadError.fileDecodingFailed(name: fullName, underlyingError: error)
+        throw BioSwiftDiagnostics.logged(
+            LoadError.fileDecodingFailed(name: fullName, underlyingError: error))
     }
 }
 

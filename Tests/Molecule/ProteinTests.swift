@@ -157,7 +157,7 @@ import Testing
     }
 
     @Test func decodedFormulaRecalculatesMasses() throws {
-        let formula = Formula("H2O")
+        let formula = try Formula("H2O")
         let data = try JSONEncoder().encode(formula)
         let decodedFormula = try JSONDecoder().decode(Formula.self, from: data)
 
@@ -189,9 +189,9 @@ import Testing
         #expect(methyl.averageMass.rounded(scale: 4) == decimal("15.0346"))
     }
 
-    @Test func formulaAverageMass() {  // C4H5NO3 + C11H10N2O + C3H5NO2 + C3H5NO2 + C4H5NO3 + H2O
+    @Test func formulaAverageMass() throws {  // C4H5NO3 + C11H10N2O + C3H5NO2 + C3H5NO2 + C4H5NO3 + H2O
         // Expected values use isotope-abundance-weighted masses from the bundled NIST data.
-        let group = FunctionalGroup(
+        let group = try FunctionalGroup(
             name: "", formula: "C4H5NO3" + "C11H10N2O" + "C3H5NO2" + "C3H5NO2" + "C4H5NO3" + "H2O")
 
         #expect(group.averageMass.rounded(scale: 3) == decimal("608.556"))
@@ -434,30 +434,22 @@ import Testing
         }
     }
 
-    @Test func invalidFormulaIsObservable() {
-        let formula = Formula("NotAnElement")
-
-        #expect(!formula.isValid)
-        #expect(formula.validationErrorDescription != nil)
-        #expect(formula.countedElements.isEmpty)
-    }
-
-    @Test func validatingFormulaThrowsForInvalidInput() {
+    @Test func invalidFormulaThrows() {
         #expect(throws: FormulaParser.ParseError.self) {
-            try Formula(validating: "NotAnElement")
+            try Formula("NotAnElement")
         }
     }
 
     @Test func emptyFormulaIsValid() {
         let formula = Formula()
 
-        #expect(formula.isValid)
-        #expect(formula.validationErrorDescription == nil)
+        #expect(formula.countedElements.isEmpty)
+        #expect(formula.formulaString.isEmpty)
     }
 
-    @Test func addFormulas() {
-        let formula1 = Formula("C12H23O7N5")
-        let formula2 = Formula("C2H2O2")
+    @Test func addFormulas() throws {
+        let formula1 = try Formula("C12H23O7N5")
+        let formula2 = try Formula("C2H2O2")
         let formula3 = formula1 + formula2
 
         debugPrint(formula3.formulaString)
@@ -466,28 +458,28 @@ import Testing
         #expect(formula3.elementCount(for: "N") == 5)
     }
 
-    @Test func formulaStringUsesHillSystemWithCarbon() {
-        let formula = Formula(from: ["O": 6, "H": 12, "C": 6, "N": 1])
+    @Test func formulaStringUsesHillSystemWithCarbon() throws {
+        let formula = try Formula(elements: ["O": 6, "H": 12, "C": 6, "N": 1])
 
         #expect(formula.formulaString == "C6H12NO6")
     }
 
-    @Test func formulaStringUsesHillSystemWithoutCarbon() {
-        let formula = Formula(from: ["S": 1, "O": 4, "H": 2])
+    @Test func formulaStringUsesHillSystemWithoutCarbon() throws {
+        let formula = try Formula(elements: ["S": 1, "O": 4, "H": 2])
 
         #expect(formula.formulaString == "H2O4S")
     }
 
-    @Test func formulaPreservesInputString() {
-        let formula = Formula("CH3(CH2)4CH3")
+    @Test func formulaPreservesInputString() throws {
+        let formula = try Formula("CH3(CH2)4CH3")
 
         #expect(formula.inputString == "CH3(CH2)4CH3")
         #expect(formula.formulaString == "C6H14")
     }
 
-    @Test func subtractFormulas() {
-        let formula1 = Formula("C12H23O7N5")
-        let formula2 = Formula("C2H2O2")
+    @Test func subtractFormulas() throws {
+        let formula1 = try Formula("C12H23O7N5")
+        let formula2 = try Formula("C2H2O2")
         let formula3 = formula1 - formula2
 
         debugPrint(formula3.formulaString)

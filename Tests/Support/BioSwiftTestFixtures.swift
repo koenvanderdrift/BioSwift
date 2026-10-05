@@ -19,6 +19,14 @@ func decimal(_ value: String) -> Decimal {
     return result
 }
 
+private func formula(_ value: String) -> Formula {
+    do {
+        return try Formula(value)
+    } catch {
+        preconditionFailure("Invalid Formula test value: \(value): \(error)")
+    }
+}
+
 struct BioSwiftTestFixtures {
     var testProtein = Protein(
         sequence:
@@ -26,9 +34,9 @@ struct BioSwiftTestFixtures {
     )
     var testPeptide = Peptide(sequence: "DWSSD")
     var alanine = AminoAcid(
-        name: "Alanine", oneLetterCode: "A", threeLetterCode: "Ala", formula: Formula("C3H5NO"))
+        name: "Alanine", oneLetterCode: "A", threeLetterCode: "Ala", formula: formula("C3H5NO"))
     var serine = AminoAcid(
-        name: "Serine", oneLetterCode: "S", threeLetterCode: "Ser", formula: Formula("C3H5NO2"))
+        name: "Serine", oneLetterCode: "S", threeLetterCode: "Ser", formula: formula("C3H5NO2"))
 
 }
 
