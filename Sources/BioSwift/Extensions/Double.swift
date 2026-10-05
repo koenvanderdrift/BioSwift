@@ -39,26 +39,4 @@ extension Double {
         return scaledValue.rounded(rule) / multiplier
     }
 
-    /// Converts the Double to Decimal and then applies decimal rounding.
-    ///
-    /// This controls the rounding step, but cannot restore precision already
-    /// lost when the original value was represented as a Double.
-    public func roundedDecimal(scale: Int = 0, mode: NSDecimalNumber.RoundingMode = .plain)
-        -> Decimal
-    {
-        precondition(scale >= 0, "scale must be non-negative")
-
-        return Decimal(self).rounded(scale: scale, mode: mode)
-    }
-
-    /// Converts the Double to Decimal, applies decimal rounding,
-    /// and formats the result for display.
-    public func formattedDecimal(
-        scale: Int = 0, mode: NSDecimalNumber.RoundingMode = .plain, locale: Locale = .current
-    ) -> String {
-        precondition(scale >= 0, "scale must be non-negative")
-
-        return roundedDecimal(scale: scale, mode: mode).formatted(
-            .number.precision(.fractionLength(scale)).locale(locale))
-    }
 }

@@ -8,8 +8,6 @@
 
 import Foundation
 
-public let zeroStringRange: Range<String.Index> = String().startIndex..<String().endIndex
-
 extension String {
     // MARK: - Regular expressions
 
@@ -279,14 +277,6 @@ extension Substring {
         self = self[index...]
 
         return result
-    }
-
-    @discardableResult mutating func scanThrough(_ character: Character) -> Character? {
-        guard first == character else {
-            return nil
-        }
-
-        return removeFirst()
     }
 
     @discardableResult mutating func skip(_ count: Int) -> Substring? {

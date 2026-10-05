@@ -195,9 +195,7 @@ import Testing
         #expect(nsError.domain == XMLParser.errorDomain)
         #expect(!nsError.localizedDescription.isEmpty)
 
-        #if DEBUG
-            debugPrint("Received expected XML parse error:", nsError.localizedDescription)
-        #endif
+        debugPrint("Received expected XML parse error:", nsError.localizedDescription)
     }
 
     @Test func malformedXMLThrowsXMLParserError2() throws {

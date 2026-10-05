@@ -654,14 +654,14 @@ extension Chain {
             }
         }
 
-        BioSwiftDiagnostics.log("Candidates tested: \(candidateCount)")
+        debugPrint("Candidates tested: \(candidateCount)")
 
         return results
     }
 
     public func digest(using enzyme: Enzyme, with missedCleavages: Int = 0) -> [Self] {
         let regex = enzyme.regex()
-        BioSwiftDiagnostics.log(regex)
+        debugPrint(regex)
 
         return digest(using: regex, with: missedCleavages)
     }
@@ -722,7 +722,7 @@ extension Chain {
 
             return [0] + validatedSites + [residues.count]
         } catch {
-            BioSwiftDiagnostics.log(error.localizedDescription)
+            debugPrint(error.localizedDescription)
         }
 
         return []

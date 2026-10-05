@@ -8,14 +8,6 @@
 
 import Foundation
 
-func decimal(_ value: String) -> Decimal {
-    guard let result = Decimal(string: value, locale: Locale(identifier: "en_US_POSIX")) else {
-        preconditionFailure("Invalid Decimal test value: \(value)")
-    }
-
-    return result
-}
-
 extension Decimal {
     /// Returns a Decimal rounded to the requested number of fractional digits.
     public func rounded(scale: Int = 0, mode: Decimal.RoundingMode = .plain) -> Decimal {
@@ -46,12 +38,4 @@ extension Decimal {
             .number.precision(.fractionLength(fractionDigits)).locale(locale))
     }
 
-    /// Converts the Decimal to Double without additional rounding.
-    public var asDouble: Double {
-        NSDecimalNumber(decimal: self).doubleValue
-    }
-    /// Rounds as Decimal first, then converts to Double.
-    public func roundedDouble(scale: Int, mode: Decimal.RoundingMode = .plain) -> Double {
-        rounded(scale: scale, mode: mode).asDouble
-    }
 }

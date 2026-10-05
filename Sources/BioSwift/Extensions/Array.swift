@@ -43,31 +43,3 @@ extension Array where Element: Sendable {
         }
     }
 }
-
-extension Array where Element: Chain {
-    func combinedConsecutiveChains(ofSize size: Int) -> [Element] {
-        consecutiveGroups(ofSize: size).map { chainGroup in
-            let combinedAminoAcids = chainGroup.flatMap {
-                $0.residues
-            }
-
-            let combinedRange: Range<Int> =
-                chainGroup.first!.range.lowerBound..<chainGroup.last!.range.upperBound
-
-            var newChain = Element(residues: combinedAminoAcids)
-            newChain.range = combinedRange
-            newChain.parentLength = chainGroup.first!.parentLength
-
-            return newChain
-        }
-    }
-}
-
-extension Array where Element: StringProtocol {
-    func uniqueElements() -> [Element] {
-        let elementSet = Set(self)
-        return Array(elementSet)
-    }
-}
-
-

@@ -28,10 +28,7 @@ import Testing
                 searchValue: 890.3877, tolerance: .ppm(10),
                 searchType: .sequential, massType: .monoisotopic, charge: 2)
 
-            let ranges = measure("Sliding Window") {
-                let ranges: [Range<Int>] = chain.searchMass(params: searchParameters)
-                return ranges
-            }
+            let ranges: [Range<Int>] = chain.searchMass(params: searchParameters)
 
             debugPrint(ranges)
             let sequenceStrings = ranges.map {
@@ -59,10 +56,7 @@ import Testing
                 searchValue: 10355.6744, tolerance: .ppm(10),
                 searchType: .sequential, massType: .monoisotopic, charge: 1)
 
-            let ranges = measure("Sliding Window") {
-                let ranges: [Range<Int>] = chain.searchMass(params: searchParameters)
-                return ranges
-            }
+            let ranges: [Range<Int>] = chain.searchMass(params: searchParameters)
 
             debugPrint(ranges)
             let sequenceStrings = ranges.map {

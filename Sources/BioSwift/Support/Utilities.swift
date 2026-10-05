@@ -7,28 +7,6 @@
 //
 
 import Foundation
-import Synchronization
-
-public enum BioSwiftDiagnostics {
-    private static let debugLoggingEnabled = Mutex(false)
-
-    public static var isDebugLoggingEnabled: Bool {
-        get {
-            debugLoggingEnabled.withLock { $0 }
-        }
-        set {
-            debugLoggingEnabled.withLock { $0 = newValue }
-        }
-    }
-
-    public static func log(_ message: @autoclosure () -> Any) {
-        guard isDebugLoggingEnabled else {
-            return
-        }
-
-        debugPrint(message())
-    }
-}
 
 public enum LoadError: Error {
     case fileNotFound(
@@ -85,17 +63,3 @@ public func loadText(from url: URL, encoding: String.Encoding = .utf8) throws ->
         throw LoadError.fileReadFailed(name: url.lastPathComponent, underlyingError: error)
     }
 }
-
-func measure<T>(_ name: String, operation: () -> T) -> T {
-    let start = DispatchTime.now().uptimeNanoseconds
-
-    let result = operation()
-
-    let end = DispatchTime.now().uptimeNanoseconds
-    let milliseconds = Double(end - start) / 1_000_000
-
-    BioSwiftDiagnostics.log("\(name): \(String(format: "%.3f ms", milliseconds))")
-
-    return result
-}
-

@@ -11,6 +11,14 @@ import Testing
 
 @testable import BioSwift
 
+func decimal(_ value: String) -> Decimal {
+    guard let result = Decimal(string: value, locale: Locale(identifier: "en_US_POSIX")) else {
+        preconditionFailure("Invalid Decimal test value: \(value)")
+    }
+
+    return result
+}
+
 struct BioSwiftTestFixtures {
     var testProtein = Protein(
         sequence:

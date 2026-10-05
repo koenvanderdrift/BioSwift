@@ -197,7 +197,7 @@ public struct Formula: Codable, Sendable {
             } catch {
                 self.init(inputString: "", countedElements: [:])
                 validationErrorDescription = String(describing: error)
-                BioSwiftDiagnostics.log(error)
+                debugPrint(error)
             }
         } else if string.isEmpty == false {
             do {
@@ -205,7 +205,7 @@ public struct Formula: Codable, Sendable {
             } catch {
                 self.init(inputString: string, countedElements: [:])
                 validationErrorDescription = String(describing: error)
-                BioSwiftDiagnostics.log(error)
+                debugPrint(error)
             }
         } else {
             self.init(inputString: "", countedElements: [:])
