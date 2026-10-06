@@ -46,6 +46,13 @@ public enum ChainEditingError: Error, Equatable, Sendable {
     case indexOutOfBounds(index: Int, residueCount: Int)
     case rangeOutOfBounds(range: Range<Int>, residueCount: Int)
     case incompatibleResidueType
+    case residueIdentifierNotFound(String)
+}
+
+/// Errors produced when converting textual biological sequences into residues.
+public enum SequenceValidationError: Error, Equatable, Sendable {
+    case invalidResidue(Character, position: Int, sequenceType: String)
+    case invalidCodon(String, position: Int)
 }
 
 extension Chain {
@@ -172,9 +179,15 @@ public protocol AminoAcidChain: Chain, Structure where ResidueType == AminoAcid 
 }
 
 extension AminoAcidChain {
-    static func createResidues(from sequence: String) -> [AminoAcid] {
-        sequence.compactMap {
-            AminoAcidReferenceDefaults.bundled.aminoAcid(identifier: String($0))
+    static func createResidues(from sequence: String) throws -> [AminoAcid] {
+        let references = try AminoAcidReferenceDefaults.loadBundled()
+        return try sequence.enumerated().map { position, character in
+            guard let residue = references.aminoAcid(identifier: String(character)) else {
+                throw BioSwiftDiagnostics.logged(
+                    SequenceValidationError.invalidResidue(
+                        character, position: position, sequenceType: "protein"))
+            }
+            return residue
         }
     }
 
@@ -256,31 +269,34 @@ extension AminoAcidChain {
 }
 
 extension Chain where ResidueType == AminoAcid {
-    public func hydrophobicityValues(for hydrophobicityScale: String) -> [Double] {
-        let values = HydrophobicityReferenceDefaults.bundled.numericHydrophobicityValues(named: hydrophobicityScale)
+    public func hydrophobicityValues(for hydrophobicityScale: String) throws -> [Double] {
+        let references = try HydrophobicityReferenceDefaults.loadBundled()
+        let values = try references.numericHydrophobicityValues(named: hydrophobicityScale)
 
-        return residues.compactMap {
-            values[$0.oneLetterCode]
+        return try residues.map { residue in
+            guard let value = values[residue.oneLetterCode] else {
+                throw BioSwiftDiagnostics.logged(
+                    HydropathyError.missingResidueValue(
+                        scale: hydrophobicityScale, residue: residue.oneLetterCode))
+            }
+            return value
         }
     }
 
-    public func hydrophobicityValues(for hydrophobicityScale: HydrophobicityScaleName) -> [Double] {
-        hydrophobicityValues(for: hydrophobicityScale.rawValue)
+    public func hydrophobicityValues(for hydrophobicityScale: HydrophobicityScaleName) throws -> [Double] {
+        try hydrophobicityValues(for: hydrophobicityScale.rawValue)
     }
 
     public func hydrophobicityProfile(
         for hydrophobicityScale: String,
         windowSize: Int = 1
-    ) -> [HydrophobicityProfilePoint] {
+    ) throws -> [HydrophobicityProfilePoint] {
         guard windowSize > 0, windowSize.isMultiple(of: 2) == false, windowSize <= residues.count else {
-            return []
+            throw BioSwiftDiagnostics.logged(
+                HydropathyError.invalidWindowSize(windowSize, residueCount: residues.count))
         }
 
-        let values = hydrophobicityValues(for: hydrophobicityScale)
-
-        guard values.count == residues.count else {
-            return []
-        }
+        let values = try hydrophobicityValues(for: hydrophobicityScale)
 
         let firstCenterPosition = (Double(windowSize) + 1) / 2
 
@@ -297,8 +313,8 @@ extension Chain where ResidueType == AminoAcid {
     public func hydrophobicityProfile(
         for hydrophobicityScale: HydrophobicityScaleName,
         windowSize: Int = 1
-    ) -> [HydrophobicityProfilePoint] {
-        hydrophobicityProfile(for: hydrophobicityScale.rawValue, windowSize: windowSize)
+    ) throws -> [HydrophobicityProfilePoint] {
+        try hydrophobicityProfile(for: hydrophobicityScale.rawValue, windowSize: windowSize)
     }
 
 }
@@ -306,14 +322,14 @@ extension Chain where ResidueType == AminoAcid {
 extension AminoAcidChain {
     /// The isoelectric point calculated with free N- and C-termini.
     public var isoelectricPoint: Double {
-        isoelectricPoint()
+        get throws { try isoelectricPoint() }
     }
 
     public func isoelectricPoint(
         nTerminalIonization: TerminalIonization = .free,
         cTerminalIonization: TerminalIonization = .free
-    ) -> Double {
-        IsoelectricPointCalculator.isoelectricPoint(
+    ) throws -> Double {
+        try IsoelectricPointCalculator.isoelectricPoint(
             for: residues,
             nTerminal: nTerminalIonization,
             cTerminal: cTerminalIonization
@@ -724,12 +740,12 @@ extension Chain {
 }
 
 extension Chain where ResidueType == AminoAcid {
-    public func allowedModifications(at location: Int) -> [Modification]? {
-        if let residue = residue(at: location) {
-            return residue.allowedModifications
+    public func allowedModifications(at location: Int) throws -> [Modification]? {
+        guard let residue = residue(at: location) else {
+            throw BioSwiftDiagnostics.logged(
+                ChainEditingError.indexOutOfBounds(index: location, residueCount: residues.count))
         }
-
-        return nil
+        return try residue.allowedModifications
     }
 }
 
@@ -746,62 +762,74 @@ extension Chain {
         residue(at: location)?.modification
     }
 
-    public mutating func addModification(_ mod: Modification, at loc: Int) {
+    public mutating func addModification(_ mod: Modification, at loc: Int) throws {
         guard residues.indices.contains(loc) else {
-            return
+            throw BioSwiftDiagnostics.logged(
+                ChainEditingError.indexOutOfBounds(index: loc, residueCount: residues.count))
         }
 
         residues[loc].modification = mod
     }
 
-    public func addingModification(_ modification: Modification, at location: Int) -> Self {
+    public func addingModification(_ modification: Modification, at location: Int) throws -> Self {
         var copy = self
-        copy.addModification(modification, at: location)
+        try copy.addModification(modification, at: location)
         return copy
     }
 
-    public mutating func removeModification(at loc: Int) {
+    public mutating func removeModification(at loc: Int) throws {
         guard residues.indices.contains(loc) else {
-            return
+            throw BioSwiftDiagnostics.logged(
+                ChainEditingError.indexOutOfBounds(index: loc, residueCount: residues.count))
         }
 
         residues[loc].modification = nil
     }
 
-    public func removingModification(at location: Int) -> Self {
+    public func removingModification(at location: Int) throws -> Self {
         var copy = self
-        copy.removeModification(at: location)
+        try copy.removeModification(at: location)
         return copy
     }
 
-    public mutating func modifyResidues(for identifier: String, with modification: Modification) {
+    public mutating func modifyResidues(for identifier: String, with modification: Modification) throws {
+        var didModify = false
         for index in residues.indices {
             if residues[index].identifier == identifier {
                 residues[index].modification = modification
+                didModify = true
             }
+        }
+        guard didModify else {
+            throw BioSwiftDiagnostics.logged(ChainEditingError.residueIdentifierNotFound(identifier))
         }
     }
 
     public func modifyingResidues(
         for identifier: String,
         with modification: Modification
-    ) -> Self {
+    ) throws -> Self {
         var copy = self
-        copy.modifyResidues(for: identifier, with: modification)
+        try copy.modifyResidues(for: identifier, with: modification)
         return copy
     }
 
-    public mutating func removeModifications(for identifier: String) {
+    public mutating func removeModifications(for identifier: String) throws {
+        var didFindResidue = false
         for index in residues.indices {
             if residues[index].identifier == identifier {
                 residues[index].modification = nil
+                didFindResidue = true
             }
+        }
+        guard didFindResidue else {
+            throw BioSwiftDiagnostics.logged(ChainEditingError.residueIdentifierNotFound(identifier))
         }
     }
 
-    public func removingModifications(for identifier: String) -> Self {
+    public func removingModifications(for identifier: String) throws -> Self {
         var copy = self
-        copy.removeModifications(for: identifier)
+        try copy.removeModifications(for: identifier)
         return copy
     }
 }

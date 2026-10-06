@@ -4,8 +4,8 @@ import Testing
 @Suite("Nucleic acid sequence transformations")
 struct NucleicAcidSequenceTests {
     @Test("DNA generates complement, reverse, and reverse complement sequences")
-    func dnaTransformations() {
-        let dna = DNA(sequence: "ATCG")
+    func dnaTransformations() throws {
+        let dna = try DNA(sequence: "ATCG")
 
         #expect(dna.complement.sequence == "TAGC")
         #expect(dna.reverse.sequence == "GCTA")
@@ -13,8 +13,8 @@ struct NucleicAcidSequenceTests {
     }
 
     @Test("RNA generates complement, reverse, and reverse complement sequences")
-    func rnaTransformations() {
-        let rna = RNA(sequence: "AUCG")
+    func rnaTransformations() throws {
+        let rna = try RNA(sequence: "AUCG")
 
         #expect(rna.complement.sequence == "UAGC")
         #expect(rna.reverse.sequence == "GCUA")
@@ -22,8 +22,8 @@ struct NucleicAcidSequenceTests {
     }
 
     @Test("Every chain in a molecule is transformed")
-    func multipleChains() {
-        let dna = DNA(sequences: ["ATCG", "GATTACA"])
+    func multipleChains() throws {
+        let dna = try DNA(sequences: ["ATCG", "GATTACA"])
 
         #expect(dna.reverseComplement.sequence(chainIndex: 0) == "CGAT")
         #expect(dna.reverseComplement.sequence(chainIndex: 1) == "TGTAATC")

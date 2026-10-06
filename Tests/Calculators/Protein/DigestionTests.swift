@@ -15,7 +15,7 @@ import Testing
 
         let missedCleavages = 0
 
-        let trypsin = enzymeLibrary.first(where: {
+        let trypsin = try (ReferenceLibraryDefaults.loadBundled().enzymes + [unspecifiedEnzyme]).first(where: {
             $0.name == "Trypsin"
         })
 
@@ -28,7 +28,7 @@ import Testing
             #expect(!peptides.map(\.sequenceString).contains("WER"))
         }
 
-        let lysC = enzymeLibrary.first(where: {
+        let lysC = try (ReferenceLibraryDefaults.loadBundled().enzymes + [unspecifiedEnzyme]).first(where: {
             $0.name == "Lys-C"
         })
 
@@ -41,7 +41,7 @@ import Testing
             #expect(!peptides.map(\.sequenceString).contains("FNK"))
         }
 
-        let aspN = enzymeLibrary.first(where: {
+        let aspN = try (ReferenceLibraryDefaults.loadBundled().enzymes + [unspecifiedEnzyme]).first(where: {
             $0.name == "Asp-N"
         })
 
@@ -52,7 +52,7 @@ import Testing
             #expect(peptides[1].sequenceString == "DPQG")
         }
 
-        let pepsin1 = enzymeLibrary.first(where: {
+        let pepsin1 = try (ReferenceLibraryDefaults.loadBundled().enzymes + [unspecifiedEnzyme]).first(where: {
             $0.name == "Pepsin (pH = 1.3)"
         })
 
@@ -67,7 +67,7 @@ import Testing
             #expect(peptides.map(\.sequenceString).contains("MGKVVNPTQK"))
         }
 
-        let pepsin2 = enzymeLibrary.first(where: {
+        let pepsin2 = try (ReferenceLibraryDefaults.loadBundled().enzymes + [unspecifiedEnzyme]).first(where: {
             $0.name == "Pepsin (pH > 2)"
         })
 
@@ -83,8 +83,8 @@ import Testing
         }
     }
 
-    @Test func digestUnspecified() {
-        let unspecified = enzymeLibrary.first(where: {
+    @Test func digestUnspecified() throws {
+        let unspecified = try (ReferenceLibraryDefaults.loadBundled().enzymes + [unspecifiedEnzyme]).first(where: {
             $0.name == "Unspecified"
         })
         #expect(unspecified?.name == "Unspecified")
@@ -95,7 +95,7 @@ import Testing
 
         let missedCleavages = 1
 
-        let trypsin = enzymeLibrary.first(where: {
+        let trypsin = try (ReferenceLibraryDefaults.loadBundled().enzymes + [unspecifiedEnzyme]).first(where: {
             $0.name == "Trypsin"
         })
 
@@ -111,10 +111,10 @@ import Testing
         let alphaID = UUID()
         let betaID = UUID()
         let protein = Protein(chains: [
-            ProteinChain(sequence: "AKR", name: "alpha", id: alphaID),
-            ProteinChain(sequence: "MKR", name: "beta", id: betaID),
+            try ProteinChain(sequence: "AKR", name: "alpha", id: alphaID),
+            try ProteinChain(sequence: "MKR", name: "beta", id: betaID),
         ])
-        let enzyme = try #require(enzymeLibrary.first { $0.name == "Trypsin" })
+        let enzyme = try #require(try ReferenceLibraryDefaults.loadBundled().enzymes.first { $0.name == "Trypsin" })
 
         let peptides: [Peptide] = try ProteinDigester(protein: protein).peptides(using: enzyme)
         let alphaPeptides = peptides.filter { $0.id == alphaID }
@@ -131,8 +131,8 @@ import Testing
         #expect(betaPeptides.allSatisfy { $0.parentLength == 3 })
     }
 
-    @Test func invalidDigestionRegexThrows() {
-        let chain = ProteinChain(sequence: "PEPTIDE")
+    @Test func invalidDigestionRegexThrows() throws {
+        let chain = try ProteinChain(sequence: "PEPTIDE")
 
         #expect(throws: (any Error).self) {
             try chain.digest(using: "[")

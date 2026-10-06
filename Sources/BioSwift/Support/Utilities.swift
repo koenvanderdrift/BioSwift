@@ -26,6 +26,11 @@ public enum LoadError: Error {
             String, underlyingError: Error?)
 }
 
+public enum ReferenceDataError: Error, Equatable, Sendable {
+    case malformedRecord(source: String, description: String)
+    case invalidNumericValue(source: String, field: String, value: String)
+}
+
 public func loadData(
     from fileName: String, withExtension fileExtension: String, in bundle: Bundle = .main
 ) throws -> Data {

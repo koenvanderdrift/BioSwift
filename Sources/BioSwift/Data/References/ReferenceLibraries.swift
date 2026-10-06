@@ -103,40 +103,8 @@ public struct ModificationLibrary: Sendable {
     }
 }
 
-// MARK: - Public compatibility globals
-
-public var aminoAcidLibrary: [AminoAcid] {
-    ReferenceLibraryDefaults.bundled.aminoAcids
-}
-
-public var modificationLibrary: [Modification] {
-    ReferenceLibraryDefaults.bundled.unimodLibrary.modifications + [zeroModification]
-}
-
-public var elementLibrary: [ChemicalElement] {
-    ElementsLibraryDefaults.bundled
-}
-
-public var enzymeLibrary: [Enzyme] {
-    ReferenceLibraryDefaults.bundled.enzymes + [unspecifiedEnzyme]
-}
-
-public var hydrophobicityLibrary: [HydrophobicityScale] {
-    ReferenceLibraryDefaults.bundled.hydrophobicityScales
-}
-
 public enum ElementsLibraryDefaults {
     public static let bundledResult = Result { try JSONReferenceLibraryLoader.loadElements() }
-
-    public static var bundled: [ChemicalElement] {
-        switch bundledResult {
-        case .success(let elements):
-            return elements
-        case .failure(let error):
-            BioSwiftDiagnostics.log(error)
-            return []
-        }
-    }
 
     public static func loadBundled() throws -> [ChemicalElement] {
         try bundledResult.get()
@@ -145,16 +113,6 @@ public enum ElementsLibraryDefaults {
 
 public enum ReferenceLibraryDefaults {
     public static let bundledResult = Result { try ReferenceLibraryLoader.loadBundled() }
-
-    public static var bundled: ReferenceLibraries {
-        switch bundledResult {
-        case .success(let libraries):
-            return libraries
-        case .failure(let error):
-            BioSwiftDiagnostics.log(error)
-            return .empty
-        }
-    }
 
     public static func loadBundled() throws -> ReferenceLibraries {
         try bundledResult.get()
@@ -192,32 +150,32 @@ enum ReferenceLibraryLoader {
 }
 
 public enum ElementReferenceDefaults {
-    public static var bundled: ElementReferences {
-        ElementReferences(elements: ElementsLibraryDefaults.bundled)
+    public static func loadBundled() throws -> ElementReferences {
+        ElementReferences(elements: try ElementsLibraryDefaults.loadBundled())
     }
 }
 
 public enum AminoAcidReferenceDefaults {
-    public static var bundled: AminoAcidReferences {
-        ReferenceLibraryDefaults.bundled.aminoAcidReferences
+    public static func loadBundled() throws -> AminoAcidReferences {
+        try ReferenceLibraryDefaults.loadBundled().aminoAcidReferences
     }
 }
 
 public enum UnimodModificationReferenceDefaults {
-    public static var bundled: ModificationLibrary {
-        ReferenceLibraryDefaults.bundled.unimodLibrary
+    public static func loadBundled() throws -> ModificationLibrary {
+        try ReferenceLibraryDefaults.loadBundled().unimodLibrary
     }
 }
 
 public enum EnzymeReferenceDefaults {
-    public static var bundled: EnzymeReferences {
-        ReferenceLibraryDefaults.bundled.enzymeReferences
+    public static func loadBundled() throws -> EnzymeReferences {
+        try ReferenceLibraryDefaults.loadBundled().enzymeReferences
     }
 }
 
 public enum HydrophobicityReferenceDefaults {
-    public static var bundled: HydrophobicityReferences {
-        ReferenceLibraryDefaults.bundled.hydrophobicityReferences
+    public static func loadBundled() throws -> HydrophobicityReferences {
+        try ReferenceLibraryDefaults.loadBundled().hydrophobicityReferences
     }
 }
 
@@ -330,19 +288,12 @@ public struct HydrophobicityReferences: Sendable {
     public let hydrophobicityScales: [HydrophobicityScale]
 
     private let hydrophobicityScalesByName: [String: HydrophobicityScale]
-    private let numericHydrophobicityValuesByName: [String: [String: Double]]
 
     public init(hydrophobicityScales: [HydrophobicityScale]) {
         self.hydrophobicityScales = hydrophobicityScales
         self.hydrophobicityScalesByName = Dictionary(
             uniqueKeysWithValues: hydrophobicityScales.map {
                 ($0.name, $0)
-            })
-        self.numericHydrophobicityValuesByName = Dictionary(
-            uniqueKeysWithValues: hydrophobicityScales.map { scale in
-                let numericValues = scale.values.compactMapValues(Double.init)
-
-                return (scale.name, numericValues)
             })
     }
 
@@ -354,12 +305,22 @@ public struct HydrophobicityReferences: Sendable {
         hydrophobicityScale(named: name.rawValue)
     }
 
-    public func numericHydrophobicityValues(named name: String) -> [String: Double] {
-        numericHydrophobicityValuesByName[name] ?? [:]
+    public func numericHydrophobicityValues(named name: String) throws -> [String: Double] {
+        guard let scale = hydrophobicityScalesByName[name] else {
+            throw BioSwiftDiagnostics.logged(HydropathyError.scaleNotFound(name))
+        }
+        return try scale.values.reduce(into: [:]) { result, entry in
+            guard let value = Double(entry.value) else {
+                throw BioSwiftDiagnostics.logged(
+                    HydropathyError.invalidReferenceValue(
+                        scale: name, key: entry.key, value: entry.value))
+            }
+            result[entry.key] = value
+        }
     }
 
-    public func numericHydrophobicityValues(named name: HydrophobicityScaleName) -> [String: Double] {
-        numericHydrophobicityValues(named: name.rawValue)
+    public func numericHydrophobicityValues(named name: HydrophobicityScaleName) throws -> [String: Double] {
+        try numericHydrophobicityValues(named: name.rawValue)
     }
 }
 
@@ -399,16 +360,6 @@ public struct ReferenceLibraries: Sendable {
         self.enzymeReferences = EnzymeReferences(enzymes: enzymes)
         self.hydrophobicityReferences = HydrophobicityReferences(hydrophobicityScales: hydrophobicityScales)
     }
-
-    static let empty = ReferenceLibraries(
-        elements: [],
-        aminoAcids: [],
-        unimodLibrary: ModificationLibrary(vocabulary: .unimod, version: "", modifications: []),
-        enzymes: [],
-        hydrophobicityScales: [],
-        psiModLibrary: ModificationLibrary(vocabulary: .psiMod, version: "", modifications: []),
-        uniProtPTMLibrary: ModificationLibrary(vocabulary: .uniProtPTM, version: "", modifications: [])
-    )
 
     public func element(symbol: String) -> ChemicalElement? {
         elementReferences.element(symbol: symbol)

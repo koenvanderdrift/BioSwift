@@ -44,6 +44,14 @@ public enum TerminalIonization: Sendable, Equatable {
     case custom(pKa: Double)
 }
 
+public enum HydropathyError: Error, Equatable, Sendable {
+    case scaleNotFound(String)
+    case invalidReferenceValue(scale: String, key: String, value: String)
+    case missingResidueValue(scale: String, residue: String)
+    case missingPKaValue(String)
+    case invalidWindowSize(Int, residueCount: Int)
+}
+
 public class IsoelectricPointCalculator {
     public var residues: [AminoAcid] = []
 
@@ -54,26 +62,33 @@ public class IsoelectricPointCalculator {
     public func isoelectricPoint(
         nTerminal: TerminalIonization = .free,
         cTerminal: TerminalIonization = .free
-    ) -> Double {
-        Self.isoelectricPoint(for: residues, nTerminal: nTerminal, cTerminal: cTerminal)
+    ) throws -> Double {
+        try Self.isoelectricPoint(for: residues, nTerminal: nTerminal, cTerminal: cTerminal)
     }
 
     public static func isoelectricPoint<Residues: Sequence>(
         for residues: Residues,
         nTerminal: TerminalIonization = .free,
         cTerminal: TerminalIonization = .free
-    ) -> Double where Residues.Element == AminoAcid {
+    ) throws -> Double where Residues.Element == AminoAcid {
         // http://isoelectric.org/www_old/files/practise-isoelectric-point.html
-        let pKaValues = HydrophobicityReferenceDefaults.bundled.numericHydrophobicityValues(named: "pKa")
+        let pKaValues = try HydrophobicityReferenceDefaults.loadBundled().numericHydrophobicityValues(named: "pKa")
 
-        guard let cTerminalpKa = pKaValues["CTerminal"], let nTerminalpKa = pKaValues["NTerminal"],
-            let asparticAcidpKa = pKaValues["D"], let glutamicAcidpKa = pKaValues["E"],
-            let cystinepKa = pKaValues["C"], let tyrosinepKa = pKaValues["Y"],
-            let histidinepKa = pKaValues["H"], let lysinepKa = pKaValues["K"],
-            let argininepKa = pKaValues["R"]
-        else {
-            return 0.0
+        func requiredValue(_ key: String) throws -> Double {
+            guard let value = pKaValues[key] else {
+                throw BioSwiftDiagnostics.logged(HydropathyError.missingPKaValue(key))
+            }
+            return value
         }
+        let cTerminalpKa = try requiredValue("CTerminal")
+        let nTerminalpKa = try requiredValue("NTerminal")
+        let asparticAcidpKa = try requiredValue("D")
+        let glutamicAcidpKa = try requiredValue("E")
+        let cystinepKa = try requiredValue("C")
+        let tyrosinepKa = try requiredValue("Y")
+        let histidinepKa = try requiredValue("H")
+        let lysinepKa = try requiredValue("K")
+        let argininepKa = try requiredValue("R")
 
         var residueCount = 0
         var numberOfAsparticAcid = 0.0

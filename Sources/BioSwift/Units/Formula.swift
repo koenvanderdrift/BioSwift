@@ -23,7 +23,7 @@ public enum FormulaParser {
     }
 
     private static var elements: ElementReferences {
-        ElementReferenceDefaults.bundled
+        get throws { try ElementReferenceDefaults.loadBundled() }
     }
 
     public static func parse(_ string: String) throws -> Formula {
@@ -142,7 +142,7 @@ public enum FormulaParser {
                     i = j
                 }
 
-                guard let element = elements.element(symbol: elementName) else {
+                guard let element = try elements.element(symbol: elementName) else {
                     throw ParseError.elementNotFound(elementName)
                 }
 

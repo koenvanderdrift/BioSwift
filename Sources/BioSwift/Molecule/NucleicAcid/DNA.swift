@@ -13,10 +13,17 @@ public struct DNAChain: NucleicAcidChain, Ionizable, Codable, Equatable, Sendabl
     public var range: Range<Int> = zeroRange
     public var parentLength: Int = 0
 
-    public init(sequence: String, name: String = "", id: UUID = UUID()) {
+    public init(sequence: String, name: String = "", id: UUID = UUID()) throws {
         self.id = id
         self.name = name
-        residues = sequence.compactMap { Nucleotide.standard(code: $0, type: .dna) }
+        residues = try sequence.enumerated().map { position, character in
+            guard let nucleotide = Nucleotide.standard(code: character, type: .dna) else {
+                throw BioSwiftDiagnostics.logged(
+                    SequenceValidationError.invalidResidue(
+                        character, position: position, sequenceType: "DNA"))
+            }
+            return nucleotide
+        }
     }
 
     public init(residues: [Nucleotide]) {
@@ -70,26 +77,28 @@ extension BioMolecule where ChainType == DNAChain {
         DNA(chains: chains.map(\.reverseComplement))
     }
 
-    public init(sequence: String) {
-        self.init(chains: [DNAChain(sequence: sequence)])
+    public init(sequence: String) throws {
+        self.init(chains: [try DNAChain(sequence: sequence)])
     }
 
-    public init(sequences: [String]) {
-        self.init(chains: sequences.map { DNAChain(sequence: $0) })
+    public init(sequences: [String]) throws {
+        self.init(chains: try sequences.map { try DNAChain(sequence: $0) })
     }
 
-    public init(fastaRecord: FastaRecord) {
+    public init(fastaRecord: FastaRecord) throws {
         let name = fastaRecord.shortName.isEmpty ? fastaRecord.fullName : fastaRecord.shortName
-        self.init(chains: [DNAChain(sequence: fastaRecord.sequence, name: name)])
+        self.init(chains: [try DNAChain(sequence: fastaRecord.sequence, name: name)])
     }
 
     public init(residues: [Nucleotide]) {
         self.init(chains: [DNAChain(residues: residues)])
     }
 
-    public func truncate(by range: Range<Int>) -> DNA {
-        guard let chain = chains.first?.removing(range) else { return self }
-        return DNA(chains: [chain])
+    public func truncate(by range: Range<Int>) throws -> DNA {
+        guard let chain = chains.first else {
+            throw BioSwiftDiagnostics.logged(CrossLinkError.invalidChainIndex(0))
+        }
+        return DNA(chains: [try chain.removingResidues(in: range)])
     }
 
     public func nucleotide(at location: Int, chainIndex: Int = 0) -> Nucleotide? {

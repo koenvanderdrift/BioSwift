@@ -19,7 +19,7 @@ struct UnimodReferenceLibraries {
 
 enum UnimodReferenceLibraryLoader {
     static func load() throws -> UnimodReferenceLibraries {
-        let elements = ElementReferences(elements: ElementsLibraryDefaults.bundled)
+        let elements = ElementReferences(elements: try ElementsLibraryDefaults.loadBundled())
 
         return try load(elements: elements)
     }
@@ -33,7 +33,7 @@ enum UnimodReferenceLibraryLoader {
 
     /// Handy for tests with custom XML data.
     static func parse(data: Data) throws -> UnimodReferenceLibraries {
-        let elements = ElementReferences(elements: ElementsLibraryDefaults.bundled)
+        let elements = ElementReferences(elements: try ElementsLibraryDefaults.loadBundled())
 
         let parser = UnimodXMLParser(elements: elements)
         return try parser.parse(data: data)
@@ -100,7 +100,7 @@ final class UnimodXMLParser: NSObject {
 
     let rightArrow = "\u{2192}"
 
-    init(elements: ElementReferences = ElementReferenceDefaults.bundled) {
+    init(elements: ElementReferences) {
         self.elementReferences = elements
         super.init()
     }
@@ -253,10 +253,22 @@ extension UnimodXMLParser: XMLParserDelegate {
     ) {
         if xmlElementName == elem {
             if elementFullName.isEmpty == false {
+                guard let monoisotopicMass = Dalton(string: elementMonoisotopicMass) else {
+                    parseError = ReferenceDataError.invalidNumericValue(
+                        source: "unimod.xml", field: "mono_mass", value: elementMonoisotopicMass)
+                    parser.abortParsing()
+                    return
+                }
+                guard let averageMass = Dalton(string: elementAverageMass) else {
+                    parseError = ReferenceDataError.invalidNumericValue(
+                        source: "unimod.xml", field: "avge_mass", value: elementAverageMass)
+                    parser.abortParsing()
+                    return
+                }
                 let chemicalElement = ChemicalElement(
                     name: elementFullName, symbol: elementSymbol,
-                    monoisotopicMass: Dalton(string: elementMonoisotopicMass) ?? 0.0,
-                    averageMass: Dalton(string: elementAverageMass) ?? 0.0)
+                    monoisotopicMass: monoisotopicMass,
+                    averageMass: averageMass)
 
                 parsedElements.append(chemicalElement)
 

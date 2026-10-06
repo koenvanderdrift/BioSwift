@@ -184,18 +184,20 @@ extension Dalton {
 }
 
 extension Array where Element: Chain {
-    public func protonated(chargeStates: ClosedRange<Charge>) -> [Element] {
-        flatMap { sequence in
-            chargeStates.compactMap { charge -> Element? in
-                guard charge >= 0 else {
-                    return nil
-                }
-
+    public func protonated(chargeStates: ClosedRange<Charge>) throws -> [Element] {
+        guard chargeStates.lowerBound >= 0 else {
+            throw BioSwiftDiagnostics.logged(MassCalculationError.invalidChargeState(chargeStates.lowerBound))
+        }
+        return flatMap { sequence in
+            chargeStates.map { charge in
                 var chargedSequence = sequence
                 chargedSequence.adducts = [Adduct](repeating: protonAdduct, count: charge)
-
                 return chargedSequence
             }
         }
     }
+}
+
+public enum MassCalculationError: Error, Equatable, Sendable {
+    case invalidChargeState(Charge)
 }

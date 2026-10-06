@@ -10,7 +10,7 @@ import Testing
 
 @Suite struct SearchTests: BioSwiftTestSuite {
     var fixtures = BioSwiftTestFixtures()
-    @Test func lowMassSearch() {
+    @Test func lowMassSearch() throws {
         if let chain = testProtein.chains.first {
             let searchParameters = MassSearchParameters(
                 searchValue: 1, tolerance: .ppm(10),
@@ -22,7 +22,7 @@ import Testing
         }
     }
 
-    @Test func moverzSearch() {
+    @Test func moverzSearch() throws {
         if let chain = testProtein.chains.first {
             let searchParameters = MassSearchParameters(
                 searchValue: 890.3877, tolerance: .ppm(10),
@@ -30,7 +30,7 @@ import Testing
 
             let ranges: [Range<Int>] = chain.searchMass(params: searchParameters)
 
-            debugPrint(ranges)
+            BioSwiftDiagnostics.log(ranges)
             let sequenceStrings = ranges.map {
                 chain.sequenceString[$0]
             }
@@ -44,12 +44,12 @@ import Testing
         }
     }
 
-    @Test func moverzLongSearch() {
-        let longTest = Protein(
+    @Test func moverzLongSearch() throws {
+        let longTest = try Protein(
             sequence: """
 
                 MIPARFAGVLLALALILPGTLCAEGTRGRSSTARCSLFGSDFVNTFDGSMYSFAGYCSYLLAGGCQKRSFSIIGDFQNGKRVSLSVYLGEFFDIHLFVNGTVTQGDQRVSMPYASKGLYLETEAGYYKLSGEAYGFVARIDGSGNFQVLLSDRYFNKTCGLCGNFNIFAEDDFMTQEGTLTSDPYDFANSWALSSGEQWCERASPPSSSCNISSGEMQKGLWEQCQLLKSTSVFARCHPLVDPEPFVALCEKTLCECAGGLECACPALLEYARTCAQEGMVLYGWTDHSACSPVCPAGMEYRQCVSPCARTCQSLHINEMCQERCVDGCSCPEGQLLDEGLCVESTECPCVHSGKRYPPGTSLSRDCNTCICRNSQWICSNEECPGECLVTGQSHFKSFDNRYFTFSGICQYLLARDCQDHSFSIVIETVQCADDRDAVCTRSVTVRLPGLHNSLVKLKHGAGVAMDGQDVQLPLLKGDLRIQHTVTASVRLSYGEDLQMDWDGRGRLLVKLSPVYAGKTCGLCGNYNGNQGDDFLTPSGLAEPRVEDFGNAWKLHGDCQDLQKQHSDPCALNPRMTRFSEEACAVLTSPTFEACHRAVSPLPYLRNCRYDVCSCSDGRECLCGALASYAAACAGRGVRVAWREPGRCELNCPKGQVYLQCGTPCNLTCRSLSYPDEECNEACLEGCFCPPGLYMDERGDCVPKAQCPCYYDGEIFQPEDIFSDHHTMCYCEDGFMHCTMSGVPGSLLPDAVLSSPLSHRSKRSLSCRPPMVKLVCPADNLRAEGLECTKTCQNYDLECMSMGCVSGCLCPPGMVRHENRCVALERCPCFHQGKEYAPGETVKIGCNTCVCQDRKWNCTDHVCDATCSTIGMAHYLTFDGLKYLFPGECQYVLVQDYCGSNPGTFRILVGNKGCSHPSVKCKKRVTILVEGGEIELFDGEVNVKRPMKDETHFEVVESGRYIILLLGKALSVVWDRHLSISVVLKQTYQEKVCGLCGNFDGIQNNDLTSSNLQVEEDPVDFGNSWKVSSQCADTRKVPLDSSPATCHNNIMKQTMVDSSCRILTSDVFQDCNKLVDPEPYLDVCIYDTCSCESIGDCACFCDTIAAYAHVCAQHGKVVTWRTATLCPQSCEERNLRENGYECEWRYNSCAPACQVTCQHPEPLACPVQCVEGCHAHCPPGKILDELLQTCVDPEDCPVCEVAGRRFASGKKVTLNPSDPEHCQICHCDVVNLTCEACQEPGGLVVPPTDAPVSPTTLYVEDISEPPLHDFYCSRLLDLVFLLDGSSRLSEAEFEVLKAFVVDMMERLRISQKWVRVAVVEYHDGSHAYIGLKDRKRPSELRRIASQVKYAGSQVASTSEVLKYTLFQIFSKIDRPEASRITLLLMASQEPQRMSRNFVRYVQGLKKKKVIVIPVGIGPHANLKQIRLIEKQAPENKAFVLSSVDELEQQRDEIVSYLCDLAPEAPPPTLPPDMAQVTVGPGLLGVSTLGPKRNSMVLDVAFVLEGSDKIGEADFNRSKEFMEEVIQRMDVGQDSIHVTVLQYSYMVTVEYPFSEAQSKGDILQRVREIRYQGGNRTNTGLALRYLSDHSFLVSQGDREQAPNLVYMVTGNPASDEIKRLPGDIQVVPIGVGPNANVQELERIGWPNAPILIQDFETLPREAPDLVLQRCCSGEGLQIPTLSPAPDCSQPLDVILLLDGSSSFPASYFDEMKSFAKAFISKANIGPRLTQVSVLQYGSITTIDVPWNVVPEKAHLLSLVDVMQREGGPSQIGDALGFAVRYLTSEMHGARPGASKAVVILVTDVSVDSVDAAADAARSNRVTVFPIGIGDRYDAAQLRILAGPAGDSNVVKLQRIEDLPTMVTLGNSFLHKLCSGFVRICMDEDGNEKRPGDVWTLPDQCHTVTCQPDGQTLLKSHRVNCDRGLRPSCPNSQSPVKVEETCGCRWTCPCVCTGSSTRHIVTFDGQNFKLTGSCSYVLFQNKEQDL...
-                """)
+                """.filter(\.isLetter))
 
         if let chain = longTest.chains.first {
             let searchParameters = MassSearchParameters(
@@ -58,7 +58,7 @@ import Testing
 
             let ranges: [Range<Int>] = chain.searchMass(params: searchParameters)
 
-            debugPrint(ranges)
+            BioSwiftDiagnostics.log(ranges)
             let sequenceStrings = ranges.map {
                 chain.sequenceString[$0]
             }
@@ -79,7 +79,7 @@ import Testing
             unimodName: "Phospho", psiModAccession: "MOD:00046",
             uniProtPTMAccession: "PTM-0253") {
             var chain = try #require(testProtein.chains.first)
-            chain.addModification(modification, at: 76)
+            try chain.addModification(modification, at: 76)
 
             let searchParameters = MassSearchParameters(
                 searchValue: 689.28, tolerance: .ppm(10),
@@ -96,7 +96,7 @@ import Testing
         }
     }
 
-    @Test func averageMassSearch() {
+    @Test func averageMassSearch() throws {
         if let chain = testProtein.chains.first {
             let searchParameters = MassSearchParameters(
                 searchValue: 609.71, tolerance: .ppm(10),
@@ -119,7 +119,7 @@ import Testing
     @Test func nominalMassSearch() throws {
         let chain = try #require(testProtein.chains.first)
         let targetSequence = "IFFSP"
-        let targetMass = Dalton(Peptide(sequence: targetSequence).nominalMass)
+        let targetMass = Dalton(try Peptide(sequence: targetSequence).nominalMass)
         let searchParameters = MassSearchParameters(
             searchValue: targetMass,
             tolerance: .dalton(0),
@@ -133,7 +133,7 @@ import Testing
         #expect(optimizedSequences.contains(targetSequence))
     }
 
-    @Test func massTolerancePreservesDecimalValue() {
+    @Test func massTolerancePreservesDecimalValue() throws {
         let value = decimal("0.1000000000000000001")
         let parameters = MassSearchParameters(
             searchValue: 100,
@@ -169,7 +169,7 @@ import Testing
     }
 
     @Test(arguments: MassTolerance.Unit.allCases)
-    func massToleranceUnitPreservesValue(unit: MassTolerance.Unit) {
+    func massToleranceUnitPreservesValue(unit: MassTolerance.Unit) throws {
         let value = decimal("0.1000000000000000001")
         var tolerance = MassTolerance.ppm(value)
 
@@ -179,7 +179,7 @@ import Testing
         #expect(tolerance.unit == unit)
     }
 
-    @Test func massToleranceUnitsHaveDisplayValues() {
+    @Test func massToleranceUnitsHaveDisplayValues() throws {
         #expect(MassTolerance.Unit.allCases == [.ppm, .dalton, .percent, .mmu])
         #expect(MassTolerance.Unit.allCases.map(\.rawValue) == ["ppm", "Da", "%", "mmu"])
     }
@@ -205,8 +205,8 @@ import Testing
         #expect(parameters.massRange.upperBound == expectedUpperBound)
     }
 
-    @Test func checkMassDifferences() {
-        let peptide = Peptide(sequence: "SAMPLER")
+    @Test func checkMassDifferences() throws {
+        let peptide = try Peptide(sequence: "SAMPLER")
         let first = peptide.subChain(range: 0..<1)
         let truncated = peptide.subChain(range: 1..<7)
 

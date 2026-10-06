@@ -28,8 +28,8 @@ import Testing
         #expect(!libraries.elements.isEmpty)
     }
 
-    @Test func bundledDefaultsAreAvailable() {
-        let libraries = ReferenceLibraryDefaults.bundled
+    @Test func bundledDefaultsAreAvailable() throws {
+        let libraries = try ReferenceLibraryDefaults.loadBundled()
 
         #expect(!libraries.elements.isEmpty)
         #expect(!libraries.unimodLibrary.modifications.isEmpty)
@@ -38,8 +38,8 @@ import Testing
         #expect(!libraries.hydrophobicityScales.isEmpty)
     }
 
-    @Test func bundledHydrophobicityReferencesProvideNumericValues() {
-        let pKaValues = HydrophobicityReferenceDefaults.bundled.numericHydrophobicityValues(named: "pKa")
+    @Test func bundledHydrophobicityReferencesProvideNumericValues() throws {
+        let pKaValues = try HydrophobicityReferenceDefaults.loadBundled().numericHydrophobicityValues(named: "pKa")
 
         #expect(pKaValues["CTerminal"] != nil)
         #expect(pKaValues["NTerminal"] != nil)
@@ -89,7 +89,7 @@ import Testing
     }
 
     @Test func uniProtPTMLibraryLoadsMetadata() throws {
-        let library = ReferenceLibraryDefaults.bundled.uniProtPTMLibrary
+        let library = try ReferenceLibraryDefaults.loadBundled().uniProtPTMLibrary
         let modification = try #require(library.modification(accession: "PTM-0369"))
         let metadata = try #require(library.metadata(for: modification))
 
@@ -105,7 +105,7 @@ import Testing
     }
 
     @Test func bundledUniProtPTMLibraryResolvesAspartateAndGlutamateAliases() throws {
-        let library = ReferenceLibraryDefaults.bundled.uniProtPTMLibrary
+        let library = try ReferenceLibraryDefaults.loadBundled().uniProtPTMLibrary
         let aspartateModification = try #require(
             library.modification(accession: "PTM-0371"))
         let glutamateModification = try #require(
@@ -118,7 +118,7 @@ import Testing
     }
 
     @Test func bundledUniProtPTMLibraryIncludesLipidAndCarbohydrateFeatures() throws {
-        let library = ReferenceLibraryDefaults.bundled.uniProtPTMLibrary
+        let library = try ReferenceLibraryDefaults.loadBundled().uniProtPTMLibrary
         let lipidModification = try #require(
             library.modification(accession: "PTM-0776"))
         let carbohydrateModification = try #require(
@@ -191,8 +191,8 @@ import Testing
 
         let library = try UniProtPTMReferenceLibraryLoader.parse(
             text,
-            elements: ElementReferenceDefaults.bundled,
-            aminoAcids: AminoAcidReferenceDefaults.bundled
+            elements: try ElementReferenceDefaults.loadBundled(),
+            aminoAcids: try AminoAcidReferenceDefaults.loadBundled()
         )
         let modification = library.modification(accession: "PTM-TEST1")
         let metadata = modification.flatMap(library.metadata)
@@ -267,7 +267,7 @@ import Testing
 
         let result = try PSIModReferenceLibraryLoader.parse(
             text,
-            elements: ElementReferenceDefaults.bundled
+            elements: try ElementReferenceDefaults.loadBundled()
         )
 
         #expect(result.version == "test")
@@ -292,8 +292,8 @@ import Testing
     @Test func unimodReferenceLibrariesLoadDebug() throws {
         let unimodLibraries = try UnimodReferenceLibraryLoader.load()
 
-        debugPrint("aminoAcids:", unimodLibraries.aminoAcids.count)
-        debugPrint("modifications:", unimodLibraries.modifications.count)
+        BioSwiftDiagnostics.log("aminoAcids: \(unimodLibraries.aminoAcids.count)")
+        BioSwiftDiagnostics.log("modifications: \(unimodLibraries.modifications.count)")
 
         #expect(!unimodLibraries.aminoAcids.isEmpty)
         #expect(!unimodLibraries.modifications.isEmpty)

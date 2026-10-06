@@ -56,43 +56,43 @@ public func fastaRecords(fromText text: String) async throws -> [FastaRecord] {
 public func proteins(fromFastaFile fileName: String, in bundle: Bundle = .main) async throws -> [Protein] {
     let records = try await fastaRecords(from: fileName, in: bundle)
 
-    return records.map {
-        Protein(fastaRecord: $0)
+    return try records.map {
+        try Protein(fastaRecord: $0)
     }
 }
 
 public func protein(fromFastaFile fileName: String, in bundle: Bundle = .main) async throws -> Protein {
     let record = try await fastaRecord(from: fileName, in: bundle)
 
-    return Protein(fastaRecord: record)
+    return try Protein(fastaRecord: record)
 }
 
 public func dnas(fromFastaFile fileName: String, in bundle: Bundle = .main) async throws -> [DNA] {
     let records = try await fastaRecords(from: fileName, in: bundle)
 
-    return records.map {
-        DNA(fastaRecord: $0)
+    return try records.map {
+        try DNA(fastaRecord: $0)
     }
 }
 
 public func dna(fromFastaFile fileName: String, in bundle: Bundle = .main) async throws -> DNA {
     let record = try await fastaRecord(from: fileName, in: bundle)
 
-    return DNA(fastaRecord: record)
+    return try DNA(fastaRecord: record)
 }
 
 public func rnas(fromFastaFile fileName: String, in bundle: Bundle = .main) async throws -> [RNA] {
     let records = try await fastaRecords(from: fileName, in: bundle)
 
-    return records.map {
-        RNA(fastaRecord: $0)
+    return try records.map {
+        try RNA(fastaRecord: $0)
     }
 }
 
 public func rna(fromFastaFile fileName: String, in bundle: Bundle = .main) async throws -> RNA {
     let record = try await fastaRecord(from: fileName, in: bundle)
 
-    return RNA(fastaRecord: record)
+    return try RNA(fastaRecord: record)
 }
 
 /// FastaParser takes a text file as input and produces a ``FastaRecord`` array.

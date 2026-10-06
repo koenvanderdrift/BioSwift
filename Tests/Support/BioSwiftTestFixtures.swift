@@ -27,12 +27,27 @@ private func formula(_ value: String) -> Formula {
     }
 }
 
+private func protein(_ sequence: String) -> Protein {
+    do {
+        return try Protein(sequence: sequence)
+    } catch {
+        preconditionFailure("Unable to create test protein: \(error)")
+    }
+}
+
+private func peptide(_ sequence: String) -> Peptide {
+    do {
+        return try Peptide(sequence: sequence)
+    } catch {
+        preconditionFailure("Unable to create test peptide: \(error)")
+    }
+}
+
 struct BioSwiftTestFixtures {
-    var testProtein = Protein(
-        sequence:
+    var testProtein = protein(
             "MPSSVSWGILLLAGLCCLVPVSLAEDPQGDAAQKTDTSHHDQDHPTFNKITPNLAEFAFSLYRQLAHQSNSTNIFFSPIVSIATAFAMLSLGTKADTHDEILEGLNFNLTEIPEAQIHEGFQELLRTLNQPDSQLQLTTGNGLFLSEGLKLVDKFLEDVKKLYHSEAFTVNFGDTEEAKKQINDYVEKGTQGKIVDLVKELDRDTVFALVNYIFFKGKWERPFEVKDTEEEDFHVDQVTTVKVPMMKRLGMFNIQHCKKLSSWVLLMKYLGNATAIFFLPDEGKLQHLENELTHDIITKFLENEDRRSASLHLPKLSITGTYDLKSVLGQLGITKVFSNGADLSGVTEEAPLKLSKAVHKAVLTIDEKGTEAAGAMFLEAIPMSIPPEVKFNKPFVFMIEQNTKSPLFMGKVVNPTQK"
     )
-    var testPeptide = Peptide(sequence: "DWSSD")
+    var testPeptide = peptide("DWSSD")
     var alanine = AminoAcid(
         name: "Alanine", oneLetterCode: "A", threeLetterCode: "Ala", formula: formula("C3H5NO"))
     var serine = AminoAcid(
@@ -70,7 +85,7 @@ extension BioSwiftTestSuite {
         psiModAccession: String,
         uniProtPTMAccession: String? = nil
     ) throws -> [Modification] {
-        let libraries = ReferenceLibraryDefaults.bundled
+        let libraries = try ReferenceLibraryDefaults.loadBundled()
         let unimodModification = try #require(
             libraries.unimodLibrary.modification(named: unimodName))
         let psiModModification = try #require(

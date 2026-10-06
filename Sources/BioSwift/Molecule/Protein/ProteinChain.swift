@@ -16,10 +16,10 @@ public struct ProteinChain: AminoAcidChain, Codable, Equatable, Sendable {
     public var range: Range<Int> = zeroRange
     public var parentLength: Int = 0
 
-    public init(sequence: String, name: String = "", id: UUID = UUID()) {
+    public init(sequence: String, name: String = "", id: UUID = UUID()) throws {
         self.id = id
         self.name = name
-        residues = Self.createResidues(from: sequence)
+        residues = try Self.createResidues(from: sequence)
     }
 
     public init(residues: [AminoAcid]) {

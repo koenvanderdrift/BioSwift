@@ -7,7 +7,7 @@ import Testing
 struct ChainEditingTests {
     @Test("Non-mutating removal supports leading, middle, and trailing ranges")
     func removalPositions() throws {
-        let chain = ProteinChain(sequence: "ACDEFGH", name: "alpha")
+        let chain = try ProteinChain(sequence: "ACDEFGH", name: "alpha")
 
         #expect(try chain.removingResidues(in: 0..<2).sequenceString == "DEFGH")
         #expect(try chain.removingResidues(in: 2..<5).sequenceString == "ACGH")
@@ -18,7 +18,7 @@ struct ChainEditingTests {
     @Test("Empty removal is an exact no-op")
     func emptyRemoval() throws {
         let id = UUID()
-        var chain = ProteinChain(sequence: "ACDE", name: "alpha", id: id)
+        var chain = try ProteinChain(sequence: "ACDE", name: "alpha", id: id)
         chain.range = 4..<8
         chain.parentLength = 12
         chain.adducts = [protonAdduct]
@@ -33,8 +33,8 @@ struct ChainEditingTests {
     }
 
     @Test("Invalid indices and ranges throw typed errors")
-    func invalidLocations() {
-        let chain = ProteinChain(sequence: "ACDE")
+    func invalidLocations() throws {
+        let chain = try ProteinChain(sequence: "ACDE")
 
         #expect(throws: ChainEditingError.indexOutOfBounds(index: -1, residueCount: 4)) {
             try chain.removingResidue(at: -1)
@@ -53,7 +53,7 @@ struct ChainEditingTests {
     @Test("Removal preserves identity, molecular state, and retained modifications")
     func removalPreservesState() throws {
         let id = UUID()
-        var chain = ProteinChain(sequence: "ACDEFG", name: "alpha", id: id)
+        var chain = try ProteinChain(sequence: "ACDEFG", name: "alpha", id: id)
         chain.range = 10..<16
         chain.parentLength = 20
         chain.adducts = [protonAdduct, sodiumAdduct]
@@ -80,9 +80,9 @@ struct ChainEditingTests {
 
     @Test("Insertion and replacement have mutating and non-mutating forms")
     func insertionAndReplacement() throws {
-        let original = ProteinChain(sequence: "ACD", name: "alpha")
+        let original = try ProteinChain(sequence: "ACD", name: "alpha")
         let glycine = try #require(
-            AminoAcidReferenceDefaults.bundled.aminoAcid(identifier: "G")
+            try AminoAcidReferenceDefaults.loadBundled().aminoAcid(identifier: "G")
         )
 
         let inserted = try original.insertingResidue(glycine, at: 1)
@@ -108,7 +108,7 @@ struct ChainEditingTests {
 
     @Test("Existential edits reject incompatible residue types")
     func incompatibleResidueType() throws {
-        let chain = ProteinChain(sequence: "ACD")
+        let chain = try ProteinChain(sequence: "ACD")
         let nucleotide = try #require(Nucleotide.standard(code: "A", type: .dna))
         let residue: any Residue = nucleotide
 
@@ -119,8 +119,8 @@ struct ChainEditingTests {
 
     @Test("DNA and RNA chains retain their concrete element types and state")
     func nucleicAcidChains() throws {
-        let dna = DNAChain(sequence: "GATTACA", name: "coding")
-        let rna = RNAChain(sequence: "GAUUACA", name: "messenger")
+        let dna = try DNAChain(sequence: "GATTACA", name: "coding")
+        let rna = try RNAChain(sequence: "GAUUACA", name: "messenger")
         var chargedDNA = dna
         var chargedRNA = rna
         chargedDNA.adducts = [sodiumAdduct]
@@ -149,7 +149,7 @@ struct ChainEditingTests {
 @Suite("Range removal mapping")
 struct RangeRemovalMappingTests {
     @Test("Positions map before, within, and after the removed range")
-    func positions() {
+    func positions() throws {
         let mapping = RangeRemovalMapping(removedRange: 2..<5)
 
         #expect(mapping.map(0) == 0)
@@ -161,7 +161,7 @@ struct RangeRemovalMappingTests {
     }
 
     @Test("An empty removed range is an identity mapping")
-    func emptyRange() {
+    func emptyRange() throws {
         let mapping = RangeRemovalMapping(removedRange: 3..<3)
 
         #expect(mapping.map(0) == 0)
@@ -173,8 +173,8 @@ struct RangeRemovalMappingTests {
 @Suite("Chain molecular-state editing")
 struct ChainMolecularStateEditingTests {
     @Test("Adduct copy operations preserve the source and chain identity")
-    func adducts() {
-        let chain = DNAChain(sequence: "GATTACA", name: "coding")
+    func adducts() throws {
+        let chain = try DNAChain(sequence: "GATTACA", name: "coding")
 
         let specified = chain.withAdducts([sodiumAdduct, protonAdduct])
         let repeated = chain.withAdducts(type: protonAdduct, count: 2)
@@ -188,8 +188,8 @@ struct ChainMolecularStateEditingTests {
     }
 
     @Test("Terminal copy operation preserves the source and other state")
-    func termini() {
-        let chain = ProteinChain(sequence: "ACDE", name: "alpha")
+    func termini() throws {
+        let chain = try ProteinChain(sequence: "ACDE", name: "alpha")
             .withAdducts([protonAdduct])
 
         let edited = chain.withTermini(
@@ -208,7 +208,7 @@ struct ChainMolecularStateEditingTests {
 
     @Test("Endpoint removal preserves terminal state until explicitly replaced")
     func endpointRemovalAndTerminalChemistry() throws {
-        let precursor = ProteinChain(sequence: "MACDEK")
+        let precursor = try ProteinChain(sequence: "MACDEK")
             .withTermini(nTerm: lossOfAmmonia, cTerm: lossOfWater)
 
         let structurallyTrimmedNTerm = try precursor.removingResidues(in: 0..<1)
@@ -238,10 +238,10 @@ struct ChainMolecularStateEditingTests {
     }
 
     @Test("A residue modification can be added and removed on copies")
-    func singleModification() {
-        let chain = ProteinChain(sequence: "ACDE", name: "alpha")
-        let modified = chain.addingModification(lossOfWater, at: 1)
-        let restored = modified.removingModification(at: 1)
+    func singleModification() throws {
+        let chain = try ProteinChain(sequence: "ACDE", name: "alpha")
+        let modified = try chain.addingModification(lossOfWater, at: 1)
+        let restored = try modified.removingModification(at: 1)
 
         #expect(chain.residues[1].modification == nil)
         #expect(modified.residues[1].modification == lossOfWater)
@@ -251,10 +251,10 @@ struct ChainMolecularStateEditingTests {
     }
 
     @Test("Bulk residue modification operations edit only matching identifiers")
-    func bulkModifications() {
-        let chain = ProteinChain(sequence: "ACCA")
-        let modified = chain.modifyingResidues(for: "C", with: lossOfWater)
-        let restored = modified.removingModifications(for: "C")
+    func bulkModifications() throws {
+        let chain = try ProteinChain(sequence: "ACCA")
+        let modified = try chain.modifyingResidues(for: "C", with: lossOfWater)
+        let restored = try modified.removingModifications(for: "C")
 
         #expect(chain.modifications.isEmpty)
         #expect(modified.residues[0].modification == nil)
@@ -265,10 +265,10 @@ struct ChainMolecularStateEditingTests {
     }
 
     @Test("Modification copy operations support nucleotide residues")
-    func nucleotideModifications() {
-        let chain = RNAChain(sequence: "ACCA", name: "messenger")
-        let modified = chain.modifyingResidues(for: "C", with: lossOfAmmonia)
-        let removed = modified.removingModification(at: 1)
+    func nucleotideModifications() throws {
+        let chain = try RNAChain(sequence: "ACCA", name: "messenger")
+        let modified = try chain.modifyingResidues(for: "C", with: lossOfAmmonia)
+        let removed = try modified.removingModification(at: 1)
 
         #expect(chain.modifications.isEmpty)
         #expect(modified.residues[1].modification == lossOfAmmonia)
@@ -279,16 +279,15 @@ struct ChainMolecularStateEditingTests {
         #expect(removed.name == chain.name)
     }
 
-    @Test("Invalid modification locations retain existing no-op semantics")
-    func invalidModificationLocations() {
-        let chain = ProteinChain(sequence: "ACDE")
+    @Test("Invalid modification locations throw typed errors")
+    func invalidModificationLocations() throws {
+        let chain = try ProteinChain(sequence: "ACDE")
 
-        let added = chain.addingModification(lossOfWater, at: -1)
-        let removed = chain.removingModification(at: chain.residues.count)
-
-        #expect(added.modifications.isEmpty)
-        #expect(removed.modifications.isEmpty)
-        #expect(added.id == chain.id)
-        #expect(removed.id == chain.id)
+        #expect(throws: ChainEditingError.indexOutOfBounds(index: -1, residueCount: 4)) {
+            try chain.addingModification(lossOfWater, at: -1)
+        }
+        #expect(throws: ChainEditingError.indexOutOfBounds(index: 4, residueCount: 4)) {
+            try chain.removingModification(at: chain.residues.count)
+        }
     }
 }

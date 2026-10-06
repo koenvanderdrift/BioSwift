@@ -10,8 +10,8 @@ import Testing
 
 @Suite struct PeptideFragmenterTests: BioSwiftTestSuite {
     var fixtures = BioSwiftTestFixtures()
-    @Test func fragmentCount() {
-        var peptide = Peptide(sequence: "SAMPLER")
+    @Test func fragmentCount() throws {
+        var peptide = try Peptide(sequence: "SAMPLER")
         peptide.setAdducts(type: protonAdduct, count: 1)
 
         let fragmenter = PeptideFragmenter(peptide: peptide)
@@ -38,8 +38,8 @@ import Testing
         #expect(yIons.count == 6)
     }
 
-    @Test func fragmenterHandlesShortPeptides() {
-        var emptyPeptide = Peptide(sequence: "")
+    @Test func fragmenterHandlesShortPeptides() throws {
+        var emptyPeptide = try Peptide(sequence: "")
         emptyPeptide.setAdducts(type: protonAdduct, count: 1)
 
         let emptyFragmenter = PeptideFragmenter(peptide: emptyPeptide)
@@ -48,7 +48,7 @@ import Testing
         }.isEmpty)
         #expect(emptyFragmenter.fragment(at: 1, for: .cIon) == nil)
 
-        var singleResiduePeptide = Peptide(sequence: "A")
+        var singleResiduePeptide = try Peptide(sequence: "A")
         singleResiduePeptide.setAdducts(type: protonAdduct, count: 1)
 
         let singleResidueFragmenter = PeptideFragmenter(peptide: singleResiduePeptide)
@@ -61,7 +61,7 @@ import Testing
     @Test func fragmentMass1() throws {
         // theoretical masses via https://prospector.ucsf.edu/prospector/cgi-bin/msform.cgi?form=msproduct
 
-        var peptide = Peptide(sequence: "SAMPLER")
+        var peptide = try Peptide(sequence: "SAMPLER")
         peptide.setAdducts(type: protonAdduct, count: 1)
 
         #expect(peptide.monoisotopicMass.rounded(scale: 4) == decimal("803.4080"))
@@ -103,7 +103,7 @@ import Testing
     }
 
     @Test func aIonNeutralLossMasses() throws {
-        var peptide = Peptide(sequence: "SQA")
+        var peptide = try Peptide(sequence: "SQA")
         peptide.setAdducts(type: protonAdduct, count: 1)
         let fragmenter = PeptideFragmenter(peptide: peptide)
 
@@ -122,7 +122,7 @@ import Testing
     }
 
     @Test func fragmentMass2() throws {
-        var peptide = Peptide(sequence: "SAMPLEVAAAGQTHR")
+        var peptide = try Peptide(sequence: "SAMPLEVAAAGQTHR")
         peptide.setAdducts(type: protonAdduct, count: 1)
 
         #expect(peptide.monoisotopicMass.rounded(scale: 4) == decimal("1538.7744"))
@@ -166,9 +166,9 @@ import Testing
         for modification in try modifications(
             unimodName: "Oxidation", psiModAccession: "MOD:00719",
             uniProtPTMAccession: "PTM-0469") {
-            var peptide = Peptide(sequence: "SAMPLEVAMAAGQTHR")
+            var peptide = try Peptide(sequence: "SAMPLEVAMAAGQTHR")
             peptide.setAdducts(type: protonAdduct, count: 1)
-            peptide.addModification(modification, at: 8)
+            try peptide.addModification(modification, at: 8)
             #expect(peptide.monoisotopicMass.rounded(scale: 4) == decimal("1685.8098"))
 
             let fragmenter = PeptideFragmenter(peptide: peptide)
@@ -223,7 +223,7 @@ import Testing
     }
 
     @Test func fragmentMass4() throws {
-        var peptide = Peptide(sequence: "AWRKQNWSTEDWWSTEDWQPRTYSAMPLER")
+        var peptide = try Peptide(sequence: "AWRKQNWSTEDWWSTEDWQPRTYSAMPLER")
         peptide.setAdducts(type: protonAdduct, count: 1)
 
         let fragmenter = PeptideFragmenter(peptide: peptide)
@@ -262,7 +262,7 @@ import Testing
     }
 
     @Test func fragmentMass5() throws {
-        var peptide = Peptide(sequence: "SAMPLEVAAAGQTHR")
+        var peptide = try Peptide(sequence: "SAMPLEVAAAGQTHR")
         peptide.setAdducts(type: protonAdduct, count: 2)
 
         #expect(peptide.monoisotopicMass.rounded(scale: 4) == decimal("769.8908"))
@@ -307,7 +307,7 @@ import Testing
     }
 
     @Test func fragmentsPreserveSodiumAdducts() throws {
-        var peptide = Peptide(sequence: "SAMPLER")
+        var peptide = try Peptide(sequence: "SAMPLER")
         peptide.adducts = [sodiumAdduct]
 
         let fragment = try #require(
@@ -320,7 +320,7 @@ import Testing
 
     @Test func fragmentsUseAdductChargeRatherThanAdductCount() throws {
         let divalentAdduct = Adduct(group: sodium, charge: 2)
-        var peptide = Peptide(sequence: "SAMPLER")
+        var peptide = try Peptide(sequence: "SAMPLER")
         peptide.adducts = [divalentAdduct]
 
         let fragment = try #require(
@@ -331,16 +331,16 @@ import Testing
         #expect(fragment.charge == 2)
     }
 
-    @Test func chargedResidues() {
-        let fragment = PeptideFragment(sequence: "AWRKQNWSTEDWWSHTEDWQPRTYSAMPLER")
+    @Test func chargedResidues() throws {
+        let fragment = try PeptideFragment(sequence: "AWRKQNWSTEDWWSHTEDWQPRTYSAMPLER")
 
         let numOfCharges = fragment.maximumChargeCount
         #expect(numOfCharges == 5)
     }
 
-    @Test func fragmentComposesPeptideStorage() {
+    @Test func fragmentComposesPeptideStorage() throws {
         let fragment = PeptideFragment(
-            residues: Peptide(sequence: "SAM").residues,
+            residues: try Peptide(sequence: "SAM").residues,
             fragmentType: .bIon,
             index: 3,
             adducts: [protonAdduct]
@@ -353,7 +353,7 @@ import Testing
         #expect(fragment.cTerminal == zeroModification)
     }
 
-    @Test func allFragmentCases() {
+    @Test func allFragmentCases() throws {
         let allCases = PeptideFragmentType.allCases
         #expect(allCases.count == 17)
     }

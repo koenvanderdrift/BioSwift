@@ -12,36 +12,36 @@ import Foundation
 public typealias Protein = BioMolecule<ProteinChain>
 
 extension BioMolecule where ChainType == ProteinChain {
-    public init(sequence: String) {
-        self.init(chains: [ProteinChain(sequence: sequence)])
+    public init(sequence: String) throws {
+        self.init(chains: [try ProteinChain(sequence: sequence)])
     }
 
-    public init(sequences: [String]) {
-        self.init(chains: sequences.map {
-            ProteinChain(sequence: $0)
+    public init(sequences: [String]) throws {
+        self.init(chains: try sequences.map {
+            try ProteinChain(sequence: $0)
         })
     }
 
-    public init(fastaRecord: FastaRecord) {
+    public init(fastaRecord: FastaRecord) throws {
         let name = fastaRecord.shortName.isEmpty ? fastaRecord.fullName : fastaRecord.shortName
-        self.init(chains: [ProteinChain(sequence: fastaRecord.sequence, name: name)])
+        self.init(chains: [try ProteinChain(sequence: fastaRecord.sequence, name: name)])
     }
 
     public init(residues: [AminoAcid]) {
         self.init(chains: [ProteinChain(residues: residues)])
     }
 
-    public func truncate(by range: Range<Int>) -> Protein {
-        if let subChain = chains.first?.removing(range) {
-            return Protein(chains: [subChain])
+    public func truncate(by range: Range<Int>) throws -> Protein {
+        guard let chain = chains.first else {
+            throw BioSwiftDiagnostics.logged(CrossLinkError.invalidChainIndex(0))
         }
-
-        return self
+        return Protein(chains: [try chain.removingResidues(in: range)])
     }
 
     public var nTermModifications: [Modification] {
-        if let nTermAA = residues.first {
-            var nTermGroups = UnimodModificationReferenceDefaults.bundled.modifications.filter { mod in
+        get throws {
+            if let nTermAA = residues.first {
+                var nTermGroups = try UnimodModificationReferenceDefaults.loadBundled().modifications.filter { mod in
                 mod.specificities.contains { spec in
                     spec.position.contains("Protein N-term") && spec.site == nTermAA.oneLetterCode
                 }
@@ -52,12 +52,14 @@ extension BioMolecule where ChainType == ProteinChain {
             return nTermGroups
         }
 
-        return []
+            return []
+        }
     }
 
     public var cTermModifications: [Modification] {
-        if let cTermAA = residues.last {
-            var cTermGroups = UnimodModificationReferenceDefaults.bundled.modifications.filter { mod in
+        get throws {
+            if let cTermAA = residues.last {
+                var cTermGroups = try UnimodModificationReferenceDefaults.loadBundled().modifications.filter { mod in
                 mod.specificities.contains { spec in
                     spec.position.contains("Protein C-term") && spec.site == cTermAA.oneLetterCode
                 }
@@ -68,7 +70,8 @@ extension BioMolecule where ChainType == ProteinChain {
             return cTermGroups
         }
 
-        return []
+            return []
+        }
     }
 
     public var nTermLocation: Int? {

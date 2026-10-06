@@ -14,8 +14,8 @@ struct FragmentTests {
         case internalFragment
     }
 
-    @Test func fragmentWrapsAChainAndMetadata() {
-        let peptide = Peptide(sequence: "PEPTIDE")
+    @Test func fragmentWrapsAChainAndMetadata() throws {
+        let peptide = try Peptide(sequence: "PEPTIDE")
         let fragment = Fragment(
             chain: peptide,
             fragmentType: TestFragmentType.internalFragment,
@@ -28,8 +28,8 @@ struct FragmentTests {
         #expect(fragment.index == 3)
     }
 
-    @Test func fragmentsHaveIndependentIdentity() {
-        let peptide = Peptide(sequence: "PEPTIDE")
+    @Test func fragmentsHaveIndependentIdentity() throws {
+        let peptide = try Peptide(sequence: "PEPTIDE")
         let first = Fragment(chain: peptide, fragmentType: TestFragmentType.internalFragment)
         let second = Fragment(chain: peptide, fragmentType: TestFragmentType.internalFragment)
 

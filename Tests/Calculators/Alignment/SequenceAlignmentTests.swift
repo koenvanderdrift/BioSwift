@@ -15,7 +15,7 @@ struct SequenceAlignmentTests {
     }
 
     @Test("Alignment scoring retains configured values")
-    func scoring() {
+    func scoring() throws {
         let scoring = AlignmentScoring(match: 2, mismatch: -1, gap: -2)
 
         #expect(scoring.match == 2)
@@ -24,7 +24,7 @@ struct SequenceAlignmentTests {
     }
 
     @Test("Alignment result derives sequences and statistics from its columns")
-    func resultStatistics() {
+    func resultStatistics() throws {
         let columns = [
             AlignmentColumn(
                 firstResidue: "A", firstIndex: 0,
@@ -65,7 +65,7 @@ struct SequenceAlignmentTests {
     }
 
     @Test("An empty alignment has zero identity and similarity")
-    func emptyResult() {
+    func emptyResult() throws {
         let result = AlignmentResult(
             algorithm: .smithWaterman,
             score: 0,
@@ -81,7 +81,7 @@ struct SequenceAlignmentTests {
     }
 
     @Test("Needleman-Wunsch aligns complete sequences")
-    func needlemanWunsch() {
+    func needlemanWunsch() throws {
         let result = SequenceAligner.align(
             residues("ACG"),
             with: residues("AG"),
@@ -98,7 +98,7 @@ struct SequenceAlignmentTests {
     }
 
     @Test("Needleman-Wunsch reproduces the canonical GATTACA alignment")
-    func canonicalNeedlemanWunsch() {
+    func canonicalNeedlemanWunsch() throws {
         let result = SequenceAligner.align(
             residues("GATTACA"),
             with: residues("GCATGCU"),
@@ -114,7 +114,7 @@ struct SequenceAlignmentTests {
     }
 
     @Test("Smith-Waterman finds the highest-scoring local regions")
-    func smithWaterman() {
+    func smithWaterman() throws {
         let result = SequenceAligner.align(
             residues("TTAC"),
             with: residues("GGTTACAA"),
@@ -131,7 +131,7 @@ struct SequenceAlignmentTests {
     }
 
     @Test("Smith-Waterman reproduces a canonical local alignment")
-    func canonicalSmithWaterman() {
+    func canonicalSmithWaterman() throws {
         let result = SequenceAligner.align(
             residues("TGTTACGG"),
             with: residues("GGTTGACTA"),
@@ -147,7 +147,7 @@ struct SequenceAlignmentTests {
     }
 
     @Test("Global alignment handles an empty sequence")
-    func globalEmptySequence() {
+    func globalEmptySequence() throws {
         let result = SequenceAligner.align(
             [],
             with: residues("AC"),
@@ -163,7 +163,7 @@ struct SequenceAlignmentTests {
     }
 
     @Test("Global alignment handles identical and substituted single residues")
-    func singleResidueSequences() {
+    func singleResidueSequences() throws {
         let identical = SequenceAligner.align(
             ["A"],
             with: ["A"],
@@ -184,7 +184,7 @@ struct SequenceAlignmentTests {
     }
 
     @Test("Global alignment reports an insertion")
-    func insertion() {
+    func insertion() throws {
         let result = SequenceAligner.align(
             residues("ACG"),
             with: residues("ATCG"),
@@ -199,7 +199,7 @@ struct SequenceAlignmentTests {
     }
 
     @Test("Local alignment returns an empty result when no positive score exists")
-    func localWithoutPositiveScore() {
+    func localWithoutPositiveScore() throws {
         let result = SequenceAligner.align(
             residues("AA"),
             with: residues("TT"),
@@ -214,7 +214,7 @@ struct SequenceAlignmentTests {
     }
 
     @Test("Traceback uses deterministic diagonal-first tie breaking")
-    func deterministicTieBreaking() {
+    func deterministicTieBreaking() throws {
         let result = SequenceAligner.align(
             residues("A"),
             with: residues("G"),
@@ -228,14 +228,14 @@ struct SequenceAlignmentTests {
     }
 
     @Test("Built-in scoring strategies provide expected defaults")
-    func builtInScoring() {
+    func builtInScoring() throws {
         #expect(AlignmentScoring.nucleotide() == AlignmentScoring(match: 2, mismatch: -1, gap: -2))
         #expect(AlignmentScoring.proteinIdentity() == AlignmentScoring(match: 1, mismatch: -1, gap: -1))
         #expect(AlignmentScoring.blosum62().gap == -4)
     }
 
     @Test("BLOSUM62 contains canonical substitution scores")
-    func blosum62Scores() {
+    func blosum62Scores() throws {
         let matrix = SubstitutionMatrix.blosum62
 
         #expect(matrix.score(first: "A", second: "A") == 4)
@@ -247,7 +247,7 @@ struct SequenceAlignmentTests {
     }
 
     @Test("A positive BLOSUM62 substitution is reported as similarity")
-    func proteinSimilarity() {
+    func proteinSimilarity() throws {
         let result = SequenceAligner.align(
             ["D"],
             with: ["E"],
@@ -281,13 +281,13 @@ struct SequenceAlignmentTests {
     }
 
     @Test("Substitution matrices reject malformed score tables")
-    func malformedSubstitutionMatrix() {
+    func malformedSubstitutionMatrix() throws {
         #expect(SubstitutionMatrix(alphabet: ["A", "B"], scores: [1, 2], unknownScore: -1) == nil)
     }
 
     @Test("DNA chains align with nucleotide scoring by default")
-    func dnaChainAPI() {
-        let result = DNAChain(sequence: "ACG").align(with: DNAChain(sequence: "AG"))
+    func dnaChainAPI() throws {
+        let result = try DNAChain(sequence: "ACG").align(with: try DNAChain(sequence: "AG"))
 
         #expect(result.score == 2)
         #expect(result.firstAlignedSequence == "ACG")
@@ -295,17 +295,17 @@ struct SequenceAlignmentTests {
     }
 
     @Test("Peptide chains align with BLOSUM62 by default")
-    func peptideChainAPI() {
-        let result = Peptide(sequence: "D").align(with: Peptide(sequence: "E"))
+    func peptideChainAPI() throws {
+        let result = try Peptide(sequence: "D").align(with: Peptide(sequence: "E"))
 
         #expect(result.score == 2)
         #expect(result.columns.map(\.operation) == [.similarity])
     }
 
     @Test("BLOSUM62 aligns similar medium-length protein sequences")
-    func similarProteinSequences() {
-        let first = Peptide(sequence: "MKTAYIAKQRQIS")
-        let second = Peptide(sequence: "MKTAYIAKQKQIS")
+    func similarProteinSequences() throws {
+        let first = try Peptide(sequence: "MKTAYIAKQRQIS")
+        let second = try Peptide(sequence: "MKTAYIAKQKQIS")
 
         let result = first.align(with: second)
 
@@ -319,9 +319,9 @@ struct SequenceAlignmentTests {
     }
 
     @Test("BLOSUM62 globally aligns related protein sequences with deletions")
-    func similarProteinSequencesWithDeletions() {
-        let first = Peptide(sequence: "MKTAYIAKQRQIS")
-        let second = Peptide(sequence: "KTAYIAKQQIS")
+    func similarProteinSequencesWithDeletions() throws {
+        let first = try Peptide(sequence: "MKTAYIAKQRQIS")
+        let second = try Peptide(sequence: "KTAYIAKQQIS")
 
         let result = first.align(with: second)
 
@@ -336,9 +336,9 @@ struct SequenceAlignmentTests {
     }
 
     @Test("Chain APIs accept explicit algorithms and scoring")
-    func customChainAlignment() {
-        let result = RNAChain(sequence: "CCAU").align(
-            with: RNAChain(sequence: "GGCCAUAA"),
+    func customChainAlignment() throws {
+        let result = try RNAChain(sequence: "CCAU").align(
+            with: try RNAChain(sequence: "GGCCAUAA"),
             algorithm: .smithWaterman,
             scoring: AlignmentScoring(match: 3, mismatch: -2, gap: -2)
         )
@@ -351,8 +351,8 @@ struct SequenceAlignmentTests {
 
     @Test("Molecule APIs align explicitly selected chains")
     func moleculeChainSelection() throws {
-        let first = DNA(sequences: ["AAAA", "ACG"])
-        let second = DNA(sequences: ["TTTT", "AG"])
+        let first = try DNA(sequences: ["AAAA", "ACG"])
+        let second = try DNA(sequences: ["TTTT", "AG"])
         let result = try first.align(
             with: second,
             chainIndex: 1,
@@ -365,9 +365,9 @@ struct SequenceAlignmentTests {
     }
 
     @Test("Molecule APIs report invalid chain indices")
-    func invalidMoleculeChainIndices() {
-        let first = Protein(sequence: "A")
-        let second = Protein(sequence: "A")
+    func invalidMoleculeChainIndices() throws {
+        let first = try Protein(sequence: "A")
+        let second = try Protein(sequence: "A")
 
         #expect(throws: AlignmentError.invalidFirstChainIndex(1)) {
             try first.align(with: second, chainIndex: 1)

@@ -6,7 +6,7 @@ import Testing
 struct BioMoleculeEditingTests {
     @Test("Range removal deletes and remaps intra-chain cross-links")
     func intraChainRemoval() throws {
-        var protein = Protein(sequence: "ACDEFG")
+        var protein = try Protein(sequence: "ACDEFG")
         let before = try protein.addCrossLink(
             modification: disulfideBond,
             between: 0,
@@ -45,8 +45,8 @@ struct BioMoleculeEditingTests {
     @Test("Range removal deletes and remaps inter-chain cross-links")
     func interChainRemoval() throws {
         var protein = Protein(chains: [
-            ProteinChain(sequence: "ACDEFG", name: "alpha"),
-            ProteinChain(sequence: "GHIK", name: "beta"),
+            try ProteinChain(sequence: "ACDEFG", name: "alpha"),
+            try ProteinChain(sequence: "GHIK", name: "beta"),
         ])
         let removed = try protein.addCrossLink(
             modification: disulfideBond,
@@ -82,8 +82,8 @@ struct BioMoleculeEditingTests {
     @Test("Insertion shifts affected cross-link endpoints")
     func insertion() throws {
         var protein = Protein(chains: [
-            ProteinChain(sequence: "ACDE"),
-            ProteinChain(sequence: "GHIK"),
+            try ProteinChain(sequence: "ACDE"),
+            try ProteinChain(sequence: "GHIK"),
         ])
         let internalLink = try protein.addCrossLink(
             modification: disulfideBond,
@@ -100,7 +100,7 @@ struct BioMoleculeEditingTests {
             inChain: 1
         )
         let glycine = try #require(
-            AminoAcidReferenceDefaults.bundled.aminoAcid(identifier: "G")
+            try AminoAcidReferenceDefaults.loadBundled().aminoAcid(identifier: "G")
         )
 
         let edited = try protein.insertingResidues(
@@ -124,11 +124,11 @@ struct BioMoleculeEditingTests {
     @Test("Single removal and replacement use chain-index conveniences")
     func singleRemovalAndReplacement() throws {
         let protein = Protein(chains: [
-            ProteinChain(sequence: "ACDE"),
-            ProteinChain(sequence: "FGHI"),
+            try ProteinChain(sequence: "ACDE"),
+            try ProteinChain(sequence: "FGHI"),
         ])
         let glycine = try #require(
-            AminoAcidReferenceDefaults.bundled.aminoAcid(identifier: "G")
+            try AminoAcidReferenceDefaults.loadBundled().aminoAcid(identifier: "G")
         )
 
         let removed = try protein.removingResidue(at: 1, chainIndex: 1)
@@ -148,7 +148,7 @@ struct BioMoleculeEditingTests {
 
     @Test("Conveniences support nucleic-acid molecules")
     func nucleicAcids() throws {
-        let dna = DNA(sequences: ["GATTACA", "CCGG"])
+        let dna = try DNA(sequences: ["GATTACA", "CCGG"])
         let adenine = try #require(Nucleotide.standard(code: "A", type: .dna))
 
         let inserted = try dna.insertingResidue(adenine, at: 2, chainIndex: 1)
@@ -161,8 +161,8 @@ struct BioMoleculeEditingTests {
     }
 
     @Test("Invalid chain indices throw")
-    func invalidChainIndex() {
-        let protein = Protein(sequence: "ACDE")
+    func invalidChainIndex() throws {
+        let protein = try Protein(sequence: "ACDE")
 
         #expect(throws: CrossLinkError.invalidChainIndex(1)) {
             try protein.removingResidues(in: 0..<1, chainIndex: 1)

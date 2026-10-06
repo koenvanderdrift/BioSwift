@@ -93,6 +93,8 @@ public struct AminoAcid: Residue, Codable, Sendable {
 extension AminoAcid {
     /// Bundled protein modifications applicable to this amino acid.
     public var allowedModifications: [Modification] {
-        UnimodModificationReferenceDefaults.bundled.modifications(applicableTo: identifier)
+        get throws {
+            try UnimodModificationReferenceDefaults.loadBundled().modifications(applicableTo: identifier)
+        }
     }
 }

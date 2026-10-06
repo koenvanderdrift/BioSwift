@@ -10,13 +10,13 @@ import Testing
 
 @Suite struct ProteinTests: BioSwiftTestSuite {
     var fixtures = BioSwiftTestFixtures()
-    @Test func sequenceLength() {
+    @Test func sequenceLength() throws {
         #expect(testProtein.sequenceLength == 418)
         #expect(testPeptide.sequenceString.count == 5)
     }
 
-    @Test func moleculeExposesFirstChainSequenceProperties() {
-        let protein = Protein(sequences: ["PEPTIDE", "SECNDS"])
+    @Test func moleculeExposesFirstChainSequenceProperties() throws {
+        let protein = try Protein(sequences: ["PEPTIDE", "SECNDS"])
 
         #expect(protein.sequence == "PEPTIDE")
         #expect(protein.sequenceLength == 7)
@@ -26,7 +26,7 @@ import Testing
 
     @Test func proteinPreservesSingleChainIdentityAndMetadata() throws {
         let id = UUID()
-        var chain = ProteinChain(sequence: "MKT", name: "alpha", id: id)
+        var chain = try ProteinChain(sequence: "MKT", name: "alpha", id: id)
         chain.adducts = [protonAdduct]
         chain.range = 4..<7
         chain.parentLength = 12
@@ -43,11 +43,11 @@ import Testing
         #expect(storedChain.parentLength == 12)
     }
 
-    @Test func proteinPreservesMultipleChainsInOrder() {
+    @Test func proteinPreservesMultipleChainsInOrder() throws {
         let firstID = UUID()
         let secondID = UUID()
-        let first = ProteinChain(sequence: "MKT", name: "alpha", id: firstID)
-        let second = ProteinChain(sequence: "SEQUENCE", name: "beta", id: secondID)
+        let first = try ProteinChain(sequence: "MKT", name: "alpha", id: firstID)
+        let second = try ProteinChain(sequence: "SEQUENCE", name: "beta", id: secondID)
 
         let protein = Protein(chains: [first, second])
 
@@ -56,21 +56,21 @@ import Testing
         #expect(protein.chains.map(\.sequenceString) == ["MKT", "SEQUENCE"])
     }
 
-    @Test func aminoAcidChainsAcceptNamesDuringInitialization() {
+    @Test func aminoAcidChainsAcceptNamesDuringInitialization() throws {
         let id = UUID()
-        let proteinChain = ProteinChain(sequence: "MKT", name: "heavy chain", id: id)
-        let peptide = Peptide(sequence: "PEPTIDE", name: "digest product")
+        let proteinChain = try ProteinChain(sequence: "MKT", name: "heavy chain", id: id)
+        let peptide = try Peptide(sequence: "PEPTIDE", name: "digest product")
 
         #expect(proteinChain.name == "heavy chain")
         #expect(proteinChain.id == id)
         #expect(peptide.name == "digest product")
-        #expect(ProteinChain(sequence: "MKT").name.isEmpty)
-        #expect(Peptide(sequence: "PEPTIDE").name.isEmpty)
+        #expect(try ProteinChain(sequence: "MKT").name.isEmpty)
+        #expect(try Peptide(sequence: "PEPTIDE").name.isEmpty)
     }
 
-    @Test func moleculeAccessesChainsByName() {
-        let first = ProteinChain(sequence: "PEPTIDE", name: "alpha")
-        let second = ProteinChain(sequence: "SECNDS", name: "beta")
+    @Test func moleculeAccessesChainsByName() throws {
+        let first = try ProteinChain(sequence: "PEPTIDE", name: "alpha")
+        let second = try ProteinChain(sequence: "SECNDS", name: "beta")
         let protein = Protein(chains: [first, second])
 
         #expect(protein.chain(named: "beta")?.sequenceString == "SECNDS")
@@ -82,22 +82,22 @@ import Testing
         #expect(protein.sequence(chainName: "missing") == nil)
     }
 
-    @Test func duplicateChainNamesResolveToFirstChain() {
-        let first = ProteinChain(sequence: "FIRST", name: "shared")
-        let second = ProteinChain(sequence: "SECOND", name: "shared")
+    @Test func duplicateChainNamesResolveToFirstChain() throws {
+        let first = try ProteinChain(sequence: "FIRST", name: "shared")
+        let second = try ProteinChain(sequence: "SECNDS", name: "shared")
 
         #expect(Protein(chains: [first, second]).sequence(chainName: "shared") == "FIRST")
     }
 
-    @Test func structuresExposeFormulaStringsDirectly() {
-        let peptide = Peptide(sequence: "A")
-        let protein = Protein(sequence: "A")
+    @Test func structuresExposeFormulaStringsDirectly() throws {
+        let peptide = try Peptide(sequence: "A")
+        let protein = try Protein(sequence: "A")
 
         #expect(peptide.formulaString == peptide.formula.formulaString)
         #expect(protein.formulaString == protein.formula.formulaString)
     }
 
-    @Test func proteinResidueCount() {
+    @Test func proteinResidueCount() throws {
         let cysCount = testProtein.residueCount(for: "C")
         #expect(cysCount == 3)
 
@@ -105,21 +105,25 @@ import Testing
         #expect(glnCount == 18)
     }
 
-    @Test func peptideResidueCount() {
+    @Test func peptideResidueCount() throws {
         let countedSet = testPeptide.residueCounts
 
-        if let ser = aminoAcidLibrary.first(where: { $0.identifier == "S" }) {
+        if let ser = try ReferenceLibraryDefaults.loadBundled().aminoAcids.first(where: { $0.identifier == "S" }) {
             let aaCount = countedSet.count(for: ser)
             #expect(aaCount == 2)
         }
     }
 
-    @Test func sequenceLengthWithIllegalCharacters() {
-        let protein = Protein(sequence: "D___WS83SD")
-        #expect(protein.sequenceLength == 5)
+    @Test func sequenceWithIllegalCharactersThrows() throws {
+        #expect(
+            throws: SequenceValidationError.invalidResidue(
+                "_", position: 1, sequenceType: "protein")
+        ) {
+            try Protein(sequence: "D___WS83SD")
+        }
     }
 
-    @Test func proteinFormula() {
+    @Test func proteinFormula() throws {
         #expect(testProtein.formula.elementCount(for: "C") == 2112)
     }  // C2112H3313N539O629S13
 
@@ -140,13 +144,13 @@ import Testing
         #expect(chain.formula == explicitFormula)
     }
 
-    @Test func peptideFormula() {
-        let peptide = Peptide(sequence: "DWSSD")
+    @Test func peptideFormula() throws {
+        let peptide = try Peptide(sequence: "DWSSD")
         #expect(peptide.formula.elementCount(for: "C") == 25)
         #expect(peptide.formula.elementCount(for: "P") == 0)
     }
 
-    @Test func elementInitializedWithExplicitMassesRetainsThem() {
+    @Test func elementInitializedWithExplicitMassesRetainsThem() throws {
         let element = ChemicalElement(
             name: "Test", symbol: "T", monoisotopicMass: decimal("12.6"),
             averageMass: decimal("12.75"))
@@ -170,21 +174,21 @@ import Testing
         for modification in try modifications(
             unimodName: "Phospho", psiModAccession: "MOD:00046",
             uniProtPTMAccession: "PTM-0253") {
-            var peptide = Peptide(sequence: "DWSSD")
-            peptide.addModification(modification, at: 3)
+            var peptide = try Peptide(sequence: "DWSSD")
+            try peptide.addModification(modification, at: 3)
             #expect(peptide.formula.elementCount(for: "P") == 1)
         }
     }
 
-    @Test func waterAverageMass() {  // H2O
+    @Test func waterAverageMass() throws {  // H2O
         #expect(water.averageMass.rounded(scale: 4) == decimal("18.0153"))
     }
 
-    @Test func ammoniaAverageMass() {  // NH3
+    @Test func ammoniaAverageMass() throws {  // NH3
         #expect(ammonia.averageMass.rounded(scale: 4) == decimal("17.0305"))
     }
 
-    @Test func methylAverageMass() {  // CH3
+    @Test func methylAverageMass() throws {  // CH3
         // Expected values use isotope-abundance-weighted masses from the bundled NIST data.
         #expect(methyl.averageMass.rounded(scale: 4) == decimal("15.0346"))
     }
@@ -197,8 +201,8 @@ import Testing
         #expect(group.averageMass.rounded(scale: 3) == decimal("608.556"))
     }
 
-    @Test func completeSequenceMassMatchesExplicitResidueSum() {
-        let peptide = Peptide(sequence: "SAMPLER")
+    @Test func completeSequenceMassMatchesExplicitResidueSum() throws {
+        let peptide = try Peptide(sequence: "SAMPLER")
         let explicitMasses = peptide.residues.reduce(zeroMass) {
             $0 + $1.masses
         } + peptide.terminalMasses()
@@ -210,8 +214,8 @@ import Testing
         for modification in try modifications(
             unimodName: "Phospho", psiModAccession: "MOD:00046",
             uniProtPTMAccession: "PTM-0253") {
-            var peptide = Peptide(sequence: "DWSSD")
-            peptide.addModification(modification, at: 3)
+            var peptide = try Peptide(sequence: "DWSSD")
+            try peptide.addModification(modification, at: 3)
             let explicitMasses = peptide.residues.reduce(zeroMass) {
                 $0 + $1.masses
             } + peptide.terminalMasses()
@@ -220,9 +224,9 @@ import Testing
         }
     }
 
-    @Test func chainMassesForIndividualResidues() {
-        var peptide = Peptide(sequence: "SAMPLER")
-        debugPrint(peptide.monoisotopicMass)
+    @Test func chainMassesForIndividualResidues() throws {
+        var peptide = try Peptide(sequence: "SAMPLER")
+        BioSwiftDiagnostics.log(peptide.monoisotopicMass)
 
         #expect(peptide.monoisotopicMass.rounded(scale: 5) == decimal("802.40072"))
         #expect(peptide.nominalMass == 802)
@@ -238,7 +242,7 @@ import Testing
         for aa in peptide.residues {
             sum += aa.masses
         }
-        debugPrint(sum.monoisotopicMass)
+        BioSwiftDiagnostics.log(sum.monoisotopicMass)
 
         #expect(sum.monoisotopicMass.rounded(scale: 5) == decimal("802.40072"))
         #expect(sum.applying(adducts: [protonAdduct, protonAdduct]).monoisotopicMass.rounded(scale: 4) == decimal("402.2076"))
@@ -248,7 +252,7 @@ import Testing
         for aa in peptide.residues[1..<7] {
             sum += aa.masses
         }
-        debugPrint(sum.monoisotopicMass)
+        BioSwiftDiagnostics.log(sum.monoisotopicMass)
 
         #expect(sum.monoisotopicMass.rounded(scale: 5) == decimal("715.36870"))
         #expect(sum.applying(adducts: [protonAdduct, protonAdduct]).monoisotopicMass.rounded(scale: 4) == decimal("358.6916"))
@@ -256,7 +260,7 @@ import Testing
         // https://www.chemcalc.org/peptides?digestion=%5Bobject%20Object%5D&filter=%5Bobject%20Object%5D&fragmentation=a%3Dfalse%26b%3Dfalse%26c%3Dfalse%26i%3Dfalse%26n%3Dfalse%26x%3Dfalse%26y%3Dfalse%26ya%3Dfalse%26yb%3Dfalse%26z%3Dfalse&ionizations=H%2B.%28H%2B%292.%28H%2B%293&protonation=false&sequence=SAMPLER%0A%0A
     }
 
-    @Test mutating func peptideMonoisotopicMass() {
+    @Test mutating func peptideMonoisotopicMass() throws {
         testPeptide.setAdducts(type: protonAdduct, count: 1)
         #expect(testPeptide.monoisotopicMass.rounded(scale: 4) == decimal("609.2151"))
 
@@ -264,8 +268,8 @@ import Testing
         #expect(testPeptide.monoisotopicMass.rounded(scale: 4) == decimal("305.1112"))
     }
 
-    @Test func massPropertiesApplyAdductsOnce() {
-        var peptide = Peptide(sequence: "DWSSD")
+    @Test func massPropertiesApplyAdductsOnce() throws {
+        var peptide = try Peptide(sequence: "DWSSD")
 
         peptide.setAdducts(type: protonAdduct, count: 1)
         #expect(peptide.charge == 1)
@@ -279,17 +283,20 @@ import Testing
         #expect(peptide.monoisotopicMass.rounded(scale: 4) == decimal("305.1112"))
     }
 
-    @Test func protonatedCreatesExactChargeStates() {
-        var peptide = Peptide(sequence: "DWSSD")
+    @Test func protonatedCreatesExactChargeStates() throws {
+        var peptide = try Peptide(sequence: "DWSSD")
         peptide.setAdducts(type: protonAdduct, count: 3)
 
-        let chargedPeptides = [peptide].protonated(chargeStates: -1...2)
+        let chargedPeptides = try [peptide].protonated(chargeStates: 0...2)
 
         #expect(chargedPeptides.map(\.charge) == [0, 1, 2])
         #expect(chargedPeptides.allSatisfy { $0.adducts.allSatisfy { $0 == protonAdduct } })
+        #expect(throws: MassCalculationError.invalidChargeState(-1)) {
+            try [peptide].protonated(chargeStates: -1...2)
+        }
     }
 
-    @Test mutating func peptideAverageMass() {
+    @Test mutating func peptideAverageMass() throws {
         // Expected values use isotope-abundance-weighted masses from the bundled NIST data.
         testPeptide.setAdducts(type: protonAdduct, count: 1)
         #expect(testPeptide.averageMass.rounded(scale: 4) == decimal("609.5630"))
@@ -303,7 +310,7 @@ import Testing
             unimodName: "Phospho", psiModAccession: "MOD:00046",
             uniProtPTMAccession: "PTM-0253") {
             var peptide = testPeptide
-            peptide.addModification(modification, at: 3)
+            try peptide.addModification(modification, at: 3)
 
             peptide.setAdducts(type: protonAdduct, count: 1)
             #expect(peptide.monoisotopicMass.rounded(scale: 4) == decimal("689.1814"))
@@ -311,7 +318,7 @@ import Testing
             peptide.setAdducts(type: protonAdduct, count: 2)
             #expect(peptide.monoisotopicMass.rounded(scale: 4) == decimal("345.0944"))
 
-            peptide.removeModification(at: 3)
+            try peptide.removeModification(at: 3)
             peptide.setAdducts(type: protonAdduct, count: 1)
             #expect(peptide.monoisotopicMass.rounded(scale: 4) == decimal("609.2151"))
         }
@@ -325,7 +332,7 @@ import Testing
 
         for (phosphorylation, oxidation) in zip(phosphorylations, oxidations) {
             var peptide = testPeptide
-            peptide.addModification(phosphorylation, at: 3)
+            try peptide.addModification(phosphorylation, at: 3)
 
             peptide.setAdducts(type: protonAdduct, count: 1)
             #expect(peptide.monoisotopicMass.rounded(scale: 4) == decimal("689.1814"))
@@ -333,62 +340,62 @@ import Testing
             peptide.setAdducts(type: protonAdduct, count: 2)
             #expect(peptide.monoisotopicMass.rounded(scale: 4) == decimal("345.0944"))
 
-            peptide.addModification(oxidation, at: 3)
+            try peptide.addModification(oxidation, at: 3)
             #expect(peptide.modification(at: 3) == oxidation)
             peptide.setAdducts(type: protonAdduct, count: 1)
             #expect(peptide.monoisotopicMass.rounded(scale: 4) == decimal("625.2100"))
         }
     }
 
-    @Test mutating func proteinMonoisotopicMass() {
+    @Test mutating func proteinMonoisotopicMass() throws {
         testProtein.setAdducts(type: protonAdduct, count: 1)
         #expect(
             testProtein.monoisotopicMass.rounded(scale: 1)
                 == decimal("46708.0267").rounded(scale: 1))
     }
 
-    @Test mutating func proteinNTermMetLossMonoisotopicMass() {
-        if let metLoss = testProtein.nTermModifications.first(where: {
+    @Test mutating func proteinNTermMetLossMonoisotopicMass() throws {
+        if let metLoss = try testProtein.nTermModifications.first(where: {
             $0.name == "Met-loss"
         }),
             let nTermLocation = testProtein.nTermLocation
         {
             testProtein.setAdducts(type: protonAdduct, count: 1)
 
-            testProtein.addModification(metLoss, at: nTermLocation)
+            try testProtein.addModification(metLoss, at: nTermLocation)
             #expect(
                 testProtein.monoisotopicMass.rounded(scale: 1)
                     == (decimal("46708.0267") - decimal("131.040485)")).rounded(scale: 1))
 
-            testProtein.removeModification(at: nTermLocation)
+            try testProtein.removeModification(at: nTermLocation)
             #expect(
                 testProtein.monoisotopicMass.rounded(scale: 1)
                     == decimal("46708.0267").rounded(scale: 1))
         }
     }
 
-    @Test mutating func proteinCTermLysLossMonoisotopicMass() {
-        if let lysLoss = testProtein.cTermModifications.first(where: {
+    @Test mutating func proteinCTermLysLossMonoisotopicMass() throws {
+        if let lysLoss = try testProtein.cTermModifications.first(where: {
             $0.name == "Lys-loss"
         }),
             let cTermLocation = testProtein.cTermLocation
         {
             testProtein.setAdducts(type: protonAdduct, count: 1)
 
-            testProtein.addModification(lysLoss, at: cTermLocation)
+            try testProtein.addModification(lysLoss, at: cTermLocation)
             #expect(testProtein.chains[0].residues.last?.modification == lysLoss)
             #expect(
                 testProtein.monoisotopicMass.formatted(fractionDigits: 1)
                     == (decimal("46708.0267") - decimal("128.094963)")).formatted(fractionDigits: 1))
 
-            testProtein.removeModification(at: cTermLocation)
+            try testProtein.removeModification(at: cTermLocation)
             #expect(
                 testProtein.monoisotopicMass.formatted(fractionDigits: 4)
                     == decimal("46708.0267").formatted(fractionDigits: 4))
         }
     }
 
-    @Test mutating func proteinAverageMass() {
+    @Test mutating func proteinAverageMass() throws {
         testProtein.setAdducts(type: protonAdduct, count: 1)
         #expect(
             testProtein.averageMass.formatted(fractionDigits: 1) == decimal("46737.0703").formatted(fractionDigits: 1))
@@ -399,7 +406,7 @@ import Testing
             unimodName: "Phospho", psiModAccession: "MOD:00046",
             uniProtPTMAccession: "PTM-0253") {
             var protein = testProtein
-            protein.addModification(modification, at: 3)
+            try protein.addModification(modification, at: 3)
             protein.setAdducts(type: protonAdduct, count: 1)
             #expect(
                 protein.monoisotopicMass.formatted(fractionDigits: 1)
@@ -412,8 +419,8 @@ import Testing
         }
     }
 
-    @Test func unimodModificationFullName() {
-        let unimodModifications = ReferenceLibraryDefaults.bundled.unimodLibrary.modifications
+    @Test func unimodModificationFullName() throws {
+        let unimodModifications = try ReferenceLibraryDefaults.loadBundled().unimodLibrary.modifications
 
         if let pnTAG = unimodModifications.first(where: { $0.name == "PnTAG" }) {
             #expect(pnTAG.fullName == "6-Phosphonohexanoylation")
@@ -428,19 +435,19 @@ import Testing
     @Test func modifyResidues() throws {
         for modification in try modifications(unimodName: "Carbamidomethyl", psiModAccession: "MOD:01060") {
             var protein = testProtein
-            protein.modifyResidues(for: "C", with: modification)
+            try protein.modifyResidues(for: "C", with: modification)
 
             #expect(protein.residueCount(for: "C") == 3)
         }
     }
 
-    @Test func invalidFormulaThrows() {
+    @Test func invalidFormulaThrows() throws {
         #expect(throws: FormulaParser.ParseError.self) {
             try Formula("NotAnElement")
         }
     }
 
-    @Test func emptyFormulaIsValid() {
+    @Test func emptyFormulaIsValid() throws {
         let formula = Formula()
 
         #expect(formula.countedElements.isEmpty)
@@ -452,7 +459,7 @@ import Testing
         let formula2 = try Formula("C2H2O2")
         let formula3 = formula1 + formula2
 
-        debugPrint(formula3.formulaString)
+        BioSwiftDiagnostics.log(formula3.formulaString)
 
         #expect(formula3.elementCount(for: "C") == 14)
         #expect(formula3.elementCount(for: "N") == 5)
@@ -482,40 +489,40 @@ import Testing
         let formula2 = try Formula("C2H2O2")
         let formula3 = formula1 - formula2
 
-        debugPrint(formula3.formulaString)
+        BioSwiftDiagnostics.log(formula3.formulaString)
 
         #expect(formula3.elementCount(for: "C") == 10)
         #expect(formula3.elementCount(for: "N") == 5)
     }
 
-    @Test mutating func proteinAtomCount() {
+    @Test mutating func proteinAtomCount() throws {
         testProtein.setAdducts(type: protonAdduct, count: 1)
         #expect(testProtein.formula.elementCount == 6606)
     }
 
-    @Test func symbolAtIndex() {
+    @Test func symbolAtIndex() throws {
         if let chain = testProtein.chains.first {
             let symbol = chain.symbol(at: 14)
             #expect(symbol?.identifier == "L")
         }
     }
 
-    @Test func proteinAminoAcidAndTermLocationsAreOptional() {
+    @Test func proteinAminoAcidAndTermLocationsAreOptional() throws {
         #expect(testProtein.aminoAcid(at: 0)?.identifier == "M")
         #expect(testProtein.aminoAcid(at: -1) == nil)
         #expect(testProtein.aminoAcid(at: 0, chainIndex: 10) == nil)
         #expect(testProtein.nTermLocation == 0)
         #expect(testProtein.nTermLocation(chainIndex: 10) == nil)
-        #expect(Protein(sequence: "").nTermLocation == nil)
+        #expect(try Protein(sequence: "").nTermLocation == nil)
         #expect(testProtein.cTermLocation == 417)
         #expect(testProtein.cTermLocation(chainIndex: 10) == nil)
-        #expect(Protein(sequence: "").cTermLocation == nil)
+        #expect(try Protein(sequence: "").cTermLocation == nil)
     }
 
     @Test mutating func replaceAminoAcid() throws {
         #expect(testPeptide.sequenceString == "DWSSD")
 
-        if let gly = aminoAcidLibrary.first(where: { $0.identifier == "G" }) {
+        if let gly = try ReferenceLibraryDefaults.loadBundled().aminoAcids.first(where: { $0.identifier == "G" }) {
             try testPeptide.replaceResidue(at: 0, with: gly)
             #expect(testPeptide.sequenceString == "GWSSD")
         }
@@ -529,7 +536,7 @@ import Testing
 
     @Test mutating func insertAminoAcid() throws {
         #expect(testPeptide.sequenceString == "DWSSD")
-        if let gly = aminoAcidLibrary.first(where: { $0.identifier == "G" }) {
+        if let gly = try ReferenceLibraryDefaults.loadBundled().aminoAcids.first(where: { $0.identifier == "G" }) {
             try testPeptide.insertResidue(gly, at: 2)
         }
 
@@ -538,10 +545,10 @@ import Testing
 
     @Test mutating func insertAminoAcids() throws {
         #expect(testPeptide.sequenceString == "DWSSD")
-        if let gly = aminoAcidLibrary.first(where: {
+        if let gly = try ReferenceLibraryDefaults.loadBundled().aminoAcids.first(where: {
             $0.identifier == "G"
         }),
-            let pro = aminoAcidLibrary.first(where: {
+            let pro = try ReferenceLibraryDefaults.loadBundled().aminoAcids.first(where: {
                 $0.identifier == "P"
             })
         {
@@ -565,7 +572,7 @@ import Testing
         )
     }
 
-    @Test func subChain() {
+    @Test func subChain() throws {
         if let chain = testProtein.chains.first {
             let range1: Range<Int> = 2..<9
             let subChain1 = chain.subChain(range: range1)
@@ -584,7 +591,7 @@ import Testing
         }
     }
 
-    @Test func subSequence() {
+    @Test func subSequence() throws {
         if let chain = testProtein.chains.first {
             #expect(chain.subSequence(range: 0..<1) == "M")
             #expect(chain.subSequence(range: 2..<9) == "SSVSWGI")
@@ -602,11 +609,11 @@ import Testing
         #expect(carboxymethylModifications.first?.fullName == "Iodoacetic acid derivative")
 
         for cysMod in carboxymethylModifications {
-            var peptide = Peptide(sequence: "SAMPLEVCAAAGQTHR")
+            var peptide = try Peptide(sequence: "SAMPLEVCAAAGQTHR")
             peptide.setAdducts(type: protonAdduct, count: 1)
             #expect(peptide.monoisotopicMass.rounded(scale: 4) == decimal("1641.7836"))
 
-            peptide.addModification(cysMod, at: 8)
+            try peptide.addModification(cysMod, at: 8)
             #expect(peptide.monoisotopicMass.rounded(scale: 4) == decimal("1699.7891"))
 
             let range = (2..<12)
@@ -618,12 +625,12 @@ import Testing
         }
     }
 
-    @Test func emptySequence() {
-        let peptide = Peptide(sequence: "")
+    @Test func emptySequence() throws {
+        let peptide = try Peptide(sequence: "")
         #expect(peptide.masses == zeroMass)
     }
 
-    @Test func emptySelection() {
+    @Test func emptySelection() throws {
         #expect(testProtein.selectionMass(zeroRange) == zeroMass)
     }
 
@@ -645,15 +652,15 @@ import Testing
         #expect(testProtein.selectionMass(range) == subChain.masses.applying(adducts: subChain.adducts))
     }
 
-    @Test func chargedSelectionAppliesAdductsOnce() {
-        var protein = Protein(sequence: "DWSSD")
+    @Test func chargedSelectionAppliesAdductsOnce() throws {
+        var protein = try Protein(sequence: "DWSSD")
         protein.setAdducts(type: protonAdduct, count: 2)
 
         #expect(protein.selectionMass(0..<5).monoisotopicMass.rounded(scale: 4) == decimal("305.1112"))
     }
 
     @Test func selectionMassUsesActualAdducts() throws {
-        var protein = Protein(sequence: "DWSSD")
+        var protein = try Protein(sequence: "DWSSD")
         protein.adducts = [sodiumAdduct]
         let chain = try #require(protein.chains.first)
 
@@ -668,50 +675,50 @@ import Testing
     @Test func isoelectricPointPropertyUsesDefaultCalculation() throws {
         let chain = try #require(testProtein.chains.first)
 
-        #expect(chain.isoelectricPoint == chain.isoelectricPoint())
-        #expect(testProtein.isoelectricPoint == testProtein.isoelectricPoint())
+        #expect(try chain.isoelectricPoint == chain.isoelectricPoint())
+        #expect(try testProtein.isoelectricPoint == testProtein.isoelectricPoint())
     }
 
     @Test func isoelectricPointRangeMatchesSubChain() throws {
         let chain = try #require(testProtein.chains.first)
         let range = 10..<200
 
-        #expect(testProtein.isoelectricPoint(range: range) == chain.subChain(range: range).isoelectricPoint())
+        #expect(try testProtein.isoelectricPoint(range: range) == chain.subChain(range: range).isoelectricPoint())
     }
 
     @Test func isoelectricPointClampsRangeToSequence() throws {
         let chain = try #require(testProtein.chains.first)
 
         #expect(
-            testProtein.isoelectricPoint(range: -1..<2)
+            try testProtein.isoelectricPoint(range: -1..<2)
                 == chain.subChain(range: 0..<2).isoelectricPoint()
         )
-        #expect(Peptide(sequence: "").isoelectricPoint() == 0.0)
+        #expect(try Peptide(sequence: "").isoelectricPoint() == 0.0)
     }
 
-    @Test func isoelectricPointSupportsTerminalIonization() {
-        let alanine = Peptide(sequence: "A")
-        #expect(abs(alanine.isoelectricPoint() - 5.925) < 0.01)
+    @Test func isoelectricPointSupportsTerminalIonization() throws {
+        let alanine = try Peptide(sequence: "A")
+        #expect(try abs(alanine.isoelectricPoint() - 5.925) < 0.01)
 
-        let customTermini = alanine.isoelectricPoint(
+        let customTermini = try alanine.isoelectricPoint(
             nTerminalIonization: .custom(pKa: 6.0),
             cTerminalIonization: .custom(pKa: 8.0)
         )
 
         #expect(abs(customTermini - 7.0) < 0.01)
 
-        let lysine = Peptide(sequence: "K")
-        let blockedNTerminal = lysine.isoelectricPoint(nTerminalIonization: .blocked)
+        let lysine = try Peptide(sequence: "K")
+        let blockedNTerminal = try lysine.isoelectricPoint(nTerminalIonization: .blocked)
         #expect(abs(blockedNTerminal - 7.22) < 0.01)
 
-        let asparticAcid = Peptide(sequence: "D")
-        let blockedCTerminal = asparticAcid.isoelectricPoint(cTerminalIonization: .blocked)
+        let asparticAcid = try Peptide(sequence: "D")
+        let blockedCTerminal = try asparticAcid.isoelectricPoint(cTerminalIonization: .blocked)
         #expect(abs(blockedCTerminal - 6.055) < 0.01)
     }
 
     @Test func hydrophobicityProfileUsesCenteredWindows() throws {
-        let peptide = Peptide(sequence: "AVIL")
-        let profile = peptide.hydrophobicityProfile(for: .kyteDoolittle, windowSize: 3)
+        let peptide = try Peptide(sequence: "AVIL")
+        let profile = try peptide.hydrophobicityProfile(for: .kyteDoolittle, windowSize: 3)
 
         #expect(profile.count == 2)
         let firstPoint = try #require(profile.first)
@@ -722,16 +729,24 @@ import Testing
         #expect(abs(lastPoint.value - (12.5 / 3.0)) < 0.000_001)
     }
 
-    @Test func hydrophobicityProfileRejectsInvalidInputs() {
-        let peptide = Peptide(sequence: "AVIL")
+    @Test func hydrophobicityProfileRejectsInvalidInputs() throws {
+        let peptide = try Peptide(sequence: "AVIL")
 
-        #expect(peptide.hydrophobicityProfile(for: .kyteDoolittle, windowSize: 0).isEmpty)
-        #expect(peptide.hydrophobicityProfile(for: .kyteDoolittle, windowSize: 2).isEmpty)
-        #expect(peptide.hydrophobicityProfile(for: .kyteDoolittle, windowSize: 5).isEmpty)
-        #expect(peptide.hydrophobicityProfile(for: "Unknown").isEmpty)
+        #expect(throws: HydropathyError.invalidWindowSize(0, residueCount: 4)) {
+            try peptide.hydrophobicityProfile(for: .kyteDoolittle, windowSize: 0)
+        }
+        #expect(throws: HydropathyError.invalidWindowSize(2, residueCount: 4)) {
+            try peptide.hydrophobicityProfile(for: .kyteDoolittle, windowSize: 2)
+        }
+        #expect(throws: HydropathyError.invalidWindowSize(5, residueCount: 4)) {
+            try peptide.hydrophobicityProfile(for: .kyteDoolittle, windowSize: 5)
+        }
+        #expect(throws: HydropathyError.scaleNotFound("Unknown")) {
+            try peptide.hydrophobicityProfile(for: "Unknown")
+        }
     }
 
-    @Test func biomolecule() {
+    @Test func biomolecule() throws {
         var chain1 = ProteinChain(residues: [alanine, alanine, serine, alanine, serine])
         #expect(chain1.sequenceLength == 5)
 
@@ -767,7 +782,7 @@ import Testing
     }
 
     @Test func crossLinkWithinOneChainContributesItsModificationOnce() throws {
-        var protein = Protein(sequence: "ACDC")
+        var protein = try Protein(sequence: "ACDC")
         let unlinkedFormula = protein.formula
         let unlinkedMasses = protein.masses
 
@@ -782,7 +797,7 @@ import Testing
     }
 
     @Test func crossLinkCanConnectDifferentProteinChainsAndRoundTripThroughCodable() throws {
-        var protein = Protein(chains: [ProteinChain(sequence: "AC"), ProteinChain(sequence: "CA")])
+        var protein = Protein(chains: [try ProteinChain(sequence: "AC"), try ProteinChain(sequence: "CA")])
 
         let crossLink = try protein.addCrossLink(
             modification: disulfideBond,

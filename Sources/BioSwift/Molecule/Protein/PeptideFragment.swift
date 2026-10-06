@@ -132,12 +132,12 @@ extension Fragment where ChainType == Peptide, FragmentType == PeptideFragmentTy
         fragmentType.isCTerminal
     }
 
-    public init(sequence: String) {
-        self.init(sequence: sequence, id: UUID())
+    public init(sequence: String) throws {
+        try self.init(sequence: sequence, id: UUID())
     }
 
-    public init(sequence: String, id: UUID) {
-        var peptide = Peptide(sequence: sequence, id: id)
+    public init(sequence: String, id: UUID) throws {
+        var peptide = try Peptide(sequence: sequence, id: id)
         peptide.setTermini(nTerm: zeroModification, cTerm: zeroModification)
         self.init(chain: peptide, fragmentType: .undefined, id: id)
     }

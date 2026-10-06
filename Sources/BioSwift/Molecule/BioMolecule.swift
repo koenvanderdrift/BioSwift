@@ -365,40 +365,40 @@ extension BioMolecule {
         _ modification: Modification,
         at location: Int,
         chainIndex: Int = 0
-    ) {
+    ) throws {
         guard chains.indices.contains(chainIndex) else {
-            return
+            throw BioSwiftDiagnostics.logged(CrossLinkError.invalidChainIndex(chainIndex))
         }
 
-        chains[chainIndex].addModification(modification, at: location)
+        try chains[chainIndex].addModification(modification, at: location)
     }
 
-    public mutating func removeModification(at location: Int, chainIndex: Int = 0) {
+    public mutating func removeModification(at location: Int, chainIndex: Int = 0) throws {
         guard chains.indices.contains(chainIndex) else {
-            return
+            throw BioSwiftDiagnostics.logged(CrossLinkError.invalidChainIndex(chainIndex))
         }
 
-        chains[chainIndex].removeModification(at: location)
+        try chains[chainIndex].removeModification(at: location)
     }
 
     public mutating func modifyResidues(
         for identifier: String,
         with modification: Modification,
         chainIndex: Int = 0
-    ) {
+    ) throws {
         guard chains.indices.contains(chainIndex) else {
-            return
+            throw BioSwiftDiagnostics.logged(CrossLinkError.invalidChainIndex(chainIndex))
         }
 
-        chains[chainIndex].modifyResidues(for: identifier, with: modification)
+        try chains[chainIndex].modifyResidues(for: identifier, with: modification)
     }
 
-    public mutating func removeModifications(for identifier: String, chainIndex: Int = 0) {
+    public mutating func removeModifications(for identifier: String, chainIndex: Int = 0) throws {
         guard chains.indices.contains(chainIndex) else {
-            return
+            throw BioSwiftDiagnostics.logged(CrossLinkError.invalidChainIndex(chainIndex))
         }
 
-        chains[chainIndex].removeModifications(for: identifier)
+        try chains[chainIndex].removeModifications(for: identifier)
     }
 }
 
@@ -439,10 +439,10 @@ private extension BioMolecule {
 extension BioMolecule where ChainType.ResidueType == AminoAcid {
     /// The isoelectric point of the first chain, calculated with free N- and C-termini.
     public var isoelectricPoint: Double {
-        isoelectricPoint()
+        get throws { try isoelectricPoint() }
     }
 
-    public func isoelectricPoint(chainIndex index: Int = 0, range: Range<Int>? = nil) -> Double {
+    public func isoelectricPoint(chainIndex index: Int = 0, range: Range<Int>? = nil) throws -> Double {
         guard chains.indices.contains(index) else {
             return 0.0
         }
@@ -450,7 +450,7 @@ extension BioMolecule where ChainType.ResidueType == AminoAcid {
         let chain = chains[index]
 
         guard let range else {
-            return IsoelectricPointCalculator.isoelectricPoint(for: chain.residues)
+            return try IsoelectricPointCalculator.isoelectricPoint(for: chain.residues)
         }
 
         let validRange = range.clamped(toSequenceLength: chain.residues.count)
@@ -459,23 +459,23 @@ extension BioMolecule where ChainType.ResidueType == AminoAcid {
             return 0.0
         }
 
-        return IsoelectricPointCalculator.isoelectricPoint(for: chain.residues[validRange])
+        return try IsoelectricPointCalculator.isoelectricPoint(for: chain.residues[validRange])
     }
 
-    public func selectedIsoelectricPoint(chainIndex index: Int = 0, _ range: Range<Int>) -> Double {
-        isoelectricPoint(chainIndex: index, range: range)
+    public func selectedIsoelectricPoint(chainIndex index: Int = 0, _ range: Range<Int>) throws -> Double {
+        try isoelectricPoint(chainIndex: index, range: range)
     }
 
-    public func hydrophobicityValues(chainIndex index: Int = 0, for hydrophobicityScale: String) -> [Double] {
+    public func hydrophobicityValues(chainIndex index: Int = 0, for hydrophobicityScale: String) throws -> [Double] {
         guard chains.indices.contains(index) else {
             return []
         }
 
-        return chains[index].hydrophobicityValues(for: hydrophobicityScale)
+        return try chains[index].hydrophobicityValues(for: hydrophobicityScale)
     }
 
-    public func hydrophobicityValues(chainIndex index: Int = 0, for hydrophobicityScale: HydrophobicityScaleName) -> [Double] {
-        hydrophobicityValues(chainIndex: index, for: hydrophobicityScale.rawValue)
+    public func hydrophobicityValues(chainIndex index: Int = 0, for hydrophobicityScale: HydrophobicityScaleName) throws -> [Double] {
+        try hydrophobicityValues(chainIndex: index, for: hydrophobicityScale.rawValue)
     }
 }
 

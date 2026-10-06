@@ -7,9 +7,9 @@ import Foundation
 
 extension BioMolecule where ChainType == DNAChain {
     /// Transcribes each DNA coding strand into RNA by replacing thymine with uracil.
-    public func transcribed() -> RNA {
-        let rnaChains = chains.map { dnaChain in
-            var rnaChain = RNAChain(
+    public func transcribed() throws -> RNA {
+        let rnaChains = try chains.map { dnaChain in
+            var rnaChain = try RNAChain(
                 sequence: dnaChain.sequenceString.replacingOccurrences(of: "T", with: "U"),
                 name: dnaChain.name)
             rnaChain.range = dnaChain.range
@@ -21,17 +21,17 @@ extension BioMolecule where ChainType == DNAChain {
     }
 
     /// Transcribes the DNA and translates the resulting RNA using the standard genetic code.
-    public func translated() -> Protein {
-        transcribed().translated()
+    public func translated() throws -> Protein {
+        try transcribed().translated()
     }
 }
 
 extension BioMolecule where ChainType == RNAChain {
     /// Translates each RNA strand from its first nucleotide using the standard genetic code.
     /// Translation ends at the first stop codon; an incomplete trailing codon is ignored.
-    public func translated() -> Protein {
-        let proteinChains = chains.map { rnaChain in
-            var proteinChain = ProteinChain(
+    public func translated() throws -> Protein {
+        let proteinChains = try chains.map { rnaChain in
+            var proteinChain = try ProteinChain(
                 sequence: Self.aminoAcidSequence(from: rnaChain.sequenceString),
                 name: rnaChain.name)
             proteinChain.range = rnaChain.range
@@ -42,14 +42,17 @@ extension BioMolecule where ChainType == RNAChain {
         return Protein(chains: proteinChains)
     }
 
-    private static func aminoAcidSequence(from sequence: String) -> String {
+    private static func aminoAcidSequence(from sequence: String) throws -> String {
         let nucleotides = Array(sequence.uppercased())
         var aminoAcids = ""
         aminoAcids.reserveCapacity(nucleotides.count / 3)
 
         for start in stride(from: 0, through: nucleotides.count - nucleotides.count % 3 - 3, by: 3) {
             let codon = String(nucleotides[start..<(start + 3)])
-            guard let aminoAcid = standardGeneticCode[codon] else { continue }
+            guard let aminoAcid = standardGeneticCode[codon] else {
+                throw BioSwiftDiagnostics.logged(
+                    SequenceValidationError.invalidCodon(codon, position: start))
+            }
             guard let aminoAcid else { break }
             aminoAcids.append(aminoAcid)
         }

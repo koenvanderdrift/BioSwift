@@ -9,7 +9,7 @@ struct BioSwiftDiagnosticsTests {
         case example
     }
 
-    @Test func debugMessagesAreLazyWhenDisabled() {
+    @Test func debugMessagesAreLazyWhenDisabled() throws {
         let previousValue = BioSwiftDiagnostics.isDebugLoggingEnabled
         defer { BioSwiftDiagnostics.isDebugLoggingEnabled = previousValue }
 
@@ -26,7 +26,7 @@ struct BioSwiftDiagnosticsTests {
         #expect(wasEvaluated == false)
     }
 
-    @Test func concreteAndExistentialErrorsUseErrorLevel() {
+    @Test func concreteAndExistentialErrorsUseErrorLevel() throws {
         let previousValue = BioSwiftDiagnostics.isDebugLoggingEnabled
         let levels = Mutex<[BioSwiftDiagnostics.Level]>([])
         BioSwiftDiagnostics.setObserver { level, message in
@@ -48,7 +48,7 @@ struct BioSwiftDiagnosticsTests {
         #expect(levels.withLock { $0 } == [.error, .error])
     }
 
-    @Test func valueErasedToAnyUsesDebugLevel() {
+    @Test func valueErasedToAnyUsesDebugLevel() throws {
         let previousValue = BioSwiftDiagnostics.isDebugLoggingEnabled
         let levels = Mutex<[BioSwiftDiagnostics.Level]>([])
         BioSwiftDiagnostics.setObserver { level, message in
