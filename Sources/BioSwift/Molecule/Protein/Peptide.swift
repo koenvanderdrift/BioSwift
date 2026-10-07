@@ -1,154 +1,72 @@
 //
 //  Peptide.swift
-//  
+//  BioSwift
 //
-//  Created by Koen van der Drift on 7/19/21.
+//  Created by Koen van der Drift on 7/18/21.
+//  Copyright © 2021 - 2026 Koen van der Drift. All rights reserved.
 //
 
 import Foundation
 
-public typealias Peptide = PolyPeptide
+/// Peptide conforms to ``Chain`` using an ``AminoAcid`` array
 
-extension Peptide {
-    public func fragment() -> [PeptideFragment] {
-        return precursorIons() + immoniumIons() + nTerminalIons() + cTerminalIons()
-    }
-    
-    func precursorIons() -> [PeptideFragment] {
-        var fragment = PeptideFragment(residues: residues, type: .precursor, adducts: self.adducts)
-        
-        if canLoseAmmonia() {
-            fragment.addModification(LocalizedModification(lossOfAmmonia, at: -1))
-        }
-        
-        if canLoseWater() {
-            fragment.addModification(LocalizedModification(lossOfWater, at: -1))
-        }
-        
-        return [fragment]
-    }
-    
-    func immoniumIons() -> [PeptideFragment] {
-        guard let symbols = symbolSet as? Set<AminoAcid> else { return [] }
-        
-        let fragments = symbols.map { symbol -> PeptideFragment in
-            let fragment = PeptideFragment(residues: [symbol], type: .immonium, adducts: self.adducts)
-            
-            return fragment
-        }
-        
-        return fragments
-    }
-    
-    func nTerminalIons() -> [PeptideFragment] { // b fragments
-        var fragments = [PeptideFragment]()
-        
-        guard adducts.count > 0 else { return fragments }
-        
-        let startIndex = residues.startIndex
-        
-        for z in 1 ... min(2, adducts.count) {
-            for i in 2 ... residues.count - 1 {
-                let index = residues.index(startIndex, offsetBy: i)
-                
-                let fragment = PeptideFragment(residues: Array(residues[..<index]), type: .nTerminal, adducts: Array(repeatElement(protonAdduct, count: z)))
-                
-                if z == 1 {
-                    fragments.append(fragment)
-                } else {
-                    if fragment.pseudomolecularIon().monoisotopicMass > pseudomolecularIon().monoisotopicMass {
-                        fragments.append(fragment)
-                    }
-                }
-            }
-        }
-        
-        return fragments
-    }
-    
-    func cTerminalIons() -> [PeptideFragment] { // y fragments
-        var fragments = [PeptideFragment]()
-        
-        guard adducts.count > 0 else { return fragments }
-        
-        let endIndex = residues.endIndex
-        
-        for z in 1 ... min(2, adducts.count) {
-            for i in 1 ... residues.count - 1 {
-                let index = residues.index(endIndex, offsetBy: -i)
-                
-                let fragment = PeptideFragment(residues: Array(residues[..<index]), type: .cTerminal, adducts: Array(repeatElement(protonAdduct, count: z)))
-                
-                fragments.append(fragment)
-            }
-        }
-        
-        return fragments
-    }
-    
-    func canLoseWater() -> Bool {
-        return sequenceString.containsCharactersFrom(substring: "STED")
-    }
-    
-    func canLoseAmmonia() -> Bool {
-        return sequenceString.containsCharactersFrom(substring: "RQNK")
-    }
-    
-    //    public func isoElectricPoint() -> Double {
-    //        let hydropathy = Hydropathy(symbolSet: CountedSet(sequenceString.map { String($0) }))
-    //
-    //        return hydropathy.isoElectricPoint()
-    //    }
-    
-}
-
-public struct PeptideFragment: RangedChain & Fragment {
-    public var name: String = ""
-    public var symbolLibrary: [Symbol] = aminoAcidLibrary
-    
+public struct Peptide: AminoAcidChain, Codable, Equatable, Sendable {
+    public let id: UUID
+    public var name: String
     public var residues: [AminoAcid] = []
-    
-    public var termini: (first: AminoAcid, last: AminoAcid)? = (nTerm, cTerm)
+    public var nTerminal: Modification = hydrogenModification
+    public var cTerminal: Modification = hydroxylModification
     public var adducts: [Adduct] = []
-    public var modifications: [LocalizedModification] = []
-    
-    public var rangeInParent: ChainRange = zeroChainRange
+    public var range: Range<Int> = zeroRange
+    public var parentLength: Int = 0
 
-    public var fragmentType: FragmentType = .undefined
-}
-
-extension PeptideFragment {
-    public init(sequence: String) {
-        self.residues = createResidues(from: sequence)
+    public init(sequence: String, name: String = "", id: UUID = UUID()) throws {
+        self.id = id
+        self.name = name
+        residues = try Self.createResidues(from: sequence)
     }
-    
+
     public init(residues: [AminoAcid]) {
+        self.init(residues: residues, name: "")
+    }
+
+    public init(residues: [AminoAcid], id: UUID) {
+        self.init(residues: residues, name: "", id: id)
+    }
+
+    public init(residues: [AminoAcid], name: String, id: UUID = UUID()) {
+        self.id = id
+        self.name = name
         self.residues = residues
     }
 
-    public init(residues: [AminoAcid], type: FragmentType, adducts: [Adduct]) {
-        self.residues = residues
-        self.fragmentType = type
-        self.adducts = adducts
+    public init(proteinChain: ProteinChain) {
+        self.init(proteinChain: proteinChain, id: proteinChain.id)
+    }
+
+    init(proteinChain: ProteinChain, id: UUID) {
+        self.id = id
+        name = proteinChain.name
+        residues = proteinChain.residues
+        nTerminal = proteinChain.nTerminal
+        cTerminal = proteinChain.cTerminal
+        adducts = proteinChain.adducts
+        range = proteinChain.range
+        parentLength = proteinChain.parentLength
     }
 }
 
-extension PeptideFragment {
-    public var masses: MassContainer {
-        return calculateMasses()
+extension Peptide: Ionizable {
+    public var massContainer: MassContainer {
+        masses.applying(adducts: adducts)
     }
 
-    public func calculateMasses() -> MassContainer {
-        return mass(of: residues) + terminalMasses()
-    }
-
-    public func terminalMasses() -> MassContainer {
-        var result = zeroMass
-        if fragmentType == .nTerminal {
-            result -= (hydrogen.masses + hydroxyl.masses)
+    var masses: MassContainer {
+        if residues.isEmpty {
+            return zeroMass
         }
 
-        return result
+        return aminoAcidResidueMasses() + terminalMasses()
     }
-}
 
+}

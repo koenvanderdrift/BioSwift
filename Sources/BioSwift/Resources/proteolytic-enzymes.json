@@ -1,0 +1,195 @@
+[
+    {
+        "name": "Trypsin",
+        "alternativeName": "",
+        "fullName": "",
+        "cleaveRestrictions": [
+            {
+                "characters": "P",
+                "position": 1
+            }
+        ],
+        "cleaveDirections": [
+            "after"
+        ],
+        "cleaveAt": [
+            "K",
+            "R"
+        ]
+    },
+    {
+        "name": "Trypsin/P",
+        "cleaveRestrictions": [],
+        "alternativeName": "",
+        "fullName": "",
+        "cleaveDirections": [
+            "after"
+        ],
+        "cleaveAt": [
+            "K",
+            "R"
+        ]
+    },
+    {
+        "name": "CNBr",
+        "alternativeName": "",
+        "fullName": "Cyanogen Bromide",
+        "cleaveRestrictions": [],
+        "cleaveDirections": [
+            "after"
+        ],
+        "cleaveAt": [
+            "M"
+        ]
+    },
+    {
+        "name": "Glu-C",
+        "cleaveRestrictions": [],
+        "alternativeName": "Staphylococcus aureus Protease V8",
+        "fullName": "Endoproteinase Glu-C",
+        "cleaveDirections": [
+            "after"
+        ],
+        "cleaveAt": [
+            "E"
+        ]
+    },
+    {
+        "name": "Chymotrypsin",
+        "cleaveRestrictions": [
+            {
+                "characters": "P",
+                "position": 1
+            }
+        ],
+        "alternativeName": "",
+        "fullName": "",
+        "cleaveDirections": [
+            "after"
+        ],
+        "cleaveAt": [
+            "F",
+            "Y",
+            "W",
+            "M",
+            "L"
+        ]
+    },
+    {
+        "name": "Arg-C",
+        "cleaveRestrictions": [
+            {
+                "characters": "P",
+                "position": 1
+            }
+        ],
+        "alternativeName": "Clostripain",
+        "fullName": "Endoproteinase-Arg-C",
+        "cleaveDirections": [
+            "after"
+        ],
+        "cleaveAt": [
+            "R"
+        ]
+    },
+    {
+        "name": "Asp-N",
+        "cleaveRestrictions": [],
+        "alternativeName": "",
+        "fullName": "",
+        "cleaveDirections": [
+            "before"
+        ],
+        "cleaveAt": [
+            "D"
+        ]
+    },
+    {
+        "name": "Lys-C",
+        "cleaveRestrictions": [
+            {
+                "characters": "P",
+                "position": 1
+            }
+        ],
+        "alternativeName": "",
+        "fullName": "Endoproteinase Lys-C",
+        "cleaveDirections": [
+            "after"
+        ],
+        "cleaveAt": [
+            "K"
+        ]
+    },
+    {
+        "name": "Lys-C\/P",
+        "cleaveRestrictions": [],
+        "alternativeName": "",
+        "fullName": "",
+        "cleaveDirections": [
+            "after"
+        ],
+        "cleaveAt": [
+            "K"
+        ]
+    },
+    {
+        "name": "Pepsin (pH = 1.3)",
+        "fullName": "",
+        "alternativeName": "",
+        "cleaveAt": [
+            "F",
+            "L",
+            "A"
+        ],
+        "cleaveDirections": [
+            "after"
+        ],
+        "cleaveRestrictions": [],
+    },
+    {
+        "name": "Pepsin (pH > 2)",
+        "fullName": "",
+        "alternativeName": "",
+        "cleaveAt": [
+            "F",
+            "L",
+            "Y",
+            "W"
+        ],
+        "cleaveDirections": [
+            "after",
+            "before"
+        ],
+        "cleaveRestrictions": [
+            {
+                "characters": "R",
+                "position": -1
+            },
+            {
+                "characters": "RKH",
+                "position": -3
+            },
+            {
+                "characters": "P",
+                "position": -2
+            },
+            {
+                "characters": "P",
+                "position": -1
+            },
+            {
+                "characters": "P",
+                "position": 1
+            },
+            {
+                "characters": "P",
+                "position": 2
+            },
+            {
+                "characters": "P",
+                "position": 3
+            }
+        ]
+    }
+]

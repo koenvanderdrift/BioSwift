@@ -1,27 +1,49 @@
+//
+//  Modification.swift
+//  BioSwift
+//
+//  Created by Koen van der Drift on 3/22/20.
+//  Copyright © 2020 - 2026 Koen van der Drift. All rights reserved.
+//
+
 import Foundation
 
 public let unmodifiedString = "Unmodified"
-public let zeroModification = Modification(name: unmodifiedString, elements: [:])
+public let zeroModification = Modification(name: unmodifiedString, reactions: [.undefined])
 
-public indirect enum Reaction {
+public let hydrogenModification = Modification(name: "Hydrogen", reactions: [.add(hydrogen)])
+public let hydroxylModification = Modification(name: "Hydroxyl", reactions: [.add(hydroxyl)])
+
+public indirect enum Reaction: Codable, Sendable {
     case add(FunctionalGroup)
     case remove(FunctionalGroup)
     case undefined
 }
 
-extension Reaction: Mass {
-    public var masses: MassContainer {
-        return calculateMasses()
-    }
-
-    public func calculateMasses() -> MassContainer {
+extension Reaction: MassRepresentable {
+    var masses: MassContainer {
         var result = zeroMass
 
         switch self {
-        case let .add(group):
+        case .add(let group):
             result += group.masses
-        case let .remove(group):
+        case .remove(let group):
             result -= group.masses
+        case .undefined:
+            break
+        }
+
+        return result
+    }
+
+    public var formula: Formula {
+        var result = zeroFormula
+
+        switch self {
+        case .add(let group):
+            result += group.formula
+        case .remove(let group):
+            result -= group.formula
         case .undefined:
             break
         }
@@ -30,146 +52,113 @@ extension Reaction: Mass {
     }
 }
 
-public protocol Modifiable {
-    var modification: Modification? { get set }
+public struct ModificationSpecificity: Codable, Sendable {
+    /* Unimod-compatible applicability metadata.
 
-    func allowedModifications() -> [Modification]
-}
+     These string values preserve terminology from imported modification
+     vocabularies; they do not constrain Modification to a particular molecule type.
 
-extension Modifiable {
-    mutating func setModification(_ modification: Modification?) {
-        self.modification = modification
-    }
-
-    mutating func removeModification() {
-        modification = nil
-    }
-    
-    func modificationMasses() -> MassContainer {
-        return modification?.masses ?? zeroMass
-    }
-
-}
-
-public struct Modification: Decodable {
-/*
      via: https://www.unimod.org/fields.html
-     
-     Site: Chosen from a controlled list of categories. Choose "N-term" or "C-Term" if the modification applies to a terminus independent of the identity of the terminal residue, (e.g. methylation of a carboxy terminus).
 
-     Position: Chosen from a controlled list of categories. Choose "Anywhere" if the modification applies to a residue independent of its position, (e.g. oxidation of methionine). Choose "Any N-term" or "Any C-term" if the modification applies to a residue only when it is at a peptide terminus, (e.g. conversion of methionine to homoserine). Choose "Protein N-term" or "Protein C-term" if the modification only applies to the original terminus of the intact protein, not new peptide termini created by digestion, (e.g. post-translational acetylation of the protein amino terminus). If Site was specified as "N-term" or "C-Term", then "Anywhere" becomes equivalent to "Any N-term" or "Any C-term".
-*/
+     Site: Chosen from a controlled list of categories. Choose "N-term" or "C-Term" if the modification applies to a terminus independent of the identity of the terminal residue, (e.g. methylation of a carboxy terminus). Required
 
+     Position: Chosen from a controlled list of categories. Choose "Anywhere" if the modification applies to a residue independent of its position, (e.g. oxidation of methionine). Choose "Any N-term" or "Any C-term" if the modification applies to a residue only when it is at a peptide terminus, (e.g. conversion of methionine to homoserine). Choose "Protein N-term" or "Protein C-term" if the modification only applies to the original terminus of the intact protein, not new peptide termini created by digestion, (e.g. post-translational acetylation of the protein amino terminus). If Site was specified as "N-term" or "C-Term", then "Anywhere" becomes equivalent to "Any N-term" or "Any C-term". Required
+
+     Classification: Chosen from a controlled list of categories. If you would like additional categories defined, please email details to unimod@unimod.org Required
+     */
+
+    public let site: String
+    public let position: String
+    public let classification: String
+
+    public init(site: String, position: String = "Anywhere", classification: String = "") {
+        self.site = site
+        self.position = position
+        self.classification = classification
+    }
+}
+
+public struct Modification: Codable, Sendable {
+    public let accession: String?
     public let name: String
+    public let fullName: String
+    public let synonyms: [String]
     public let reactions: [Reaction]
-    public let sites: [String] // sites it can attach to
+    public let specificities: [ModificationSpecificity]
 
-    enum CodingKeys: String, CodingKey {
-        case name = "name"
-        case reactions = "reactions"
-        case sites = "sites"
-    }
-    
-    public init(from decoder: Decoder) throws {
-        self.name = ""
-        self.reactions = []
-        self.sites = []
-    }
-    
-    public init(name: String, reactions: [Reaction], sites: [String] = []) {
+    public init(
+        accession: String? = nil, name: String, fullName: String = "", synonyms: [String] = [],
+        reactions: [Reaction],
+        specificities: [ModificationSpecificity] = []
+    ) {
+        self.accession = accession
         self.name = name
+        self.fullName = fullName
+        self.synonyms = synonyms
+        self.specificities = specificities
         self.reactions = reactions
-        self.sites = sites
     }
 
-    public init(name: String, elements: [String: Int], sites: [String] = []) {
+    public init(
+        accession: String? = nil, name: String, fullName: String = "", synonyms: [String] = [],
+        elements: [String: Int],
+        specificities: [ModificationSpecificity] = []
+    ) throws {
+        // TODO: switch to [ChemicalElement: Int] ?
+
         var reactions = [Reaction]()
 
-        let negativeElements = elements.filter { $0.value < 0 }
+        let negativeElements = elements.filter {
+            $0.value < 0
+        }
         if negativeElements.count > 0 {
-            let group = FunctionalGroup(name: name, formula: negativeElements)
+            let group = try FunctionalGroup(name: name, elements: negativeElements)
             reactions.append(Reaction.remove(group))
         }
 
-        let postiveElements = elements.filter { $0.value > 0 }
+        let postiveElements = elements.filter {
+            $0.value > 0
+        }
         if postiveElements.count > 0 {
-            let group = FunctionalGroup(name: name, formula: postiveElements)
+            let group = try FunctionalGroup(name: name, elements: postiveElements)
             reactions.append(Reaction.add(group))
         }
 
-        self.init(name: name, reactions: reactions, sites: sites)
+        self.init(
+            accession: accession, name: name, fullName: fullName, synonyms: synonyms,
+            reactions: reactions, specificities: specificities)
     }
-    
+
     public init(_ modification: Modification) {
-        self.name = modification.name
-        self.sites = modification.sites
-        self.reactions = modification.reactions
+        accession = modification.accession
+        name = modification.name
+        fullName = modification.fullName
+        synonyms = modification.synonyms
+        specificities = modification.specificities
+        reactions = modification.reactions
     }
 }
 
 extension Modification: Hashable {
     public static func == (lhs: Modification, rhs: Modification) -> Bool {
-        return lhs.name == rhs.name
+        switch (lhs.accession, rhs.accession) {
+        case (.some(let lhsAccession), .some(let rhsAccession)):
+            return lhsAccession == rhsAccession
+        case (.none, .none):
+            return lhs.name == rhs.name
+        default:
+            return false
+        }
     }
 
     public func hash(into hasher: inout Hasher) {
-        hasher.combine(name)
+        hasher.combine(accession ?? name)
     }
 }
 
-extension Modification: Mass {
-    public var masses: MassContainer {
-        return calculateMasses()
-    }
+extension Modification: MassRepresentable {
+    var masses: MassContainer { reactions.reduce(zeroMass) { $0 + $1.masses } }
 
-    public func calculateMasses() -> MassContainer {
-        return reactions.reduce(zeroMass) { $0 + $1.masses }
-    }
-}
+    public var formula: Formula { reactions.reduce(zeroFormula) { $0 + $1.formula } }
 
-public struct LocalizedModification: Hashable {
-    public let location: Int
-    public let chain: Int
-    public let modification: Modification
-    
-    public init(_ modification: Modification, at location: Int, in chain: Int = 0) {
-        self.location = location
-        self.chain = chain
-        self.modification = modification
-    }
-}
-
-public struct Link: Hashable {
-    public var mods: [LocalizedModification]
-    
-    public init(mods: [LocalizedModification]) {
-        self.mods = mods
-    }
-
-    public func contains(_ location: Int) -> Bool {
-        return mods.contains(where: { $0.location == location })
-    }
-}
-
-extension Link {
-    // https://codereview.stackexchange.com/questions/237295/comparing-two-structs-in-swift#
-    
-    public enum CompareResult {
-        case equal
-        case intersect
-        case disjoint
-    }
-
-    public func compareLocations(with other: Link) -> CompareResult {
-        let modsSet = Set(mods)
-        let otherModsSet = Set(other.mods)
-        
-        if modsSet == otherModsSet {
-            return .equal
-        } else if modsSet.isDisjoint(with: otherModsSet) {
-            return .disjoint
-        } else {
-            return .intersect
-        }
-    }
 }

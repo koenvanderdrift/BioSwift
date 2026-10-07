@@ -1,86 +1,83 @@
+//
+//  Formula.swift
+//  BioSwift
+//
+//  Created by Koen van der Drift on 3/15/18.
+//  Copyright © 2018 - 2026 Koen van der Drift. All rights reserved.
+//
+
 import Foundation
 
-public let zeroFormula = Formula("")
+public let zeroFormula = Formula()
 
-public struct Formula {
-    public var formulaString: String
-
-    public var elements: [ChemicalElement] {
-        var result = [ChemicalElement] ()
-
-        do {
-            result = try parseElements()
-        } catch {
-            debugPrint(error)
-        }
-
-        return result
-    }
-
-    public init(_ string: String) {
-        self.formulaString = string
-    }
-
-    public init(_ dict: [String: Int]) {
-        var formula = ""
-        for (element, count) in dict {
-            formula.append(element)
-            if count > 1 {
-                formula.append(String(count))
-            }
-        }
-
-        formulaString = formula
-    }
-
-    var description: String {
-        return formulaString
-    }
-
-    public func countedElements() -> NSCountedSet {
-       return NSCountedSet(array: elements)
-    }
-    
-    public func isotopes() -> NSCountedSet {
-        return NSCountedSet(array: elements.map { $0.isotopes }.reduce([], +))
-    }
-    
-    public func countFor(element: String) -> Int {
-        return elements.map { $0.symbol }.filter { $0 == element }.count
-    }
-}
-
-extension Formula {
-    private enum ParseError: Error {
+public enum FormulaParser {
+    public enum ParseError: Error {
         case missingClosingBracket
         case missingOpeningBracket
         case zeroCount
         case invalidCharacterFound(Character)
-        case elementNotFound
+        case elementNotFound(String)
         case numberPrecedingFormula
         case invalidFormula
+        case invalidCount
     }
 
-    private func parseElements() throws -> [ChemicalElement]  {
-        // https://github.com/cgohlke/molmass/blob/master/molmass/molmass.py
-        // https://github.com/cgohlke/molmass/blob/master/molmass/elements.py
+    private static var elements: ElementReferences {
+        get throws { try ElementReferenceDefaults.loadBundled() }
+    }
 
-        let characters = Array(formulaString)
+    public static func parse(_ string: String) throws -> Formula {
+        do {
+            let countedElements = try parseElements(from: string)
+            return Formula(inputString: string, countedElements: countedElements)
+        } catch {
+            BioSwiftDiagnostics.log(error)
+            throw error
+        }
+    }
+
+    public static func parse(elements elementsDictionary: [String: Int]) throws -> Formula {
+        do {
+            return try parse(elements: elementsDictionary, using: elements)
+        } catch {
+            BioSwiftDiagnostics.log(error)
+            throw error
+        }
+    }
+
+    static func parse(
+        elements elementsDictionary: [String: Int],
+        using references: ElementReferences
+    ) throws -> Formula {
+        var countedElements: [ChemicalElement: Int] = [:]
+
+        for (symbol, count) in elementsDictionary {
+            guard count != 0 else { continue }
+            guard count != Int.min else { throw ParseError.invalidCount }
+            guard let element = references.element(symbol: symbol) else {
+                throw ParseError.elementNotFound(symbol)
+            }
+
+            countedElements[element] = (countedElements[element] ?? 0) + abs(count)
+        }
+
+        return Formula(inputString: "", countedElements: countedElements)
+    }
+
+    private static func parseElements(from string: String) throws -> [ChemicalElement: Int] {
+        let characters = Array(string)
         var i = characters.count
 
+        var countedElements: [ChemicalElement: Int] = [:]
         var parenthesisLevel = 0
         var multiplication = [1]
 
         var elementCount = 0
         var elementName = ""
 
-        var result = [ChemicalElement] ()
-
         if i == 0 {
-            return result
+            return [:]
         }
-
-        // parse string backwards
 
         while i > 0 {
             i -= 1
@@ -102,7 +99,8 @@ extension Formula {
                     multiplication.append(0)
                 }
 
-                multiplication[parenthesisLevel] = elementCount * multiplication[parenthesisLevel - 1]
+                multiplication[parenthesisLevel] =
+                    elementCount * multiplication[parenthesisLevel - 1]
 
                 elementCount = 0
             } else if char.isNumber {
@@ -112,13 +110,17 @@ extension Formula {
                     i -= 1
                 }
 
-                elementCount = Int(formulaString[i ..< j + 1])!
+                guard let count = Int(string[i..<(j + 1)]) else {
+                    throw ParseError.invalidCount
+                }
+
+                elementCount = count
 
                 if elementCount == 0 {
                     throw ParseError.zeroCount
                 }
             } else if char.isLowercase {
-                if characters[i - 1].isUppercase == false {
+                guard i > 0, characters[i - 1].isUppercase else {
                     throw ParseError.invalidCharacterFound(char)
                 }
 
@@ -140,13 +142,13 @@ extension Formula {
                     i = j
                 }
 
-                if let element = elementLibrary.first(where: { $0.identifier == elementName }) {
-                    for _ in 0 ..< (elementCount * multiplication[parenthesisLevel]) {
-                        result.append(element)
-                    }
-                } else {
-                    throw ParseError.elementNotFound
+                guard let element = try elements.element(symbol: elementName) else {
+                    throw ParseError.elementNotFound(elementName)
                 }
+
+                countedElements[element] =
+                    (countedElements[element] ?? 0)
+                    + elementCount * multiplication[parenthesisLevel]
 
                 elementName = ""
                 elementCount = 0
@@ -158,47 +160,166 @@ extension Formula {
         if elementCount != 0 {
             throw ParseError.numberPrecedingFormula
         }
-
+        
         if parenthesisLevel != 0 {
             throw ParseError.missingOpeningBracket
         }
-
-        if parenthesisLevel != 0 {
-            throw ParseError.missingOpeningBracket
-        }
-
-        if result.isEmpty {
+        
+        if countedElements.isEmpty {
             throw ParseError.invalidFormula
         }
+        
+        return countedElements
+    }
+
+    private static func isOpeningBracket(_ char: Character) -> Bool { "({[<".contains(char) }
+
+    private static func isClosingBracket(_ char: Character) -> Bool {
+        ")}]>".contains(char)
+    }
+
+}
+
+/// Formula is used in every Chemical Structure.
+///
+public struct Formula: Codable, Sendable {
+    public private(set) var inputString: String
+    public private(set) var countedElements: [ChemicalElement: Int]
+    var masses: MassContainer = zeroMass
+
+    private enum CodingKeys: String, CodingKey {
+        case inputString
+        case countedElements
+    }
+
+    public init() {
+        self.init(inputString: "", countedElements: [:])
+    }
+
+    public init(_ string: String) throws {
+        self = try FormulaParser.parse(string)
+    }
+
+    public init(elements: [String: Int]) throws {
+        self = try FormulaParser.parse(elements: elements)
+    }
+
+    init(inputString: String, countedElements: [ChemicalElement: Int]) {
+        self.inputString = inputString
+        self.countedElements = countedElements
+        masses = calculateMasses()
+    }
+
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+
+        inputString = try container.decode(String.self, forKey: .inputString)
+        countedElements = try container.decode([ChemicalElement: Int].self, forKey: .countedElements)
+        masses = calculateMasses()
+    }
+
+    public func elementCount(for element: String) -> Int {
+        var result = 0
+
+        for (key, value) in countedElements { if key.symbol == element { result += value } }
 
         return result
     }
 
-    private func isOpeningBracket(_ char: Character) -> Bool {
-        return "({[<".contains(char)
-    }
+    public var elementCount: Int {
+        var result = 0
 
-    private func isClosingBracket(_ char: Character) -> Bool {
-        return ")}]>".contains(char)
-    }
-}
+        for (_, value) in countedElements {
+            result += value
+        }
 
-extension Formula: Equatable {
-    public static func == (lhs: Self, rhs: Self) -> Bool {
-        return lhs.countedElements() == rhs.countedElements()
+        return result
     }
 }
 
 extension Formula {
-    public static func + (lhs: Formula, rhs: Formula) -> Formula {
-        return Formula(lhs.formulaString + rhs.formulaString)
-    }
+    public var formulaString: String {
+        var result = ""
+        let containsCarbon = countedElements.keys.contains { $0.symbol == "C" }
+        let sortedElements = countedElements.sorted { lhs, rhs in
+            func priority(of symbol: String) -> Int {
+                guard containsCarbon else { return 0 }
 
-    public static func += (lhs: inout Formula, rhs: Formula) {
-        lhs = lhs + rhs
+                switch symbol {
+                case "C": return 0
+                case "H": return 1
+                default: return 2
+                }
+            }
+
+            let lhsPriority = priority(of: lhs.key.symbol)
+            let rhsPriority = priority(of: rhs.key.symbol)
+
+            if lhsPriority != rhsPriority {
+                return lhsPriority < rhsPriority
+            }
+
+            return lhs.key.symbol < rhs.key.symbol
+        }
+
+        for (element, count) in sortedElements {
+            result += element.symbol
+            if count != 1 {
+                result += String(count)
+            }
+        }
+
+        return result
     }
 }
 
+extension Formula: Equatable {
+    public static func == (lhs: Formula, rhs: Formula) -> Bool {
+        lhs.countedElements == rhs.countedElements
+    }
+
+    static func + (lhs: Formula, rhs: Formula) -> Formula {
+        let result = lhs.countedElements.merging(
+            rhs.countedElements, uniquingKeysWith: {
+                left, right in left + right
+            })
+
+        return Formula(inputString: "", countedElements: result)
+    }
+
+    static func += (lhs: inout Formula, rhs: Formula) {
+        lhs = lhs + rhs
+    }
+
+    static func - (lhs: Formula, rhs: Formula) -> Formula {
+        var result = lhs.countedElements
+
+        for (element, count) in rhs.countedElements {
+            result[element, default: 0] -= count
+            if result[element] == 0 {
+                result.removeValue(forKey: element)
+            }
+        }
+
+        return Formula(inputString: "", countedElements: result)
+    }
+
+    static func -= (lhs: inout Formula, rhs: Formula) {
+        lhs = lhs - rhs
+    }
+}
+
+extension Formula: MassRepresentable {
+    private func calculateMasses() -> MassContainer {
+        var result = zeroMass
+
+        for (element, count) in countedElements {
+            result += count * element.masses
+        }
+
+        return result
+    }
+}
 
 /*
  # Common chemical groups
@@ -347,7 +468,9 @@ extension Formula {
      'T': 'C10H13N2O7P',
      'C': 'C9H12N3O6P',
      'G': 'C10H12N5O6P',
-     'complements': {'A': 'T', 'T': 'A', 'C': 'G', 'G': 'C'},
+     'complements': {
+         'A': 'T', 'T': 'A', 'C': 'G', 'G': 'C'
+     },
  }
 
  # Nucleotide monophosphates - H2O
@@ -356,7 +479,9 @@ extension Formula {
      'U': 'C9H11N2O8P',
      'C': 'C9H12N3O7P',
      'G': 'C10H12N5O7P',
-     'complements': {'A': 'U', 'U': 'A', 'C': 'G', 'G': 'C'},
+     'complements': {
+         'A': 'U', 'U': 'A', 'C': 'G', 'G': 'C'
+     },
  }
 
  # Formula preprocessors

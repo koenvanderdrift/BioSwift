@@ -3,227 +3,258 @@
 //  BioSwift
 //
 //  Created by Koen van der Drift on 8/18/20.
-//
+//  Copyright © 2020 - 2026 Koen van der Drift. All rights reserved.
 
 import Foundation
-import Combine
 
-public struct FastaRecord: Codable, Hashable {
+public let zeroFastaRecord = FastaRecord(
+    accession: "", shortName: "", fullName: "", organism: "", sequence: "")
+
+public struct FastaRecord: Codable, Hashable, Identifiable, Sendable {
+    public let id: UUID
     public let accession: String
-    public let name: String
+    public let shortName: String
+    public let fullName: String
     public let organism: String
-    public let sequence: String
-    
-    public init(accession: String, name: String, organism: String, sequence: String) {
+    public var sequence: String
+
+    public init(
+        accession: String, shortName: String, fullName: String, organism: String, sequence: String
+    ) {
+        id = UUID()
         self.accession = accession
-        self.name = name
+        self.shortName = shortName
+        self.fullName = fullName
         self.organism = organism
         self.sequence = sequence
     }
 }
 
-let zeroFastaRecord = FastaRecord(accession: "", name: "", organism: "", sequence: "")
+public func fastaRecords(from fileName: String, in bundle: Bundle = .main) async throws -> [FastaRecord] {
+    try await FastaParser().parse(fileName, in: bundle)
+}
 
-public func parseFastaData(from fileName: String) throws -> [FastaRecord] {
-    do {
-        let fastaData = try loadData(from: fileName, withExtension: "fasta")
-        return try FastaDecoder().decode([FastaRecord].self, from: fastaData)
-    } catch {
-        throw LoadError.fileDecodingFailed(name: fileName)
+public func fastaRecord(from fileName: String, in bundle: Bundle = .main) async throws -> FastaRecord {
+    let records = try await fastaRecords(from: fileName, in: bundle)
+
+    guard let record = records.first else {
+        throw BioSwiftDiagnostics.logged(
+            LoadError.fileParsingFailed(name: "\(fileName).fasta", underlyingError: nil))
+    }
+
+    return record
+}
+
+public func fastaRecords(from data: Data) async throws -> [FastaRecord] {
+    try await FastaParser().parse(data)
+}
+
+public func fastaRecords(fromText text: String) async throws -> [FastaRecord] {
+    try await FastaParser().parseFasta(text)
+}
+
+public func proteins(fromFastaFile fileName: String, in bundle: Bundle = .main) async throws -> [Protein] {
+    let records = try await fastaRecords(from: fileName, in: bundle)
+
+    return try records.map {
+        try Protein(fastaRecord: $0)
     }
 }
 
-public func parseFastaDataFromBundle(from fileName: String) throws -> [FastaRecord] {
-    do {
-        let fastaData = try loadDataFromBundle(from: fileName, withExtension: "fasta")
-        return try FastaDecoder().decode([FastaRecord].self, from: fastaData)
-    } catch {
-        throw LoadError.fileDecodingFailed(name: fileName)
+public func protein(fromFastaFile fileName: String, in bundle: Bundle = .main) async throws -> Protein {
+    let record = try await fastaRecord(from: fileName, in: bundle)
+
+    return try Protein(fastaRecord: record)
+}
+
+public func dnas(fromFastaFile fileName: String, in bundle: Bundle = .main) async throws -> [DNA] {
+    let records = try await fastaRecords(from: fileName, in: bundle)
+
+    return try records.map {
+        try DNA(fastaRecord: $0)
     }
 }
 
-public struct FastaDecoder: TopLevelDecoder {
-//
-// TODO: MORE ERROR CHECKING
-//
-    public init() {}
+public func dna(fromFastaFile fileName: String, in bundle: Bundle = .main) async throws -> DNA {
+    let record = try await fastaRecord(from: fileName, in: bundle)
 
-    public func decode<T : Decodable>(_ type: T.Type, from data: Data) throws -> T {
-        var records: [FastaRecord] = []
-        
-        if let fastaArray = String(data: data, encoding: .utf8)?
-            .components(separatedBy: ">")
-            .dropFirst() {
-            
-            records = try fastaArray.map( { fastaLine in
-                let decoder = _FastaDecoder(fastaLine)
-                
-                return try FastaRecord(from: decoder)
-            })
-        }
-        
-        return records as! T
+    return try DNA(fastaRecord: record)
+}
+
+public func rnas(fromFastaFile fileName: String, in bundle: Bundle = .main) async throws -> [RNA] {
+    let records = try await fastaRecords(from: fileName, in: bundle)
+
+    return try records.map {
+        try RNA(fastaRecord: $0)
     }
 }
 
-private final class _FastaDecoder: Decoder {
+public func rna(fromFastaFile fileName: String, in bundle: Bundle = .main) async throws -> RNA {
+    let record = try await fastaRecord(from: fileName, in: bundle)
 
-//
-// via: https://talk.objc.io/episodes/S01E115-building-a-custom-xml-decoder
-//
+    return try RNA(fastaRecord: record)
+}
 
-    let codingPath: [CodingKey] = []
-    let userInfo: [CodingUserInfoKey:Any] = [:]
-    let input: String
-    
-    init(_ input: String) {
-        self.input = input
+/// FastaParser takes a text file as input and produces a ``FastaRecord`` array.
+/// Currently, it can process SwissProt, UPS, IPI, and Ensemble files
+public final class FastaParser {
+    struct RawRecord {
+        let info: String
+        let sequence: String
     }
-    
-    func container<Key>(keyedBy type: Key.Type) throws -> KeyedDecodingContainer<Key> where Key : CodingKey {
-        return KeyedDecodingContainer(KDC(input))
-    }
-    
-    func unkeyedContainer() throws -> UnkeyedDecodingContainer {
-        fatalError("TODO")
-    }
-    
-    func singleValueContainer() throws -> SingleValueDecodingContainer {
-        fatalError("TODO")
-    }
-    
-    struct KDC<Key: CodingKey>: KeyedDecodingContainerProtocol {
-        var codingPath: [CodingKey] = []
-        var allKeys: [Key] = []
-        
-        let lines: [String]
-        var record: FastaRecord = zeroFastaRecord
-        
-        init(_ input: String) {
-            self.lines = input.components(separatedBy: "\n")
-            
-            if let header = lines.first {
-                self.record = parseHeader(input: header)
-            }
-        }
-        
-        func contains(_ key: Key) -> Bool {
-            return true
-        }
-        
-        func decodeNil(forKey key: Key) throws -> Bool {
-            return true
-        }
-        
-        func decode(_ type: Bool.Type, forKey key: Key) throws -> Bool {
-            return true
-        }
-        
-        func decode(_ type: String.Type, forKey key: Key) throws -> String {
-            switch key.stringValue {
-            case "accession":
-                return self.record.accession
-            case "name":
-                return self.record.name
-            case "organism":
-                return self.record.organism
-            case "sequence":
-                return lines.dropFirst().joined()
-            default:
-                return ""
-            }
-        }
-        
-        func decode(_ type: Double.Type, forKey key: Key) throws -> Double {
-            return 0
-        }
-        
-        func decode(_ type: Float.Type, forKey key: Key) throws -> Float {
-            return 0
-        }
-        
-        func decode(_ type: Int.Type, forKey key: Key) throws -> Int {
-            return 0
-        }
-        
-        func decode(_ type: Int8.Type, forKey key: Key) throws -> Int8 {
-            return 0
-        }
-        
-        func decode(_ type: Int16.Type, forKey key: Key) throws -> Int16 {
-            return 0
-        }
-        
-        func decode(_ type: Int32.Type, forKey key: Key) throws -> Int32 {
-            return 0
-        }
-        
-        func decode(_ type: Int64.Type, forKey key: Key) throws -> Int64 {
-            return 0
-        }
-        
-        func decode(_ type: UInt.Type, forKey key: Key) throws -> UInt {
-            return 0
-        }
-        
-        func decode(_ type: UInt8.Type, forKey key: Key) throws -> UInt8 {
-            return 0
-        }
-        
-        func decode(_ type: UInt16.Type, forKey key: Key) throws -> UInt16 {
-            return 0
-        }
-        
-        func decode(_ type: UInt32.Type, forKey key: Key) throws -> UInt32 {
-            return 0
-        }
-        
-        func decode(_ type: UInt64.Type, forKey key: Key) throws -> UInt64 {
-            return 0
-        }
-        
-        func decode<T>(_ type: T.Type, forKey key: Key) throws -> T where T : Decodable {
-            fatalError("TODO")
-        }
-        
-        func nestedContainer<NestedKey>(keyedBy type: NestedKey.Type, forKey key: Key) throws -> KeyedDecodingContainer<NestedKey> where NestedKey : CodingKey {
-            fatalError("TODO")
-        }
-        
-        func nestedUnkeyedContainer(forKey key: Key) throws -> UnkeyedDecodingContainer {
-            fatalError("TODO")
-        }
-        
-        func superDecoder() throws -> Decoder {
-            fatalError("TODO")
-        }
-        
-        func superDecoder(forKey key: Key) throws -> Decoder {
-            fatalError("TODO")
-        }
-        
-        func parseHeader(input: String) -> FastaRecord {
-            // https://www.uniprot.org/help/fasta-headers
 
-            let parser = FastaParser()
-            
-            if input.hasPrefix("sp") || input.hasPrefix("swiss") || input.hasPrefix("tr") {
-                return parser.parseSwissProt(input)
-            }
-            else if input.hasPrefix("IPI") {
-                return parser.parseIPI(input)
-            }
-            else if input.hasPrefix("ENS") {
-                return parser.parseEnsemble(input)
-            }
+    public init() {
+    }
 
-            return parser.parseUnspecified(input)
+    public func parse(_ fileName: String, in bundle: Bundle = .main) async throws -> [FastaRecord] {
+        let fastaText = try loadText(from: fileName, withExtension: "fasta", in: bundle)
+        let fullName = "\(fileName).fasta"
+
+        do {
+            return try await parseFasta(fastaText)
+        } catch {
+            throw BioSwiftDiagnostics.logged(
+                LoadError.fileDecodingFailed(name: fullName, underlyingError: error))
         }
+    }
+
+    public func parse(_ data: Data) async throws -> [FastaRecord] {
+        guard let fastaText = String(data: data, encoding: .utf8) else {
+            throw BioSwiftDiagnostics.logged(
+                LoadError.fileConversionFailed(name: "data", underlyingError: nil))
+        }
+
+        return try await parseFasta(fastaText)
+    }
+
+    public func parseBundleFile(_ fileName: String) async throws -> [FastaRecord] {
+        try await parse(fileName, in: .module)
+    }
+
+    public func parseFasta(_ fastaText: String) async throws -> [FastaRecord] {
+        let rawRecords = try splitRawRecords(from: fastaText)
+
+        return try rawRecords.map(parseRecord)
     }
 }
 
-public struct FastaParser {
-    func parseSwissProt(_ input: String) -> FastaRecord {
+extension FastaParser {
+    func splitRawRecords(from text: String) throws -> [RawRecord] {
+        let normalizedText = text.replacingOccurrences(of: "\r\n", with: "\n").replacingOccurrences(
+            of: "\r", with: "\n")
+
+        return try normalizedText.components(separatedBy: "\n>").map { recordText in
+            try rawRecord(from: recordText)
+        }.filter { !$0.info.isEmpty || !$0.sequence.isEmpty }
+    }
+
+    func rawRecord(from recordText: String) throws -> RawRecord {
+        var cleanedRecordText = recordText.trimmingCharacters(in: .whitespacesAndNewlines)
+
+        if cleanedRecordText.first == ">" {
+            cleanedRecordText.removeFirst()
+        }
+
+        let parts = cleanedRecordText.split(
+            separator: "\n", maxSplits: 1, omittingEmptySubsequences: false)
+
+        guard let infoPart = parts.first else {
+            throw BioSwiftDiagnostics.logged(
+                LoadError.fileParsingFailed(name: "records", underlyingError: nil))
+        }
+
+        let info = String(infoPart).trimmingCharacters(in: .whitespacesAndNewlines)
+
+        let rawData = parts.count > 1 ? String(parts[1]) : ""
+
+        let data = rawData.filter {
+            !$0.isWhitespace
+        }
+
+        guard !info.isEmpty, !data.isEmpty else {
+            throw BioSwiftDiagnostics.logged(
+                LoadError.fileParsingFailed(name: "records", underlyingError: nil))
+        }
+
+        return RawRecord(info: info, sequence: data)
+    }
+}
+
+extension FastaParser {
+    func parseRecord(_ record: RawRecord) throws -> FastaRecord {
+        let input = record.info[...]
+
+        var result: FastaRecord = zeroFastaRecord
+
+        if input.contains("ups|") {
+            result = parseUPS(input)
+        } else if input.hasPrefix("sp") || input.hasPrefix("swiss") || input.hasPrefix("tr") {
+            result = parseSwissProt(input)
+        } else if input.hasPrefix("IPI") {
+            result = parseIPI(input)
+        } else if input.hasPrefix("ENS") {
+            result = parseEnsemble(input)
+        } else {
+            result = parseUnspecified(input)
+        }
+
+        result.sequence = record.sequence
+
+        return result
+    }
+
+    func parseString(_ input: String) -> FastaRecord {
+        // https://www.uniprot.org/help/fasta-headers
+
+        var input = input[...]
+
+        if input.hasPrefix(">") {
+            input.remove(at: input.startIndex)
+        }
+
+        if input.contains("ups|") {
+            return parseUPS(input)
+        } else if input.hasPrefix("sp") || input.hasPrefix("swiss") || input.hasPrefix("tr") {
+            return parseSwissProt(input)
+        } else if input.hasPrefix("IPI") {
+            return parseIPI(input)
+        } else if input.hasPrefix("ENS") {
+            return parseEnsemble(input)
+        }
+
+        return parseUnspecified(input)
+    }
+
+    func parseUPS(_ input: Substring) -> FastaRecord {
+        // >P02768ups|ALBU_HUMAN_UPS Serum albumin (Chain 26-609) - Homo sapiens (Human) AHKSEVAHRFKDLGEENF…
+        var entry = input
+        var fullName: Substring = ""
+        var org: Substring = ""
+
+        let acc = entry.scanUntil("|")?.dropLast(3)
+        entry.skip(1)
+
+        let shortName = entry.scanUntil(" ")
+
+        if let nameRange = entry.range(of: " - ") {
+            let count = entry.distance(from: input.startIndex, to: nameRange.lowerBound)
+
+            fullName = entry.skip(count) ?? ""
+        }
+
+        entry.skip(3)
+
+        if let organismRange = entry.range(of: " ", options: .backwards) {
+            let count = entry.distance(from: input.startIndex, to: organismRange.lowerBound)
+            org = entry.skip(count) ?? ""
+        }
+
+        return FastaRecord(
+            accession: String(acc ?? ""), shortName: String(shortName ?? ""),
+            fullName: String(fullName), organism: String(org), sequence: "")
+    }
+
+    func parseSwissProt(_ input: Substring) -> FastaRecord {
         /*
          * >db|UniqueIdentifier|EntryName ProteinName OS=OrganismName OX=OrganismIdentifier [GN=GeneName ]PE=ProteinExistence SV=SequenceVersion
          * >tr|Q8ADX7|Q8ADX7_9HIV1 Envelope glycoprotein gp160 OS=Human immunodeficiency virus 1 OX=11676 GN=env PE=3 SV=1
@@ -238,57 +269,58 @@ public struct FastaParser {
          * ProteinExistence is the numerical value describing the evidence for the existence of the protein.
          * SequenceVersion is the version number of the sequence.
          */
-        
-        var acc, name, org: NSString?
-        
-        let scanner = Scanner(string: input)
-        scanner.scanUpTo("|", into: nil)
-        scanner.scanString("|", into: nil)
-        scanner.scanUpTo("|", into: &acc)
-        scanner.scanUpTo(" ", into: nil)
-        scanner.scanUpTo(" OS=", into: &name)
-        
-        let pattern = "([A-Z]{2}=)((.(?![A-Z]{2}=))*)"
-        if let regex = try? NSRegularExpression(pattern: pattern, options: NSRegularExpression.Options(rawValue: 0)) {
-            let matches = regex.matches(in: input,
-                                        options: NSRegularExpression.MatchingOptions(rawValue: 0),
-                                        range: NSMakeRange(0, input.count))
-            for match in matches {
-                if let s = input.substring(with: match.range), s.hasPrefix("OS")  {
-                    org = s.components(separatedBy: "=").last as NSString?
-                }
-            }
-        }
-        
-        guard let id = acc as String?, let n = name as String?, let o = org as String? else {
-            return FastaRecord(accession: "", name: "", organism: "", sequence: "")
-        }
-        
-        return FastaRecord(accession: id, name: n, organism: o, sequence: "")
+
+        var input = input[...]
+        input.skipThrough("|")
+
+        let acc = input.scanUntil("|")
+        input.skip(1)
+
+        let shortName = input.scanUntil(" ")
+        input.skip(1)
+
+        let fullName = input.scanUntil("=")?.dropLast(3)
+        input.skip(1)
+
+        let org = input.scanUntil("=")?.dropLast(3)
+
+        return FastaRecord(
+            accession: String(acc ?? ""), shortName: String(shortName ?? ""),
+            fullName: String(fullName ?? ""), organism: String(org ?? ""), sequence: "")
     }
-    
-    func parseIPI(_ input: String) -> FastaRecord {
-        // IPI00300415 IPI:IPI00300415.9|SWISS-PROT:Q8N431-1|TREMBL:D3DWQ7|ENSEMBL:ENSP00000354963;ENSP00000377037|REFSEQ:NP_778232|H-INV:HIT000094619|VEGA:OTTHUMP00000161522;OTTHUMP00000161538 Tax_Id=9606 Gene_Symbol=RASGEF1C Isoform 1 of Ras-GEF domain-containing family member 1C
+
+    func parseIPI(_ input: Substring) -> FastaRecord {
+        // IPI00300415 IPI:IPI00300415.9|SWISS-PROT:Q8N431-1|TREMBL:D3DWQ7|ENSEMBL:ENSP00000354963;ENSP00000377037|REFSEQ:NP_778232|H-INV:HIT000094619|VEGA:OTTHUMP00000161522;OTTHUMP00000161538
+        // Tax_Id=9606 Gene_Symbol=RASGEF1C Isoform 1 of Ras-GEF domain-containing family member 1C
         let info = input.components(separatedBy: "|")
-        let acc = info[1]
-        let name = info.last!
-        
-        return FastaRecord(accession: acc, name: name, organism: "", sequence: "")
+        let acc = info.count > 1 ? info[1] : info.first ?? ""
+        let fullName = info.last ?? ""
+
+        // TODO: implement
+
+        return FastaRecord(
+            accession: acc, shortName: "", fullName: fullName, organism: "", sequence: "")
     }
-    
-    func parseEnsemble(_ input: String) -> FastaRecord {
+
+    func parseEnsemble(_ input: Substring) -> FastaRecord {
         // ENSP00000391493 pep:known chromosome:GRCh37:2:160609001:160624471:1 gene:ENSG00000136536 transcript:ENST00000420397
         let info = input.components(separatedBy: " ")
-        let name = info[0]
-        
-        return FastaRecord(accession: "", name: name, organism: "", sequence: "")
+        let fullName = info[0]
+
+        // TODO: implement
+
+        return FastaRecord(
+            accession: "", shortName: "", fullName: fullName, organism: "", sequence: "")
     }
-    
-    func parseUnspecified(_ input: String) -> FastaRecord {
+
+    func parseUnspecified(_ input: Substring) -> FastaRecord {
         // DROME_HH_Q02936
         // DECOY_IPI00339224 Decoy sequence
-        let name = input.replacingOccurrences(of: "_", with: " ")
-        
-        return FastaRecord(accession: "", name: name, organism: "", sequence: "")
+        let fullName = input.replacingOccurrences(of: "_", with: " ")
+
+        // TODO: implement
+
+        return FastaRecord(
+            accession: "", shortName: "", fullName: fullName, organism: "", sequence: "")
     }
 }

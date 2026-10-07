@@ -3,155 +3,130 @@
 //  BioSwift
 //
 //  Created by Koen van der Drift on 4/28/18.
-//  Copyright © 2018 Koen van der Drift. All rights reserved.
+//  Copyright © 2018 - 2026 Koen van der Drift. All rights reserved.
 //
 
 import Foundation
 
-public enum SearchType: Int {
+public enum SearchType: Int, Codable, Identifiable, Equatable, Sendable {
     case sequential
     case unique
     case exhaustive
+
+    public var id: Self {
+        self
+    }
 }
 
-public enum MassToleranceType: String {
-    case ppm
-    case dalton = "Da"
-    case percent = "%"
-    case mmu
+public enum MassTolerance: Codable, Equatable, Sendable {
+    case ppm(Decimal)
+    case dalton(Dalton)
+    case percent(Decimal)
+    case mmu(Decimal)
 }
 
-extension MassToleranceType {
-    public var minValue: Double {
-        return 0.0
+extension MassTolerance {
+    public enum Unit: String, CaseIterable, Codable, Identifiable, Sendable {
+        case ppm
+        case dalton = "Da"
+        case percent = "%"
+        case mmu
+
+        public var id: Self {
+            self
+        }
     }
 
-    public var maxValue: Double {
-        switch self {
-        case .ppm:
-            return 10000.0
-        case .dalton:
-            return 10.0
-        case .percent:
-            return 1.0
-        case .mmu:
-            return 10000.0
+    public var value: Decimal {
+        get {
+            switch self {
+            case .ppm(let value), .dalton(let value), .percent(let value), .mmu(let value):
+                value
+            }
+        }
+        set {
+            switch self {
+            case .ppm:
+                self = .ppm(newValue)
+            case .dalton:
+                self = .dalton(newValue)
+            case .percent:
+                self = .percent(newValue)
+            case .mmu:
+                self = .mmu(newValue)
+            }
+        }
+    }
+
+    public var unit: Unit {
+        get {
+            switch self {
+            case .ppm:
+                .ppm
+            case .dalton:
+                .dalton
+            case .percent:
+                .percent
+            case .mmu:
+                .mmu
+            }
+        }
+        set {
+            switch newValue {
+            case .ppm:
+                self = .ppm(value)
+            case .dalton:
+                self = .dalton(value)
+            case .percent:
+                self = .percent(value)
+            case .mmu:
+                self = .mmu(value)
+            }
         }
     }
 }
 
-public struct MassTolerance {
-    public var type: MassToleranceType
-    public var value: Double
-
-    public init(type: MassToleranceType, value: Double) {
-        self.type = type
-        self.value = value
-    }
-}
-
-public struct MassSearchParameters {
-    public var searchValue: Double
+public struct MassSearchParameters: Codable, Equatable, Sendable {
+    public var searchValue: Dalton
     public var tolerance: MassTolerance
     public let searchType: SearchType
-    public var adducts: [Adduct]
     public var massType: MassType
+    public var charge: Int
 
-    public init(searchValue: Double, tolerance: MassTolerance, searchType: SearchType, adducts: [Adduct], massType: MassType) {
+    public init(
+        searchValue: Dalton, tolerance: MassTolerance, searchType: SearchType, massType: MassType,
+        charge: Int
+    ) {
         self.searchValue = searchValue
         self.tolerance = tolerance
         self.searchType = searchType
-        self.adducts = adducts
         self.massType = massType
+        self.charge = charge
     }
 
-    func massRange() -> ClosedRange<Dalton> {
-        var minMass = 0.0
-        var maxMass = 0.0
-        let toleranceValue = Double(tolerance.value)
+    public var massRange: MassRange {
+        let minMass: Dalton
+        let maxMass: Dalton
 
-        switch tolerance.type {
-        case .ppm:
-            let delta = toleranceValue / 1_000_000
+        switch tolerance {
+        case .ppm(let value):
+            let delta = value / 1_000_000
             minMass = (1 - delta) * searchValue
             maxMass = (1 + delta) * searchValue
 
-        case .dalton:
-            minMass = searchValue - toleranceValue
-            maxMass = searchValue + toleranceValue
+        case .dalton(let value):
+            minMass = searchValue - value
+            maxMass = searchValue + value
 
-        case .percent:
-            minMass = searchValue - (toleranceValue * searchValue) / 100
-            maxMass = searchValue + (toleranceValue * searchValue) / 100
+        case .percent(let value):
+            minMass = searchValue - (value * searchValue) / 100
+            maxMass = searchValue + (value * searchValue) / 100
 
-        case .mmu:
-            minMass = searchValue - toleranceValue / 1000
-            maxMass = searchValue + toleranceValue / 1000
+        case .mmu(let value):
+            minMass = searchValue - value / 1000
+            maxMass = searchValue + value / 1000
         }
 
-        return Dalton(minMass) ... Dalton(maxMass)
-    }
-}
-
-extension Chain {
-    public func searchSequence<T: RangedChain>(searchString: String) -> [T] {
-        var result = [T]()
-        
-        for range in sequenceString.sequenceRanges(of: searchString) {
-            if var sub: T = subChain(with: range) as? T {
-                sub.rangeInParent = range
-                result.append(sub)
-            }
-        }
-
-        return result
-    }
-}
-
-extension Chain {
-    public func searchMass<T: RangedChain & ChargedMass>(params: MassSearchParameters) -> [T] {
-        var result = [T]()
-
-        let massRange = params.massRange()
-        let count = self.numberOfResidues()
-        
-        var start = 0
-        
-        // Nterm: 1102.3525
-        // 807.9348
-        // Cterm: 979.0476
-        
-        while start < count {
-            for index in start..<count {
-                guard var sub: T = subChain(from: start, to: index) as? T else { break }
-                sub.adducts = adducts
-                sub.rangeInParent = start...index
-                
-                let chargedMass = sub.chargedMass()
-                
-                if chargedMass.averageMass > 1.05 * massRange.upperBound {
-                    break
-                }
-                
-                switch params.massType {
-                case .monoisotopic:
-                    if massRange.contains(chargedMass.monoisotopicMass) {
-                        result.append(sub)
-                    }
-                case .average:
-                    if massRange.contains(chargedMass.averageMass) {
-                        result.append(sub)
-                    }
-                case .nominal:
-                    if massRange.contains(Dalton(chargedMass.nominalMass)) {
-                        result.append(sub)
-                    }
-                }
-            }
-            
-            start += 1
-        }
-
-        return result
+        return minMass...maxMass
     }
 }

@@ -3,86 +3,65 @@
 //  BioSwift
 //
 //  Created by Koen van der Drift on 3/22/20.
+//  Copyright © 2020 - 2026 Koen van der Drift. All rights reserved.
 //
 
 import Foundation
 
-public let hydroxyl = FunctionalGroup(name: "hydroxyl", formula: "OH")
-public let ammonia = FunctionalGroup(name: "ammonia", formula: "NH3")
-public let water = FunctionalGroup(name: "water", formula: "H2O")
-public let hydrogen = FunctionalGroup(name: "hydrogen", formula: "H")
-public let methyl = FunctionalGroup(name: "methyl", formula: "CH3")
+public let hydrogen = makeBuiltInFunctionalGroup(name: "hydrogen", formula: "H")
+public let oxygen = makeBuiltInFunctionalGroup(name: "oxygen", formula: "O")
 
-public let proton = FunctionalGroup(name: "proton", formula: "H")
-public let sodium = FunctionalGroup(name: "sodium", formula: "Na")
-public let ammonium = FunctionalGroup(name: "ammonium", formula: "NH4")
+public let hydroxyl = makeBuiltInFunctionalGroup(name: "hydroxyl", formula: "OH")
+public let ammonia = makeBuiltInFunctionalGroup(name: "ammonia", formula: "NH3")
+public let carbonyl = makeBuiltInFunctionalGroup(name: "carbonyl", formula: "CO")
+public let water = makeBuiltInFunctionalGroup(name: "water", formula: "H2O")
+public let methyl = makeBuiltInFunctionalGroup(name: "methyl", formula: "CH3")
 
-public struct FunctionalGroup: Structure, Codable {    
+public let ammonium = makeBuiltInFunctionalGroup(name: "ammonium", formula: "NH4")
+public let sodium = makeBuiltInFunctionalGroup(name: "sodium", formula: "Na")
+public let potassium = makeBuiltInFunctionalGroup(name: "potassium", formula: "K")
+
+public let chloride = makeBuiltInFunctionalGroup(name: "chloride", formula: "Cl")
+
+private func makeBuiltInFunctionalGroup(name: String, formula: String) -> FunctionalGroup {
+    do {
+        return FunctionalGroup(name: name, formula: try Formula(formula))
+    } catch {
+        preconditionFailure("Invalid built-in formula \(formula): \(error)")
+    }
+}
+
+public struct FunctionalGroup: Structure, Codable, Sendable {
     public let name: String
     public let formula: Formula
-    public var adducts: [Adduct]
 
-    private(set) var _masses: MassContainer = zeroMass
-
-    private enum CodingKeys: String, CodingKey {
-        case name
-        case formula
-    }
-
-    public init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-
-        self.name = try container.decode(String.self, forKey: .name)
-        self.formula = Formula(try container.decode(String.self, forKey: .formula))
-        self.adducts = []
-
-        self._masses = calculateMasses()
-    }
-
-    public init(name: String, formula: String) {
+    public init(name: String, formula: Formula) {
         self.name = name
-        self.formula = Formula(formula)
-        self.adducts = []
-
-        self._masses = calculateMasses()
+        self.formula = formula
     }
 
-    public init(name: String, formula: [String: Int]) {
+    public init(name: String, formula: String) throws {
         self.name = name
-        self.formula = Formula(formula)
-        self.adducts = []
-
-        self._masses = calculateMasses()
+        self.formula = try Formula(formula)
     }
 
-    public func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(name, forKey: .name)
-        try container.encode(formula.formulaString, forKey: .formula)
+    public init(name: String, elements: [String: Int]) throws {
+        self.name = name
+        formula = try Formula(elements: elements)
     }
 
-    public var masses: MassContainer {
-        return _masses
-    }
-
-    var description: String {
-        return name
+    public var description: String {
+        name
     }
 }
 
 extension FunctionalGroup: Hashable {
     public static func == (lhs: FunctionalGroup, rhs: FunctionalGroup) -> Bool {
-        return lhs.name == rhs.name
+        lhs.name == rhs.name
     }
 
     public func hash(into hasher: inout Hasher) {
         hasher.combine(name)
         hasher.combine(formula.formulaString)
-    }
-}
-
-extension FunctionalGroup: Mass {
-    public func calculateMasses() -> MassContainer {
-        return mass(of: formula.elements)
     }
 }

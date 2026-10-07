@@ -1,40 +1,38 @@
+//
+//  ChemicalElement.swift
+//  BioSwift
+//
+//  Created by Koen van der Drift on 3/15/18.
+//  Copyright © 2018 - 2026 Koen van der Drift. All rights reserved.
+//
+
 import Foundation
 
-public let electron = ChemicalElement(name: "electron", symbol: "e", masses: MassContainer(monoisotopicMass: Dalton(0.00054858026), averageMass: Dalton(0.00054858026), nominalMass: 0))
-
-public struct Isotope: Codable {
+public struct Isotope: Codable, Sendable {
     public let mass: String
     public let ordinalNumber: String
     public let abundance: String
+    
+    public init(mass: String, ordinalNumber: String, abundance: String) {
+        self.mass = mass
+        self.ordinalNumber = ordinalNumber
+        self.abundance = abundance
+    }
 }
 
-public struct ChemicalElement: Codable, Symbol {
-    private(set) var _masses: MassContainer = zeroMass
-
+/// ChemicalElement conforms to ``Symbol`` and is the building block for every chemical structure
+public struct ChemicalElement: Codable, Symbol, Sendable {
     public let name: String
     public let symbol: String
     public let isotopes: [Isotope]
-
-    private enum CodingKeys: String, CodingKey {
-        case name
-        case symbol
-        case isotopes
-    }
+    var masses: MassContainer = zeroMass
 
     public init(name: String, symbol: String, isotopes: [Isotope]) {
         self.name = name
         self.symbol = symbol
         self.isotopes = isotopes
 
-        _masses = calculateMasses()
-    }
-
-    public init(name: String, symbol: String, masses: MassContainer) {
-        self.name = name
-        self.symbol = symbol
-        isotopes = []
-
-        _masses = masses
+        setUp()
     }
 
     public init(from decoder: Decoder) throws {
@@ -44,38 +42,52 @@ public struct ChemicalElement: Codable, Symbol {
         symbol = try container.decode(String.self, forKey: .symbol)
         isotopes = try container.decode([Isotope].self, forKey: .isotopes)
 
-        _masses = calculateMasses()
+        setUp()
+    }
+
+    public init(name: String, symbol: String, monoisotopicMass: Dalton, averageMass: Dalton) {
+        // only called when loadElementsFromUnimod == true
+        self.name = name
+        self.symbol = symbol
+        isotopes = []
+        masses = MassContainer(
+            monoisotopicMass: monoisotopicMass,
+            averageMass: averageMass,
+            nominalMass: monoisotopicMass.roundedInt() ?? 0)
+    }
+
+    private mutating func setUp() {
+        masses = calculateMasses()
     }
 
     public var identifier: String {
-        return symbol
+        symbol
     }
 
-    var description: String {
-        return symbol
+    public var description: String {
+        symbol
     }
 }
 
-extension ChemicalElement: Equatable {
+extension ChemicalElement: Equatable, Hashable {
     public static func == (lhs: Self, rhs: Self) -> Bool {
-        return lhs.symbol == rhs.symbol && lhs.name == rhs.name
+        lhs.symbol == rhs.symbol && lhs.name == rhs.name
+    }
+
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(name)
     }
 }
 
-extension ChemicalElement: Mass {
-    public var masses: MassContainer {
-        return _masses
-    }
-
-    public func calculateMasses() -> MassContainer {
-        var currentAbundance = Dalton(0.0)
-
+extension ChemicalElement: MassRepresentable {
+    private func calculateMasses() -> MassContainer {
+        var currentAbundance = Decimal(0.0)
         var monoisotopicMass = Dalton(0.0)
         var averageMass = Dalton(0.0)
 
         // The nominal mass for an element is the mass number of its most abundant naturally occurring stable isotope
         for i in isotopes {
-            if let abundance = Double(i.abundance), let mass = Double(i.mass) {
+            if let abundance = Decimal(string: i.abundance), let mass = Dalton(string: i.mass) {
                 if abundance > currentAbundance {
                     monoisotopicMass = mass
                     currentAbundance = abundance
@@ -85,6 +97,10 @@ extension ChemicalElement: Mass {
             }
         }
 
-        return MassContainer(monoisotopicMass: monoisotopicMass, averageMass: averageMass / 100.0, nominalMass: Int(round(monoisotopicMass)))
+        let nominalMass = monoisotopicMass.roundedInt()
+
+        return MassContainer(
+            monoisotopicMass: monoisotopicMass, averageMass: averageMass / Decimal(100),
+            nominalMass: nominalMass ?? 0)
     }
 }

@@ -1,0 +1,202 @@
+//
+//  Range.swift
+//  BioSwift
+//
+//  Created by Koen van der Drift on 23.05.2026.
+//  Copyright © 2026 Koen van der Drift. All rights reserved.
+//
+
+import Foundation
+
+// MARK: - Range Types
+
+public let zeroRange: Range<Int> = 0..<0
+
+/// Maps positions after removing a zero-based, half-open range.
+struct RangeRemovalMapping {
+    let removedRange: Range<Int>
+
+    func map(_ position: Int) -> Int? {
+        if removedRange.contains(position) {
+            return nil
+        }
+
+        if position >= removedRange.upperBound {
+            return position - removedRange.count
+        }
+
+        return position
+    }
+}
+
+/// BiologicalRange is one-based wrapper around ClosedRange<Int> to be used in views, etc
+
+public struct BiologicalRange: Equatable {
+    public let value: ClosedRange<Int>
+
+    public init(_ value: ClosedRange<Int>) {
+        precondition(value.lowerBound >= 1, "BiologicalRange must be one-based.")
+
+        self.value = value
+    }
+
+    public init?(validating value: ClosedRange<Int>) {
+        guard value.lowerBound >= 1 else {
+            return nil
+        }
+
+        self.value = value
+    }
+
+    public init?(nsRange: NSRange) {
+        guard nsRange.location != NSNotFound, nsRange.location >= 0, nsRange.length > 0 else {
+            return nil
+        }
+
+        let lowerBound = nsRange.location + 1
+        let upperBound = nsRange.location + nsRange.length
+
+        self.init(lowerBound...upperBound)
+    }
+
+    public func toNSRange(clampedToTextLength textLength: Int) -> NSRange? {
+        guard textLength > 0 else {
+            return nil
+        }
+
+        /*
+         BiologicalRange is 1-based and inclusive.
+         Ignore ranges that do not intersect the current text.
+         */guard upperBound >= 1, lowerBound <= textLength else {
+             return nil
+         }
+
+        let clampedLowerBound = Swift.max(1, lowerBound)
+
+        let clampedUpperBound = Swift.min(textLength, upperBound)
+
+        guard clampedUpperBound >= clampedLowerBound else {
+            return nil
+        }
+
+        return NSRange(
+            location: clampedLowerBound - 1, length: clampedUpperBound - clampedLowerBound + 1)
+    }
+
+    public var zeroBasedRange: Range<Int> {
+        (lowerBound - 1)..<upperBound
+    }
+
+    public var isValidRange: Bool {
+        lowerBound >= 1 && upperBound >= lowerBound
+    }
+
+    public var locationString: String {
+        lowerBound == upperBound ? "\(lowerBound)" : "\(lowerBound) - \(upperBound)"
+    }
+
+    public var length: Int {
+        return upperBound - lowerBound + 1
+    }
+
+    public var lowerBound: Int {
+        value.lowerBound
+    }
+
+    public var upperBound: Int {
+        value.upperBound
+    }
+}
+
+public struct BiologicalPosition: Equatable, Comparable, Codable {
+    public let value: Int
+
+    public init?(_ value: Int?) {
+        guard let value, value >= 1 else {
+            return nil
+        }
+
+        self.value = value
+    }
+
+    public var zeroBasedIndex: Int {
+        value - 1
+    }
+
+    public var range: BiologicalRange {
+        BiologicalRange(value...value)
+    }
+
+    public static func < (lhs: BiologicalPosition, rhs: BiologicalPosition) -> Bool {
+        lhs.value < rhs.value
+    }
+}
+
+extension BiologicalRange: CustomStringConvertible {
+    public var description: String {
+        locationString
+    }
+}
+
+extension Range<Int> {
+    public var isZeroRange: Bool {
+        self == zeroRange
+    }
+
+    public var isValidRange: Bool {
+        lowerBound >= 0 && upperBound >= lowerBound
+    }
+
+    public var length: Int {
+        guard isValidRange else {
+            return 0
+        }
+
+        return upperBound - lowerBound
+    }
+
+    public func offset(by amount: Int) -> Range<Int> {
+        (lowerBound + amount)..<(upperBound + amount)
+    }
+
+    public func clamped(toSequenceLength sequenceLength: Int) -> Range<Int> {
+        guard sequenceLength > 0 else {
+            return zeroRange
+        }
+
+        let lower = Swift.max(0, Swift.min(sequenceLength, lowerBound))
+        let upper = Swift.max(0, Swift.min(sequenceLength, upperBound))
+
+        guard upper > lower else {
+            return zeroRange
+        }
+
+        return lower..<upper
+    }
+}
+
+extension Range where Bound == Int {
+    public func localIndex(for sourceIndex: Int) -> Int? {
+        guard contains(sourceIndex) else {
+            return nil
+        }
+
+        return sourceIndex - lowerBound
+    }
+
+    public var biologicalRange: BiologicalRange? {
+        guard !isEmpty else {
+            return nil
+        }
+
+        return BiologicalRange((lowerBound + 1)...upperBound)
+    }
+
+    public var endPoints: (from: Int, to: Int)? {
+        guard !isEmpty else {
+            return nil
+        }
+
+        return (from: lowerBound, to: upperBound - 1)
+    }
+}
