@@ -68,4 +68,23 @@ struct BioSwiftDiagnosticsTests {
 
         #expect(levels.withLock { $0 } == [.debug])
     }
+
+    @Test func ionValidationErrorsUseErrorLevel() throws {
+        let diagnostics = Mutex<[(BioSwiftDiagnostics.Level, String)]>([])
+        BioSwiftDiagnostics.setObserver { level, message in
+            diagnostics.withLock { $0.append((level, message)) }
+        }
+        defer { BioSwiftDiagnostics.setObserver(nil) }
+
+        #expect(throws: IonError.noAdducts) {
+            try water.ionized(with: [])
+        }
+        #expect(throws: IonError.zeroCharge) {
+            try water.ionized(with: [protonAdduct, negativeProtonAdduct])
+        }
+
+        let recorded = diagnostics.withLock { $0 }
+        #expect(recorded.map(\.0) == [.error, .error])
+        #expect(recorded.map(\.1) == ["noAdducts", "zeroCharge"])
+    }
 }

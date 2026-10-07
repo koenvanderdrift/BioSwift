@@ -17,7 +17,7 @@ extension BioMolecule where ChainType == DNAChain {
             return rnaChain
         }
 
-        return RNA(chains: rnaChains, adducts: adducts)
+        return RNA(chains: rnaChains)
     }
 
     /// Transcribes the DNA and translates the resulting RNA using the standard genetic code.

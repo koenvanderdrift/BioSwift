@@ -71,19 +71,21 @@ extension MassContainer {
     }
 
     func applying(adducts: [Adduct]) -> Self {
-    
-    // TODO: Negative-ion calculations are not yet supported.
-    
         let charge = adducts.reduce(0) { $0 + $1.charge }
-        guard charge > 0 else {
+        guard charge != 0 else {
             return self
         }
 
         let adductMasses = adducts.reduce(zeroMass) {
-            $0 + $1.group.masses - ($1.charge * electronMass)
+            switch $1.operation {
+            case .add:
+                $0 + $1.group.masses
+            case .remove:
+                $0 - $1.group.masses
+            }
         }
 
-        return (self + adductMasses) / charge
+        return (self + adductMasses - (charge * electronMass)) / abs(charge)
     }
 
 }
@@ -124,15 +126,40 @@ extension MassContainer {
     }
 }
 
-/// An adduct and its associated charge.
+/// Describes whether an adduct adds or removes its functional group.
+public enum AdductOperation: String, Codable, Sendable {
+    case add
+    case remove
+}
+
+/// An adduct, its associated charge, and its effect on molecular composition.
 
 public struct Adduct: Codable, Equatable, Sendable {
     public var group: FunctionalGroup
     public var charge: Charge
+    public var operation: AdductOperation
     
-    public init(group: FunctionalGroup, charge: Charge) {
+    public init(
+        group: FunctionalGroup,
+        charge: Charge,
+        operation: AdductOperation = .add
+    ) {
         self.group = group
         self.charge = charge
+        self.operation = operation
+    }
+
+    private enum CodingKeys: String, CodingKey {
+        case group
+        case charge
+        case operation
+    }
+
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        group = try container.decode(FunctionalGroup.self, forKey: .group)
+        charge = try container.decode(Charge.self, forKey: .charge)
+        operation = try container.decodeIfPresent(AdductOperation.self, forKey: .operation) ?? .add
     }
 }
 
@@ -141,7 +168,7 @@ public let sodiumAdduct = Adduct(group: sodium, charge: 1)
 public let ammoniumAdduct = Adduct(group: ammonium, charge: 1)
 public let potassiumAdduct = Adduct(group: potassium, charge: 1)
 
-public let negativeProtonAdduct = Adduct(group: hydrogen, charge: -1)
+public let negativeProtonAdduct = Adduct(group: hydrogen, charge: -1, operation: .remove)
 public let chlorineAdduct = Adduct(group: chloride, charge: -1)
 
 let zeroMass = MassContainer(monoisotopicMass: 0.0, averageMass: 0.0, nominalMass: 0)
@@ -168,31 +195,22 @@ extension MassRepresentable {
     }
 }
 
-/// Internal common interface for structures that can carry adducts.
-protocol Ionizable {
-    var masses: MassContainer { get }
-
-    var adducts: [Adduct] {
-        get set
-    }
-}
-
 extension Dalton {
     public func formattedString(fractions: Int) -> String {
         formatted(fractionDigits: fractions)
     }
 }
 
-extension Array where Element: Chain {
-    public func protonated(chargeStates: ClosedRange<Charge>) throws -> [Element] {
-        guard chargeStates.lowerBound >= 0 else {
+extension Array where Element: Structure {
+    public func protonated(chargeStates: ClosedRange<Charge>) throws -> [Ion<Element>] {
+        guard chargeStates.lowerBound > 0 else {
             throw BioSwiftDiagnostics.logged(MassCalculationError.invalidChargeState(chargeStates.lowerBound))
         }
         return flatMap { sequence in
             chargeStates.map { charge in
-                var chargedSequence = sequence
-                chargedSequence.adducts = [Adduct](repeating: protonAdduct, count: charge)
-                return chargedSequence
+                try! Ion(
+                    structure: sequence,
+                    adducts: [Adduct](repeating: protonAdduct, count: charge))
             }
         }
     }

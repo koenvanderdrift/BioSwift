@@ -21,7 +21,6 @@ struct ChainEditingTests {
         var chain = try ProteinChain(sequence: "ACDE", name: "alpha", id: id)
         chain.range = 4..<8
         chain.parentLength = 12
-        chain.adducts = [protonAdduct]
 
         let result = try chain.removingResidues(in: 2..<2)
 
@@ -29,7 +28,6 @@ struct ChainEditingTests {
         #expect(result.sequenceString == chain.sequenceString)
         #expect(result.range == 4..<8)
         #expect(result.parentLength == 12)
-        #expect(result.adducts == [protonAdduct])
     }
 
     @Test("Invalid indices and ranges throw typed errors")
@@ -56,7 +54,6 @@ struct ChainEditingTests {
         var chain = try ProteinChain(sequence: "ACDEFG", name: "alpha", id: id)
         chain.range = 10..<16
         chain.parentLength = 20
-        chain.adducts = [protonAdduct, sodiumAdduct]
         chain.nTerminal = lossOfAmmonia
         chain.cTerminal = lossOfWater
         chain.residues[1].modification = lossOfWater
@@ -69,7 +66,6 @@ struct ChainEditingTests {
         #expect(result.sequenceString == "AEFG")
         #expect(result.id == id)
         #expect(result.name == "alpha")
-        #expect(result.adducts == [protonAdduct, sodiumAdduct])
         #expect(result.nTerminal == lossOfAmmonia)
         #expect(result.cTerminal == lossOfWater)
         #expect(result.range == 0..<4)
@@ -121,15 +117,13 @@ struct ChainEditingTests {
     func nucleicAcidChains() throws {
         let dna = try DNAChain(sequence: "GATTACA", name: "coding")
         let rna = try RNAChain(sequence: "GAUUACA", name: "messenger")
-        var chargedDNA = dna
-        var chargedRNA = rna
-        chargedDNA.adducts = [sodiumAdduct]
-        chargedRNA.adducts = [protonAdduct]
-        chargedDNA.residues[4].modification = lossOfWater
-        chargedRNA.residues[4].modification = lossOfAmmonia
+        var modifiedDNA = dna
+        var modifiedRNA = rna
+        modifiedDNA.residues[4].modification = lossOfWater
+        modifiedRNA.residues[4].modification = lossOfAmmonia
 
-        let editedDNA: DNAChain = try chargedDNA.removingResidues(in: 1..<3)
-        let editedRNA: RNAChain = try chargedRNA.removingResidues(in: 1..<3)
+        let editedDNA: DNAChain = try modifiedDNA.removingResidues(in: 1..<3)
+        let editedRNA: RNAChain = try modifiedRNA.removingResidues(in: 1..<3)
 
         #expect(editedDNA.sequenceString == "GTACA")
         #expect(editedRNA.sequenceString == "GUACA")
@@ -137,8 +131,6 @@ struct ChainEditingTests {
         #expect(editedRNA.id == rna.id)
         #expect(editedDNA.name == "coding")
         #expect(editedRNA.name == "messenger")
-        #expect(editedDNA.adducts == [sodiumAdduct])
-        #expect(editedRNA.adducts == [protonAdduct])
         #expect(editedDNA.residues[2].modification == lossOfWater)
         #expect(editedRNA.residues[2].modification == lossOfAmmonia)
         #expect(editedDNA.range == 0..<5)
@@ -172,25 +164,23 @@ struct RangeRemovalMappingTests {
 
 @Suite("Chain molecular-state editing")
 struct ChainMolecularStateEditingTests {
-    @Test("Adduct copy operations preserve the source and chain identity")
+    @Test("Ionization preserves the neutral source and chain identity")
     func adducts() throws {
         let chain = try DNAChain(sequence: "GATTACA", name: "coding")
 
-        let specified = chain.withAdducts([sodiumAdduct, protonAdduct])
-        let repeated = chain.withAdducts(type: protonAdduct, count: 2)
+        let specified = try chain.ionized(with: [sodiumAdduct, protonAdduct])
+        let repeated = try chain.ionized(with: [protonAdduct, protonAdduct])
 
-        #expect(chain.adducts.isEmpty)
         #expect(specified.adducts == [sodiumAdduct, protonAdduct])
         #expect(repeated.adducts == [protonAdduct, protonAdduct])
-        #expect(specified.id == chain.id)
-        #expect(specified.name == chain.name)
-        #expect(specified.sequenceString == chain.sequenceString)
+        #expect(specified.structure.id == chain.id)
+        #expect(specified.structure.name == chain.name)
+        #expect(specified.structure.sequenceString == chain.sequenceString)
     }
 
     @Test("Terminal copy operation preserves the source and other state")
     func termini() throws {
         let chain = try ProteinChain(sequence: "ACDE", name: "alpha")
-            .withAdducts([protonAdduct])
 
         let edited = chain.withTermini(
             nTerm: lossOfAmmonia,
@@ -201,7 +191,6 @@ struct ChainMolecularStateEditingTests {
         #expect(chain.cTerminal == hydroxylModification)
         #expect(edited.nTerminal == lossOfAmmonia)
         #expect(edited.cTerminal == lossOfWater)
-        #expect(edited.adducts == chain.adducts)
         #expect(edited.id == chain.id)
         #expect(edited.sequenceString == chain.sequenceString)
     }

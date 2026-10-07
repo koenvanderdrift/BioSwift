@@ -10,34 +10,29 @@ import Foundation
 
 /// BioMolecule contains one or more typed ``Chain`` values.
 public struct BioMolecule<ChainType: Chain> {
-    public var adducts: [Adduct]
     public var chains: [ChainType]
     public var crossLinks: [CrossLink]
 
-    public init(chains: [ChainType], adducts: [Adduct] = [], crossLinks: [CrossLink] = []) {
+    public init(chains: [ChainType], crossLinks: [CrossLink] = []) {
         self.chains = chains
-        self.adducts = adducts
         self.crossLinks = crossLinks
     }
 }
 
 extension BioMolecule: Codable where ChainType: Codable {
     private enum CodingKeys: String, CodingKey {
-        case adducts
         case chains
         case crossLinks
     }
 
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        adducts = try container.decode([Adduct].self, forKey: .adducts)
         chains = try container.decode([ChainType].self, forKey: .chains)
         crossLinks = try container.decodeIfPresent([CrossLink].self, forKey: .crossLinks) ?? []
     }
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(adducts, forKey: .adducts)
         try container.encode(chains, forKey: .chains)
         try container.encode(crossLinks, forKey: .crossLinks)
     }
@@ -61,6 +56,12 @@ extension BioMolecule where ChainType: Structure {
     /// The molecular formula formatted using Hill-system element ordering.
     public var formulaString: String {
         formula.formulaString
+    }
+}
+
+extension BioMolecule: Structure where ChainType: Structure {
+    public var name: String {
+        chains.map(\.name).filter { !$0.isEmpty }.joined(separator: ", ")
     }
 }
 
@@ -479,41 +480,7 @@ extension BioMolecule where ChainType.ResidueType == AminoAcid {
     }
 }
 
-extension BioMolecule {
-    var masses: MassContainer {
-        let chainMasses = chains.reduce(zeroMass) {
-            $0 + $1.calculatedMasses()
-        }
-
-        return crossLinks.reduce(chainMasses) {
-            $0 + $1.modification.masses
-        }
-    }
-}
-
-extension BioMolecule: MassRepresentable {
-    public var charge: Charge {
-        adducts.reduce(0) {
-            $0 + $1.charge
-        }
-    }
-
-    public var monoisotopicMass: Dalton {
-        massContainer.monoisotopicMass
-    }
-
-    public var averageMass: Dalton {
-        massContainer.averageMass
-    }
-
-    public var nominalMass: Int {
-        massContainer.nominalMass
-    }
-
-    public var massContainer: MassContainer {
-        masses.applying(adducts: adducts)
-    }
-
+extension BioMolecule where ChainType: Structure {
     public func selectionMass(
         chainIndex index: Int = 0,
         _ range: Range<Int>
@@ -534,16 +501,10 @@ extension BioMolecule: MassRepresentable {
                 + aminoAcidChain.nTerminal.masses
                 + aminoAcidChain.cTerminal.masses
 
-            return selectedMasses.applying(adducts: adducts)
+            return selectedMasses
         }
 
         let sub = chain.subChain(range: validRange)
-        return sub.calculatedMasses().applying(adducts: adducts)
-    }
-
-    public mutating func setAdducts(type: Adduct, count: Int) {
-        adducts = Array(repeating: type, count: count)
+        return sub.calculatedMasses()
     }
 }
-
-extension BioMolecule: Ionizable {}

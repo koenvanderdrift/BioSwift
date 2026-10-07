@@ -33,7 +33,7 @@ extension Residue {
         threeLetterCode
     }
 
-    var masses: MassContainer {
+    public var masses: MassContainer {
         formula.masses + modificationMasses()
     }
 

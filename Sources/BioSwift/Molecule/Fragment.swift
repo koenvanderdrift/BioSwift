@@ -24,15 +24,6 @@ public struct Fragment<ChainType: Chain, FragmentType>: Identifiable {
         set { chain.residues = newValue }
     }
 
-    public var adducts: [Adduct] {
-        get { chain.adducts }
-        set { chain.adducts = newValue }
-    }
-
-    public var charge: Charge {
-        chain.charge
-    }
-
     public var parentLength: Int {
         get { chain.parentLength }
         set { chain.parentLength = newValue }

@@ -19,13 +19,13 @@ public protocol Structure {
         get
     }
 
-    var massContainer: MassContainer {
+    var masses: MassContainer {
         get
     }
 }
 
 extension Structure {
-    var masses: MassContainer {
+    public var masses: MassContainer {
         formula.masses
     }
 
@@ -34,19 +34,15 @@ extension Structure {
         formula.formulaString
     }
 
-    public var massContainer: MassContainer {
-        masses
-    }
-
     public var monoisotopicMass: Dalton {
-        massContainer.monoisotopicMass
+        masses.monoisotopicMass
     }
 
     public var averageMass: Dalton {
-        massContainer.averageMass
+        masses.averageMass
     }
 
     public var nominalMass: Int {
-        massContainer.nominalMass
+        masses.nominalMass
     }
 }
