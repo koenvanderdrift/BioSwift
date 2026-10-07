@@ -23,37 +23,11 @@ public class PeptideFragmenter {
     /// Positive adduct combinations supported by the fragment generator, preserving
     /// the precursor's actual adduct composition and charge.
     private var fragmentAdductStates: [[Adduct]] {
-        let positiveAdducts = peptide.adducts.filter { $0.charge > 0 }
-        var states: [[Adduct]] = []
-
-        func addCombinations(startingAt index: Int, current: [Adduct], charge: Charge) {
-            for adductIndex in index..<positiveAdducts.count {
-                let adduct = positiveAdducts[adductIndex]
-                let updatedCharge = charge + adduct.charge
-
-                guard updatedCharge <= 2 else {
-                    continue
-                }
-
-                let combination = current + [adduct]
-                if states.contains(combination) == false {
-                    states.append(combination)
-                }
-
-                addCombinations(
-                    startingAt: adductIndex + 1,
-                    current: combination,
-                    charge: updatedCharge
-                )
-            }
-        }
-
-        addCombinations(startingAt: 0, current: [], charge: 0)
-        return states.sorted { lhs, rhs in
-            let lhsCharge = lhs.reduce(0) { $0 + $1.charge }
-            let rhsCharge = rhs.reduce(0) { $0 + $1.charge }
-            return lhsCharge < rhsCharge
-        }
+        FragmentAdductStateGenerator(
+            adducts: peptide.adducts,
+            polarity: .positive,
+            maximumAbsoluteCharge: 2
+        ).states()
     }
 
     public lazy var fragments: [PeptideFragment] =
