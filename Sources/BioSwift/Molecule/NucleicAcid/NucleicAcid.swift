@@ -5,7 +5,7 @@
 
 import Foundation
 
-public protocol NucleicAcidChain: Chain, Structure {}
+public protocol NucleicAcidChain: Chain, Structure where ResidueType == Nucleotide {}
 
 extension NucleicAcidChain {
     public var formula: Formula {

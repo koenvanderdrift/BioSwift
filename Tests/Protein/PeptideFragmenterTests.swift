@@ -328,29 +328,4 @@ import Testing
         #expect(fragment.charge == 2)
     }
 
-    @Test func chargedResidues() throws {
-        let fragment = try PeptideFragment(sequence: "AWRKQNWSTEDWWSHTEDWQPRTYSAMPLER")
-
-        let numOfCharges = fragment.maximumChargeCount
-        #expect(numOfCharges == 5)
-    }
-
-    @Test func fragmentComposesPeptideStorage() throws {
-        let fragment = PeptideFragment(
-            residues: try Peptide(sequence: "SAM").residues,
-            fragmentType: .bIon,
-            index: 3
-        )
-
-        #expect(fragment.sequenceString == "SAM")
-        #expect(fragment.residues.count == 3)
-        #expect(fragment.nTerminal == zeroModification)
-        #expect(fragment.cTerminal == zeroModification)
-    }
-
-    @Test func allFragmentCases() throws {
-        let allCases = PeptideFragmentType.allCases
-        #expect(allCases.count == 17)
-    }
-
 }

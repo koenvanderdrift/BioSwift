@@ -8,7 +8,7 @@
 
 import Foundation
 
-public enum PeptideFragmentType: CaseIterable, Codable, Identifiable, Sendable {
+public enum PeptideFragmentType: CaseIterable, Codable, FragmentMassAdjusting, Identifiable, Sendable {
     case precursorIon
     case precursorIonMinusWater
     case precursorIonMinusAmmonia
@@ -63,7 +63,7 @@ public enum PeptideFragmentType: CaseIterable, Codable, Identifiable, Sendable {
         }
     }
 
-    var massAdjustment: MassContainer {
+    public func massAdjustment(for residues: [any Residue]) -> MassContainer {
         switch self {
         case .precursorIon:
             return water.masses
@@ -114,19 +114,6 @@ public enum PeptideFragmentType: CaseIterable, Codable, Identifiable, Sendable {
 
 /// A peptide chain annotated with its fragmentation metadata.
 public typealias PeptideFragment = Fragment<Peptide, PeptideFragmentType>
-
-extension Fragment: Structure where ChainType == Peptide, FragmentType == PeptideFragmentType {
-    public var name: String { chain.name }
-
-    /// The formula of the unfragmented residue span. Fragment-type mass adjustments are
-    /// represented by ``masses`` because some legacy adjustments are mass-only values.
-    public var formula: Formula { chain.formula }
-
-    public var masses: MassContainer {
-        guard !residues.isEmpty else { return zeroMass }
-        return chain.masses + fragmentType.massAdjustment
-    }
-}
 
 extension Fragment where ChainType == Peptide, FragmentType == PeptideFragmentType {
     public var isPrecursor: Bool {

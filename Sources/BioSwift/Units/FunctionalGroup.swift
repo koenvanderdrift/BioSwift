@@ -10,6 +10,7 @@ import Foundation
 
 public let hydrogen = makeBuiltInFunctionalGroup(name: "hydrogen", formula: "H")
 public let oxygen = makeBuiltInFunctionalGroup(name: "oxygen", formula: "O")
+public let phosphorus = makeBuiltInFunctionalGroup(name: "phosphorus", formula: "P")
 
 public let hydroxyl = makeBuiltInFunctionalGroup(name: "hydroxyl", formula: "OH")
 public let ammonia = makeBuiltInFunctionalGroup(name: "ammonia", formula: "NH3")
@@ -22,6 +23,12 @@ public let sodium = makeBuiltInFunctionalGroup(name: "sodium", formula: "Na")
 public let potassium = makeBuiltInFunctionalGroup(name: "potassium", formula: "K")
 
 public let chloride = makeBuiltInFunctionalGroup(name: "chloride", formula: "Cl")
+
+public let adenine = makeBuiltInFunctionalGroup(name: "adenine", formula: "C5H5N5")
+public let cytosine = makeBuiltInFunctionalGroup(name: "cytosine", formula: "C4H5N3O")
+public let guanine = makeBuiltInFunctionalGroup(name: "guanine", formula: "C5H5N5O")
+public let thymine = makeBuiltInFunctionalGroup(name: "thymine", formula: "C5H6N2O2")
+public let uracil = makeBuiltInFunctionalGroup(name: "uracil", formula: "C4H4N2O2")
 
 private func makeBuiltInFunctionalGroup(name: String, formula: String) -> FunctionalGroup {
     do {

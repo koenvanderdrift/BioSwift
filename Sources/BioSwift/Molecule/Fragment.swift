@@ -8,6 +8,10 @@
 
 import Foundation
 
+public protocol FragmentMassAdjusting {
+    func massAdjustment(for residues: [any Residue]) -> MassContainer
+}
+
 /// A fragment of a molecular chain together with its fragmentation metadata.
 public struct Fragment<ChainType: Chain, FragmentType>: Identifiable {
     public let id: UUID
@@ -43,4 +47,15 @@ public struct Fragment<ChainType: Chain, FragmentType>: Identifiable {
 }
 
 extension Fragment: Codable where ChainType: Codable, FragmentType: Codable {}
+extension Fragment: Equatable where ChainType: Equatable, FragmentType: Equatable {}
 extension Fragment: Sendable where ChainType: Sendable, FragmentType: Sendable {}
+
+extension Fragment: Structure where ChainType: Structure, FragmentType: FragmentMassAdjusting {
+    public var name: String { chain.name }
+    public var formula: Formula { chain.formula }
+
+    public var masses: MassContainer {
+        guard !residues.isEmpty else { return zeroMass }
+        return chain.masses + fragmentType.massAdjustment(for: residues)
+    }
+}
