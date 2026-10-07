@@ -5,11 +5,10 @@
 
 import Foundation
 
-public struct DNAChain: NucleicAcidChain, Ionizable, Codable, Equatable, Sendable {
+public struct DNAChain: NucleicAcidChain, Codable, Equatable, Sendable {
     public let id: UUID
     public var name: String
     public var residues: [Nucleotide]
-    public var adducts: [Adduct] = []
     public var range: Range<Int> = zeroRange
     public var parentLength: Int = 0
 
@@ -54,7 +53,6 @@ public struct DNAChain: NucleicAcidChain, Ionizable, Codable, Equatable, Sendabl
 
     private func transformed(residues: [Nucleotide]) -> DNAChain {
         var chain = DNAChain(residues: residues, name: name)
-        chain.adducts = adducts
         chain.range = range
         chain.parentLength = parentLength
         return chain

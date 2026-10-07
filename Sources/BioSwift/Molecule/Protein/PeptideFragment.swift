@@ -115,6 +115,19 @@ public enum PeptideFragmentType: CaseIterable, Codable, Identifiable, Sendable {
 /// A peptide chain annotated with its fragmentation metadata.
 public typealias PeptideFragment = Fragment<Peptide, PeptideFragmentType>
 
+extension Fragment: Structure where ChainType == Peptide, FragmentType == PeptideFragmentType {
+    public var name: String { chain.name }
+
+    /// The formula of the unfragmented residue span. Fragment-type mass adjustments are
+    /// represented by ``masses`` because some legacy adjustments are mass-only values.
+    public var formula: Formula { chain.formula }
+
+    public var masses: MassContainer {
+        guard !residues.isEmpty else { return zeroMass }
+        return chain.masses + fragmentType.massAdjustment
+    }
+}
+
 extension Fragment where ChainType == Peptide, FragmentType == PeptideFragmentType {
     public var isPrecursor: Bool {
         fragmentType.isPrecursor
@@ -152,9 +165,8 @@ extension Fragment where ChainType == Peptide, FragmentType == PeptideFragmentTy
         self.init(chain: peptide, fragmentType: .undefined, id: id)
     }
 
-    public init(residues: [AminoAcid], fragmentType: PeptideFragmentType, index: Int = -1, adducts: [Adduct], nTerm: Modification = zeroModification, cTerm: Modification = zeroModification, parentLength: Int = 0, id: UUID = UUID()) {
+    public init(residues: [AminoAcid], fragmentType: PeptideFragmentType, index: Int = -1, nTerm: Modification = zeroModification, cTerm: Modification = zeroModification, parentLength: Int = 0, id: UUID = UUID()) {
         var peptide = Peptide(residues: residues, id: id)
-        peptide.adducts = adducts
         peptide.parentLength = parentLength
         peptide.setTermini(nTerm: nTerm, cTerm: cTerm)
         self.init(chain: peptide, fragmentType: fragmentType, index: index, id: id)
@@ -168,30 +180,6 @@ extension Fragment where ChainType == Peptide, FragmentType == PeptideFragmentTy
     public var cTerminal: Modification {
         get { chain.cTerminal }
         set { chain.cTerminal = newValue }
-    }
-
-    public var massContainer: MassContainer {
-        masses.applying(adducts: adducts)
-    }
-
-    public var monoisotopicMass: Dalton {
-        massContainer.monoisotopicMass
-    }
-
-    public var averageMass: Dalton {
-        massContainer.averageMass
-    }
-
-    public var nominalMass: Int {
-        massContainer.nominalMass
-    }
-
-    var masses: MassContainer {
-        if residues.isEmpty {
-            return zeroMass
-        }
-
-        return chain.masses + fragmentType.massAdjustment
     }
 
     public var canLoseWater: Bool {
@@ -213,4 +201,19 @@ extension Fragment where ChainType == Peptide, FragmentType == PeptideFragmentTy
     public var maximumChargeCount: Int {
         return residues.filter { $0.properties.contains(.chargedPositive) }.count
     }
+}
+
+extension Ion where StructureType == PeptideFragment {
+    public var fragmentType: PeptideFragmentType { structure.fragmentType }
+    public var index: Int { structure.index }
+    public var residues: [AminoAcid] { structure.residues }
+    public var sequenceString: String { structure.sequenceString }
+    public var parentLength: Int { structure.parentLength }
+    public var isPrecursor: Bool { structure.isPrecursor }
+    public var isImmonium: Bool { structure.isImmonium }
+    public var isNTerminal: Bool { structure.isNTerminal }
+    public var isCTerminal: Bool { structure.isCTerminal }
+    public var canLoseWater: Bool { structure.canLoseWater }
+    public var canLoseAmmonia: Bool { structure.canLoseAmmonia }
+    public var maximumChargeCount: Int { structure.maximumChargeCount }
 }

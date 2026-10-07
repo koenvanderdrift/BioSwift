@@ -26,10 +26,6 @@ public protocol Chain: Identifiable {
         get set
     }
 
-    var adducts: [Adduct] {
-        get set
-    }
-
     var range: Range<Int> {
         get set
     }
@@ -56,30 +52,6 @@ public enum SequenceValidationError: Error, Equatable, Sendable {
 }
 
 extension Chain {
-    public var charge: Charge {
-        adducts.reduce(0) { $0 + $1.charge }
-    }
-
-    public mutating func setAdducts(_ adducts: [Adduct]) {
-        self.adducts = adducts
-    }
-
-    public mutating func setAdducts(type: Adduct, count: Int) {
-        setAdducts(Array(repeating: type, count: count))
-    }
-
-    public func withAdducts(_ adducts: [Adduct]) -> Self {
-        var copy = self
-        copy.setAdducts(adducts)
-        return copy
-    }
-
-    public func withAdducts(type: Adduct, count: Int) -> Self {
-        var copy = self
-        copy.setAdducts(type: type, count: count)
-        return copy
-    }
-
     public static func == (lhs: Self, rhs: Self) -> Bool {
         lhs.sequenceString == rhs.sequenceString && lhs.name == rhs.name
     }
@@ -135,10 +107,6 @@ extension Chain {
     }
 
     func calculatedMasses() -> MassContainer {
-        if let ionizable = self as? any Ionizable {
-            return ionizable.masses
-        }
-
         if let massRepresentable = self as? any MassRepresentable {
             return massRepresentable.masses
         }
@@ -189,6 +157,11 @@ extension AminoAcidChain {
             }
             return residue
         }
+    }
+
+    public var masses: MassContainer {
+        guard !residues.isEmpty else { return zeroMass }
+        return aminoAcidResidueMasses() + terminalMasses()
     }
 
     func aminoAcidResidueMasses() -> MassContainer {

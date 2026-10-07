@@ -16,7 +16,6 @@ public struct Peptide: AminoAcidChain, Codable, Equatable, Sendable {
     public var residues: [AminoAcid] = []
     public var nTerminal: Modification = hydrogenModification
     public var cTerminal: Modification = hydroxylModification
-    public var adducts: [Adduct] = []
     public var range: Range<Int> = zeroRange
     public var parentLength: Int = 0
 
@@ -50,23 +49,7 @@ public struct Peptide: AminoAcidChain, Codable, Equatable, Sendable {
         residues = proteinChain.residues
         nTerminal = proteinChain.nTerminal
         cTerminal = proteinChain.cTerminal
-        adducts = proteinChain.adducts
         range = proteinChain.range
         parentLength = proteinChain.parentLength
     }
-}
-
-extension Peptide: Ionizable {
-    public var massContainer: MassContainer {
-        masses.applying(adducts: adducts)
-    }
-
-    var masses: MassContainer {
-        if residues.isEmpty {
-            return zeroMass
-        }
-
-        return aminoAcidResidueMasses() + terminalMasses()
-    }
-
 }

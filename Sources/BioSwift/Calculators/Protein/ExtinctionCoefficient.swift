@@ -109,7 +109,7 @@ extension AminoAcidChain {
     }
 }
 
-extension BioMolecule where ChainType.ResidueType == AminoAcid {
+extension BioMolecule where ChainType: Structure, ChainType.ResidueType == AminoAcid {
     /// The combined molar extinction coefficient at 280 nm in M⁻¹ cm⁻¹, assuming no disulfide bonds.
     public var molarExtinctionCoefficient: Double {
         molarExtinctionCoefficient(disulfideCount: 0)

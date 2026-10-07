@@ -44,8 +44,6 @@ public struct AminoAcid: Residue, Codable, Sendable {
     public var properties: Set<AminoAcidProperty>
     public var modification: Modification?
 
-    public var adducts: [Adduct]
-
     public init(
         name: String, oneLetterCode: String, threeLetterCode: String = "", formula: Formula,
         represents: [String] = [], representedBy: [String] = []
@@ -56,7 +54,6 @@ public struct AminoAcid: Residue, Codable, Sendable {
         self.formula = formula
         self.represents = represents
         self.representedBy = representedBy
-        self.adducts = []
         self.properties = []
 
         setProperties()

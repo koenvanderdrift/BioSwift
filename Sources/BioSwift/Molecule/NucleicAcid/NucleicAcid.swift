@@ -16,15 +16,4 @@ extension NucleicAcidChain {
         }
     }
 
-    public var massContainer: MassContainer {
-        masses.applying(adducts: adducts)
-    }
-
-    var masses: MassContainer {
-        guard !residues.isEmpty else { return zeroMass }
-
-        return residues.reduce(water.masses) { result, residue in
-            result + residue.masses
-        }
-    }
 }

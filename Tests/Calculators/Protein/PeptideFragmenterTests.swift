@@ -11,10 +11,9 @@ import Testing
 @Suite struct PeptideFragmenterTests: BioSwiftTestSuite {
     var fixtures = BioSwiftTestFixtures()
     @Test func fragmentCount() throws {
-        var peptide = try Peptide(sequence: "SAMPLER")
-        peptide.setAdducts(type: protonAdduct, count: 1)
-
-        let fragmenter = PeptideFragmenter(peptide: peptide)
+        let peptide = try Peptide(sequence: "SAMPLER")
+        let fragmenter = PeptideFragmenter(
+            precursor: try peptide.ionized(with: [protonAdduct]))
         let fragments = fragmenter.fragments
 
         let precursors = fragments.filter {
@@ -39,19 +38,17 @@ import Testing
     }
 
     @Test func fragmenterHandlesShortPeptides() throws {
-        var emptyPeptide = try Peptide(sequence: "")
-        emptyPeptide.setAdducts(type: protonAdduct, count: 1)
-
-        let emptyFragmenter = PeptideFragmenter(peptide: emptyPeptide)
+        let emptyPeptide = try Peptide(sequence: "")
+        let emptyFragmenter = PeptideFragmenter(
+            precursor: try emptyPeptide.ionized(with: [protonAdduct]))
         #expect(emptyFragmenter.fragments.filter {
             $0.isNTerminal || $0.isCTerminal
         }.isEmpty)
         #expect(emptyFragmenter.fragment(at: 1, for: .cIon) == nil)
 
-        var singleResiduePeptide = try Peptide(sequence: "A")
-        singleResiduePeptide.setAdducts(type: protonAdduct, count: 1)
-
-        let singleResidueFragmenter = PeptideFragmenter(peptide: singleResiduePeptide)
+        let singleResiduePeptide = try Peptide(sequence: "A")
+        let singleResidueFragmenter = PeptideFragmenter(
+            precursor: try singleResiduePeptide.ionized(with: [protonAdduct]))
         #expect(singleResidueFragmenter.fragments.filter {
             $0.isCTerminal
         }.isEmpty)
@@ -61,13 +58,13 @@ import Testing
     @Test func fragmentMass1() throws {
         // theoretical masses via https://prospector.ucsf.edu/prospector/cgi-bin/msform.cgi?form=msproduct
 
-        var peptide = try Peptide(sequence: "SAMPLER")
-        peptide.setAdducts(type: protonAdduct, count: 1)
+        let peptide = try Peptide(sequence: "SAMPLER")
+        let precursor = try peptide.ionized(with: [protonAdduct])
 
-        #expect(peptide.monoisotopicMass.rounded(scale: 4) == decimal("803.4080"))
-        #expect(peptide.monoisotopicMass.rounded(scale: 4) == decimal("803.4080"))
+        #expect(precursor.monoisotopicMass.rounded(scale: 4) == decimal("803.4080"))
+        #expect(precursor.monoisotopicMass.rounded(scale: 4) == decimal("803.4080"))
 
-        let fragmenter = PeptideFragmenter(peptide: peptide)
+        let fragmenter = PeptideFragmenter(precursor: precursor)
         let fragments = fragmenter.fragments
 
         let precursors = fragments.filter {
@@ -103,9 +100,9 @@ import Testing
     }
 
     @Test func aIonNeutralLossMasses() throws {
-        var peptide = try Peptide(sequence: "SQA")
-        peptide.setAdducts(type: protonAdduct, count: 1)
-        let fragmenter = PeptideFragmenter(peptide: peptide)
+        let peptide = try Peptide(sequence: "SQA")
+        let fragmenter = PeptideFragmenter(
+            precursor: try peptide.ionized(with: [protonAdduct]))
 
         let a2 = try #require(fragmenter.fragment(at: 2, for: .aIon))
         let waterLoss = try #require(fragmenter.fragment(at: 2, for: .aIonMinusWater))
@@ -122,12 +119,12 @@ import Testing
     }
 
     @Test func fragmentMass2() throws {
-        var peptide = try Peptide(sequence: "SAMPLEVAAAGQTHR")
-        peptide.setAdducts(type: protonAdduct, count: 1)
+        let peptide = try Peptide(sequence: "SAMPLEVAAAGQTHR")
+        let precursor = try peptide.ionized(with: [protonAdduct])
 
-        #expect(peptide.monoisotopicMass.rounded(scale: 4) == decimal("1538.7744"))
+        #expect(precursor.monoisotopicMass.rounded(scale: 4) == decimal("1538.7744"))
 
-        let fragmenter = PeptideFragmenter(peptide: peptide)
+        let fragmenter = PeptideFragmenter(precursor: precursor)
         let fragments = fragmenter.fragments
 
         let bIons = fragments.filter {
@@ -167,11 +164,11 @@ import Testing
             unimodName: "Oxidation", psiModAccession: "MOD:00719",
             uniProtPTMAccession: "PTM-0469") {
             var peptide = try Peptide(sequence: "SAMPLEVAMAAGQTHR")
-            peptide.setAdducts(type: protonAdduct, count: 1)
             try peptide.addModification(modification, at: 8)
-            #expect(peptide.monoisotopicMass.rounded(scale: 4) == decimal("1685.8098"))
+            let precursor = try peptide.ionized(with: [protonAdduct])
+            #expect(precursor.monoisotopicMass.rounded(scale: 4) == decimal("1685.8098"))
 
-            let fragmenter = PeptideFragmenter(peptide: peptide)
+            let fragmenter = PeptideFragmenter(precursor: precursor)
             let fragments = fragmenter.fragments
 
             let aIonsMinusWater = fragments.filter {
@@ -223,10 +220,10 @@ import Testing
     }
 
     @Test func fragmentMass4() throws {
-        var peptide = try Peptide(sequence: "AWRKQNWSTEDWWSTEDWQPRTYSAMPLER")
-        peptide.setAdducts(type: protonAdduct, count: 1)
+        let peptide = try Peptide(sequence: "AWRKQNWSTEDWWSTEDWQPRTYSAMPLER")
 
-        let fragmenter = PeptideFragmenter(peptide: peptide)
+        let fragmenter = PeptideFragmenter(
+            precursor: try peptide.ionized(with: [protonAdduct]))
         let fragments = fragmenter.fragments
 
         let bIonsMinusWater = fragments.filter {
@@ -262,12 +259,12 @@ import Testing
     }
 
     @Test func fragmentMass5() throws {
-        var peptide = try Peptide(sequence: "SAMPLEVAAAGQTHR")
-        peptide.setAdducts(type: protonAdduct, count: 2)
+        let peptide = try Peptide(sequence: "SAMPLEVAAAGQTHR")
+        let precursor = try peptide.ionized(with: [protonAdduct, protonAdduct])
 
-        #expect(peptide.monoisotopicMass.rounded(scale: 4) == decimal("769.8908"))
+        #expect(precursor.monoisotopicMass.rounded(scale: 4) == decimal("769.8908"))
 
-        let fragmenter = PeptideFragmenter(peptide: peptide)
+        let fragmenter = PeptideFragmenter(precursor: precursor)
         let fragments = fragmenter.fragments
 
         let bIons = fragments.filter {
@@ -307,11 +304,11 @@ import Testing
     }
 
     @Test func fragmentsPreserveSodiumAdducts() throws {
-        var peptide = try Peptide(sequence: "SAMPLER")
-        peptide.adducts = [sodiumAdduct]
+        let peptide = try Peptide(sequence: "SAMPLER")
 
         let fragment = try #require(
-            PeptideFragmenter(peptide: peptide).fragment(at: 1, for: .yIon)
+            PeptideFragmenter(precursor: try peptide.ionized(with: [sodiumAdduct]))
+                .fragment(at: 1, for: .yIon)
         )
 
         #expect(fragment.adducts == [sodiumAdduct])
@@ -320,11 +317,11 @@ import Testing
 
     @Test func fragmentsUseAdductChargeRatherThanAdductCount() throws {
         let divalentAdduct = Adduct(group: sodium, charge: 2)
-        var peptide = try Peptide(sequence: "SAMPLER")
-        peptide.adducts = [divalentAdduct]
+        let peptide = try Peptide(sequence: "SAMPLER")
 
         let fragment = try #require(
-            PeptideFragmenter(peptide: peptide).fragment(at: 1, for: .yIon, with: 2)
+            PeptideFragmenter(precursor: try peptide.ionized(with: [divalentAdduct]))
+                .fragment(at: 1, for: .yIon, with: 2)
         )
 
         #expect(fragment.adducts == [divalentAdduct])
@@ -342,13 +339,11 @@ import Testing
         let fragment = PeptideFragment(
             residues: try Peptide(sequence: "SAM").residues,
             fragmentType: .bIon,
-            index: 3,
-            adducts: [protonAdduct]
+            index: 3
         )
 
         #expect(fragment.sequenceString == "SAM")
         #expect(fragment.residues.count == 3)
-        #expect(fragment.adducts == [protonAdduct])
         #expect(fragment.nTerminal == zeroModification)
         #expect(fragment.cTerminal == zeroModification)
     }

@@ -132,7 +132,7 @@ public enum AdductOperation: String, Codable, Sendable {
     case remove
 }
 
-/// An adduct, its associated charge, and its effect on the neutral mass.
+/// An adduct, its associated charge, and its effect on molecular composition.
 
 public struct Adduct: Codable, Equatable, Sendable {
     public var group: FunctionalGroup
@@ -195,31 +195,22 @@ extension MassRepresentable {
     }
 }
 
-/// Internal common interface for structures that can carry adducts.
-protocol Ionizable {
-    var masses: MassContainer { get }
-
-    var adducts: [Adduct] {
-        get set
-    }
-}
-
 extension Dalton {
     public func formattedString(fractions: Int) -> String {
         formatted(fractionDigits: fractions)
     }
 }
 
-extension Array where Element: Chain {
-    public func protonated(chargeStates: ClosedRange<Charge>) throws -> [Element] {
-        guard chargeStates.lowerBound >= 0 else {
+extension Array where Element: Structure {
+    public func protonated(chargeStates: ClosedRange<Charge>) throws -> [Ion<Element>] {
+        guard chargeStates.lowerBound > 0 else {
             throw BioSwiftDiagnostics.logged(MassCalculationError.invalidChargeState(chargeStates.lowerBound))
         }
         return flatMap { sequence in
             chargeStates.map { charge in
-                var chargedSequence = sequence
-                chargedSequence.adducts = [Adduct](repeating: protonAdduct, count: charge)
-                return chargedSequence
+                try! Ion(
+                    structure: sequence,
+                    adducts: [Adduct](repeating: protonAdduct, count: charge))
             }
         }
     }

@@ -21,7 +21,6 @@ public struct Nucleotide: Residue, Codable, Sendable {
     public let nucleicAcidType: NucleicAcidType
 
     public var modification: Modification?
-    public var adducts: [Adduct]
 
     public init(
         name: String,
@@ -39,7 +38,6 @@ public struct Nucleotide: Residue, Codable, Sendable {
         self.nucleicAcidType = nucleicAcidType
         self.represents = represents
         self.representedBy = representedBy
-        self.adducts = []
     }
 
     public init(
