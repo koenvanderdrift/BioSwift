@@ -20,7 +20,11 @@
 import Foundation
 
 /// Calculates McLuckey terminal product ions from an explicitly charged oligonucleotide.
-public final class OligonucleotideFragmenter<ChainType: NucleicAcidChain> {
+public final class OligonucleotideFragmenter<ChainType: NucleicAcidChain>: Fragmenter {
+    public typealias FragmentType = OligonucleotideFragmentType
+
+    public static var defaultFragmentCharge: Charge { -1 }
+
     public let precursor: Ion<ChainType>
 
     public init(precursor: Ion<ChainType>) {
@@ -29,25 +33,13 @@ public final class OligonucleotideFragmenter<ChainType: NucleicAcidChain> {
 
     public var oligonucleotide: ChainType { precursor.structure }
 
-    private var productAdductCombinations: [[Adduct]] {
-        precursor.adductCombinations(maximumAbsoluteCharge: 2)
-    }
-
     public lazy var fragments: [Ion<OligonucleotideFragment<ChainType>>] =
         precursorIons() + fivePrimeIons() + threePrimeIons()
 
-    private func ionize(
-        _ fragment: OligonucleotideFragment<ChainType>,
-        with adducts: [Adduct]
-    ) -> Ion<OligonucleotideFragment<ChainType>>? {
-        try? fragment.ionized(with: adducts)
-    }
-
     public func precursorIons() -> [Ion<OligonucleotideFragment<ChainType>>] {
         let fragment = OligonucleotideFragment(
-            chain: fragmentChain(
-                residues: oligonucleotide.residues,
-                range: oligonucleotide.residues.startIndex..<oligonucleotide.residues.endIndex),
+            chain: oligonucleotide.fragmentChain(
+                in: oligonucleotide.residues.startIndex..<oligonucleotide.residues.endIndex),
             fragmentType: .precursorIon)
 
         return ionize(fragment, with: precursor.adducts).map { [$0] } ?? []
@@ -66,9 +58,7 @@ public final class OligonucleotideFragmenter<ChainType: NucleicAcidChain> {
         for adducts in productAdductCombinations {
             for index in 1..<oligonucleotide.residues.count {
                 let range = oligonucleotide.residues.startIndex..<index
-                let chain = fragmentChain(
-                    residues: Array(oligonucleotide.residues[range]),
-                    range: range)
+                let chain = oligonucleotide.fragmentChain(in: range)
 
                 for type in fragmentTypes {
                     let fragment = OligonucleotideFragment(
@@ -98,9 +88,7 @@ public final class OligonucleotideFragmenter<ChainType: NucleicAcidChain> {
             for index in 1..<oligonucleotide.residues.count {
                 let startIndex = oligonucleotide.residues.index(endIndex, offsetBy: -index)
                 let range = startIndex..<endIndex
-                let chain = fragmentChain(
-                    residues: Array(oligonucleotide.residues[range]),
-                    range: range)
+                let chain = oligonucleotide.fragmentChain(in: range)
 
                 for type in fragmentTypes {
                     let fragment = OligonucleotideFragment(
@@ -117,23 +105,4 @@ public final class OligonucleotideFragmenter<ChainType: NucleicAcidChain> {
         return result
     }
 
-    public func fragment(
-        at index: Int,
-        for type: OligonucleotideFragmentType,
-        with charge: Charge = -1
-    ) -> Ion<OligonucleotideFragment<ChainType>>? {
-        fragments.first {
-            $0.structure.fragmentType == type
-                && $0.structure.index == index
-                && $0.charge == charge
-        }
-    }
-
-    private func fragmentChain(residues: [Nucleotide], range: Range<Int>) -> ChainType {
-        var chain = ChainType(residues: residues)
-        chain.name = oligonucleotide.name
-        chain.range = range
-        chain.parentLength = oligonucleotide.residueCount
-        return chain
-    }
 }

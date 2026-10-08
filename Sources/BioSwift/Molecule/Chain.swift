@@ -531,6 +531,13 @@ extension Chain {
         return subChain
     }
 
+    /// Returns a chain slice carrying its position and length in the parent chain.
+    public func fragmentChain(in range: Range<Int>) -> Self {
+        var fragment = subChain(range: range)
+        fragment.parentLength = parentLength > 0 ? parentLength : residueCount
+        return fragment
+    }
+
     public func removing(_ range: Range<Int>) -> Self {
         let validRange = range.clamped(toSequenceLength: residues.count)
 

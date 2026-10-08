@@ -9,7 +9,12 @@
 import Foundation
 
 /// Calculates common peptide product ions from an explicitly charged precursor ion.
-public final class PeptideFragmenter {
+public final class PeptideFragmenter: Fragmenter {
+    public typealias ChainType = Peptide
+    public typealias FragmentType = PeptideFragmentType
+
+    public static var defaultFragmentCharge: Charge { 1 }
+
     public let precursor: Ion<Peptide>
 
     public init(precursor: Ion<Peptide>) {
@@ -18,16 +23,8 @@ public final class PeptideFragmenter {
 
     public var peptide: Peptide { precursor.structure }
 
-    private var productAdductCombinations: [[Adduct]] {
-        precursor.adductCombinations(maximumAbsoluteCharge: 2)
-    }
-
     public lazy var fragments: [Ion<PeptideFragment>] =
         precursorIons() + immoniumIons() + nTerminalIons() + cTerminalIons()
-
-    private func ionize(_ fragment: PeptideFragment, with adducts: [Adduct]) -> Ion<PeptideFragment>? {
-        try? fragment.ionized(with: adducts)
-    }
 
     func precursorIons() -> [Ion<PeptideFragment>] {
         let precursorFragment = PeptideFragment(
@@ -152,13 +149,4 @@ public final class PeptideFragmenter {
         return result.reversed()
     }
 
-    public func fragment(
-        at index: Int,
-        for type: PeptideFragmentType,
-        with charge: Charge = 1
-    ) -> Ion<PeptideFragment>? {
-        fragments.first {
-            $0.fragmentType == type && $0.index == index && $0.charge == charge
-        }
-    }
 }
