@@ -19,6 +19,39 @@ public struct BioMolecule<ChainType: Chain> {
     }
 }
 
+extension BioMolecule where ChainType: SequenceInitializableChain {
+    public init(sequence: String) throws {
+        self.init(chains: [
+            try ChainType(sequence: sequence, name: "", id: UUID())
+        ])
+    }
+
+    public init(sequences: [String]) throws {
+        self.init(chains: try sequences.map {
+            try ChainType(sequence: $0, name: "", id: UUID())
+        })
+    }
+
+    public init(fastaRecord: FastaRecord) throws {
+        let name = fastaRecord.shortName.isEmpty ? fastaRecord.fullName : fastaRecord.shortName
+        self.init(chains: [
+            try ChainType(sequence: fastaRecord.sequence, name: name, id: UUID())
+        ])
+    }
+
+    public init(residues: [ChainType.ResidueType]) {
+        self.init(chains: [ChainType(residues: residues)])
+    }
+
+    public func truncate(by range: Range<Int>) throws -> Self {
+        guard let chain = chains.first else {
+            throw BioSwiftDiagnostics.logged(CrossLinkError.invalidChainIndex(0))
+        }
+
+        return Self(chains: [try chain.removingResidues(in: range)])
+    }
+}
+
 extension BioMolecule: Codable where ChainType: Codable {
     private enum CodingKeys: String, CodingKey {
         case chains
@@ -77,7 +110,7 @@ extension BioMolecule {
     }
 
     /// The residues of the first chain, or an empty array when the molecule has no chains.
-    public var residues: [any Residue] {
+    public var residues: [ChainType.ResidueType] {
         residues(chainIndex: 0)
     }
 
@@ -155,7 +188,25 @@ extension BioMolecule {
         chain(named: chainName)?.residueCount
     }
 
-    public func residues(chainIndex: Int) -> [any Residue] {
+    public func residue(
+        at location: Int,
+        chainIndex: Int = 0
+    ) -> ChainType.ResidueType? {
+        guard chains.indices.contains(chainIndex) else {
+            return nil
+        }
+
+        return chains[chainIndex].residue(at: location)
+    }
+
+    public func residue(
+        at location: Int,
+        chainName: String
+    ) -> ChainType.ResidueType? {
+        chain(named: chainName)?.residue(at: location)
+    }
+
+    public func residues(chainIndex: Int) -> [ChainType.ResidueType] {
         guard chains.indices.contains(chainIndex) else {
             return []
         }
@@ -163,7 +214,7 @@ extension BioMolecule {
         return chains[chainIndex].residues
     }
 
-    public func residues(chainName: String) -> [any Residue]? {
+    public func residues(chainName: String) -> [ChainType.ResidueType]? {
         chain(named: chainName)?.residues
     }
 

@@ -25,15 +25,7 @@ public struct Peptide: AminoAcidChain, Codable, Equatable, Sendable {
         residues = try Self.createResidues(from: sequence)
     }
 
-    public init(residues: [AminoAcid]) {
-        self.init(residues: residues, name: "")
-    }
-
-    public init(residues: [AminoAcid], id: UUID) {
-        self.init(residues: residues, name: "", id: id)
-    }
-
-    public init(residues: [AminoAcid], name: String, id: UUID = UUID()) {
+    public init(residues: [AminoAcid], name: String, id: UUID) {
         self.id = id
         self.name = name
         self.residues = residues

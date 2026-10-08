@@ -34,7 +34,12 @@ public protocol Chain: Identifiable {
         get set
     }
 
-    init(residues: [ResidueType])
+    init(residues: [ResidueType], name: String, id: UUID)
+}
+
+/// A chain that can validate and construct its residues from a biological sequence.
+public protocol SequenceInitializableChain: Chain {
+    init(sequence: String, name: String, id: UUID) throws
 }
 
 /// Errors produced by validated structural edits to a chain.
@@ -52,6 +57,38 @@ public enum SequenceValidationError: Error, Equatable, Sendable {
 }
 
 extension Chain {
+    public init(residues: [ResidueType]) {
+        self.init(residues: residues, name: "", id: UUID())
+    }
+
+    public init(residues: [ResidueType], id: UUID) {
+        self.init(residues: residues, name: "", id: id)
+    }
+
+    public init(residues: [ResidueType], name: String) {
+        self.init(residues: residues, name: name, id: UUID())
+    }
+
+    static func parseResidues(
+        from sequence: String,
+        sequenceType: String,
+        lookup: (Character) throws -> ResidueType?
+    ) throws -> [ResidueType] {
+        try sequence.enumerated().map { position, character in
+            guard let residue = try lookup(character) else {
+                throw BioSwiftDiagnostics.logged(
+                    SequenceValidationError.invalidResidue(
+                        character,
+                        position: position,
+                        sequenceType: sequenceType
+                    )
+                )
+            }
+
+            return residue
+        }
+    }
+
     public static func == (lhs: Self, rhs: Self) -> Bool {
         lhs.sequenceString == rhs.sequenceString && lhs.name == rhs.name
     }
@@ -136,7 +173,7 @@ extension Chain {
     }
 }
 
-public protocol AminoAcidChain: Chain, Structure where ResidueType == AminoAcid {
+public protocol AminoAcidChain: SequenceInitializableChain, Structure where ResidueType == AminoAcid {
     var nTerminal: Modification {
         get set
     }
@@ -149,13 +186,9 @@ public protocol AminoAcidChain: Chain, Structure where ResidueType == AminoAcid 
 extension AminoAcidChain {
     static func createResidues(from sequence: String) throws -> [AminoAcid] {
         let references = try AminoAcidReferenceDefaults.loadBundled()
-        return try sequence.enumerated().map { position, character in
-            guard let residue = references.aminoAcid(identifier: String(character)) else {
-                throw BioSwiftDiagnostics.logged(
-                    SequenceValidationError.invalidResidue(
-                        character, position: position, sequenceType: "protein"))
-            }
-            return residue
+
+        return try parseResidues(from: sequence, sequenceType: "protein") { character in
+            references.aminoAcid(identifier: String(character))
         }
     }
 

@@ -12,32 +12,6 @@ import Foundation
 public typealias Protein = BioMolecule<ProteinChain>
 
 extension BioMolecule where ChainType == ProteinChain {
-    public init(sequence: String) throws {
-        self.init(chains: [try ProteinChain(sequence: sequence)])
-    }
-
-    public init(sequences: [String]) throws {
-        self.init(chains: try sequences.map {
-            try ProteinChain(sequence: $0)
-        })
-    }
-
-    public init(fastaRecord: FastaRecord) throws {
-        let name = fastaRecord.shortName.isEmpty ? fastaRecord.fullName : fastaRecord.shortName
-        self.init(chains: [try ProteinChain(sequence: fastaRecord.sequence, name: name)])
-    }
-
-    public init(residues: [AminoAcid]) {
-        self.init(chains: [ProteinChain(residues: residues)])
-    }
-
-    public func truncate(by range: Range<Int>) throws -> Protein {
-        guard let chain = chains.first else {
-            throw BioSwiftDiagnostics.logged(CrossLinkError.invalidChainIndex(0))
-        }
-        return Protein(chains: [try chain.removingResidues(in: range)])
-    }
-
     public var nTermModifications: [Modification] {
         get throws {
             if let nTermAA = residues.first {
@@ -113,30 +87,22 @@ extension BioMolecule where ChainType == ProteinChain {
     }
 
     public func aminoAcid(at location: Int, chainIndex: Int = 0) -> AminoAcid? {
-        let aminoAcids = aminoAcids(chainIndex: chainIndex)
-        guard aminoAcids.indices.contains(location) else {
-            return nil
-        }
-
-        return aminoAcids[location]
+        residue(at: location, chainIndex: chainIndex)
     }
 
     public func aminoAcid(at location: Int, chainName: String) -> AminoAcid? {
-        guard let aminoAcids = aminoAcids(chainName: chainName), aminoAcids.indices.contains(location) else {
-            return nil
-        }
-        return aminoAcids[location]
+        residue(at: location, chainName: chainName)
     }
 
     public var aminoAcids: [AminoAcid] {
-        aminoAcids(chainIndex: 0)
+        residues
     }
 
     public func aminoAcids(chainIndex: Int) -> [AminoAcid] {
-        residues(chainIndex: chainIndex) as? [AminoAcid] ?? []
+        residues(chainIndex: chainIndex)
     }
 
     public func aminoAcids(chainName: String) -> [AminoAcid]? {
-        chain(named: chainName)?.residues
+        residues(chainName: chainName)
     }
 }
