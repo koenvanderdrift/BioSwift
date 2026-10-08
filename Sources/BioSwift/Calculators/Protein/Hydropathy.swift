@@ -52,7 +52,7 @@ public enum HydropathyError: Error, Equatable, Sendable {
     case invalidWindowSize(Int, residueCount: Int)
 }
 
-public class IsoelectricPointCalculator {
+public struct IsoelectricPointCalculator: Sendable {
     public var residues: [AminoAcid] = []
 
     public init(residues: [AminoAcid]) {

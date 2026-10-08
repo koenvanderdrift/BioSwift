@@ -33,8 +33,9 @@ public final class OligonucleotideFragmenter<ChainType: NucleicAcidChain>: Fragm
 
     public var oligonucleotide: ChainType { precursor.structure }
 
-    public lazy var fragments: [Ion<OligonucleotideFragment<ChainType>>] =
+    public var fragments: [Ion<OligonucleotideFragment<ChainType>>] {
         precursorIons() + fivePrimeIons() + threePrimeIons()
+    }
 
     public func precursorIons() -> [Ion<OligonucleotideFragment<ChainType>>] {
         let fragment = OligonucleotideFragment(
@@ -106,3 +107,5 @@ public final class OligonucleotideFragmenter<ChainType: NucleicAcidChain>: Fragm
     }
 
 }
+
+extension OligonucleotideFragmenter: Sendable where ChainType: Sendable {}

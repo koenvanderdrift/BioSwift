@@ -11,7 +11,7 @@ import Foundation
 /// ProteinDigester produces a ``Peptides`` array.
 ///  It takes an ``Enzyme`` and optionally a missedCleavages paramenter
 ///
-public class ProteinDigester {
+public final class ProteinDigester: Sendable {
     public let protein: Protein
     
     public init(protein: Protein) {

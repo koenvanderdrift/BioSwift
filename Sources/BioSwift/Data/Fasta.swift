@@ -97,7 +97,7 @@ public func rna(fromFastaFile fileName: String, in bundle: Bundle = .main) async
 
 /// FastaParser takes a text file as input and produces a ``FastaRecord`` array.
 /// Currently, it can process SwissProt, UPS, IPI, and Ensemble files
-public final class FastaParser {
+public final class FastaParser: Sendable {
     struct RawRecord {
         let info: String
         let sequence: String
