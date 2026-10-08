@@ -3,6 +3,7 @@
 //  BioSwift
 //
 
+import Foundation
 import Testing
 
 @testable import BioSwift
@@ -52,6 +53,39 @@ import Testing
 
         #expect(throws: IonError.zeroCharge) {
             try water.ionized(with: [protonAdduct, negativeProtonAdduct])
+        }
+    }
+
+    @Test func decodingValidatesAdducts() throws {
+        let encoder = JSONEncoder()
+        let decoder = JSONDecoder()
+        let validIon = try water.ionized(with: [protonAdduct])
+        let encodedIon = try encoder.encode(validIon)
+        let decodedIon = try decoder.decode(Ion<FunctionalGroup>.self, from: encodedIon)
+
+        #expect(decodedIon == validIon)
+
+        var payload = try #require(
+            JSONSerialization.jsonObject(with: encodedIon) as? [String: Any]
+        )
+        payload["adducts"] = []
+
+        #expect(throws: IonError.noAdducts) {
+            try decoder.decode(
+                Ion<FunctionalGroup>.self,
+                from: JSONSerialization.data(withJSONObject: payload)
+            )
+        }
+
+        payload["adducts"] = try JSONSerialization.jsonObject(
+            with: encoder.encode([protonAdduct, negativeProtonAdduct])
+        )
+
+        #expect(throws: IonError.zeroCharge) {
+            try decoder.decode(
+                Ion<FunctionalGroup>.self,
+                from: JSONSerialization.data(withJSONObject: payload)
+            )
         }
     }
 }

@@ -28,12 +28,16 @@ public enum FormulaParser {
 
     public static func parse(_ string: String) throws -> Formula {
         do {
-            let countedElements = try parseElements(from: string)
-            return Formula(inputString: string, countedElements: countedElements)
+            return try parseUnlogged(string)
         } catch {
             BioSwiftDiagnostics.log(error)
             throw error
         }
+    }
+
+    static func parseUnlogged(_ string: String) throws -> Formula {
+        let countedElements = try parseElements(from: string)
+        return Formula(inputString: string, countedElements: countedElements)
     }
 
     public static func parse(elements elementsDictionary: [String: Int]) throws -> Formula {
@@ -211,11 +215,37 @@ public struct Formula: Codable, Sendable {
     }
 
     public init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
+        do {
+            let container = try decoder.container(keyedBy: CodingKeys.self)
 
-        inputString = try container.decode(String.self, forKey: .inputString)
-        countedElements = try container.decode([ChemicalElement: Int].self, forKey: .countedElements)
-        masses = calculateMasses()
+            inputString = try container.decode(String.self, forKey: .inputString)
+            countedElements = try container.decode([ChemicalElement: Int].self, forKey: .countedElements)
+
+            if !inputString.isEmpty {
+                let parsedElements: [ChemicalElement: Int]
+                do {
+                    parsedElements = try FormulaParser.parseUnlogged(inputString).countedElements
+                } catch {
+                    throw DecodingError.dataCorruptedError(
+                        forKey: .inputString,
+                        in: container,
+                        debugDescription: "inputString is not a valid molecular formula"
+                    )
+                }
+
+                guard parsedElements == countedElements else {
+                    throw DecodingError.dataCorruptedError(
+                        forKey: .countedElements,
+                        in: container,
+                        debugDescription: "countedElements does not match inputString"
+                    )
+                }
+            }
+
+            masses = calculateMasses()
+        } catch {
+            throw BioSwiftDiagnostics.loggedDecodingFailure(error, from: decoder)
+        }
     }
 
     public func elementCount(for element: String) -> Int {

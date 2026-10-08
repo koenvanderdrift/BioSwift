@@ -39,41 +39,45 @@ public struct CleaveRestriction: Codable, Sendable {
     }
 
     public init(from decoder: Decoder) throws {
-        let container = try decoder.container(
-            keyedBy: CodingKeys.self
-        )
+        do {
+            let container = try decoder.container(
+                keyedBy: CodingKeys.self
+            )
 
-        let characters = try container.decode(
-            String.self,
-            forKey: .characters
-        )
+            let characters = try container.decode(
+                String.self,
+                forKey: .characters
+            )
 
-        // N-terminal direction (left of the cut): P1, P2, P3, P4
-        // C-terminal direction (right of the cut): P1', P2', P3', P41
+            // N-terminal direction (left of the cut): P1, P2, P3, P4
+            // C-terminal direction (right of the cut): P1', P2', P3', P41
 
-        let position = try container.decode(
-            Int.self,
-            forKey: .position
-        )
+            let position = try container.decode(
+                Int.self,
+                forKey: .position
+            )
 
-        guard !characters.isEmpty else {
-            throw BioSwiftDiagnostics.logged(DecodingError.dataCorruptedError(
-                forKey: .characters,
-                in: container,
-                debugDescription: "characters must not be empty"
-            ))
+            guard !characters.isEmpty else {
+                throw DecodingError.dataCorruptedError(
+                    forKey: .characters,
+                    in: container,
+                    debugDescription: "characters must not be empty"
+                )
+            }
+
+            guard position != 0 else {
+                throw DecodingError.dataCorruptedError(
+                    forKey: .position,
+                    in: container,
+                    debugDescription: "position 0 is the cut boundary"
+                )
+            }
+
+            self.characters = characters
+            self.position = position
+        } catch {
+            throw BioSwiftDiagnostics.loggedDecodingFailure(error, from: decoder)
         }
-
-        guard position != 0 else {
-            throw BioSwiftDiagnostics.logged(DecodingError.dataCorruptedError(
-                forKey: .position,
-                in: container,
-                debugDescription: "position 0 is the cut boundary"
-            ))
-        }
-
-        self.characters = characters
-        self.position = position
     }
 }
 

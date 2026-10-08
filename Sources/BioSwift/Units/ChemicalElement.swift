@@ -36,13 +36,17 @@ public struct ChemicalElement: Codable, Symbol, Sendable {
     }
 
     public init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
+        do {
+            let container = try decoder.container(keyedBy: CodingKeys.self)
 
-        name = try container.decode(String.self, forKey: .name)
-        symbol = try container.decode(String.self, forKey: .symbol)
-        isotopes = try container.decode([Isotope].self, forKey: .isotopes)
+            name = try container.decode(String.self, forKey: .name)
+            symbol = try container.decode(String.self, forKey: .symbol)
+            isotopes = try container.decode([Isotope].self, forKey: .isotopes)
 
-        setUp()
+            setUp()
+        } catch {
+            throw BioSwiftDiagnostics.loggedDecodingFailure(error, from: decoder)
+        }
     }
 
     public init(name: String, symbol: String, monoisotopicMass: Dalton, averageMass: Dalton) {

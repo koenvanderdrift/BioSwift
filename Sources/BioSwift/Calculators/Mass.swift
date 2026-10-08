@@ -156,10 +156,14 @@ public struct Adduct: Codable, Equatable, Sendable {
     }
 
     public init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        group = try container.decode(FunctionalGroup.self, forKey: .group)
-        charge = try container.decode(Charge.self, forKey: .charge)
-        operation = try container.decodeIfPresent(AdductOperation.self, forKey: .operation) ?? .add
+        do {
+            let container = try decoder.container(keyedBy: CodingKeys.self)
+            group = try container.decode(FunctionalGroup.self, forKey: .group)
+            charge = try container.decode(Charge.self, forKey: .charge)
+            operation = try container.decodeIfPresent(AdductOperation.self, forKey: .operation) ?? .add
+        } catch {
+            throw BioSwiftDiagnostics.loggedDecodingFailure(error, from: decoder)
+        }
     }
 }
 
@@ -206,9 +210,9 @@ extension Array where Element: Structure {
         guard chargeStates.lowerBound > 0 else {
             throw BioSwiftDiagnostics.logged(MassCalculationError.invalidChargeState(chargeStates.lowerBound))
         }
-        return flatMap { sequence in
-            chargeStates.map { charge in
-                try! Ion(
+        return try flatMap { sequence in
+            try chargeStates.map { charge in
+                try Ion(
                     structure: sequence,
                     adducts: [Adduct](repeating: protonAdduct, count: charge))
             }

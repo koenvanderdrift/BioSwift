@@ -6,6 +6,20 @@
 import OSLog
 import Synchronization
 
+private extension DecodingError {
+    var codingPath: [any CodingKey] {
+        switch self {
+        case .typeMismatch(_, let context),
+            .valueNotFound(_, let context),
+            .keyNotFound(_, let context),
+            .dataCorrupted(let context):
+            context.codingPath
+        @unknown default:
+            []
+        }
+    }
+}
+
 /// Package-wide diagnostic logging for BioSwift.
 public enum BioSwiftDiagnostics {
     private static let logger = Logger(subsystem: "com.koenvanderdrift.BioSwift", category: "Diagnostics")
@@ -51,6 +65,16 @@ public enum BioSwiftDiagnostics {
     static func logged<E: Error>(_ error: E) -> E {
         log(error)
         return error
+    }
+
+    static func loggedDecodingFailure<E: Error>(_ error: E, from decoder: Decoder) -> E {
+        if let decodingError = error as? DecodingError,
+            decodingError.codingPath.count > decoder.codingPath.count + 1
+        {
+            return error
+        }
+
+        return logged(error)
     }
 
     static func setObserver(_ observer: (@Sendable (Level, String) -> Void)?) {

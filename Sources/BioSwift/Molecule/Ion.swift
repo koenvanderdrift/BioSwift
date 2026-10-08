@@ -41,7 +41,31 @@ public struct Ion<StructureType: Structure>: Structure {
     }
 }
 
-extension Ion: Codable where StructureType: Codable {}
+extension Ion: Codable where StructureType: Codable {
+    private enum CodingKeys: String, CodingKey {
+        case structure
+        case adducts
+    }
+
+    public init(from decoder: Decoder) throws {
+        do {
+            let container = try decoder.container(keyedBy: CodingKeys.self)
+            let structure = try container.decode(StructureType.self, forKey: .structure)
+            let adducts = try container.decode([Adduct].self, forKey: .adducts)
+            try self.init(structure: structure, adducts: adducts)
+        } catch let error as IonError {
+            throw error
+        } catch {
+            throw BioSwiftDiagnostics.loggedDecodingFailure(error, from: decoder)
+        }
+    }
+
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(structure, forKey: .structure)
+        try container.encode(adducts, forKey: .adducts)
+    }
+}
 extension Ion: Equatable where StructureType: Equatable {}
 extension Ion: Sendable where StructureType: Sendable {}
 

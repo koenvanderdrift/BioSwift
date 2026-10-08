@@ -62,7 +62,7 @@ public struct Glycan: Structure, Codable, CustomStringConvertible, Hashable, Sen
         } catch let error as GlycanError {
             throw error
         } catch {
-            throw BioSwiftDiagnostics.logged(error)
+            throw BioSwiftDiagnostics.loggedDecodingFailure(error, from: decoder)
         }
     }
 
@@ -186,24 +186,7 @@ public struct Glycan: Structure, Codable, CustomStringConvertible, Hashable, Sen
     }
 
     private func validate() throws {
-        var identifiers: Set<UUID> = []
-        for node in nodes {
-            guard identifiers.insert(node.id).inserted else {
-                throw BioSwiftDiagnostics.logged(GlycanError.duplicateNodeID(node.id))
-            }
-
-            var positions: Set<GlycosidicPosition> = []
-            for branch in node.branches where branch.linkage.acceptorPosition != .unknown {
-                guard positions.insert(branch.linkage.acceptorPosition).inserted else {
-                    throw BioSwiftDiagnostics.logged(
-                        GlycanError.acceptorPositionOccupied(
-                            nodeID: node.id,
-                            position: branch.linkage.acceptorPosition
-                        )
-                    )
-                }
-            }
-        }
+        try root.validate()
     }
 }
 

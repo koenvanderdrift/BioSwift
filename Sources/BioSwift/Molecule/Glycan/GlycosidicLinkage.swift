@@ -26,7 +26,7 @@ public struct GlycosidicPosition: Codable, Hashable, Sendable {
         } catch let error as GlycanError {
             throw error
         } catch {
-            throw BioSwiftDiagnostics.logged(error)
+            throw BioSwiftDiagnostics.loggedDecodingFailure(error, from: decoder)
         }
     }
 
@@ -68,7 +68,7 @@ public struct GlycosidicLinkage: Codable, Hashable, Sendable {
         } catch let error as GlycanError {
             throw error
         } catch {
-            throw BioSwiftDiagnostics.logged(error)
+            throw BioSwiftDiagnostics.loggedDecodingFailure(error, from: decoder)
         }
     }
 

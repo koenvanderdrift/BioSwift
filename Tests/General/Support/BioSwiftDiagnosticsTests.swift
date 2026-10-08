@@ -1,3 +1,4 @@
+import Foundation
 import Synchronization
 import Testing
 
@@ -108,5 +109,63 @@ struct BioSwiftDiagnosticsTests {
             "emptyMonosaccharideSequence",
             "invalidGlycosidicPosition(0)",
         ])
+    }
+
+    @Test func customDecoderFailuresUseErrorLevel() throws {
+        let diagnostics = Mutex<[(BioSwiftDiagnostics.Level, String)]>([])
+        BioSwiftDiagnostics.setObserver { level, message in
+            diagnostics.withLock { $0.append((level, message)) }
+        }
+        defer { BioSwiftDiagnostics.setObserver(nil) }
+
+        let data = Data("{}".utf8)
+        let decoder = JSONDecoder()
+        let decodeFailures: [() throws -> Void] = [
+            { _ = try decoder.decode(Adduct.self, from: data) },
+            { _ = try decoder.decode(CleaveRestriction.self, from: data) },
+            { _ = try decoder.decode(ChemicalElement.self, from: data) },
+            { _ = try decoder.decode(DNA.self, from: data) },
+            { _ = try decoder.decode(Formula.self, from: data) },
+        ]
+
+        for decode in decodeFailures {
+            do {
+                try decode()
+                Issue.record("Expected decoding to fail")
+            } catch {
+                #expect(error is DecodingError)
+            }
+        }
+
+        let recorded = diagnostics.withLock { $0 }
+        #expect(recorded.count == decodeFailures.count)
+        #expect(recorded.allSatisfy { $0.0 == .error })
+    }
+
+    @Test func nestedDecoderFailureIsLoggedOnce() throws {
+        let diagnostics = Mutex<[(BioSwiftDiagnostics.Level, String)]>([])
+        BioSwiftDiagnostics.setObserver { level, message in
+            diagnostics.withLock { $0.append((level, message)) }
+        }
+        defer { BioSwiftDiagnostics.setObserver(nil) }
+
+        var payload = try #require(
+            JSONSerialization.jsonObject(with: JSONEncoder().encode(Monosaccharide.galactose))
+                as? [String: Any]
+        )
+        var formula = try #require(payload["formula"] as? [String: Any])
+        formula["inputString"] = "not a formula"
+        payload["formula"] = formula
+
+        #expect(throws: DecodingError.self) {
+            try JSONDecoder().decode(
+                Monosaccharide.self,
+                from: JSONSerialization.data(withJSONObject: payload)
+            )
+        }
+
+        let recorded = diagnostics.withLock { $0 }
+        #expect(recorded.count == 1)
+        #expect(recorded.first?.0 == .error)
     }
 }

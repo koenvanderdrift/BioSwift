@@ -24,6 +24,26 @@ public struct RNAChain: NucleicAcidChain, Codable, Equatable, Sendable {
         self.residues = residues
     }
 
+    private enum CodingKeys: String, CodingKey {
+        case id
+        case name
+        case residues
+        case range
+        case parentLength
+    }
+
+    public init(from decoder: Decoder) throws {
+        do {
+            let container = try decoder.container(keyedBy: CodingKeys.self)
+            id = try container.decode(UUID.self, forKey: .id)
+            name = try container.decode(String.self, forKey: .name)
+            residues = try container.decode([Nucleotide].self, forKey: .residues)
+            range = try container.decodeIfPresent(Range<Int>.self, forKey: .range) ?? zeroRange
+            parentLength = try container.decodeIfPresent(Int.self, forKey: .parentLength) ?? 0
+        } catch {
+            throw BioSwiftDiagnostics.loggedDecodingFailure(error, from: decoder)
+        }
+    }
 }
 
 /// RNA contains one or more nucleotide strands.

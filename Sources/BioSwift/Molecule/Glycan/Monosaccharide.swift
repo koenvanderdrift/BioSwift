@@ -139,7 +139,7 @@ public struct Monosaccharide: Structure, Codable, CustomStringConvertible, Senda
                 ringForm: try container.decode(MonosaccharideRingForm.self, forKey: .ringForm)
             )
         } catch {
-            throw BioSwiftDiagnostics.logged(error)
+            throw BioSwiftDiagnostics.loggedDecodingFailure(error, from: decoder)
         }
     }
 

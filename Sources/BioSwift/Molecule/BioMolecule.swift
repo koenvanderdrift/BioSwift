@@ -59,9 +59,13 @@ extension BioMolecule: Codable where ChainType: Codable {
     }
 
     public init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        chains = try container.decode([ChainType].self, forKey: .chains)
-        crossLinks = try container.decodeIfPresent([CrossLink].self, forKey: .crossLinks) ?? []
+        do {
+            let container = try decoder.container(keyedBy: CodingKeys.self)
+            chains = try container.decode([ChainType].self, forKey: .chains)
+            crossLinks = try container.decodeIfPresent([CrossLink].self, forKey: .crossLinks) ?? []
+        } catch {
+            throw BioSwiftDiagnostics.loggedDecodingFailure(error, from: decoder)
+        }
     }
 
     public func encode(to encoder: Encoder) throws {

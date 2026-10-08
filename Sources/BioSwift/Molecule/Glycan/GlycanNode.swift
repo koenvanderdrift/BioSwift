@@ -25,6 +25,33 @@ public struct GlycanNode: Identifiable, Codable, Sendable {
         self.branches = branches
     }
 
+    private enum CodingKeys: String, CodingKey {
+        case id
+        case monosaccharide
+        case branches
+    }
+
+    public init(from decoder: Decoder) throws {
+        do {
+            let container = try decoder.container(keyedBy: CodingKeys.self)
+            id = try container.decode(UUID.self, forKey: .id)
+            monosaccharide = try container.decode(Monosaccharide.self, forKey: .monosaccharide)
+            branches = try container.decode([GlycanBranch].self, forKey: .branches)
+            try validate()
+        } catch let error as GlycanError {
+            throw error
+        } catch {
+            throw BioSwiftDiagnostics.loggedDecodingFailure(error, from: decoder)
+        }
+    }
+
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(id, forKey: .id)
+        try container.encode(monosaccharide, forKey: .monosaccharide)
+        try container.encode(branches, forKey: .branches)
+    }
+
     public var isLeaf: Bool { branches.isEmpty }
 
     var formula: Formula {
@@ -50,6 +77,27 @@ public struct GlycanNode: Identifiable, Codable, Sendable {
                     acceptor: monosaccharide
                 )
             ]
+        }
+    }
+
+    func validate() throws {
+        var identifiers: Set<UUID> = []
+        for node in nodesDepthFirst {
+            guard identifiers.insert(node.id).inserted else {
+                throw BioSwiftDiagnostics.logged(GlycanError.duplicateNodeID(node.id))
+            }
+
+            var positions: Set<GlycosidicPosition> = []
+            for branch in node.branches where branch.linkage.acceptorPosition != .unknown {
+                guard positions.insert(branch.linkage.acceptorPosition).inserted else {
+                    throw BioSwiftDiagnostics.logged(
+                        GlycanError.acceptorPositionOccupied(
+                            nodeID: node.id,
+                            position: branch.linkage.acceptorPosition
+                        )
+                    )
+                }
+            }
         }
     }
 
