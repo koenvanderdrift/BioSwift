@@ -38,8 +38,14 @@ import Testing
         let alphaGlucose = Monosaccharide.glucose.form(anomer: .alpha, ring: .pyranose)
         let oneToFour = try GlycosidicLinkage(donorPosition: 1, acceptorPosition: 4)
         let glucoseOnly = Glycan(monosaccharide: glucose)
-        let maltose = glucoseOnly.prependingAtNonReducingEnd(alphaGlucose, linkage: oneToFour)
-        let maltotriose = maltose.prependingAtNonReducingEnd(alphaGlucose, linkage: oneToFour)
+        let maltose = try glucoseOnly.prependingAtNonReducingEnd(
+            alphaGlucose,
+            linkage: oneToFour
+        )
+        let maltotriose = try maltose.prependingAtNonReducingEnd(
+            alphaGlucose,
+            linkage: oneToFour
+        )
         #expect(glucoseOnly.monosaccharideCount == 1)
         #expect(maltose.description == "Glcp(α1→4)Glcp")
         #expect(maltotriose.monosaccharideCount == 3)
@@ -87,6 +93,109 @@ import Testing
         #expect(lactose.composition[glucose] == 1)
     }
 
+    @Test func rootedGlycanSupportsBranches() throws {
+        let coreMannose = Monosaccharide.mannose.form(
+            anomer: .beta,
+            ring: .pyranose
+        )
+        let branchMannose = Monosaccharide.mannose.form(
+            anomer: .alpha,
+            ring: .pyranose
+        )
+        var glycan = Glycan(monosaccharide: coreMannose, name: "Branched mannose")
+
+        let alphaOneToThree = try GlycosidicLinkage(
+            donorPosition: 1,
+            acceptorPosition: 3
+        )
+        let alphaOneToSix = try GlycosidicLinkage(
+            donorPosition: 1,
+            acceptorPosition: 6
+        )
+
+        let firstBranchID = try glycan.add(
+            branchMannose,
+            to: glycan.root.id,
+            linkage: alphaOneToThree
+        )
+        let secondBranchID = try glycan.add(
+            branchMannose,
+            to: glycan.root.id,
+            linkage: alphaOneToSix
+        )
+
+        #expect(glycan.root.branches.count == 2)
+        #expect(glycan.node(id: firstBranchID)?.monosaccharide == branchMannose)
+        #expect(glycan.node(id: secondBranchID)?.monosaccharide == branchMannose)
+        #expect(glycan.nonReducingEnds.count == 2)
+        #expect(glycan.monosaccharideCount == 3)
+        #expect(glycan.description == "Manp(α1→3)[Manp(α1→6)]Manp")
+        #expect(glycan.formula.formulaString == "C18H32O16")
+        #expect(glycan.monoisotopicMass.rounded(scale: 6) == decimal("504.169035"))
+
+        let encoded = try JSONEncoder().encode(glycan)
+        let decoded = try JSONDecoder().decode(Glycan.self, from: encoded)
+        #expect(decoded == glycan)
+    }
+
+    @Test func branchedGlycanProvidesIUPACNotations() throws {
+        let reducingMannose = Monosaccharide.mannose.form(
+            anomer: .unspecified,
+            ring: .pyranose
+        )
+        let alphaMannose = Monosaccharide.mannose.form(
+            anomer: .alpha,
+            ring: .pyranose
+        )
+        var glycan = Glycan(monosaccharide: reducingMannose)
+
+        // Add these in reverse display order to verify canonical branch ordering.
+        try glycan.add(
+            alphaMannose,
+            to: glycan.root.id,
+            linkage: GlycosidicLinkage(donorPosition: 1, acceptorPosition: 6)
+        )
+        try glycan.add(
+            alphaMannose,
+            to: glycan.root.id,
+            linkage: GlycosidicLinkage(donorPosition: 1, acceptorPosition: 3)
+        )
+
+        #expect(glycan.iupacCondensed == "Man(a1-3)[Man(a1-6)]Man")
+        #expect(glycan.iupacExtended == "α-D-Manp-(1→3)-[α-D-Manp-(1→6)]-D-Manp")
+    }
+
+    @Test func linearGlycanProvidesIUPACNotations() throws {
+        let lactose = try Glycan(
+            monosaccharides: [galactose, glucose],
+            linkages: [GlycosidicLinkage(donorPosition: 1, acceptorPosition: 4)]
+        )
+
+        #expect(lactose.iupacCondensed == "Gal(b1-4)Glc")
+        #expect(lactose.iupacExtended == "β-D-Galp-(1→4)-D-Glcp")
+    }
+
+    @Test func rootedGlycanRejectsConflictingBranchesAndMissingParents() throws {
+        let mannose = Monosaccharide.mannose.form(anomer: .alpha, ring: .pyranose)
+        let linkage = try GlycosidicLinkage(donorPosition: 1, acceptorPosition: 3)
+        var glycan = Glycan(monosaccharide: glucose)
+        try glycan.add(mannose, to: glycan.root.id, linkage: linkage)
+
+        #expect(
+            throws: GlycanError.acceptorPositionOccupied(
+                nodeID: glycan.root.id,
+                position: try GlycosidicPosition(3)
+            )
+        ) {
+            try glycan.add(mannose, to: glycan.root.id, linkage: linkage)
+        }
+
+        let missingID = UUID()
+        #expect(throws: GlycanError.nodeNotFound(missingID)) {
+            try glycan.add(mannose, to: missingID, linkage: linkage)
+        }
+    }
+
     @Test func constructionValidatesSequenceAndLinkageCounts() {
         #expect(throws: GlycanError.emptyMonosaccharideSequence) {
             try Glycan(monosaccharides: [], linkages: [])
@@ -113,7 +222,7 @@ import Testing
         let invalidJSON = """
         {"name":"Invalid","monosaccharides":[],"linkages":[]}
         """.data(using: .utf8)!
-        #expect(throws: GlycanError.emptyMonosaccharideSequence) {
+        #expect(throws: DecodingError.self) {
             try decoder.decode(Glycan.self, from: invalidJSON)
         }
     }
