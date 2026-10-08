@@ -87,4 +87,26 @@ struct BioSwiftDiagnosticsTests {
         #expect(recorded.map(\.0) == [.error, .error])
         #expect(recorded.map(\.1) == ["noAdducts", "zeroCharge"])
     }
+
+    @Test func glycanErrorsUseErrorLevel() throws {
+        let diagnostics = Mutex<[(BioSwiftDiagnostics.Level, String)]>([])
+        BioSwiftDiagnostics.setObserver { level, message in
+            diagnostics.withLock { $0.append((level, message)) }
+        }
+        defer { BioSwiftDiagnostics.setObserver(nil) }
+
+        #expect(throws: GlycanError.emptyMonosaccharideSequence) {
+            try Glycan(monosaccharides: [], linkages: [])
+        }
+        #expect(throws: GlycanError.invalidGlycosidicPosition(0)) {
+            try GlycosidicPosition(0)
+        }
+
+        let recorded = diagnostics.withLock { $0 }
+        #expect(recorded.map(\.0) == [.error, .error])
+        #expect(recorded.map(\.1) == [
+            "emptyMonosaccharideSequence",
+            "invalidGlycosidicPosition(0)",
+        ])
+    }
 }
