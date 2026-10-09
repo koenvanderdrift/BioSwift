@@ -175,6 +175,40 @@ import Testing
         #expect(lactose.iupacExtended == "β-D-Galp-(1→4)-D-Glcp")
     }
 
+    @Test func parsesCondensedIUPACWithBranches() throws {
+        let glycan = try GlycanIUPACParser().parse("Man(a1-3)[Man(a1-6)]Man")
+
+        #expect(glycan.monosaccharideCount == 3)
+        #expect(glycan.root.branches.count == 2)
+        #expect(glycan.iupacCondensed == "Man(a1-3)[Man(a1-6)]Man")
+        #expect(glycan.iupacExtended == "α-D-Manp-(1→3)-[α-D-Manp-(1→6)]-D-Manp")
+    }
+
+    @Test func parsesExtendedIUPACAndRoundTrips() throws {
+        let notation = "β-D-Galp-(1→4)-D-Glcp"
+        let glycan = try GlycanIUPACParser().parse(notation, name: "Lactose")
+
+        #expect(glycan.name == "Lactose")
+        #expect(glycan.iupacExtended == notation)
+        #expect(glycan.iupacCondensed == "Gal(b1-4)Glc")
+        #expect(glycan.formula.formulaString == "C12H22O11")
+    }
+
+    @Test func parserAcceptsTextAnomersAndASCIIArrows() throws {
+        let glycan = try GlycanIUPACParser().parse("beta-D-Galp-(1->4)-D-Glcp")
+
+        #expect(glycan.iupacExtended == "β-D-Galp-(1→4)-D-Glcp")
+    }
+
+    @Test func parserReportsUnknownResiduesAndMalformedBranches() {
+        #expect(throws: GlycanIUPACParserError.self) {
+            try GlycanIUPACParser().parse("Foo(a1-3)Man")
+        }
+        #expect(throws: GlycanIUPACParserError.self) {
+            try GlycanIUPACParser().parse("Man(a1-3)[Man(a1-6)Man")
+        }
+    }
+
     @Test func rootedGlycanRejectsConflictingBranchesAndMissingParents() throws {
         let mannose = Monosaccharide.mannose.form(anomer: .alpha, ring: .pyranose)
         let linkage = try GlycosidicLinkage(donorPosition: 1, acceptorPosition: 3)
