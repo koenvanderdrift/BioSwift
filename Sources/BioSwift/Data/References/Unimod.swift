@@ -147,13 +147,17 @@ final class UnimodXMLParser: NSObject {
         let removedElements = modificationElements.filter { $0.value < 0 }
         if removedElements.isEmpty == false {
             let formula = try FormulaParser.parse(elements: removedElements, using: references)
-            reactions.append(.remove(FunctionalGroup(name: modificationTitle, formula: formula)))
+            reactions.append(.remove(.functionalGroup(
+                FunctionalGroup(name: modificationTitle, formula: formula)
+            )))
         }
 
         let addedElements = modificationElements.filter { $0.value > 0 }
         if addedElements.isEmpty == false {
             let formula = try FormulaParser.parse(elements: addedElements, using: references)
-            reactions.append(.add(FunctionalGroup(name: modificationTitle, formula: formula)))
+            reactions.append(.add(.functionalGroup(
+                FunctionalGroup(name: modificationTitle, formula: formula)
+            )))
         }
 
         return Modification(

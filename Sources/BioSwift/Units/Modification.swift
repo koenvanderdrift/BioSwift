@@ -11,12 +11,40 @@ import Foundation
 public let unmodifiedString = "Unmodified"
 public let zeroModification = Modification(name: unmodifiedString, reactions: [.undefined])
 
-public let hydrogenModification = Modification(name: "Hydrogen", reactions: [.add(hydrogen)])
-public let hydroxylModification = Modification(name: "Hydroxyl", reactions: [.add(hydroxyl)])
+public let hydrogenModification = Modification(
+    name: "Hydrogen",
+    reactions: [.add(.functionalGroup(hydrogen))]
+)
+public let hydroxylModification = Modification(
+    name: "Hydroxyl",
+    reactions: [.add(.functionalGroup(hydroxyl))]
+)
 
-public indirect enum Reaction: Codable, Sendable {
-    case add(FunctionalGroup)
-    case remove(FunctionalGroup)
+/// A chemically meaningful structure participating in a reaction.
+public enum ReactionComponent: Codable, Sendable {
+    case functionalGroup(FunctionalGroup)
+    case glycan(Glycan)
+
+    public var name: String {
+        switch self {
+        case .functionalGroup(let group): group.name
+        case .glycan(let glycan): glycan.name
+        }
+    }
+
+    public var formula: Formula {
+        switch self {
+        case .functionalGroup(let group): group.formula
+        case .glycan(let glycan): glycan.formula
+        }
+    }
+}
+
+extension ReactionComponent: Structure {}
+
+public enum Reaction: Codable, Sendable {
+    case add(ReactionComponent)
+    case remove(ReactionComponent)
     case undefined
 }
 
@@ -25,10 +53,10 @@ extension Reaction: MassRepresentable {
         var result = zeroMass
 
         switch self {
-        case .add(let group):
-            result += group.masses
-        case .remove(let group):
-            result -= group.masses
+        case .add(let component):
+            result += component.masses
+        case .remove(let component):
+            result -= component.masses
         case .undefined:
             break
         }
@@ -40,10 +68,10 @@ extension Reaction: MassRepresentable {
         var result = zeroFormula
 
         switch self {
-        case .add(let group):
-            result += group.formula
-        case .remove(let group):
-            result -= group.formula
+        case .add(let component):
+            result += component.formula
+        case .remove(let component):
+            result -= component.formula
         case .undefined:
             break
         }
@@ -113,7 +141,7 @@ public struct Modification: Codable, Sendable {
         }
         if negativeElements.count > 0 {
             let group = try FunctionalGroup(name: name, elements: negativeElements)
-            reactions.append(Reaction.remove(group))
+            reactions.append(Reaction.remove(.functionalGroup(group)))
         }
 
         let postiveElements = elements.filter {
@@ -121,7 +149,7 @@ public struct Modification: Codable, Sendable {
         }
         if postiveElements.count > 0 {
             let group = try FunctionalGroup(name: name, elements: postiveElements)
-            reactions.append(Reaction.add(group))
+            reactions.append(Reaction.add(.functionalGroup(group)))
         }
 
         self.init(

@@ -209,6 +209,32 @@ import Testing
         }
     }
 
+    @Test func reactionComponentPreservesGlycanStructureAndChemistry() throws {
+        let glycan = try GlycanIUPACParser().parse(
+            "Gal(b1-4)Glc",
+            name: "Lactose"
+        )
+        let modification = Modification(
+            name: "Lactosylation",
+            reactions: [
+                .add(.glycan(glycan)),
+                .remove(.functionalGroup(water))
+            ]
+        )
+
+        #expect(modification.formula.formulaString == "C12H20O10")
+
+        let encoded = try JSONEncoder().encode(modification)
+        let decoded = try JSONDecoder().decode(Modification.self, from: encoded)
+        guard case let .add(.glycan(decodedGlycan)) = decoded.reactions.first else {
+            Issue.record("Expected the decoded reaction to contain a glycan")
+            return
+        }
+        #expect(decodedGlycan == glycan)
+        #expect(decodedGlycan.iupacCondensed == "Gal(b1-4)Glc")
+        #expect(decoded.formula == modification.formula)
+    }
+
     @Test func rootedGlycanRejectsConflictingBranchesAndMissingParents() throws {
         let mannose = Monosaccharide.mannose.form(anomer: .alpha, ring: .pyranose)
         let linkage = try GlycosidicLinkage(donorPosition: 1, acceptorPosition: 3)

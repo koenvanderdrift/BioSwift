@@ -124,18 +124,30 @@ private struct UniProtPTMParser {
         }
 
         let keywords = record.values(for: "KW").map(removeTrailingPeriod)
-        let modification = try Modification(
-            accession: accession,
-            name: name,
-            elements: elementCounts,
-            specificities: [
-                ModificationSpecificity(
-                    site: aminoAcid.oneLetterCode,
-                    position: normalizedPosition(record.value(for: "PP")),
-                    classification: keywords.joined(separator: ", ")
-                )
-            ]
-        )
+        let specificities = [
+            ModificationSpecificity(
+                site: aminoAcid.oneLetterCode,
+                position: normalizedPosition(record.value(for: "PP")),
+                classification: keywords.joined(separator: ", ")
+            )
+        ]
+        let modification: Modification
+        if let glycan = parsedGlycan(from: name) {
+            let targetFormula = try FormulaParser.parse(elements: elementCounts, using: elements)
+            modification = Modification(
+                accession: accession,
+                name: name,
+                reactions: glycanReactions(glycan: glycan, targetFormula: targetFormula),
+                specificities: specificities
+            )
+        } else {
+            modification = try Modification(
+                accession: accession,
+                name: name,
+                elements: elementCounts,
+                specificities: specificities
+            )
+        }
 
         let metadata = ModificationMetadata(
             taxonomicRanges: record.values(for: "TR").compactMap(parseTaxonomicRange),
@@ -144,6 +156,58 @@ private struct UniProtPTMParser {
             crossReferences: record.values(for: "DR").compactMap(parseCrossReference)
         )
         return (modification, metadata)
+    }
+
+    private func parsedGlycan(from modificationName: String) -> Glycan? {
+        guard let notation = firstParenthesizedExpression(in: modificationName),
+              notation.contains("->"),
+              notation.contains("...") == false else {
+            return nil
+        }
+        return try? GlycanIUPACParser().parseUnlogged(notation)
+    }
+
+    private func firstParenthesizedExpression(in text: String) -> String? {
+        guard let open = text.firstIndex(of: "(") else { return nil }
+        var depth = 0
+        for index in text.indices[open...] {
+            switch text[index] {
+            case "(": depth += 1
+            case ")":
+                depth -= 1
+                if depth == 0 {
+                    return String(text[text.index(after: open)..<index])
+                }
+            default: break
+            }
+        }
+        return nil
+    }
+
+    private func glycanReactions(glycan: Glycan, targetFormula: Formula) -> [Reaction] {
+        var reactions: [Reaction] = [.add(.glycan(glycan))]
+        let correction = targetFormula - glycan.formula
+        let removedElements = correction.countedElements.filter { $0.value < 0 }
+            .mapValues { abs($0) }
+        let addedElements = correction.countedElements.filter { $0.value > 0 }
+
+        if removedElements.isEmpty == false {
+            reactions.append(.remove(.functionalGroup(
+                FunctionalGroup(
+                    name: "glycan attachment loss",
+                    formula: Formula(inputString: "", countedElements: removedElements)
+                )
+            )))
+        }
+        if addedElements.isEmpty == false {
+            reactions.append(.add(.functionalGroup(
+                FunctionalGroup(
+                    name: "glycan attachment addition",
+                    formula: Formula(inputString: "", countedElements: addedElements)
+                )
+            )))
+        }
+        return reactions
     }
 
     private func parseCorrectionFormula(_ formula: String) -> [String: Int]? {

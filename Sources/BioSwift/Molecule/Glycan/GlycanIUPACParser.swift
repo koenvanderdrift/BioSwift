@@ -25,19 +25,23 @@ public struct GlycanIUPACParser: Sendable {
 
     public func parse(_ notation: String, name: String = "") throws -> Glycan {
         do {
-            let normalized = notation
-                .replacingOccurrences(of: "alpha", with: "α", options: .caseInsensitive)
-                .replacingOccurrences(of: "beta", with: "β", options: .caseInsensitive)
-                .replacingOccurrences(of: "->", with: "→")
-            let tokens = try tokenize(normalized)
-            guard tokens.isEmpty == false else {
-                throw GlycanIUPACParserError.emptyInput
-            }
-            let root = try parseChain(tokens[...])
-            return try Glycan(name: name, root: root)
+            return try parseUnlogged(notation, name: name)
         } catch {
             throw BioSwiftDiagnostics.logged(error)
         }
+    }
+
+    func parseUnlogged(_ notation: String, name: String = "") throws -> Glycan {
+        let normalized = notation
+            .replacingOccurrences(of: "alpha", with: "α", options: .caseInsensitive)
+            .replacingOccurrences(of: "beta", with: "β", options: .caseInsensitive)
+            .replacingOccurrences(of: "->", with: "→")
+        let tokens = try tokenize(normalized)
+        guard tokens.isEmpty == false else {
+            throw GlycanIUPACParserError.emptyInput
+        }
+        let root = try parseChain(tokens[...])
+        return try Glycan(name: name, root: root)
     }
 
     private func tokenize(_ notation: String) throws -> [Token] {

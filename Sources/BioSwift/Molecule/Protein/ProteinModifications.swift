@@ -8,7 +8,7 @@ import Foundation
 /// Common protein and peptide neutral-loss modifications.
 public let lossOfWater = Modification(
     name: "Loss of Water",
-    reactions: [.remove(water)],
+    reactions: [.remove(.functionalGroup(water))],
     specificities: [
         ModificationSpecificity(site: "S"),
         ModificationSpecificity(site: "T"),
@@ -19,7 +19,7 @@ public let lossOfWater = Modification(
 
 public let lossOfAmmonia = Modification(
     name: "Loss of Ammonia",
-    reactions: [.remove(ammonia)],
+    reactions: [.remove(.functionalGroup(ammonia))],
     specificities: [
         ModificationSpecificity(site: "R"),
         ModificationSpecificity(site: "Q"),
@@ -32,7 +32,7 @@ public let lossOfAmmonia = Modification(
 public let disulfideBond = Modification(
     name: "Disulfide bond",
     reactions: [
-        .remove(hydrogen),
-        .remove(hydrogen),
+        .remove(.functionalGroup(hydrogen)),
+        .remove(.functionalGroup(hydrogen)),
     ]
 )

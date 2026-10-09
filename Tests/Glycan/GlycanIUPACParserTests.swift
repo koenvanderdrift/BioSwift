@@ -21,6 +21,7 @@ import Testing
         #expect(glycan.monosaccharideCount == 8)
         #expect(glycan.nodes.filter { $0.branches.count == 2 }.count == 1)
         #expect(glycan.formula == modification.formula + water.formula)
+        #expect(embeddedGlycan(in: modification)?.root == glycan.root)
         #expect(glycan.iupacCondensed == "Gal(b1-4)GlcNAc(b1-2)Man(a1-3)[GlcNAc(b1-2)Man(a1-6)]Man(b1-4)GlcNAc(b1-4)GlcNAc")
     }
 
@@ -32,6 +33,7 @@ import Testing
         #expect(glycan.nodes.contains { $0.branches.count == 3 })
         #expect(glycan.composition[.nAcetylneuraminicAcid.form(anomer: .alpha, ring: .pyranose)] == 1)
         #expect(glycan.formula == modification.formula + water.formula)
+        #expect(embeddedGlycan(in: modification)?.root == glycan.root)
     }
 
     @Test func parsesUniProtPTM0760CoreFucosylatedNGlycan() throws {
@@ -41,7 +43,17 @@ import Testing
         #expect(glycan.monosaccharideCount == 8)
         #expect(glycan.composition[.fucose.form(anomer: .alpha, ring: .pyranose)] == 1)
         #expect(glycan.formula == modification.formula + water.formula)
+        #expect(embeddedGlycan(in: modification)?.root == glycan.root)
         #expect(glycan.root.branches.count == 2)
+    }
+
+    private func embeddedGlycan(in modification: Modification) -> Glycan? {
+        for reaction in modification.reactions {
+            if case let .add(.glycan(glycan)) = reaction {
+                return glycan
+            }
+        }
+        return nil
     }
 
     private func uniProtGlycan(accession: String) throws -> (String, Modification) {
