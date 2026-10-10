@@ -137,4 +137,37 @@ extension BioMolecule where ChainType == ProteinChain {
         try copy.glycosylate(with: glycan, at: location, chainIndex: chainIndex)
         return copy
     }
+
+    /// Applies a modification to cysteines that have no residue modification
+    /// and do not participate in a cross-link.
+    public mutating func modifyFreeCysteines(with modification: Modification) {
+        let occupiedSites = Set(
+            crossLinks.flatMap { [$0.firstSite, $0.secondSite] }
+        )
+
+        for chainIndex in chains.indices {
+            let chainID = chains[chainIndex].id
+
+            for residueIndex in chains[chainIndex].residues.indices {
+                let residue = chains[chainIndex].residues[residueIndex]
+                let site = CrossLinkSite(chainID: chainID, residueIndex: residueIndex)
+
+                guard residue.identifier == "C",
+                    residue.modification == nil,
+                    occupiedSites.contains(site) == false
+                else {
+                    continue
+                }
+
+                chains[chainIndex].residues[residueIndex].modification = modification
+            }
+        }
+    }
+
+    /// Returns a copy with all free cysteines modified.
+    public func modifyingFreeCysteines(with modification: Modification) -> Self {
+        var copy = self
+        copy.modifyFreeCysteines(with: modification)
+        return copy
+    }
 }

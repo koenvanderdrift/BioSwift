@@ -308,7 +308,7 @@ extension Formula: Equatable {
         lhs.countedElements == rhs.countedElements
     }
 
-    static func + (lhs: Formula, rhs: Formula) -> Formula {
+    public static func + (lhs: Formula, rhs: Formula) -> Formula {
         let result = lhs.countedElements.merging(
             rhs.countedElements, uniquingKeysWith: {
                 left, right in left + right
@@ -317,11 +317,11 @@ extension Formula: Equatable {
         return Formula(inputString: "", countedElements: result)
     }
 
-    static func += (lhs: inout Formula, rhs: Formula) {
+    public static func += (lhs: inout Formula, rhs: Formula) {
         lhs = lhs + rhs
     }
 
-    static func - (lhs: Formula, rhs: Formula) -> Formula {
+    public static func - (lhs: Formula, rhs: Formula) -> Formula {
         var result = lhs.countedElements
 
         for (element, count) in rhs.countedElements {
@@ -334,7 +334,7 @@ extension Formula: Equatable {
         return Formula(inputString: "", countedElements: result)
     }
 
-    static func -= (lhs: inout Formula, rhs: Formula) {
+    public static func -= (lhs: inout Formula, rhs: Formula) {
         lhs = lhs - rhs
     }
 }
