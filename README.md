@@ -1,7 +1,7 @@
 # BioSwift
 
-BioSwift is a Swift package for working with proteins, peptides, DNA, RNA, molecular
-formulas, and common bioinformatics calculations.
+BioSwift is a Swift package for working with proteins, peptides, DNA, RNA, glycans,
+molecular formulas, and common bioinformatics calculations.
 
 The project is educational and under active development. 
 
@@ -26,11 +26,12 @@ import BioSwift
 ## Capabilities
 
 - Protein, peptide, DNA, and RNA models with one or more chains
+- Branched glycan models with condensed and extended IUPAC parsing and formatting
 - FASTA parsing and molecule creation from FASTA records
 - Monoisotopic, average, and nominal mass calculations
 - Molecular formulas, modifications, adducts, and cross-links
 - Bundled chemical-element, amino-acid, enzyme, hydrophobicity, and modification data
-- Protein digestion and peptide fragmentation
+- Protein digestion, peptide fragmentation, and oligonucleotide fragmentation
 - Protein extinction coefficients, concentration calculations, hydropathy profiles, and
   isoelectric-point calculations
 - DNA transcription and DNA/RNA translation
@@ -97,6 +98,73 @@ let protein = dna.translated()
 print(rna.sequence)     // AUGGCC
 print(protein.sequence) // MA
 ```
+
+### Nucleotides and oligonucleotide fragmentation
+
+DNA and RNA expose their `Nucleotide` residues directly. Sequence truncation removes a
+zero-based, half-open range while preserving the remaining nucleotides:
+
+```swift
+let dna = try DNA(sequence: "ATCG")
+
+print(dna.nucleotides.map(\.oneLetterCode)) // ["A", "T", "C", "G"]
+print(try dna.truncate(by: 1..<3).sequence) // AG
+```
+
+`OligonucleotideFragmenter` calculates negatively charged McLuckey terminal product ions
+for a `DNAChain` or `RNAChain`. It produces a, a−B, b, c, and d five-prime ions and w, x,
+y, and z three-prime ions, as well as the precursor ion:
+
+```swift
+let chain = try RNAChain(sequence: "ACGU")
+let precursor = try chain.ionized(with: [negativeProtonAdduct])
+let fragmenter = OligonucleotideFragmenter(precursor: precursor)
+
+let fragments = fragmenter.fragments
+let w2 = fragmenter.fragment(at: 2, for: .wIon)
+
+print(w2?.structure.sequenceString as Any) // Optional("GU")
+print(w2?.monoisotopicMass as Any)
+```
+
+The precursor's negative charge determines the available product charge states. Use
+`fivePrimeIons()`, `threePrimeIons()`, or `fragment(at:for:with:)` to select products.
+
+## Glycans
+
+`Glycan` represents a rooted tree whose root is the reducing-end or
+attachment-proximal monosaccharide. Parse branched condensed or extended IUPAC notation
+with `GlycanIUPACParser`:
+
+```swift
+let lactose = try GlycanIUPACParser().parse(
+    "Gal(b1-4)Glc",
+    name: "Lactose"
+)
+let branched = try GlycanIUPACParser().parse("Man(a1-3)[Man(a1-6)]Man")
+
+print(lactose.iupacCondensed) // Gal(b1-4)Glc
+print(lactose.iupacExtended)  // β-D-Galp-(1→4)-D-Glcp
+print(lactose.formulaString)  // C12H22O11
+print(branched.monosaccharideCount) // 3
+```
+
+Glycans also support programmatic construction from `Monosaccharide` values and
+`GlycosidicLinkage` values. Use `add(_:to:linkage:)` to create branches, and inspect
+`composition`, `reducingEnd`, and `nonReducingEnds` for structural information.
+
+Attach a glycan to a protein residue with `glycosylate(with:at:chainIndex:)`. The method
+creates the modification and automatically removes the water lost during glycosidic bond
+formation:
+
+```swift
+var protein = Protein(sequence: "NVT")
+let glycan = try GlycanIUPACParser().parse("Gal(b1-4)GlcNAc", name: "LacNAc")
+
+try protein.glycosylate(with: glycan, at: 0)
+```
+
+Use `glycosylated(with:at:chainIndex:)` when a modified copy is preferred.
 
 ## Sequence alignment
 
@@ -201,8 +269,8 @@ scales, chemical elements, and modification vocabularies.
 ## Testing
 
 The test suite uses Swift Testing and covers molecule construction, formulas and masses,
-reference loading, FASTA workflows, protein calculations, DNA/RNA operations, and
-sequence alignment.
+reference loading, FASTA workflows, protein calculations, DNA/RNA operations and
+fragmentation, glycans and IUPAC parsing, and sequence alignment.
 
 ## Project status
 
