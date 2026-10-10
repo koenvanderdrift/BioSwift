@@ -376,6 +376,39 @@ import Testing
             try testProtein.ionized(with: [protonAdduct]).averageMass.formatted(fractionDigits: 1) == decimal("46737.0703").formatted(fractionDigits: 1))
     }
 
+    @Test func glycosylatesProteinAndRemovesAttachmentWater() throws {
+        let glycan = try GlycanIUPACParser().parse("Gal(b1-4)Glc", name: "Lactose")
+        let protein = try Protein(sequence: "NVT").glycosylated(with: glycan, at: 0)
+        let modification = try #require(protein.aminoAcid(at: 0)?.modification)
+        let unmodifiedProtein = try Protein(sequence: "NVT")
+
+        #expect(modification.name == "Lactose glycosylation")
+        #expect(modification.formula == glycan.formula - water.formula)
+        #expect(protein.formula == unmodifiedProtein.formula + glycan.formula - water.formula)
+
+        guard case let .add(.glycan(attachedGlycan)) = modification.reactions.first else {
+            Issue.record("Expected the modification to contain the attached glycan")
+            return
+        }
+        #expect(attachedGlycan == glycan)
+    }
+
+    @Test func glycosylatesSelectedProteinChain() throws {
+        var protein = Protein(chains: [
+            try ProteinChain(sequence: "NVT"),
+            try ProteinChain(sequence: "AST"),
+        ])
+        let glycan = Glycan(monosaccharide: .glucose, name: "Glucose")
+
+        try protein.glycosylate(with: glycan, at: 1, chainIndex: 1)
+
+        #expect(protein.aminoAcid(at: 1, chainIndex: 0)?.modification == nil)
+        #expect(
+            protein.aminoAcid(at: 1, chainIndex: 1)?.modification?.formula
+                == glycan.formula - water.formula
+        )
+    }
+
     @Test func proteinSerinePhosphorylationMonoisotopicMass() throws {
         for modification in try modifications(
             unimodName: "Phospho", psiModAccession: "MOD:00046",

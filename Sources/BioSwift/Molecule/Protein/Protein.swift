@@ -105,4 +105,36 @@ extension BioMolecule where ChainType == ProteinChain {
     public func aminoAcids(chainName: String) -> [AminoAcid]? {
         residues(chainName: chainName)
     }
+
+    /// Attaches a glycan to an amino acid, accounting for the water lost during
+    /// glycosidic bond formation.
+    public mutating func glycosylate(
+        with glycan: Glycan,
+        at location: Int,
+        chainIndex: Int = 0
+    ) throws {
+        let modificationName = glycan.name.isEmpty
+            ? "Glycosylation"
+            : "\(glycan.name) glycosylation"
+        let modification = Modification(
+            name: modificationName,
+            reactions: [
+                .add(.glycan(glycan)),
+                .remove(.functionalGroup(water)),
+            ]
+        )
+
+        try addModification(modification, at: location, chainIndex: chainIndex)
+    }
+
+    /// Returns a copy with a glycan attached to an amino acid.
+    public func glycosylated(
+        with glycan: Glycan,
+        at location: Int,
+        chainIndex: Int = 0
+    ) throws -> Self {
+        var copy = self
+        try copy.glycosylate(with: glycan, at: location, chainIndex: chainIndex)
+        return copy
+    }
 }
