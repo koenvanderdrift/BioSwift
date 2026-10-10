@@ -28,6 +28,8 @@ import BioSwift
 - Protein, peptide, DNA, and RNA models with one or more chains
 - Branched glycan models with condensed and extended IUPAC parsing and formatting
 - FASTA parsing and molecule creation from FASTA records
+- PEFF parsing with lossless metadata and annotation preservation
+- Core ProForma parsing and formatting for modified peptide sequences
 - Monoisotopic, average, and nominal mass calculations
 - Molecular formulas, modifications, adducts, and cross-links
 - Bundled chemical-element, amino-acid, enzyme, hydrophobicity, and modification data
@@ -276,6 +278,59 @@ for record in records where record.headerFormat == .generic {
     print("Generic FASTA metadata: \(record.header)")
 }
 ```
+
+### PEFF
+
+`PEFFParser` reads PSI Extended FASTA documents while preserving ordered database metadata
+and every sequence annotation, including keys BioSwift does not interpret. PEFF sequence
+content is not restricted to a molecule type; `PEFFRecord.fastaRecord` provides the same
+sequence-neutral bridge used by ordinary FASTA parsing:
+
+```swift
+let document = try PEFFParser().parse(peffText)
+let record = document.records[0]
+
+print(record.values(for: "ModResPsi"))
+let protein = try Protein(fastaRecord: record.fastaRecord)
+```
+
+The parser supports the PEFF signature, ordered header key/value metadata, database-prefixed
+accessions, multiline sequences, and backslash-prefixed entry annotations. Structured and
+unknown annotation values are retained as strings so a document can be serialized and parsed
+again without discarding them.
+
+## ProForma
+
+`ProFormaParser` supports one linear peptidoform with residue-localized bracket annotations,
+N- and C-terminal annotations, and an optional positive charge:
+
+```swift
+let form = try ProFormaParser().parse(
+    "[Acetyl]-EM[UNIMOD:35]E[+15.9949]K-[Methyl]/2"
+)
+
+print(form.sequence)       // EMEK
+print(form.proFormaString) // normalized, round-trippable notation
+```
+
+Annotation text is preserved, including names, controlled-vocabulary accessions, formulas,
+glycan compositions, and mass shifts. Converting to `Peptide` requires a resolver supplied by
+the caller, because a mass shift alone is insufficient to construct BioSwift's formula-based
+`Modification` safely:
+
+```swift
+let peptide = try form.peptide { annotation in
+    guard let modification = myModificationLookup(annotation.value) else {
+        throw MyError.unknownModification(annotation.value)
+    }
+    return modification
+}
+```
+
+Ambiguous or unlocalized modifications, cross-links, global and labile modifications,
+multi-valued tags, chimeric/multiple peptidoforms, and charge carriers are intentionally outside
+this core subset. The parser reports these constructs as `ProFormaError.unsupportedFeature`
+instead of partially interpreting them.
 
 ## Protein calculations
 

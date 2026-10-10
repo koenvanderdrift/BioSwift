@@ -9,6 +9,7 @@ import Foundation
 
 /// The recognized convention used to interpret a FASTA header.
 public enum FastaHeaderFormat: String, Codable, Sendable {
+    case peff
     case uniProt
     case ncbi
     case ups
@@ -371,7 +372,7 @@ public func rna(fromFastaFile fileName: String, in bundle: Bundle = .main) async
 }
 
 /// FastaParser takes a text file as input and produces a ``FastaRecord`` array.
-/// Currently, it can process SwissProt, UPS, IPI, and Ensemble files
+/// It recognizes common protein and nucleotide header conventions and safely falls back to generic metadata.
 public final class FastaParser: Sendable {
     struct RawRecord {
         let info: String
