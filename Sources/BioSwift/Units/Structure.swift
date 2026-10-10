@@ -45,4 +45,16 @@ extension Structure {
     public var nominalMass: Int {
         masses.nominalMass
     }
+
+    /// Returns the requested mass representation for this structure.
+    public func mass(for type: MassType) -> Dalton {
+        switch type {
+        case .monoisotopic:
+            monoisotopicMass
+        case .average:
+            averageMass
+        case .nominal:
+            Dalton(nominalMass)
+        }
+    }
 }
