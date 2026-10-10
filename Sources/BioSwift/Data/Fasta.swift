@@ -7,11 +7,23 @@
 
 import Foundation
 
-public let zeroFastaRecord = FastaRecord(
-    accession: "", shortName: "", fullName: "", organism: "", sequence: "")
+/// The recognized convention used to interpret a FASTA header.
+public enum FastaHeaderFormat: String, Codable, Sendable {
+    case uniProt
+    case ncbi
+    case ups
+    case ipi
+    case ensembl
+    /// No supported header convention matched; only generic metadata was extracted.
+    case generic
+}
 
 public struct FastaRecord: Codable, Hashable, Identifiable, Sendable {
     public let id: UUID
+    /// The original FASTA header without the leading `>` character.
+    public let header: String
+    /// The convention used to interpret the header.
+    public let headerFormat: FastaHeaderFormat
     public let accession: String
     public let shortName: String
     public let fullName: String
@@ -19,15 +31,278 @@ public struct FastaRecord: Codable, Hashable, Identifiable, Sendable {
     public var sequence: String
 
     public init(
-        accession: String, shortName: String, fullName: String, organism: String, sequence: String
+        accession: String,
+        shortName: String,
+        fullName: String,
+        organism: String,
+        sequence: String,
+        header: String = "",
+        headerFormat: FastaHeaderFormat = .generic
     ) {
         id = UUID()
+        self.header = header
+        self.headerFormat = headerFormat
         self.accession = accession
         self.shortName = shortName
         self.fullName = fullName
         self.organism = organism
         self.sequence = sequence
     }
+
+    private enum CodingKeys: String, CodingKey {
+        case id
+        case header
+        case headerFormat
+        case accession
+        case shortName
+        case fullName
+        case organism
+        case sequence
+    }
+
+    public init(from decoder: Decoder) throws {
+        do {
+            let container = try decoder.container(keyedBy: CodingKeys.self)
+            id = try container.decode(UUID.self, forKey: .id)
+            header = try container.decodeIfPresent(String.self, forKey: .header) ?? ""
+            headerFormat = try container.decodeIfPresent(
+                FastaHeaderFormat.self,
+                forKey: .headerFormat
+            ) ?? .generic
+            accession = try container.decode(String.self, forKey: .accession)
+            shortName = try container.decode(String.self, forKey: .shortName)
+            fullName = try container.decode(String.self, forKey: .fullName)
+            organism = try container.decode(String.self, forKey: .organism)
+            sequence = try container.decode(String.self, forKey: .sequence)
+        } catch {
+            throw BioSwiftDiagnostics.loggedDecodingFailure(error, from: decoder)
+        }
+    }
+}
+
+private struct ParsedFastaHeader: Sendable {
+    var format: FastaHeaderFormat = .generic
+    var accession: String?
+    var shortName: String?
+    var fullName: String?
+    var organism: String?
+}
+
+private protocol FastaHeaderParsing: Sendable {
+    func parse(_ header: Substring) -> ParsedFastaHeader?
+}
+
+private struct UniProtFastaHeaderParser: FastaHeaderParsing {
+    func parse(_ header: Substring) -> ParsedFastaHeader? {
+        let (token, description) = splitFastaHeader(header)
+        let components = token.split(separator: "|", omittingEmptySubsequences: false)
+
+        guard components.count >= 3,
+            ["sp", "tr", "swiss"].contains(components[0].lowercased())
+        else {
+            return nil
+        }
+
+        return ParsedFastaHeader(
+            format: .uniProt,
+            accession: nonemptyString(components[1]),
+            shortName: nonemptyString(components[2]),
+            fullName: fastaDescription(beforeTagsIn: description),
+            organism: fastaTaggedValue("OS", in: description)
+        )
+    }
+}
+
+private struct UPSFastaHeaderParser: FastaHeaderParsing {
+    func parse(_ header: Substring) -> ParsedFastaHeader? {
+        let (token, description) = splitFastaHeader(header)
+        guard let marker = token.range(of: "ups|", options: .caseInsensitive) else {
+            return nil
+        }
+
+        let accession = token[..<marker.lowerBound]
+        let shortName = token[marker.upperBound...]
+        let descriptionParts = description.components(separatedBy: " - ")
+
+        return ParsedFastaHeader(
+            format: .ups,
+            accession: nonemptyString(accession),
+            shortName: nonemptyString(shortName),
+            fullName: descriptionParts.first.flatMap(nonemptyString),
+            organism: descriptionParts.dropFirst().first.flatMap(nonemptyString)
+        )
+    }
+}
+
+private struct NCBIFastaHeaderParser: FastaHeaderParsing {
+    private static let databaseMarkers: Set<String> = [
+        "ref", "gb", "emb", "dbj", "tpg", "tpe", "tpd", "pdb",
+    ]
+
+    private static let refSeqPrefixes: Set<String> = [
+        "AC", "AP", "NC", "NG", "NM", "NP", "NR", "NT", "NW", "NZ", "WP", "XM",
+        "XP", "XR", "YP", "ZP",
+    ]
+
+    func parse(_ header: Substring) -> ParsedFastaHeader? {
+        let (token, description) = splitFastaHeader(header)
+        let components = token.split(separator: "|", omittingEmptySubsequences: false)
+
+        if let markerIndex = components.firstIndex(where: {
+            Self.databaseMarkers.contains($0.lowercased())
+        }), components.indices.contains(markerIndex + 1) {
+            let accession = components[markerIndex + 1]
+            let nameIndex = markerIndex + 2
+            let shortName = components.indices.contains(nameIndex) ? components[nameIndex] : ""
+
+            return ParsedFastaHeader(
+                format: .ncbi,
+                accession: nonemptyString(accession),
+                shortName: nonemptyString(shortName),
+                fullName: nonemptyString(description),
+                organism: ncbiOrganism(in: description)
+            )
+        }
+
+        guard isRefSeqAccession(token) || header.contains("[organism=") else {
+            return nil
+        }
+
+        return ParsedFastaHeader(
+            format: .ncbi,
+            accession: nonemptyString(token),
+            fullName: ncbiDescription(in: description),
+            organism: ncbiOrganism(in: description)
+        )
+    }
+
+    private func isRefSeqAccession(_ token: Substring) -> Bool {
+        let parts = token.split(separator: "_", maxSplits: 1)
+        guard parts.count == 2,
+            Self.refSeqPrefixes.contains(parts[0].uppercased())
+        else {
+            return false
+        }
+
+        let versionParts = parts[1].split(separator: ".", maxSplits: 1)
+        return !versionParts[0].isEmpty && versionParts[0].allSatisfy(\.isNumber)
+            && (versionParts.count == 1
+                || (!versionParts[1].isEmpty && versionParts[1].allSatisfy(\.isNumber)))
+    }
+}
+
+private struct IPIFastaHeaderParser: FastaHeaderParsing {
+    func parse(_ header: Substring) -> ParsedFastaHeader? {
+        let (token, description) = splitFastaHeader(header)
+        guard token.uppercased().hasPrefix("IPI") else {
+            return nil
+        }
+
+        return ParsedFastaHeader(
+            format: .ipi,
+            accession: nonemptyString(token),
+            fullName: nonemptyString(description)
+        )
+    }
+}
+
+private struct EnsemblFastaHeaderParser: FastaHeaderParsing {
+    func parse(_ header: Substring) -> ParsedFastaHeader? {
+        let (token, description) = splitFastaHeader(header)
+        let tokenComponents = token.split(separator: "|", omittingEmptySubsequences: false)
+        let accession = tokenComponents.first ?? token
+
+        guard accession.uppercased().hasPrefix("ENS") || isCoordinateHeader(token) else {
+            return nil
+        }
+
+        return ParsedFastaHeader(
+            format: .ensembl,
+            accession: nonemptyString(accession),
+            fullName: nonemptyString(description) ?? nonemptyString(token)
+        )
+    }
+
+    private func isCoordinateHeader(_ token: Substring) -> Bool {
+        let components = token.split(separator: ":", omittingEmptySubsequences: false)
+        guard components.count >= 6,
+            ["chromosome", "scaffold", "contig", "supercontig"].contains(
+                components[0].lowercased())
+        else {
+            return false
+        }
+
+        return components.suffix(3).dropLast().allSatisfy { Int($0) != nil }
+            && ["1", "-1"].contains(String(components.last ?? ""))
+    }
+}
+
+private func ncbiOrganism(in description: Substring) -> String? {
+    if let tagged = bracketedFastaValue("organism", in: description) {
+        return tagged
+    }
+
+    guard description.hasSuffix("]"),
+        let openingBracket = description.lastIndex(of: "[")
+    else {
+        return nil
+    }
+
+    return nonemptyString(description[description.index(after: openingBracket)..<description.index(before: description.endIndex)])
+}
+
+private func ncbiDescription(in description: Substring) -> String? {
+    guard let firstBracket = description.firstIndex(of: "[") else {
+        return nonemptyString(description)
+    }
+
+    return nonemptyString(description[..<firstBracket])
+}
+
+private func bracketedFastaValue(_ key: String, in description: Substring) -> String? {
+    let marker = "[\(key)="
+    guard let markerRange = description.range(of: marker),
+        let closingBracket = description[markerRange.upperBound...].firstIndex(of: "]")
+    else {
+        return nil
+    }
+
+    return nonemptyString(description[markerRange.upperBound..<closingBracket])
+}
+
+private func splitFastaHeader(_ header: Substring) -> (token: Substring, description: Substring) {
+    guard let separator = header.firstIndex(where: \.isWhitespace) else {
+        return (header, "")
+    }
+
+    let descriptionStart = header[separator...].firstIndex(where: { !$0.isWhitespace })
+    let description = descriptionStart.map { header[$0...] } ?? ""
+    return (header[..<separator], description)
+}
+
+private func nonemptyString<S: StringProtocol>(_ value: S) -> String? {
+    let result = value.trimmingCharacters(in: .whitespacesAndNewlines)
+    return result.isEmpty ? nil : result
+}
+
+private func fastaDescription(beforeTagsIn description: Substring) -> String? {
+    let markers = [" OS=", " OX=", " GN=", " PE=", " SV="]
+    let end = markers.compactMap { description.range(of: $0)?.lowerBound }.min()
+    let value = end.map { description[..<$0] } ?? description[...]
+    return nonemptyString(value)
+}
+
+private func fastaTaggedValue(_ tag: String, in description: Substring) -> String? {
+    let marker = " \(tag)="
+    guard let markerRange = description.range(of: marker) else {
+        return nil
+    }
+
+    let remainder = description[markerRange.upperBound...]
+    let terminatingMarkers = [" OS=", " OX=", " GN=", " PE=", " SV="]
+    let end = terminatingMarkers.compactMap { remainder.range(of: $0)?.lowerBound }.min()
+    let value = end.map { remainder[..<$0] } ?? remainder[...]
+    return nonemptyString(value)
 }
 
 public func fastaRecords(from fileName: String, in bundle: Bundle = .main) async throws -> [FastaRecord] {
@@ -106,6 +381,14 @@ public final class FastaParser: Sendable {
     public init() {
     }
 
+    private static let headerParsers: [any FastaHeaderParsing] = [
+        UniProtFastaHeaderParser(),
+        NCBIFastaHeaderParser(),
+        UPSFastaHeaderParser(),
+        IPIFastaHeaderParser(),
+        EnsemblFastaHeaderParser(),
+    ]
+
     public func parse(_ fileName: String, in bundle: Bundle = .main) async throws -> [FastaRecord] {
         let fastaText = try loadText(from: fileName, withExtension: "fasta", in: bundle)
         let fullName = "\(fileName).fasta"
@@ -182,145 +465,49 @@ extension FastaParser {
 
 extension FastaParser {
     func parseRecord(_ record: RawRecord) throws -> FastaRecord {
-        let input = record.info[...]
+        let metadata = parseHeader(record.info[...])
 
-        var result: FastaRecord = zeroFastaRecord
-
-        if input.contains("ups|") {
-            result = parseUPS(input)
-        } else if input.hasPrefix("sp") || input.hasPrefix("swiss") || input.hasPrefix("tr") {
-            result = parseSwissProt(input)
-        } else if input.hasPrefix("IPI") {
-            result = parseIPI(input)
-        } else if input.hasPrefix("ENS") {
-            result = parseEnsemble(input)
-        } else {
-            result = parseUnspecified(input)
-        }
-
-        result.sequence = record.sequence
-
-        return result
+        return FastaRecord(
+            accession: metadata.accession ?? "",
+            shortName: metadata.shortName ?? "",
+            fullName: metadata.fullName ?? "",
+            organism: metadata.organism ?? "",
+            sequence: record.sequence,
+            header: record.info,
+            headerFormat: metadata.format
+        )
     }
 
     func parseString(_ input: String) -> FastaRecord {
-        // https://www.uniprot.org/help/fasta-headers
-
         var input = input[...]
-
         if input.hasPrefix(">") {
             input.remove(at: input.startIndex)
         }
 
-        if input.contains("ups|") {
-            return parseUPS(input)
-        } else if input.hasPrefix("sp") || input.hasPrefix("swiss") || input.hasPrefix("tr") {
-            return parseSwissProt(input)
-        } else if input.hasPrefix("IPI") {
-            return parseIPI(input)
-        } else if input.hasPrefix("ENS") {
-            return parseEnsemble(input)
+        let header = input.trimmingCharacters(in: .whitespacesAndNewlines)
+        let metadata = parseHeader(header[...])
+        return FastaRecord(
+            accession: metadata.accession ?? "",
+            shortName: metadata.shortName ?? "",
+            fullName: metadata.fullName ?? "",
+            organism: metadata.organism ?? "",
+            sequence: "",
+            header: header,
+            headerFormat: metadata.format
+        )
+    }
+
+    private func parseHeader(_ header: Substring) -> ParsedFastaHeader {
+        for parser in Self.headerParsers {
+            if let result = parser.parse(header) {
+                return result
+            }
         }
 
-        return parseUnspecified(input)
-    }
-
-    func parseUPS(_ input: Substring) -> FastaRecord {
-        // >P02768ups|ALBU_HUMAN_UPS Serum albumin (Chain 26-609) - Homo sapiens (Human) AHKSEVAHRFKDLGEENF…
-        var entry = input
-        var fullName: Substring = ""
-        var org: Substring = ""
-
-        let acc = entry.scanUntil("|")?.dropLast(3)
-        entry.skip(1)
-
-        let shortName = entry.scanUntil(" ")
-
-        if let nameRange = entry.range(of: " - ") {
-            let count = entry.distance(from: input.startIndex, to: nameRange.lowerBound)
-
-            fullName = entry.skip(count) ?? ""
-        }
-
-        entry.skip(3)
-
-        if let organismRange = entry.range(of: " ", options: .backwards) {
-            let count = entry.distance(from: input.startIndex, to: organismRange.lowerBound)
-            org = entry.skip(count) ?? ""
-        }
-
-        return FastaRecord(
-            accession: String(acc ?? ""), shortName: String(shortName ?? ""),
-            fullName: String(fullName), organism: String(org), sequence: "")
-    }
-
-    func parseSwissProt(_ input: Substring) -> FastaRecord {
-        /*
-         * >db|UniqueIdentifier|EntryName ProteinName OS=OrganismName OX=OrganismIdentifier [GN=GeneName ]PE=ProteinExistence SV=SequenceVersion
-         * >tr|Q8ADX7|Q8ADX7_9HIV1 Envelope glycoprotein gp160 OS=Human immunodeficiency virus 1 OX=11676 GN=env PE=3 SV=1
-         *
-         * db is ‘sp’ for UniProtKB/Swiss-Prot and ‘tr’ for UniProtKB/TrEMBL.
-         * UniqueIdentifier is the primary accession number of the UniProtKB entry.
-         * EntryName is the entry name of the UniProtKB entry.
-         * ProteinName is the recommended name of the UniProtKB entry as annotated in the RecName field. For UniProtKB/TrEMBL entries without a RecName field, the SubName field is used. In case of multiple SubNames, the first one is used. The ‘precursor’ attribute is excluded, ‘Fragment’ is included with the name if applicable.
-         * OrganismName is the scientific name of the organism of the UniProtKB entry.
-         * OrganismIdentifier is the unique identifier of the source organism, assigned by the NCBI.
-         * GeneName is the first gene name of the UniProtKB entry. If there is no gene name, OrderedLocusName or ORFname, the GN field is not listed.
-         * ProteinExistence is the numerical value describing the evidence for the existence of the protein.
-         * SequenceVersion is the version number of the sequence.
-         */
-
-        var input = input[...]
-        input.skipThrough("|")
-
-        let acc = input.scanUntil("|")
-        input.skip(1)
-
-        let shortName = input.scanUntil(" ")
-        input.skip(1)
-
-        let fullName = input.scanUntil("=")?.dropLast(3)
-        input.skip(1)
-
-        let org = input.scanUntil("=")?.dropLast(3)
-
-        return FastaRecord(
-            accession: String(acc ?? ""), shortName: String(shortName ?? ""),
-            fullName: String(fullName ?? ""), organism: String(org ?? ""), sequence: "")
-    }
-
-    func parseIPI(_ input: Substring) -> FastaRecord {
-        // IPI00300415 IPI:IPI00300415.9|SWISS-PROT:Q8N431-1|TREMBL:D3DWQ7|ENSEMBL:ENSP00000354963;ENSP00000377037|REFSEQ:NP_778232|H-INV:HIT000094619|VEGA:OTTHUMP00000161522;OTTHUMP00000161538
-        // Tax_Id=9606 Gene_Symbol=RASGEF1C Isoform 1 of Ras-GEF domain-containing family member 1C
-        let info = input.components(separatedBy: "|")
-        let acc = info.count > 1 ? info[1] : info.first ?? ""
-        let fullName = info.last ?? ""
-
-        // TODO: implement
-
-        return FastaRecord(
-            accession: acc, shortName: "", fullName: fullName, organism: "", sequence: "")
-    }
-
-    func parseEnsemble(_ input: Substring) -> FastaRecord {
-        // ENSP00000391493 pep:known chromosome:GRCh37:2:160609001:160624471:1 gene:ENSG00000136536 transcript:ENST00000420397
-        let info = input.components(separatedBy: " ")
-        let fullName = info[0]
-
-        // TODO: implement
-
-        return FastaRecord(
-            accession: "", shortName: "", fullName: fullName, organism: "", sequence: "")
-    }
-
-    func parseUnspecified(_ input: Substring) -> FastaRecord {
-        // DROME_HH_Q02936
-        // DECOY_IPI00339224 Decoy sequence
-        let fullName = input.replacingOccurrences(of: "_", with: " ")
-
-        // TODO: implement
-
-        return FastaRecord(
-            accession: "", shortName: "", fullName: fullName, organism: "", sequence: "")
+        let (token, _) = splitFastaHeader(header)
+        return ParsedFastaHeader(
+            accession: nonemptyString(token),
+            fullName: nonemptyString(header.replacingOccurrences(of: "_", with: " "))
+        )
     }
 }

@@ -243,14 +243,39 @@ Mass values use `Decimal` through the `Dalton` type alias.
 
 ## FASTA
 
-Parse FASTA text asynchronously and create typed molecules from its records:
+Parse FASTA text asynchronously and create typed molecules from its records. FASTA
+parsing preserves sequence text without guessing whether it represents protein, DNA, or
+RNA; the caller selects the appropriate molecule type:
 
 ```swift
 let records = try await FastaParser().parseFasta(fastaText)
-let proteins = records.map(Protein.init(fastaRecord:))
+let proteins = try records.map(Protein.init(fastaRecord:))
+let dnas = try records.map(DNA.init(fastaRecord:))
 ```
 
 `FastaParser` can also parse bundled files or raw `Data`.
+
+Each `FastaRecord` retains the original header in `header` and reports how its metadata
+was interpreted through `headerFormat`. BioSwift recognizes these common header
+conventions:
+
+- UniProtKB Swiss-Prot and TrEMBL
+- NCBI compound identifiers, including RefSeq, GenBank, EMBL/ENA, and DDBJ markers
+- Modern RefSeq accessions and NCBI bracketed nucleotide definition lines
+- Ensembl gene, transcript, protein, and genomic-coordinate headers
+- GENCODE-style headers beginning with an Ensembl identifier
+- UPS and legacy IPI headers
+
+FASTA permits free-form headers, so unrecognized conventions are not parsing errors.
+They use `.generic`, preserve the complete header, and extract the first header token as
+the accession. Applications can use `headerFormat == .generic` to indicate that
+format-specific metadata such as the organism or short name may be unavailable:
+
+```swift
+for record in records where record.headerFormat == .generic {
+    print("Generic FASTA metadata: \(record.header)")
+}
+```
 
 ## Protein calculations
 
