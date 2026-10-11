@@ -307,33 +307,34 @@ extension Formula: Equatable {
     public static func == (lhs: Formula, rhs: Formula) -> Bool {
         lhs.countedElements == rhs.countedElements
     }
-
+    
     public static func + (lhs: Formula, rhs: Formula) -> Formula {
-        let result = lhs.countedElements.merging(
-            rhs.countedElements, uniquingKeysWith: {
-                left, right in left + right
-            })
-
-        return Formula(inputString: "", countedElements: result)
+        let countedElements = lhs.countedElements.merging(
+            rhs.countedElements,
+            uniquingKeysWith: +
+        )
+        
+        return Formula(inputString: "", countedElements: countedElements)
     }
-
+    
     public static func += (lhs: inout Formula, rhs: Formula) {
         lhs = lhs + rhs
     }
-
+    
     public static func - (lhs: Formula, rhs: Formula) -> Formula {
-        var result = lhs.countedElements
-
+        var countedElements = lhs.countedElements
+        
         for (element, count) in rhs.countedElements {
-            result[element, default: 0] -= count
-            if result[element] == 0 {
-                result.removeValue(forKey: element)
+            countedElements[element, default: 0] -= count
+            
+            if countedElements[element] == 0 {
+                countedElements.removeValue(forKey: element)
             }
         }
-
-        return Formula(inputString: "", countedElements: result)
+        
+        return Formula(inputString: "", countedElements: countedElements)
     }
-
+    
     public static func -= (lhs: inout Formula, rhs: Formula) {
         lhs = lhs - rhs
     }
@@ -350,6 +351,8 @@ extension Formula: MassRepresentable {
         return result
     }
 }
+
+
 
 /*
  # Common chemical groups
