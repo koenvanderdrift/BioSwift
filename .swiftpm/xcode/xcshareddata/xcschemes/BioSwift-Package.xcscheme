@@ -73,6 +73,18 @@
       debugServiceExtension = "internal"
       allowLocationSimulation = "YES"
       queueDebuggingEnabled = "No">
+      <EnvironmentVariables>
+         <EnvironmentVariable
+            key = "BIOSWIFT_RUN_LIVE_NCBI_BLAST"
+            value = "1"
+            isEnabled = "YES">
+         </EnvironmentVariable>
+         <EnvironmentVariable
+            key = "BIOSWIFT_NCBI_EMAIL"
+            value = "eoms113@gmail.com"
+            isEnabled = "YES">
+         </EnvironmentVariable>
+      </EnvironmentVariables>
    </LaunchAction>
    <ProfileAction
       buildConfiguration = "Release"

@@ -36,6 +36,36 @@ for configuring connectivity, caching, and network-access policy.
 Its `UniProtClient` supports paginated FASTA searches, raw JSON entry retrieval, and entry
 version checks. Full UniProt JSON decoding and presentation remain application concerns.
 
+`NCBIBLASTClient` implements `BLASTSearching` through NCBI's hosted BLAST service:
+
+```swift
+let client = try NCBIBLASTClient(email: "researcher@example.org")
+let query = try BLASTQuery(identifier: "sample", sequence: "MPEPTIDE")
+let configuration = try BLASTConfiguration(program: .blastp, database: "swissprot")
+let result = try await client.search(query: query, configuration: configuration)
+```
+
+For searches that must survive cancellation or app relaunch, submit and persist the handle
+separately. Progress is delivered as structured events, including the RID and elapsed time:
+
+```swift
+let client = try NCBIBLASTClient(
+    email: "researcher@example.org",
+    eventHandler: { print($0.description) }
+)
+let submission = try await client.submit(query: query, configuration: configuration)
+
+// Persist `submission` with JSONEncoder if needed. Cancelling this task only stops polling.
+let result = try await client.result(for: submission)
+```
+
+`result(for:)` checks `FORMAT_OBJECT=SearchInfo` until NCBI reports `READY`, then retrieves
+the JSON2 report. Passing a previously saved submission resumes polling without resubmitting
+the sequence.
+
+NCBI requires a contact email and limits request frequency. Searches upload their query
+sequences to NCBI; use a local BLAST+ installation instead for sensitive or high-volume data.
+
 ## Capabilities
 
 - Protein, peptide, DNA, and RNA models with one or more chains
@@ -364,6 +394,18 @@ scales, chemical elements, and modification vocabularies.
 The test suite uses Swift Testing and covers molecule construction, formulas and masses,
 reference loading, FASTA workflows, protein calculations, DNA/RNA operations and
 fragmentation, glycans and IUPAC parsing, and sequence alignment.
+
+An opt-in integration test submits a real ubiquitin query to NCBI and logs the input and
+returned alignments to the test console. To run it, add these environment variables to the
+test action in the Xcode scheme:
+
+```text
+BIOSWIFT_RUN_LIVE_NCBI_BLAST=1
+BIOSWIFT_NCBI_EMAIL=researcher@example.org
+```
+
+The live test is skipped by default because it uploads the sequence, requires network access,
+and observes NCBI's polling interval.
 
 ## Project status
 
