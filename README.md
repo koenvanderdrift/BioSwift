@@ -23,6 +23,19 @@ After adding the package to an Xcode project, add `BioSwift` to the target depen
 import BioSwift
 ```
 
+Remote-service integrations can opt into the separate `BioSwiftNetworking` product:
+
+```swift
+import BioSwiftNetworking
+```
+
+`BioSwiftNetworking` depends on `BioSwift` and provides shared, injectable HTTP transport
+primitives. Core `BioSwift` does not depend on networking. Applications remain responsible
+for configuring connectivity, caching, and network-access policy.
+
+Its `UniProtClient` supports paginated FASTA searches, raw JSON entry retrieval, and entry
+version checks. Full UniProt JSON decoding and presentation remain application concerns.
+
 ## Capabilities
 
 - Protein, peptide, DNA, and RNA models with one or more chains

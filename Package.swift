@@ -13,6 +13,10 @@ let package = Package(
         .library(
             name: "BioSwift",
             targets: ["BioSwift"]
+        ),
+        .library(
+            name: "BioSwiftNetworking",
+            targets: ["BioSwiftNetworking"]
         )
     ],
     dependencies: [],
@@ -24,10 +28,20 @@ let package = Package(
                 .process("Resources")
             ]
         ),
+        .target(
+            name: "BioSwiftNetworking",
+            dependencies: ["BioSwift"]
+        ),
         .testTarget(
             name: "BioSwiftTests",
             dependencies: ["BioSwift"],
-            path: "Tests"
+            path: "Tests",
+            exclude: ["BioSwiftNetworking"]
+        ),
+        .testTarget(
+            name: "BioSwiftNetworkingTests",
+            dependencies: ["BioSwift", "BioSwiftNetworking"],
+            path: "Tests/BioSwiftNetworking"
         ),
     ],
     swiftLanguageModes: [.v6]
