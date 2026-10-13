@@ -4,32 +4,15 @@ import Testing
 
 @Suite("BLAST models")
 struct BLASTModelsTests {
-    @Test("BLAST search implementations use the provider-neutral interface")
-    func searching() async throws {
-        let query = try BLASTQuery(identifier: "query-1", sequence: "ACGT")
-        let configuration = try BLASTConfiguration(program: .blastn, database: "test")
-        let searcher: any BLASTSearching = StubBLASTSearcher()
-
-        let result = try await searcher.search(query: query, configuration: configuration)
-
-        #expect(result.program == .blastn)
-        #expect(result.database == "test")
-        #expect(result.query == query)
-        #expect(result.hits.isEmpty)
-    }
-
     @Test("BLAST programs support iteration and Codable round trips")
     func programs() throws {
         #expect(BLASTProgram.allCases == [.blastn, .blastp, .blastx, .tblastn, .tblastx])
-
-        let encoded = try JSONEncoder().encode(BLASTProgram.tblastn)
-        let decoded = try JSONDecoder().decode(BLASTProgram.self, from: encoded)
-
-        #expect(decoded == .tblastn)
+        let data = try JSONEncoder().encode(BLASTProgram.tblastn)
+        #expect(try JSONDecoder().decode(BLASTProgram.self, from: data) == .tblastn)
     }
 
-    @Test("Queries and configurations retain provider-independent values")
-    func configuration() throws {
+    @Test("Queries and protein configurations retain their options")
+    func proteinConfiguration() throws {
         let query = try BLASTQuery(identifier: "query-1", sequence: "MPEPTIDE")
         let configuration = try BLASTConfiguration(
             program: .blastp,
@@ -37,7 +20,9 @@ struct BLASTModelsTests {
             expectationValue: 0.001,
             maximumHits: 25,
             filtersLowComplexityRegions: false,
-            substitutionMatrix: "BLOSUM62"
+            substitutionMatrix: "BLOSUM62",
+            wordSize: 3,
+            adjustsForShortQuery: true
         )
 
         #expect(query.identifier == "query-1")
@@ -48,41 +33,21 @@ struct BLASTModelsTests {
         #expect(configuration.maximumHits == 25)
         #expect(!configuration.filtersLowComplexityRegions)
         #expect(configuration.substitutionMatrix == "BLOSUM62")
+        #expect(configuration.wordSize == 3)
+        #expect(configuration.adjustsForShortQuery == true)
     }
 
-    @Test("High-scoring pairs derive alignment statistics")
-    func highScoringPairStatistics() throws {
-        let pair = try makeHighScoringPair()
-
-        #expect(pair.alignmentLength == 5)
-        #expect(pair.identity == 0.6)
-        #expect(pair.positives == 0.8)
-        #expect(pair.queryRange == 2..<6)
-        #expect(pair.subjectRange == 10..<14)
-        #expect(pair.subjectStrand == .minus)
-    }
-
-    @Test("Complete results support Codable round trips")
-    func resultCodable() throws {
-        let query = try BLASTQuery(identifier: "query-1", sequence: "ACGT")
-        let hit = try BLASTHit(
-            identifier: "subject-1",
-            accession: "ABC123",
-            definition: "Example sequence",
-            sequenceLength: 42,
-            highScoringPairs: [makeHighScoringPair()]
-        )
-        let result = BLASTResult(
+    @Test("Nucleotide configurations retain scoring options")
+    func nucleotideConfiguration() throws {
+        let configuration = try BLASTConfiguration(
             program: .blastn,
             database: "core_nt",
-            query: query,
-            hits: [hit]
+            nucleotideMatchReward: 2,
+            nucleotideMismatchPenalty: -3
         )
 
-        let encoded = try JSONEncoder().encode(result)
-        let decoded = try JSONDecoder().decode(BLASTResult.self, from: encoded)
-
-        #expect(decoded == result)
+        #expect(configuration.nucleotideMatchReward == 2)
+        #expect(configuration.nucleotideMismatchPenalty == -3)
     }
 
     @Test("Queries reject empty and whitespace-only sequences", arguments: ["", " \n\t"])
@@ -92,8 +57,8 @@ struct BLASTModelsTests {
         }
     }
 
-    @Test("Configurations validate database, expectation value, and hit count")
-    func invalidConfiguration() {
+    @Test("Configurations validate common values")
+    func invalidCommonConfiguration() {
         #expect(throws: BLASTError.emptyDatabase) {
             try BLASTConfiguration(program: .blastn, database: " ")
         }
@@ -103,64 +68,51 @@ struct BLASTModelsTests {
         #expect(throws: BLASTError.invalidMaximumHits(0)) {
             try BLASTConfiguration(program: .blastn, database: "core_nt", maximumHits: 0)
         }
-    }
-
-    @Test("Hits reject negative sequence lengths")
-    func invalidHitLength() {
-        #expect(throws: BLASTError.invalidSequenceLength(-1)) {
-            try BLASTHit(identifier: "subject", sequenceLength: -1, highScoringPairs: [])
+        #expect(throws: BLASTError.invalidWordSize(0)) {
+            try BLASTConfiguration(program: .blastn, database: "core_nt", wordSize: 0)
         }
     }
 
-    @Test("High-scoring pairs validate coordinates and aligned sequences")
-    func invalidHighScoringPairShape() {
-        #expect(throws: BLASTError.invalidRange(-1..<2)) {
-            try makeHighScoringPair(queryRange: -1..<2)
+    @Test("Configurations reject options unsupported by a program")
+    func unsupportedOptions() {
+        #expect(throws: BLASTError.unsupportedOption("substitutionMatrix", program: .blastn)) {
+            try BLASTConfiguration(
+                program: .blastn,
+                database: "core_nt",
+                substitutionMatrix: "BLOSUM62"
+            )
         }
-        #expect(throws: BLASTError.inconsistentAlignmentLengths(query: 5, subject: 4)) {
-            try makeHighScoringPair(subjectSequence: "ACGT")
+        #expect(throws: BLASTError.unsupportedOption("adjustsForShortQuery", program: .blastx)) {
+            try BLASTConfiguration(
+                program: .blastx,
+                database: "swissprot",
+                adjustsForShortQuery: true
+            )
         }
-        #expect(throws: BLASTError.invalidCount(name: "identity", value: 6, alignmentLength: 5)) {
-            try makeHighScoringPair(identityCount: 6)
-        }
-        #expect(throws: BLASTError.invalidCount(name: "positive", value: 2, alignmentLength: 5)) {
-            try makeHighScoringPair(identityCount: 3, positiveCount: 2)
+        #expect(throws: BLASTError.unsupportedOption("nucleotideScoring", program: .blastp)) {
+            try BLASTConfiguration(
+                program: .blastp,
+                database: "swissprot",
+                nucleotideMatchReward: 1
+            )
         }
     }
 
-    private func makeHighScoringPair(
-        queryRange: Range<Int> = 2..<6,
-        subjectSequence: String = "AC-GT",
-        identityCount: Int = 3,
-        positiveCount: Int = 4
-    ) throws -> BLASTHighScoringPair {
-        try BLASTHighScoringPair(
-            rawScore: 21,
-            bitScore: 17.3,
-            expectationValue: 0.0002,
-            queryRange: queryRange,
-            subjectRange: 10..<14,
-            querySequence: "ACG-T",
-            subjectSequence: subjectSequence,
-            identityCount: identityCount,
-            positiveCount: positiveCount,
-            gapCount: 2,
-            queryStrand: .plus,
-            subjectStrand: .minus
-        )
-    }
-}
-
-private struct StubBLASTSearcher: BLASTSearching {
-    func search(
-        query: BLASTQuery,
-        configuration: BLASTConfiguration
-    ) async throws -> BLASTResult {
-        BLASTResult(
-            program: configuration.program,
-            database: configuration.database,
-            query: query,
-            hits: []
-        )
+    @Test("Nucleotide scoring signs are validated")
+    func invalidNucleotideScoring() {
+        #expect(throws: BLASTError.invalidNucleotideMatchReward(0)) {
+            try BLASTConfiguration(
+                program: .blastn,
+                database: "core_nt",
+                nucleotideMatchReward: 0
+            )
+        }
+        #expect(throws: BLASTError.invalidNucleotideMismatchPenalty(1)) {
+            try BLASTConfiguration(
+                program: .blastn,
+                database: "core_nt",
+                nucleotideMismatchPenalty: 1
+            )
+        }
     }
 }

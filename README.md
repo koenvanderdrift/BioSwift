@@ -36,35 +36,18 @@ for configuring connectivity, caching, and network-access policy.
 Its `UniProtClient` supports paginated FASTA searches, raw JSON entry retrieval, and entry
 version checks. Full UniProt JSON decoding and presentation remain application concerns.
 
-`NCBIBLASTClient` implements `BLASTSearching` through NCBI's hosted BLAST service:
+`NCBIBLASTWebRequest` creates a prefilled NCBI BLAST webpage for browser handoff:
 
 ```swift
-let client = try NCBIBLASTClient(email: "researcher@example.org")
 let query = try BLASTQuery(identifier: "sample", sequence: "MPEPTIDE")
 let configuration = try BLASTConfiguration(program: .blastp, database: "swissprot")
-let result = try await client.search(query: query, configuration: configuration)
+let request = try NCBIBLASTWebRequest(query: query, configuration: configuration)
 ```
 
-For searches that must survive cancellation or app relaunch, submit and persist the handle
-separately. Progress is delivered as structured events, including the RID and elapsed time:
-
-```swift
-let client = try NCBIBLASTClient(
-    email: "researcher@example.org",
-    eventHandler: { print($0.description) }
-)
-let submission = try await client.submit(query: query, configuration: configuration)
-
-// Persist `submission` with JSONEncoder if needed. Cancelling this task only stops polling.
-let result = try await client.result(for: submission)
-```
-
-`result(for:)` checks `FORMAT_OBJECT=SearchInfo` until NCBI reports `READY`, then retrieves
-the JSON2 report. Passing a previously saved submission resumes polling without resubmitting
-the sequence.
-
-NCBI requires a contact email and limits request frequency. Searches upload their query
-sequences to NCBI; use a local BLAST+ installation instead for sensitive or high-volume data.
+The request does not submit or monitor a search. An application opens `request.url` after an
+explicit user action, and NCBI's website owns submission and results. Query sequences are
+included in the URL, so applications should display a privacy notice before opening it. Very
+large encoded URLs are rejected; use NCBI's file-upload workflow for those queries.
 
 ## Capabilities
 
@@ -271,6 +254,41 @@ let result = DNAChain(sequence: "GATTACA").align(
 )
 ```
 
+### NCBI BLAST browser handoff
+
+BioSwift models BLAST queries and validates common search options. The optional
+`BioSwiftNetworking` product can convert them into a prefilled NCBI BLAST webpage URL:
+
+```swift
+import BioSwift
+import BioSwiftNetworking
+
+let query = try BLASTQuery(
+    identifier: "human-ubiquitin",
+    sequence: "MQIFVKTLTGKTITLEVEPSDTIENVKAKIQDKEGIPPDQQRLIFAGKQLEDGRTLSDYNIQKESTLHLVLRLRGG"
+)
+let configuration = try BLASTConfiguration(
+    program: .blastp,
+    database: "swissprot",
+    expectationValue: 0.001,
+    maximumHits: 10,
+    substitutionMatrix: "BLOSUM62"
+)
+let request = try NCBIBLASTWebRequest(query: query, configuration: configuration)
+
+// The application opens request.url after an explicit user action.
+```
+
+The same API supports `blastn`, `blastp`, `blastx`, `tblastn`, and `tblastx`, along with
+low-complexity filtering, word size, short-query adjustment, and nucleotide scoring options
+where applicable. Invalid program/option combinations throw a `BLASTError`.
+
+`NCBIBLASTWebRequest` does not submit, monitor, or download a search. After the application
+opens its URL, NCBI's website owns the search and results. Because the sequence is encoded in
+the URL and sent outside the application, applications should obtain explicit user consent.
+Queries that exceed the conservative browser URL limit throw `NCBIBLASTWebRequestError` and
+should instead use NCBI's file-upload workflow.
+
 ## Masses and formulas
 
 Molecules expose monoisotopic, average, and nominal masses calculated from their
@@ -395,17 +413,8 @@ The test suite uses Swift Testing and covers molecule construction, formulas and
 reference loading, FASTA workflows, protein calculations, DNA/RNA operations and
 fragmentation, glycans and IUPAC parsing, and sequence alignment.
 
-An opt-in integration test submits a real ubiquitin query to NCBI and logs the input and
-returned alignments to the test console. To run it, add these environment variables to the
-test action in the Xcode scheme:
-
-```text
-BIOSWIFT_RUN_LIVE_NCBI_BLAST=1
-BIOSWIFT_NCBI_EMAIL=researcher@example.org
-```
-
-The live test is skipped by default because it uploads the sequence, requires network access,
-and observes NCBI's polling interval.
+NCBI BLAST web-request tests validate generated URLs locally and never upload sequences or
+depend on network access.
 
 ## Project status
 
