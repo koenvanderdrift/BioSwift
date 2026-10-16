@@ -211,6 +211,69 @@ struct RefSeqClientTests {
         #expect(fields["retmode"] == "xml")
     }
 
+    @Test("Versioned protein accessions look up the latest base-accession version")
+    func versionFromVersionedProteinAccession() async throws {
+        let transport = RefSeqRecordingTransport(responses: [
+            HTTPResponse(
+                data: Data(#"{"esearchresult":{"count":"1","idlist":["NP_000543.3"]}}"#.utf8),
+                statusCode: 200
+            )
+        ])
+
+        let version = try await RefSeqClient(transport: transport).version(
+            accession: " NP_000543.1 ",
+            database: .protein
+        )
+
+        #expect(version == "3")
+        let request = try #require(await transport.requests.first)
+        let fields = queryFields(try #require(request.url))
+        #expect(request.url?.path == "/entrez/eutils/esearch.fcgi")
+        #expect(fields["db"] == "protein")
+        #expect(fields["term"] == "(NP_000543[Accession]) AND srcdb_refseq[prop]")
+        #expect(fields["idtype"] == "acc")
+        #expect(fields["retmax"] == "1")
+        #expect(request.value(forHTTPHeaderField: "Accept") == "application/json")
+    }
+
+    @Test("Unversioned nucleotide accessions return the latest sequence version")
+    func versionFromUnversionedNucleotideAccession() async throws {
+        let transport = RefSeqRecordingTransport(responses: [
+            HTTPResponse(
+                data: Data(#"{"esearchresult":{"count":"1","idlist":["NM_000546.6"]}}"#.utf8),
+                statusCode: 200
+            )
+        ])
+
+        let version = try await RefSeqClient(transport: transport).version(
+            accession: "NM_000546",
+            database: .nucleotide
+        )
+
+        #expect(version == "6")
+        let request = try #require(await transport.requests.first)
+        let fields = queryFields(try #require(request.url))
+        #expect(fields["db"] == "nuccore")
+        #expect(fields["term"] == "(NM_000546[Accession]) AND srcdb_refseq[prop]")
+    }
+
+    @Test("Version lookup returns nil when the matching identifier has no version")
+    func missingVersion() async throws {
+        let transport = RefSeqRecordingTransport(responses: [
+            HTTPResponse(
+                data: Data(#"{"esearchresult":{"count":"1","idlist":["NP_000543"]}}"#.utf8),
+                statusCode: 200
+            )
+        ])
+
+        let version = try await RefSeqClient(transport: transport).version(
+            accession: "NP_000543",
+            database: .protein
+        )
+
+        #expect(version == nil)
+    }
+
     @Test("Invalid inputs are rejected before transport")
     func invalidInput() async {
         let client = RefSeqClient(transport: RefSeqRecordingTransport(responses: []))
@@ -226,6 +289,9 @@ struct RefSeqClientTests {
         }
         await #expect(throws: RefSeqError.emptyAccession) {
             try await client.fasta(accession: "", database: .nucleotide)
+        }
+        await #expect(throws: RefSeqError.emptyAccession) {
+            try await client.version(accession: " \n", database: .protein)
         }
     }
 
@@ -251,6 +317,13 @@ struct RefSeqClientTests {
         ]))
         await #expect(throws: NetworkingError.unsuccessfulStatus(code: 429, responseBody: body)) {
             try await failing.summaryJSON(accession: "NP_000537.3", database: .protein)
+        }
+
+        let versionFailure = RefSeqClient(transport: RefSeqRecordingTransport(responses: [
+            HTTPResponse(data: body, statusCode: 503)
+        ]))
+        await #expect(throws: NetworkingError.unsuccessfulStatus(code: 503, responseBody: body)) {
+            try await versionFailure.version(accession: "NP_000543.2", database: .protein)
         }
     }
 

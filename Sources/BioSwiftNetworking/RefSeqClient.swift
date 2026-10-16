@@ -201,6 +201,35 @@ public struct RefSeqClient: Sendable {
         return data
     }
 
+    /// Retrieves the latest RefSeq sequence version, or `nil` when no version is available.
+    ///
+    /// A version suffix on the supplied accession is removed before searching so the result
+    /// represents the latest record rather than the specifically requested historical version.
+    public func version(
+        accession: String,
+        database: RefSeqDatabase
+    ) async throws -> String? {
+        let accession = accession.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !accession.isEmpty else {
+            throw RefSeqError.emptyAccession
+        }
+
+        let baseAccession = Self.baseAccession(accession)
+        let result = try await search(
+            query: "\(baseAccession)[Accession]",
+            database: database,
+            pageSize: 1,
+            offset: 0
+        )
+
+        guard let identifier = result.identifiers.first(where: {
+            Self.baseAccession($0).caseInsensitiveCompare(baseAccession) == .orderedSame
+        }) else {
+            return nil
+        }
+        return Self.versionSuffix(identifier)
+    }
+
     private func fastaPage(
         query: String,
         database: RefSeqDatabase,
@@ -305,6 +334,28 @@ public struct RefSeqClient: Sendable {
         var request = URLRequest(url: url)
         request.setValue(contentType, forHTTPHeaderField: "Accept")
         return try await transport.data(for: request).validated()
+    }
+
+    private static func baseAccession(_ accession: String) -> String {
+        guard let separator = accession.lastIndex(of: ".") else {
+            return accession
+        }
+        let suffix = accession[accession.index(after: separator)...]
+        guard !suffix.isEmpty, suffix.allSatisfy(\.isNumber) else {
+            return accession
+        }
+        return String(accession[..<separator])
+    }
+
+    private static func versionSuffix(_ accession: String) -> String? {
+        guard let separator = accession.lastIndex(of: ".") else {
+            return nil
+        }
+        let suffix = accession[accession.index(after: separator)...]
+        guard !suffix.isEmpty, suffix.allSatisfy(\.isNumber) else {
+            return nil
+        }
+        return String(suffix)
     }
 
     private static let host = "eutils.ncbi.nlm.nih.gov"
