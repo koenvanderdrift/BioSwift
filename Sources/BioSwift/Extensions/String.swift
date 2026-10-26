@@ -8,7 +8,7 @@
 
 import Foundation
 
-extension UInt8 {
+public extension UInt8 {
     /// Whether this byte represents an uppercase ASCII letter (A–Z).
     var isASCIIUppercase: Bool {
         (UInt8(ascii: "A")...UInt8(ascii: "Z")).contains(self)
