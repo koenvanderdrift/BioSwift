@@ -137,9 +137,16 @@ enum ReferenceLibraryLoader {
             modifications: unimodLibraries.modifications
         )
 
+        // Keep the full Unimod definitions for modification conversion above, but
+        // expose only the standard 20 amino acids in the bundled sequence library.
+        let standardCodes = Set("ACDEFGHIKLMNPQRSTVWY".map(String.init))
+        let standardAminoAcids = unimodLibraries.aminoAcids.filter {
+            standardCodes.contains($0.oneLetterCode)
+        }
+
         return ReferenceLibraries(
             elements: elements,
-            aminoAcids: unimodLibraries.aminoAcids,
+            aminoAcids: standardAminoAcids,
             unimodLibrary: unimodLibrary,
             enzymes: jsonLibraries.enzymes,
             hydrophobicityScales: jsonLibraries.hydrophobicityScales,
@@ -278,14 +285,7 @@ extension AminoAcidReferences {
         var oneLetterCodes: Set<String> = []
         var threeLetterCodes: Set<String> = []
 
-        for (index, aminoAcid) in (bundled.aminoAcids + customAminoAcids).enumerated() {
-            // Unimod includes terminal definitions that are not sequence residues.
-            if index < bundled.aminoAcids.count,
-               aminoAcid.oneLetterCode == "N-term" || aminoAcid.oneLetterCode == "C-term" {
-                combined.append(aminoAcid)
-                continue
-            }
-
+        for aminoAcid in bundled.aminoAcids + customAminoAcids {
             let code = try Self.normalizedCode(aminoAcid.oneLetterCode, length: 1)
             let threeLetterCode = aminoAcid.threeLetterCode.isEmpty
                 ? ""

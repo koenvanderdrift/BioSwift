@@ -80,6 +80,33 @@ struct CustomAminoAcidTests {
         }
     }
 
+    @Test func bundledLibraryContainsOnlyStandardTwenty() throws {
+        let libraries = try ReferenceLibraryDefaults.loadBundled()
+        let references = try AminoAcidReferenceDefaults.loadBundled()
+        let standard = "ACDEFGHIKLMNPQRSTVWY"
+        #expect(libraries.aminoAcids.count == 20)
+        #expect(references.aminoAcids.count == 20)
+        #expect(references.allowedOneLetterCodes == Set(standard.map(String.init)))
+        #expect(references.filterSequence("abcdefghijklmnopqrstuvwxyz") == standard)
+        #expect(try ProteinChain(sequence: standard.lowercased()).sequenceString == standard)
+
+        for code in ["B", "J", "O", "U", "X", "Z"] {
+            #expect(references.aminoAcid(identifier: code) == nil)
+            let character = try #require(code.first)
+            #expect(throws: SequenceValidationError.invalidResidue(
+                character, position: 0, sequenceType: "protein"
+            )) {
+                try ProteinChain(sequence: code)
+            }
+
+            let custom = try AminoAcid(oneLetterCode: code, formula: Formula("C6H11NO"))
+            let extended = try AminoAcidReferences(customAminoAcids: [custom])
+            #expect(extended.aminoAcids.count == 21)
+            #expect(extended.filterSequence(code.lowercased()) == code)
+            #expect(try ProteinChain(sequence: code, references: extended).residues == [custom])
+        }
+    }
+
     @Test func minimalDefinition() throws {
         let aa = try AminoAcid(oneLetterCode: "j", formula: Formula("C6H11NO"))
         #expect(aa.oneLetterCode == "J")
@@ -114,8 +141,8 @@ struct CustomAminoAcidTests {
         #expect(references.aminoAcids.count == bundled.aminoAcids.count + 1)
         #expect(!references.allowedOneLetterCodes.contains("N-TERM"))
         #expect(!references.allowedOneLetterCodes.contains("C-TERM"))
-        #expect(references.aminoAcid(identifier: "N-term") != nil)
-        #expect(references.aminoAcid(identifier: "C-term") != nil)
+        #expect(references.aminoAcid(identifier: "N-term") == nil)
+        #expect(references.aminoAcid(identifier: "C-term") == nil)
         #expect(references.allowedOneLetterCodes == bundled.allowedOneLetterCodes.union([code]))
         let resolved = try #require(references.aminoAcid(identifier: code))
         #expect(resolved.oneLetterCode == code)
@@ -226,13 +253,13 @@ struct CustomAminoAcidTests {
         let firstID = UUID()
         let secondID = UUID()
         let first = try ProteinChain(sequence: "MKT", name: "alpha", id: firstID)
-        let second = try ProteinChain(sequence: "SEQUENCE", name: "beta", id: secondID)
+        let second = try ProteinChain(sequence: "SECNDS", name: "beta", id: secondID)
 
         let protein = Protein(chains: [first, second])
 
         #expect(protein.chains.map(\.id) == [firstID, secondID])
         #expect(protein.chains.map(\.name) == ["alpha", "beta"])
-        #expect(protein.chains.map(\.sequenceString) == ["MKT", "SEQUENCE"])
+        #expect(protein.chains.map(\.sequenceString) == ["MKT", "SECNDS"])
     }
 
     @Test func aminoAcidChainsAcceptNamesDuringInitialization() throws {
