@@ -69,6 +69,40 @@ public struct AminoAcid: Residue, Codable, Sendable {
         setProperties()
     }
 
+    /// Creates a residue with validated ASCII codes. The formula excludes chain termini.
+    /// An empty three-letter code means that no three-letter code was supplied.
+    public init(
+        oneLetterCode: String,
+        formula: Formula,
+        threeLetterCode: String = "",
+        name: String = ""
+    ) throws {
+        let code = try AminoAcidReferences.normalizedCode(oneLetterCode, length: 1)
+        let threeLetterCode = threeLetterCode.isEmpty
+            ? ""
+            : try AminoAcidReferences.normalizedCode(threeLetterCode, length: 3)
+
+        self.init(
+            name: name, oneLetterCode: code,
+            threeLetterCode: threeLetterCode, formula: formula
+        )
+    }
+
+    /// Descriptive metadata does not participate in residue equality.
+    public static func == (lhs: AminoAcid, rhs: AminoAcid) -> Bool {
+        lhs.oneLetterCode.uppercased() == rhs.oneLetterCode.uppercased()
+            && lhs.formula == rhs.formula
+            && lhs.modification == rhs.modification
+            && lhs.modification?.formula == rhs.modification?.formula
+    }
+
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(oneLetterCode.uppercased())
+        hasher.combine(formula.countedElements)
+        hasher.combine(modification)
+        hasher.combine(modification?.formula.countedElements)
+    }
+
     private mutating func setProperties() {
         switch oneLetterCode {
         case "A", "G", "L", "V", "M", "I":

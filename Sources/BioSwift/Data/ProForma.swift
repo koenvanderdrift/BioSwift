@@ -39,7 +39,7 @@ public struct ProFormaPeptidoform: Hashable, Codable, Sendable, CustomStringConv
         charge: Int? = nil
     ) throws {
         guard !sequence.isEmpty else { throw ProFormaError.emptySequence }
-        guard sequence.allSatisfy({ $0.isASCII && $0.isLetter && $0.isUppercase }) else {
+        guard sequence.utf8.allSatisfy(\.isASCIIUppercase) else {
             throw ProFormaError.invalidSequence(sequence)
         }
         if let charge, charge <= 0 { throw ProFormaError.invalidCharge(charge) }
@@ -176,7 +176,7 @@ public struct ProFormaParser: Sendable {
                 index = next
                 continue
             }
-            guard character.isASCII, character.isLetter, character.isUppercase else {
+            guard character.asciiValue?.isASCIIUppercase == true else {
                 if character == "+" { throw ProFormaError.unsupportedFeature("multiple peptidoforms") }
                 if character == "|" { throw ProFormaError.unsupportedFeature("multi-valued modification tags") }
                 throw ProFormaError.invalidSequence(String(body))

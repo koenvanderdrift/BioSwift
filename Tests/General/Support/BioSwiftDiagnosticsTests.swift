@@ -10,6 +10,22 @@ struct BioSwiftDiagnosticsTests {
         case example
     }
 
+    @Test func aminoAcidValidationLogsOncePerError() throws {
+        let messages = Mutex<[String]>([])
+        BioSwiftDiagnostics.setObserver { level, message in
+            if level == .error,
+               message.contains("diagnostics") {
+                messages.withLock { $0.append(message) }
+            }
+        }
+        defer { BioSwiftDiagnostics.setObserver(nil) }
+
+        #expect(throws: AminoAcidReferenceError.invalidCode("diagnostics", expectedLength: 1)) {
+            try AminoAcid(oneLetterCode: "diagnostics", formula: zeroFormula)
+        }
+        #expect(messages.withLock { $0.count } == 1)
+    }
+
     @Test func debugMessagesAreLazyWhenDisabled() throws {
         let previousValue = BioSwiftDiagnostics.isDebugLoggingEnabled
         defer { BioSwiftDiagnostics.isDebugLoggingEnabled = previousValue }

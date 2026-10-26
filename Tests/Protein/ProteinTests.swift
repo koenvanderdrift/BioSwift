@@ -8,6 +8,187 @@ import Testing
 
 @testable import BioSwift
 
+@Suite("Custom amino acids")
+struct CustomAminoAcidTests {
+    private func unusedCode() throws -> String {
+        let references = try AminoAcidReferenceDefaults.loadBundled()
+        return try #require("ABCDEFGHIJKLMNOPQRSTUVWXYZ".map(String.init).first {
+            !references.allowedOneLetterCodes.contains($0)
+        })
+    }
+
+    @Test func filteringUsesDefinedCodesOnly() throws {
+        let a = try AminoAcid(oneLetterCode: "A", formula: Formula("C3H5NO"))
+        let j = try AminoAcid(oneLetterCode: "J", formula: Formula("C6H11NO"))
+        let references = AminoAcidReferences(aminoAcids: [a, j])
+        #expect(references.filterSequence(" aJ-jA 12\n\tC*?éßＡ😀") == "AJJA")
+        #expect(references.filterSequence("") == "")
+        #expect(references.filterSequence("123-!* éß😀") == "")
+        #expect(references.filterSequence("a\u{0301}") == "A")
+        let ascii = String(decoding: Array(UInt8(0)...UInt8(127)), as: UTF8.self)
+        #expect(references.filterSequence(ascii) == "AJAJ")
+        #expect(references.allowedOneLetterCodes == ["A", "J"])
+    }
+
+    @Test func bundledAndCustomFiltering() throws {
+        let bundled = try AminoAcidReferenceDefaults.loadBundled()
+        let code = try unusedCode()
+        let custom = try AminoAcid(
+            oneLetterCode: code.lowercased(), formula: Formula("C6H11NO")
+        )
+        let references = try AminoAcidReferences(customAminoAcids: [custom])
+        let input = "a-" + code.lowercased() + "1c"
+        #expect(bundled.filterSequence(input) == "AC")
+        let filtered = references.filterSequence(input)
+        #expect(filtered == "A" + code + "C")
+        #expect(references.filterSequence(filtered) == filtered)
+        let chain = try ProteinChain(sequence: filtered, references: references, name: "Edited")
+        #expect(chain.name == "Edited")
+        #expect(chain.residues[1] == custom)
+        let peptide = try Peptide(sequence: input.replacingOccurrences(of: "-", with: "")
+            .replacingOccurrences(of: "1", with: ""), references: references)
+        #expect(peptide.residues[1] == custom)
+        #expect(peptide.sequenceString == filtered)
+    }
+
+    @Test func largePasteFiltering() throws {
+        let code = try unusedCode()
+        let custom = try AminoAcid(oneLetterCode: code, formula: Formula("C6H11NO"))
+        let references = try AminoAcidReferences(customAminoAcids: [custom])
+        let input = String(repeating: "ac-" + code.lowercased() + " 123\n😀", count: 100_000)
+        let expected = String(repeating: "AC" + code, count: 100_000)
+        #expect(references.filterSequence(input) == expected)
+    }
+
+    @Test func strictParsingNormalizesButDoesNotFilter() throws {
+        #expect(try ProteinChain(sequence: "acD").sequenceString == "ACD")
+        #expect(try Peptide(sequence: "acD").sequenceString == "ACD")
+        let references = try AminoAcidReferenceDefaults.loadBundled()
+        for character: Character in ["?", " ", "é", "ß", "a\u{0301}"] {
+            #expect(throws: SequenceValidationError.invalidResidue(
+                character, position: 1, sequenceType: "protein"
+            )) {
+                try ProteinChain(sequence: "A" + String(character) + "C", references: references)
+            }
+        }
+        let code = try unusedCode()
+        let character = try #require(code.first)
+        #expect(throws: SequenceValidationError.invalidResidue(
+            character, position: 1, sequenceType: "protein"
+        )) {
+            try ProteinChain(sequence: "A" + code, references: references)
+        }
+    }
+
+    @Test func minimalDefinition() throws {
+        let aa = try AminoAcid(oneLetterCode: "j", formula: Formula("C6H11NO"))
+        #expect(aa.oneLetterCode == "J")
+        #expect(aa.threeLetterCode.isEmpty)
+        #expect(aa.name.isEmpty)
+        let named = try AminoAcid(oneLetterCode: "j", formula: aa.formula, threeLetterCode: "Nle")
+        #expect(named.threeLetterCode == "NLE")
+    }
+
+    @Test(arguments: ["", "AB", "1", "-", " ", "é", "ß", "Ａ", "a\u{0301}"])
+    func invalidOneLetterCodes(code: String) throws {
+        #expect(throws: AminoAcidReferenceError.invalidCode(code, expectedLength: 1)) {
+            try AminoAcid(oneLetterCode: code, formula: zeroFormula)
+        }
+    }
+
+    @Test(arguments: ["A", "AB", "ABCD", "A1B", " A ", "éaa"])
+    func invalidThreeLetterCodes(code: String) throws {
+        #expect(throws: AminoAcidReferenceError.invalidCode(code, expectedLength: 3)) {
+            try AminoAcid(oneLetterCode: "J", formula: zeroFormula, threeLetterCode: code)
+        }
+    }
+
+    @Test func mergingAndPreservation() throws {
+        let code = try unusedCode()
+        var custom = AminoAcid(name: "Custom", oneLetterCode: code.lowercased(),
+            formula: try Formula("C6H11NO"), represents: ["A"], representedBy: ["X"])
+        custom.properties = [.polar]
+        custom.modification = lossOfWater
+        let references = try AminoAcidReferences(customAminoAcids: [custom])
+        let bundled = try AminoAcidReferenceDefaults.loadBundled()
+        #expect(references.aminoAcids.count == bundled.aminoAcids.count + 1)
+        #expect(!references.allowedOneLetterCodes.contains("N-TERM"))
+        #expect(!references.allowedOneLetterCodes.contains("C-TERM"))
+        #expect(references.aminoAcid(identifier: "N-term") != nil)
+        #expect(references.aminoAcid(identifier: "C-term") != nil)
+        #expect(references.allowedOneLetterCodes == bundled.allowedOneLetterCodes.union([code]))
+        let resolved = try #require(references.aminoAcid(identifier: code))
+        #expect(resolved.oneLetterCode == code)
+        #expect(resolved.formula == custom.formula)
+        #expect(resolved.properties == custom.properties)
+        #expect(resolved.represents == custom.represents)
+        #expect(resolved.representedBy == custom.representedBy)
+        #expect(resolved.modification == custom.modification)
+        let chain = ProteinChain(residues: [resolved])
+        let decoded = try JSONDecoder().decode(ProteinChain.self, from: JSONEncoder().encode(chain))
+        #expect(decoded.residues[0] == resolved)
+        #expect(decoded.residues[0].name == custom.name)
+        #expect(decoded.residues[0].properties == custom.properties)
+        #expect(Peptide(proteinChain: decoded).residues[0] == resolved)
+        let edited = try decoded.insertingResidue(resolved, at: 0)
+        #expect(edited.residues == [resolved, resolved])
+        #expect(edited.formula == resolved.formula + resolved.formula
+            + lossOfWater.formula + lossOfWater.formula
+            + edited.nTerminal.formula + edited.cTerminal.formula)
+    }
+
+    @Test func duplicateCodes() throws {
+        let code = try unusedCode()
+        let first = AminoAcid(name: "", oneLetterCode: code, formula: zeroFormula)
+        let second = AminoAcid(name: "", oneLetterCode: code.lowercased(), formula: zeroFormula)
+        #expect(throws: AminoAcidReferenceError.duplicateCode(code)) {
+            try AminoAcidReferences(customAminoAcids: [first, second])
+        }
+        let bundledDuplicate = AminoAcid(name: "", oneLetterCode: "a", formula: zeroFormula)
+        #expect(throws: AminoAcidReferenceError.duplicateCode("A")) {
+            try AminoAcidReferences(customAminoAcids: [bundledDuplicate])
+        }
+        let three = AminoAcid(name: "", oneLetterCode: code, threeLetterCode: "ala", formula: zeroFormula)
+        #expect(throws: AminoAcidReferenceError.duplicateCode("ALA")) {
+            try AminoAcidReferences(customAminoAcids: [three])
+        }
+    }
+
+    @Test func legacyDefinitionsAreValidated() throws {
+        let invalid = AminoAcid(name: "", oneLetterCode: "?", formula: zeroFormula)
+        #expect(throws: AminoAcidReferenceError.invalidCode("?", expectedLength: 1)) {
+            try AminoAcidReferences(customAminoAcids: [invalid])
+        }
+        let invalidThree = AminoAcid(name: "", oneLetterCode: try unusedCode(),
+            threeLetterCode: "XX", formula: zeroFormula)
+        #expect(throws: AminoAcidReferenceError.invalidCode("XX", expectedLength: 3)) {
+            try AminoAcidReferences(customAminoAcids: [invalidThree])
+        }
+    }
+
+    @Test func equalityAndHashing() throws {
+        let first = try AminoAcid(oneLetterCode: "j", formula: Formula("C6H11NO"))
+        let equivalent = try AminoAcid(oneLetterCode: "J", formula: Formula("H11C6ON"),
+            threeLetterCode: "Nle", name: "Metadata")
+        let otherCode = try AminoAcid(oneLetterCode: "B", formula: first.formula)
+        let otherFormula = try AminoAcid(oneLetterCode: "J", formula: Formula("C5H9NO"))
+        #expect(first == equivalent)
+        #expect(first.hashValue == equivalent.hashValue)
+        #expect(Set([first, equivalent, otherCode, otherFormula]).count == 3)
+        #expect([first: "found"][equivalent] == "found")
+        var modified = first
+        modified.modification = try Modification(name: "Custom change", elements: ["O": 1])
+        var different = first
+        different.modification = try Modification(name: "Custom change", elements: ["O": 2])
+        var same = equivalent
+        same.modification = try Modification(name: "Custom change", elements: ["O": 1])
+        #expect(modified == same)
+        #expect(modified.hashValue == same.hashValue)
+        #expect(Set([first, modified, different, same]).count == 3)
+    }
+}
+
+
 @Suite struct ProteinTests: BioSwiftTestSuite {
     var fixtures = BioSwiftTestFixtures()
     @Test func sequenceLength() throws {

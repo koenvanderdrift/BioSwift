@@ -196,10 +196,16 @@ public struct ElementReferences: Sendable {
     }
 }
 
+public enum AminoAcidReferenceError: Error, Equatable, Sendable {
+    case invalidCode(String, expectedLength: Int)
+    case duplicateCode(String)
+}
+
 public struct AminoAcidReferences: Sendable {
     public let aminoAcids: [AminoAcid]
 
     private let aminoAcidsByIdentifier: [String: AminoAcid]
+    private let sequenceCodeTable: [UInt8]
 
     public init(aminoAcids: [AminoAcid]) {
         self.aminoAcids = aminoAcids
@@ -207,10 +213,108 @@ public struct AminoAcidReferences: Sendable {
             uniqueKeysWithValues: aminoAcids.map {
                 ($0.identifier, $0)
             })
+
+        var table = [UInt8](repeating: 0, count: 256)
+        for aminoAcid in aminoAcids where Self.isValidCode(aminoAcid.oneLetterCode, length: 1) {
+            if let byte = aminoAcid.oneLetterCode.uppercased().utf8.first {
+                table[Int(byte)] = byte
+                table[Int(byte + 32)] = byte
+            }
+        }
+        sequenceCodeTable = table
+    }
+
+    /// Filters raw one-letter sequence text for editing, retaining only defined ASCII
+    /// codes and normalizing lowercase to uppercase. Order and repetitions are preserved.
+    ///
+    /// Scans UTF-8 bytes in O(n) time using a lookup table built with these references.
+    /// Non-ASCII bytes are discarded; no Unicode transliteration is performed.
+    /// This is not a FASTA parser: letters in headers or other prose are also retained.
+    public func filterSequence(_ sequence: String) -> String {
+        var result: [UInt8] = []
+        result.reserveCapacity(sequence.utf8.count)
+        for byte in sequence.utf8 {
+            let code = sequenceCodeTable[Int(byte)]
+            if code != 0 {
+                result.append(code)
+            }
+        }
+        return String(decoding: result, as: UTF8.self)
     }
 
     public func aminoAcid(identifier: String) -> AminoAcid? {
         aminoAcidsByIdentifier[identifier]
+    }
+}
+
+extension AminoAcidReferences {
+    private static func isValidCode(_ code: String, length: Int) -> Bool {
+        code.utf8.count == length && code.utf8.allSatisfy {
+            $0.isASCIIUppercase || $0.isASCIILowercase
+        }
+    }
+
+    static func normalizedCode(_ code: String, length: Int) throws -> String {
+        guard isValidCode(code, length: length) else {
+            throw BioSwiftDiagnostics.logged(
+                AminoAcidReferenceError.invalidCode(code, expectedLength: length)
+            )
+        }
+
+        return code.uppercased()
+    }
+
+    public var allowedOneLetterCodes: Set<String> {
+        Set((65...90).compactMap { index in
+            sequenceCodeTable[index] == 0 ? nil : String(decoding: [sequenceCodeTable[index]], as: UTF8.self)
+        })
+    }
+
+    /// Combines bundled and custom definitions without permitting code overrides.
+    /// Codes are normalized to uppercase; omitted three-letter codes are not indexed.
+    public init(customAminoAcids: [AminoAcid]) throws {
+        let bundled = try AminoAcidReferenceDefaults.loadBundled()
+        var combined: [AminoAcid] = []
+        var oneLetterCodes: Set<String> = []
+        var threeLetterCodes: Set<String> = []
+
+        for (index, aminoAcid) in (bundled.aminoAcids + customAminoAcids).enumerated() {
+            // Unimod includes terminal definitions that are not sequence residues.
+            if index < bundled.aminoAcids.count,
+               aminoAcid.oneLetterCode == "N-term" || aminoAcid.oneLetterCode == "C-term" {
+                combined.append(aminoAcid)
+                continue
+            }
+
+            let code = try Self.normalizedCode(aminoAcid.oneLetterCode, length: 1)
+            let threeLetterCode = aminoAcid.threeLetterCode.isEmpty
+                ? ""
+                : try Self.normalizedCode(aminoAcid.threeLetterCode, length: 3)
+
+            guard oneLetterCodes.insert(code).inserted else {
+                throw BioSwiftDiagnostics.logged(
+                    AminoAcidReferenceError.duplicateCode(code)
+                )
+            }
+
+            if !threeLetterCode.isEmpty,
+               !threeLetterCodes.insert(threeLetterCode).inserted {
+                throw BioSwiftDiagnostics.logged(
+                    AminoAcidReferenceError.duplicateCode(threeLetterCode)
+                )
+            }
+
+            var normalized = AminoAcid(
+                name: aminoAcid.name, oneLetterCode: code,
+                threeLetterCode: threeLetterCode, formula: aminoAcid.formula,
+                represents: aminoAcid.represents, representedBy: aminoAcid.representedBy
+            )
+            normalized.properties = aminoAcid.properties
+            normalized.modification = aminoAcid.modification
+            combined.append(normalized)
+        }
+
+        self.init(aminoAcids: combined)
     }
 }
 

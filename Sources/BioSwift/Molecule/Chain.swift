@@ -184,11 +184,21 @@ public protocol AminoAcidChain: SequenceInitializableChain, Structure where Resi
 }
 
 extension AminoAcidChain {
-    static func createResidues(from sequence: String) throws -> [AminoAcid] {
-        let references = try AminoAcidReferenceDefaults.loadBundled()
+    public static func createResidues(from sequence: String) throws -> [AminoAcid] {
+        try createResidues(from: sequence, references: AminoAcidReferenceDefaults.loadBundled())
+    }
 
-        return try parseResidues(from: sequence, sequenceType: "protein") { character in
-            references.aminoAcid(identifier: String(character))
+    /// Parses strictly using the supplied definitions. For editing, explicitly call
+    /// `references.filterSequence(_:)` first to discard unsupported input.
+    public static func createResidues(
+        from sequence: String, references: AminoAcidReferences
+    ) throws -> [AminoAcid] {
+        try parseResidues(from: sequence, sequenceType: "protein") { character in
+            guard let byte = character.asciiValue,
+                  byte.isASCIIUppercase || byte.isASCIILowercase else {
+                return nil
+            }
+            return references.aminoAcid(identifier: String(character).uppercased())
         }
     }
 

@@ -8,6 +8,18 @@
 
 import Foundation
 
+extension UInt8 {
+    /// Whether this byte represents an uppercase ASCII letter (A–Z).
+    var isASCIIUppercase: Bool {
+        (UInt8(ascii: "A")...UInt8(ascii: "Z")).contains(self)
+    }
+
+    /// Whether this byte represents a lowercase ASCII letter (a–z).
+    var isASCIILowercase: Bool {
+        (UInt8(ascii: "a")...UInt8(ascii: "z")).contains(self)
+    }
+}
+
 extension String {
     // MARK: - Regular expressions
 

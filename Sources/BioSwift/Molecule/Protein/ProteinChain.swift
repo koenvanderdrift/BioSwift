@@ -21,6 +21,16 @@ public struct ProteinChain: AminoAcidChain, Codable, Equatable, Sendable {
         residues = try Self.createResidues(from: sequence)
     }
 
+    /// Constructs a chain using explicit definitions, rejecting unknown characters.
+    public init(
+        sequence: String, references: AminoAcidReferences,
+        name: String = "", id: UUID = UUID()
+    ) throws {
+        self.id = id
+        self.name = name
+        residues = try Self.createResidues(from: sequence, references: references)
+    }
+
     public init(residues: [AminoAcid], name: String, id: UUID) {
         self.id = id
         self.name = name
