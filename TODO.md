@@ -9,5 +9,6 @@
 ## Future capabilities
 
 - Expand UniProt import support.
+- Expand UniProt ptm import support.
 - Add more substitution matrices and alignment scoring presets.
 - Consider returning multiple equally optimal sequence alignments.
