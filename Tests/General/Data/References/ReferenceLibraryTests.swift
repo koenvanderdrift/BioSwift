@@ -152,6 +152,48 @@ import Testing
         #expect(carbohydrateModification.specificities.first?.site == "N")
     }
 
+    @Test(arguments: ["\n", "\r\n", "\r"])
+    func uniProtPTMParserReadsRecordsAfterHeader(lineEnding: String) throws {
+        let text = """
+            Release:     test_release
+              ID         Identifier (FT description)
+              AC         Accession (PTM-xxxx)
+              FT         Feature key
+              TG         Target
+              //         Terminator
+
+            ID   First modification
+            AC   PTM-FIRST
+            FT   MOD_RES
+            TG   Asparagine.
+            CF   O1
+            //
+            ID   Second modification
+            AC   PTM-SECOND
+            FT   MOD_RES
+            TG   Serine.
+            CF   H2
+            //
+            AC   PTM-OUTSIDE
+            ID   Unfinished modification
+            AC   PTM-UNFINISHED
+            FT   MOD_RES
+            TG   Serine.
+            CF   O1
+            """
+            .replacingOccurrences(of: "\n", with: lineEnding)
+        let references = try ReferenceLibraryDefaults.loadBundled()
+        let library = try UniProtPTMReferenceLibraryLoader.parse(
+            text, elements: references.elementReferences,
+            aminoAcids: references.aminoAcidReferences
+        )
+
+        #expect(library.version == "test_release")
+        #expect(library.modifications.map(\.accession) == ["PTM-FIRST", "PTM-SECOND"])
+        #expect(library.modification(accession: "PTM-FIRST")?.name == "First modification")
+        #expect(library.modification(accession: "PTM-SECOND")?.name == "Second modification")
+    }
+
     @Test func uniProtPTMParserPreservesRepeatedFieldsRejectsUnsupportedRecordsAndIgnoresProvidedMasses() throws {
         let text = """
             Release:     test_release of 01-Jan-2026

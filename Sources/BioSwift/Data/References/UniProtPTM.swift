@@ -63,7 +63,24 @@ private struct UniProtPTMParser {
     func parse(_ text: String) throws -> ModificationLibrary {
         let normalizedText = text.replacingOccurrences(of: "\r\n", with: "\n")
         let version = parseVersion(from: normalizedText)
-        let records = normalizedText.components(separatedBy: "\n//").compactMap(parseRecord)
+        var records: [UniProtPTMRecord] = []
+        var recordLines: [String] = []
+
+        for rawLine in normalizedText.split(whereSeparator: \.isNewline) {
+            let line = String(rawLine)
+            // Keep leading whitespace significant: the header also describes ID fields.
+            if line.hasPrefix("ID   ") {
+                recordLines = [line]
+            } else if line.trimmingCharacters(in: .whitespaces) == "//" {
+                if !recordLines.isEmpty,
+                   let record = parseRecord(recordLines.joined(separator: "\n")) {
+                    records.append(record)
+                }
+                recordLines.removeAll(keepingCapacity: true)
+            } else if !recordLines.isEmpty {
+                recordLines.append(line)
+            }
+        }
         let convertedRecords = try records.compactMap(convert)
         let modifications = convertedRecords.map(\.modification)
         let metadata = Dictionary(
