@@ -11,7 +11,7 @@ import Testing
 @Suite("Custom amino acids")
 struct CustomAminoAcidTests {
     private func unusedCode() throws -> String {
-        let references = try AminoAcidReferenceDefaults.loadBundled()
+        let references = try ReferenceLibraryDefaults.loadBundled().aminoAcidReferences
         return try #require("ABCDEFGHIJKLMNOPQRSTUVWXYZ".map(String.init).first {
             !references.allowedOneLetterCodes.contains($0)
         })
@@ -31,7 +31,7 @@ struct CustomAminoAcidTests {
     }
 
     @Test func bundledAndCustomFiltering() throws {
-        let bundled = try AminoAcidReferenceDefaults.loadBundled()
+        let bundled = try ReferenceLibraryDefaults.loadBundled().aminoAcidReferences
         let code = try unusedCode()
         let custom = try AminoAcid(
             oneLetterCode: code.lowercased(), formula: Formula("C6H11NO")
@@ -63,7 +63,7 @@ struct CustomAminoAcidTests {
     @Test func strictParsingNormalizesButDoesNotFilter() throws {
         #expect(try ProteinChain(sequence: "acD").sequenceString == "ACD")
         #expect(try Peptide(sequence: "acD").sequenceString == "ACD")
-        let references = try AminoAcidReferenceDefaults.loadBundled()
+        let references = try ReferenceLibraryDefaults.loadBundled().aminoAcidReferences
         for character: Character in ["?", " ", "é", "ß", "a\u{0301}"] {
             #expect(throws: SequenceValidationError.invalidResidue(
                 character, position: 1, sequenceType: "protein"
@@ -82,7 +82,7 @@ struct CustomAminoAcidTests {
 
     @Test func bundledLibraryContainsOnlyStandardTwenty() throws {
         let libraries = try ReferenceLibraryDefaults.loadBundled()
-        let references = try AminoAcidReferenceDefaults.loadBundled()
+        let references = try ReferenceLibraryDefaults.loadBundled().aminoAcidReferences
         let standard = "ACDEFGHIKLMNPQRSTVWY"
         #expect(libraries.aminoAcids.count == 20)
         #expect(references.aminoAcids.count == 20)
@@ -137,7 +137,7 @@ struct CustomAminoAcidTests {
         custom.properties = [.polar]
         custom.modification = lossOfWater
         let references = try AminoAcidReferences(customAminoAcids: [custom])
-        let bundled = try AminoAcidReferenceDefaults.loadBundled()
+        let bundled = try ReferenceLibraryDefaults.loadBundled().aminoAcidReferences
         #expect(references.aminoAcids.count == bundled.aminoAcids.count + 1)
         #expect(!references.allowedOneLetterCodes.contains("N-TERM"))
         #expect(!references.allowedOneLetterCodes.contains("C-TERM"))

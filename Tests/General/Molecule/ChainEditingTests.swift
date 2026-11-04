@@ -78,7 +78,7 @@ struct ChainEditingTests {
     func insertionAndReplacement() throws {
         let original = try ProteinChain(sequence: "ACD", name: "alpha")
         let glycine = try #require(
-            try AminoAcidReferenceDefaults.loadBundled().aminoAcid(identifier: "G")
+            try ReferenceLibraryDefaults.loadBundled().aminoAcidReferences.aminoAcid(identifier: "G")
         )
 
         let inserted = try original.insertingResidue(glycine, at: 1)

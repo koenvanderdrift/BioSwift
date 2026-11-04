@@ -6,110 +6,22 @@
 //  Copyright © 2026 Koen van der Drift. All rights reserved.
 //
 
+/*
+ Parsing of modifications in ReferenceLibraries has become quite complex. It uses ModificationVocabulary, TaxonomicRange, ModificationCrossReference, ModificationMetadata and ModificationLibrary. And then PSIModTerm and UniProtPTMRecord.
+ 
+ Are these all really needed?
+ 
+ 
+ Missing formulas, how to handle?
+ 
+ RESID is outdated: RESID Database of Protein Modifications Release Notes
+ Release 76.00 31-May-2018
+
+ ChEBI is well maintained: http://www.ebi.ac.uk/chebi
+ */
+
+
 import Foundation
-
-public enum ModificationVocabulary: String, Codable, Sendable {
-    case unimod
-    case psiMod
-    case uniProtPTM
-}
-
-public struct TaxonomicRange: Codable, Hashable, Sendable {
-    public let name: String
-    public let taxonIdentifier: Int
-
-    public init(name: String, taxonIdentifier: Int) {
-        self.name = name
-        self.taxonIdentifier = taxonIdentifier
-    }
-}
-
-public struct ModificationCrossReference: Codable, Hashable, Sendable {
-    public let database: String
-    public let identifier: String
-
-    public init(database: String, identifier: String) {
-        self.database = database
-        self.identifier = identifier
-    }
-}
-
-public struct ModificationMetadata: Codable, Sendable {
-    public let taxonomicRanges: [TaxonomicRange]
-    public let keywords: [String]
-    public let cellularLocations: [String]
-    public let crossReferences: [ModificationCrossReference]
-
-    public init(
-        taxonomicRanges: [TaxonomicRange] = [],
-        keywords: [String] = [],
-        cellularLocations: [String] = [],
-        crossReferences: [ModificationCrossReference] = []
-    ) {
-        self.taxonomicRanges = taxonomicRanges
-        self.keywords = keywords
-        self.cellularLocations = cellularLocations
-        self.crossReferences = crossReferences
-    }
-}
-
-public struct ModificationLibrary: Sendable {
-    public let vocabulary: ModificationVocabulary
-    public let version: String
-    public let modifications: [Modification]
-
-    private let references: ModificationReferences
-    private let metadataByAccession: [String: ModificationMetadata]
-
-    public init(
-        vocabulary: ModificationVocabulary,
-        version: String,
-        modifications: [Modification],
-        metadataByAccession: [String: ModificationMetadata] = [:]
-    ) {
-        self.vocabulary = vocabulary
-        self.version = version
-        self.modifications = modifications
-        self.references = ModificationReferences(modifications: modifications)
-        self.metadataByAccession = metadataByAccession
-    }
-
-    public func modification(named name: String) -> Modification? {
-        references.modification(named: name)
-    }
-
-    public func modification(accession: String) -> Modification? {
-        references.modification(accession: accession)
-    }
-
-    public func modifications(matching query: String, applicableTo residue: String? = nil) -> [Modification] {
-        references.modifications(matching: query, applicableTo: residue)
-    }
-
-    public func modifications(applicableTo residueIdentifier: String) -> [Modification] {
-        references.modifications(applicableTo: residueIdentifier)
-    }
-
-    public func metadata(for modification: Modification) -> ModificationMetadata? {
-        modification.accession.flatMap { metadataByAccession[$0] }
-    }
-
-    public func modifications(taxonIdentifier: Int) -> [Modification] {
-        modifications.filter { modification in
-            metadata(for: modification)?.taxonomicRanges.contains {
-                $0.taxonIdentifier == taxonIdentifier
-            } == true
-        }
-    }
-}
-
-public enum ElementsLibraryDefaults {
-    public static let bundledResult = Result { try JSONReferenceLibraryLoader.loadElements() }
-
-    public static func loadBundled() throws -> [ChemicalElement] {
-        try bundledResult.get()
-    }
-}
 
 public enum ReferenceLibraryDefaults {
     public static let bundledResult = Result { try ReferenceLibraryLoader.loadBundled() }
@@ -120,10 +32,20 @@ public enum ReferenceLibraryDefaults {
 }
 
 enum ReferenceLibraryLoader {
+    // Formula parsing is used while loading the other libraries, so elements
+    // must be available independently of the complete bundled collection.
+    private static let bundledElements = Result {
+        ElementReferences(elements: try JSONReferenceLibraryLoader.loadElements())
+    }
+
+    static func loadElements() throws -> ElementReferences {
+        try bundledElements.get()
+    }
+
     static func loadBundled() throws -> ReferenceLibraries {
-        let elements = try JSONReferenceLibraryLoader.loadElements()
+        let elementReferences = try loadElements()
+        let elements = elementReferences.elements
         let jsonLibraries = try JSONReferenceLibraryLoader.loadOtherLibraries()
-        let elementReferences = ElementReferences(elements: elements)
         let unimodLibraries = try UnimodReferenceLibraryLoader.load(elements: elementReferences)
         let psiModLibrary = try PSIModReferenceLibraryLoader.load(elements: elementReferences)
         let aminoAcidReferences = AminoAcidReferences(aminoAcids: unimodLibraries.aminoAcids)
@@ -153,36 +75,6 @@ enum ReferenceLibraryLoader {
             psiModLibrary: psiModLibrary,
             uniProtPTMLibrary: uniProtPTMLibrary
         )
-    }
-}
-
-public enum ElementReferenceDefaults {
-    public static func loadBundled() throws -> ElementReferences {
-        ElementReferences(elements: try ElementsLibraryDefaults.loadBundled())
-    }
-}
-
-public enum AminoAcidReferenceDefaults {
-    public static func loadBundled() throws -> AminoAcidReferences {
-        try ReferenceLibraryDefaults.loadBundled().aminoAcidReferences
-    }
-}
-
-public enum UnimodModificationReferenceDefaults {
-    public static func loadBundled() throws -> ModificationLibrary {
-        try ReferenceLibraryDefaults.loadBundled().unimodLibrary
-    }
-}
-
-public enum EnzymeReferenceDefaults {
-    public static func loadBundled() throws -> EnzymeReferences {
-        try ReferenceLibraryDefaults.loadBundled().enzymeReferences
-    }
-}
-
-public enum HydrophobicityReferenceDefaults {
-    public static func loadBundled() throws -> HydrophobicityReferences {
-        try ReferenceLibraryDefaults.loadBundled().hydrophobicityReferences
     }
 }
 
@@ -280,7 +172,7 @@ extension AminoAcidReferences {
     /// Combines bundled and custom definitions without permitting code overrides.
     /// Codes are normalized to uppercase; omitted three-letter codes are not indexed.
     public init(customAminoAcids: [AminoAcid]) throws {
-        let bundled = try AminoAcidReferenceDefaults.loadBundled()
+        let bundled = try ReferenceLibraryDefaults.loadBundled().aminoAcidReferences
         var combined: [AminoAcid] = []
         var oneLetterCodes: Set<String> = []
         var threeLetterCodes: Set<String> = []
@@ -315,59 +207,6 @@ extension AminoAcidReferences {
         }
 
         self.init(aminoAcids: combined)
-    }
-}
-
-public struct ModificationReferences: Sendable {
-    public let modifications: [Modification]
-
-    private let modificationsByName: [String: Modification]
-    private let modificationsByAccession: [String: Modification]
-
-    public init(modifications: [Modification]) {
-        self.modifications = modifications
-        self.modificationsByName = Dictionary(
-            modifications.map { ($0.name, $0) }, uniquingKeysWith: { first, _ in first })
-        self.modificationsByAccession = Dictionary(
-            modifications.compactMap { modification in
-                modification.accession.map { ($0, modification) }
-            },
-            uniquingKeysWith: { first, _ in first }
-        )
-    }
-
-    public func modification(named name: String) -> Modification? {
-        modificationsByName[name]
-    }
-
-    public func modification(accession: String) -> Modification? {
-        modificationsByAccession[accession]
-    }
-
-    public func modifications(matching query: String, applicableTo residue: String? = nil) -> [Modification] {
-        let normalizedQuery = query.folding(
-            options: [.caseInsensitive, .diacriticInsensitive], locale: .current)
-
-        return modifications.filter { modification in
-            let searchableNames = [modification.name, modification.fullName] + modification.synonyms
-            let matchesName = searchableNames.contains { name in
-                name.folding(options: [.caseInsensitive, .diacriticInsensitive], locale: .current)
-                    .contains(normalizedQuery)
-            }
-            let matchesResidue = residue == nil || modification.specificities.contains {
-                $0.site == residue || $0.site == "X"
-            }
-
-            return matchesName && matchesResidue
-        }
-    }
-
-    public func modifications(applicableTo residueIdentifier: String) -> [Modification] {
-        modifications.filter { modification in
-            modification.specificities.contains {
-                $0.site == residueIdentifier
-            }
-        }
     }
 }
 

@@ -6,7 +6,7 @@ import Testing
     private let parser = GlycanIUPACParser()
 
     private static let uniProtPTMLibrary = Result {
-        let elements = try ElementReferenceDefaults.loadBundled()
+        let elements = try ReferenceLibraryDefaults.loadBundled().elementReferences
         let unimod = try UnimodReferenceLibraryLoader.load(elements: elements)
         return try UniProtPTMReferenceLibraryLoader.load(
             elements: elements,

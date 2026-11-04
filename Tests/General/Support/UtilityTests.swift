@@ -155,7 +155,7 @@ import Testing
             """
 
         let data = Data(malformedXML.utf8)
-        let elements = try ElementReferenceDefaults.loadBundled()
+        let elements = try ReferenceLibraryDefaults.loadBundled().elementReferences
 
         #expect(throws: Error.self) {
             try UnimodXMLParser(elements: elements).parse(data: data)
@@ -169,7 +169,7 @@ import Testing
             """
 
         let data = Data(malformedXML.utf8)
-        let elements = try ElementReferenceDefaults.loadBundled()
+        let elements = try ReferenceLibraryDefaults.loadBundled().elementReferences
 
         let error = try #require(
             #expect(throws: Error.self) {
@@ -185,7 +185,7 @@ import Testing
     @Test func malformedXMLThrowsXMLParserError() throws {
         let malformedXML = Data("<root><broken></root>".utf8)
 
-        let parser = UnimodXMLParser(elements: try ElementReferenceDefaults.loadBundled())
+        let parser = UnimodXMLParser(elements: try ReferenceLibraryDefaults.loadBundled().elementReferences)
 
         let error = try #require(
             #expect(throws: Error.self) {
@@ -203,7 +203,7 @@ import Testing
     @Test func malformedXMLThrowsXMLParserError2() throws {
         let malformedXML = Data("<root><broken></root>".utf8)
 
-        let parser = UnimodXMLParser(elements: try ElementReferenceDefaults.loadBundled())
+        let parser = UnimodXMLParser(elements: try ReferenceLibraryDefaults.loadBundled().elementReferences)
 
         let error = #expect(throws: Error.self) {
             try parser.parse(data: malformedXML)

@@ -185,7 +185,7 @@ public protocol AminoAcidChain: SequenceInitializableChain, Structure where Resi
 
 extension AminoAcidChain {
     public static func createResidues(from sequence: String) throws -> [AminoAcid] {
-        try createResidues(from: sequence, references: AminoAcidReferenceDefaults.loadBundled())
+        try createResidues(from: sequence, references: ReferenceLibraryDefaults.loadBundled().aminoAcidReferences)
     }
 
     /// Parses strictly using the supplied definitions. For editing, explicitly call
@@ -286,7 +286,7 @@ extension AminoAcidChain {
 
 extension Chain where ResidueType == AminoAcid {
     public func hydrophobicityValues(for hydrophobicityScale: String) throws -> [Double] {
-        let references = try HydrophobicityReferenceDefaults.loadBundled()
+        let references = try ReferenceLibraryDefaults.loadBundled().hydrophobicityReferences
         let values = try references.numericHydrophobicityValues(named: hydrophobicityScale)
 
         return try residues.map { residue in

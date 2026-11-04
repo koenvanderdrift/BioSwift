@@ -100,7 +100,7 @@ struct BioMoleculeEditingTests {
             inChain: 1
         )
         let glycine = try #require(
-            try AminoAcidReferenceDefaults.loadBundled().aminoAcid(identifier: "G")
+            try ReferenceLibraryDefaults.loadBundled().aminoAcidReferences.aminoAcid(identifier: "G")
         )
 
         let edited = try protein.insertingResidues(
@@ -128,7 +128,7 @@ struct BioMoleculeEditingTests {
             try ProteinChain(sequence: "FGHI"),
         ])
         let glycine = try #require(
-            try AminoAcidReferenceDefaults.loadBundled().aminoAcid(identifier: "G")
+            try ReferenceLibraryDefaults.loadBundled().aminoAcidReferences.aminoAcid(identifier: "G")
         )
 
         let removed = try protein.removingResidue(at: 1, chainIndex: 1)

@@ -19,7 +19,7 @@ struct UnimodReferenceLibraries {
 
 enum UnimodReferenceLibraryLoader {
     static func load() throws -> UnimodReferenceLibraries {
-        let elements = ElementReferences(elements: try ElementsLibraryDefaults.loadBundled())
+        let elements = try ReferenceLibraryLoader.loadElements()
 
         return try load(elements: elements)
     }
@@ -33,7 +33,7 @@ enum UnimodReferenceLibraryLoader {
 
     /// Handy for tests with custom XML data.
     static func parse(data: Data) throws -> UnimodReferenceLibraries {
-        let elements = ElementReferences(elements: try ElementsLibraryDefaults.loadBundled())
+        let elements = try ReferenceLibraryLoader.loadElements()
 
         let parser = UnimodXMLParser(elements: elements)
         return try parser.parse(data: data)

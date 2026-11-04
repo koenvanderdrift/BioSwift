@@ -21,11 +21,26 @@ import Testing
     }
 
     @Test func bundledResultsExposeLoadingFailures() throws {
-        let elements = try ElementsLibraryDefaults.bundledResult.get()
+        let elements = try ReferenceLibraryDefaults.bundledResult.get().elements
         let libraries = try ReferenceLibraryDefaults.bundledResult.get()
 
         #expect(!elements.isEmpty)
         #expect(!libraries.elements.isEmpty)
+    }
+
+    @Test func bundledCollectionsProvideLookupsThroughOneEntryPoint() throws {
+        let libraries = try ReferenceLibraryDefaults.loadBundled()
+
+        #expect(libraries.elementReferences.element(symbol: "C")?.symbol == "C")
+        #expect(libraries.aminoAcidReferences.aminoAcid(identifier: "G")?.oneLetterCode == "G")
+        let enzyme = try #require(libraries.enzymes.first)
+        #expect(libraries.enzymeReferences.enzyme(named: enzyme.name)?.name == enzyme.name)
+        let scale = try #require(libraries.hydrophobicityScales.first)
+        #expect(libraries.hydrophobicityReferences.hydrophobicityScale(named: scale.name)?.name == scale.name)
+        #expect(libraries.elementReferences.elements.count == libraries.elements.count)
+        #expect(libraries.aminoAcidReferences.aminoAcids.count == libraries.aminoAcids.count)
+        #expect(libraries.enzymeReferences.enzymes.count == libraries.enzymes.count)
+        #expect(libraries.hydrophobicityReferences.hydrophobicityScales.count == libraries.hydrophobicityScales.count)
     }
 
     @Test func bundledDefaultsAreAvailable() throws {
@@ -39,7 +54,7 @@ import Testing
     }
 
     @Test func bundledHydrophobicityReferencesProvideNumericValues() throws {
-        let pKaValues = try HydrophobicityReferenceDefaults.loadBundled().numericHydrophobicityValues(named: "pKa")
+        let pKaValues = try ReferenceLibraryDefaults.loadBundled().hydrophobicityReferences.numericHydrophobicityValues(named: "pKa")
 
         #expect(pKaValues["CTerminal"] != nil)
         #expect(pKaValues["NTerminal"] != nil)
@@ -77,14 +92,21 @@ import Testing
     @Test func modificationLibrariesHaveAnExchangeableAPI() throws {
         let libraries = try ReferenceLibraryDefaults.loadBundled()
 
-        func validate(_ library: ModificationLibrary) {
+        func validate(_ library: ModificationLibrary, vocabulary: ModificationVocabulary) throws {
+            #expect(library.vocabulary == vocabulary)
             #expect(!library.modifications.isEmpty)
             #expect(!library.modifications(applicableTo: "M").isEmpty)
+
+            let modification = try #require(library.modifications.first)
+            let accession = try #require(modification.accession)
+            #expect(library.modification(accession: accession)?.name == modification.name)
+            #expect(library.modification(named: modification.name)?.name == modification.name)
+            #expect(library.modifications(matching: modification.name).contains(modification))
         }
 
-        validate(libraries.unimodLibrary)
-        validate(libraries.psiModLibrary)
-        validate(libraries.uniProtPTMLibrary)
+        try validate(libraries.unimodLibrary, vocabulary: .unimod)
+        try validate(libraries.psiModLibrary, vocabulary: .psiMod)
+        try validate(libraries.uniProtPTMLibrary, vocabulary: .uniProtPTM)
         #expect(libraries.unimodLibrary.modification(accession: "UNIMOD:1") != nil)
     }
 
@@ -191,8 +213,8 @@ import Testing
 
         let library = try UniProtPTMReferenceLibraryLoader.parse(
             text,
-            elements: try ElementReferenceDefaults.loadBundled(),
-            aminoAcids: try AminoAcidReferenceDefaults.loadBundled()
+            elements: try ReferenceLibraryDefaults.loadBundled().elementReferences,
+            aminoAcids: try ReferenceLibraryDefaults.loadBundled().aminoAcidReferences
         )
         let modification = library.modification(accession: "PTM-TEST1")
         let metadata = modification.flatMap(library.metadata)
@@ -267,7 +289,7 @@ import Testing
 
         let result = try PSIModReferenceLibraryLoader.parse(
             text,
-            elements: try ElementReferenceDefaults.loadBundled()
+            elements: try ReferenceLibraryDefaults.loadBundled().elementReferences
         )
 
         #expect(result.version == "test")

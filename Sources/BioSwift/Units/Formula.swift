@@ -23,7 +23,7 @@ public enum FormulaParser {
     }
 
     private static var elements: ElementReferences {
-        get throws { try ElementReferenceDefaults.loadBundled() }
+        get throws { try ReferenceLibraryLoader.loadElements() }
     }
 
     public static func parse(_ string: String) throws -> Formula {
