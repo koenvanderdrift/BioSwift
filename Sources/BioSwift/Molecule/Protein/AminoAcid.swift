@@ -125,7 +125,7 @@ extension AminoAcid {
     /// Bundled protein modifications applicable to this amino acid.
     public var allowedModifications: [Modification] {
         get throws {
-            try ReferenceLibraryDefaults.loadBundled().unimodLibrary.modifications(applicableTo: identifier)
+            try ReferenceLibrary.unimod.modifications(applicableTo: identifier)
         }
     }
 }

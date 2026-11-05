@@ -85,7 +85,7 @@ struct CustomAminoAcidTests {
         let references = try ReferenceLibraryDefaults.loadBundled().aminoAcidReferences
         let standard = "ACDEFGHIKLMNPQRSTVWY"
         #expect(libraries.aminoAcids.count == 20)
-        #expect(references.aminoAcids.count == 20)
+        #expect(references.count == 20)
         #expect(references.allowedOneLetterCodes == Set(standard.map(String.init)))
         #expect(references.filterSequence("abcdefghijklmnopqrstuvwxyz") == standard)
         #expect(try ProteinChain(sequence: standard.lowercased()).sequenceString == standard)
@@ -101,7 +101,7 @@ struct CustomAminoAcidTests {
 
             let custom = try AminoAcid(oneLetterCode: code, formula: Formula("C6H11NO"))
             let extended = try AminoAcidReferences(customAminoAcids: [custom])
-            #expect(extended.aminoAcids.count == 21)
+            #expect(extended.count == 21)
             #expect(extended.filterSequence(code.lowercased()) == code)
             #expect(try ProteinChain(sequence: code, references: extended).residues == [custom])
         }
@@ -138,7 +138,7 @@ struct CustomAminoAcidTests {
         custom.modification = lossOfWater
         let references = try AminoAcidReferences(customAminoAcids: [custom])
         let bundled = try ReferenceLibraryDefaults.loadBundled().aminoAcidReferences
-        #expect(references.aminoAcids.count == bundled.aminoAcids.count + 1)
+        #expect(references.count == bundled.count + 1)
         #expect(!references.allowedOneLetterCodes.contains("N-TERM"))
         #expect(!references.allowedOneLetterCodes.contains("C-TERM"))
         #expect(references.aminoAcid(identifier: "N-term") == nil)

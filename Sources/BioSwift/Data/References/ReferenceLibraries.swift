@@ -23,58 +23,164 @@
 
 import Foundation
 
-public enum ReferenceLibraryDefaults {
-    public static let bundledResult = Result { try ReferenceLibraryLoader.loadBundled() }
+/// Bundled reference libraries, loaded on first access and cached for subsequent use.
+public enum ReferenceLibrary {
+    public static var aminoAcids: AminoAcidReferences {
+        get throws {
+            try ReferenceLibraryLoader.loadAminoAcids()
+        }
+    }
 
-    public static func loadBundled() throws -> ReferenceLibraries {
+    public static var elements: ElementReferences {
+        get throws {
+            try ReferenceLibraryLoader.loadElements()
+        }
+    }
+
+    public static var enzymes: EnzymeReferences {
+        get throws {
+            try ReferenceLibraryLoader.loadEnzymes()
+        }
+    }
+
+    public static var hydrophobicityScales: HydrophobicityReferences {
+        get throws {
+            try ReferenceLibraryLoader.loadHydrophobicityScales()
+        }
+    }
+
+    public static var unimod: ModificationLibrary {
+        get throws {
+            try ReferenceLibraryLoader.loadUnimod()
+        }
+    }
+
+    public static var psiMod: ModificationLibrary {
+        get throws {
+            try ReferenceLibraryLoader.loadPSIMod()
+        }
+    }
+
+    public static var uniProtPTM: ModificationLibrary {
+        get throws {
+            try ReferenceLibraryLoader.loadUniProtPTM()
+        }
+    }
+}
+
+enum ReferenceLibraryDefaults {
+    static let bundledResult = Result { try ReferenceLibraryLoader.loadBundled() }
+
+    static func loadBundled() throws -> ReferenceLibraries {
         try bundledResult.get()
     }
 }
 
 enum ReferenceLibraryLoader {
-    // Formula parsing is used while loading the other libraries, so elements
-    // must be available independently of the complete bundled collection.
+    // Elements must load independently because formula parsing uses them.
     private static let bundledElements = Result {
         ElementReferences(elements: try JSONReferenceLibraryLoader.loadElements())
+    }
+
+    private static let bundledUnimodSource = Result {
+        try UnimodReferenceLibraryLoader.load(elements: loadElements())
+    }
+
+    private static let bundledAminoAcids = Result {
+        let source = try bundledUnimodSource.get()
+        let standardCodes = Set("ACDEFGHIKLMNPQRSTVWY".map(String.init))
+        return AminoAcidReferences(aminoAcids: source.aminoAcids.filter {
+            standardCodes.contains($0.oneLetterCode)
+        })
+    }
+
+    private static let bundledEnzymes = Result {
+        EnzymeReferences(enzymes: try JSONReferenceLibraryLoader.loadEnzymes())
+    }
+
+    private static let bundledHydrophobicityScales = Result {
+        HydrophobicityReferences(
+            hydrophobicityScales: try JSONReferenceLibraryLoader.loadHydrophobicityScales()
+        )
+    }
+
+    private static let bundledUnimod = Result {
+        ModificationLibrary(
+            vocabulary: .unimod,
+            version: "2.0",
+            modifications: try bundledUnimodSource.get().modifications
+        )
+    }
+
+    private static let bundledPSIMod = Result {
+        try PSIModReferenceLibraryLoader.load(elements: loadElements())
+    }
+
+    private static let bundledUniProtPTM = Result {
+        // Conversion needs the full Unimod definitions, including nonstandard amino acids.
+        let source = try bundledUnimodSource.get()
+        return try UniProtPTMReferenceLibraryLoader.load(
+            elements: loadElements(),
+            aminoAcids: AminoAcidReferences(aminoAcids: source.aminoAcids)
+        )
+    }
+
+    static func loadAminoAcids() throws -> AminoAcidReferences {
+        try bundledAminoAcids.get()
     }
 
     static func loadElements() throws -> ElementReferences {
         try bundledElements.get()
     }
 
+    static func loadEnzymes() throws -> EnzymeReferences {
+        try bundledEnzymes.get()
+    }
+
+    static func loadHydrophobicityScales() throws -> HydrophobicityReferences {
+        try bundledHydrophobicityScales.get()
+    }
+
+    static func loadUnimod() throws -> ModificationLibrary {
+        try bundledUnimod.get()
+    }
+
+    static func loadPSIMod() throws -> ModificationLibrary {
+        try bundledPSIMod.get()
+    }
+
+    static func loadUniProtPTM() throws -> ModificationLibrary {
+        try bundledUniProtPTM.get()
+    }
+
     static func loadBundled() throws -> ReferenceLibraries {
-        let elementReferences = try loadElements()
-        let elements = elementReferences.elements
-        let jsonLibraries = try JSONReferenceLibraryLoader.loadOtherLibraries()
-        let unimodLibraries = try UnimodReferenceLibraryLoader.load(elements: elementReferences)
-        let psiModLibrary = try PSIModReferenceLibraryLoader.load(elements: elementReferences)
-        let aminoAcidReferences = AminoAcidReferences(aminoAcids: unimodLibraries.aminoAcids)
-        let uniProtPTMLibrary = try UniProtPTMReferenceLibraryLoader.load(
-            elements: elementReferences,
-            aminoAcids: aminoAcidReferences
+        try ReferenceLibraries(
+            elements: loadElements().elements,
+            aminoAcids: loadAminoAcids().aminoAcids,
+            unimodLibrary: loadUnimod(),
+            enzymes: loadEnzymes().enzymes,
+            hydrophobicityScales: loadHydrophobicityScales().hydrophobicityScales,
+            psiModLibrary: loadPSIMod(),
+            uniProtPTMLibrary: loadUniProtPTM()
         )
-        let unimodLibrary = ModificationLibrary(
-            vocabulary: .unimod,
-            version: "2.0",
-            modifications: unimodLibraries.modifications
-        )
+    }
+}
 
-        // Keep the full Unimod definitions for modification conversion above, but
-        // expose only the standard 20 amino acids in the bundled sequence library.
-        let standardCodes = Set("ACDEFGHIKLMNPQRSTVWY".map(String.init))
-        let standardAminoAcids = unimodLibraries.aminoAcids.filter {
-            standardCodes.contains($0.oneLetterCode)
-        }
+/// Provides direct iteration and indexed access in reference-library order.
+extension ElementReferences: RandomAccessCollection {
+    public var startIndex: Int { elements.startIndex }
+    public var endIndex: Int { elements.endIndex }
 
-        return ReferenceLibraries(
-            elements: elements,
-            aminoAcids: standardAminoAcids,
-            unimodLibrary: unimodLibrary,
-            enzymes: jsonLibraries.enzymes,
-            hydrophobicityScales: jsonLibraries.hydrophobicityScales,
-            psiModLibrary: psiModLibrary,
-            uniProtPTMLibrary: uniProtPTMLibrary
-        )
+    public subscript(position: Int) -> ChemicalElement {
+        elements[position]
+    }
+
+    public func index(after index: Int) -> Int {
+        elements.index(after: index)
+    }
+
+    public func index(before index: Int) -> Int {
+        elements.index(before: index)
     }
 }
 
@@ -146,6 +252,24 @@ public struct AminoAcidReferences: Sendable {
     }
 }
 
+/// Provides direct iteration and indexed access in reference-library order.
+extension AminoAcidReferences: RandomAccessCollection {
+    public var startIndex: Int { aminoAcids.startIndex }
+    public var endIndex: Int { aminoAcids.endIndex }
+
+    public subscript(position: Int) -> AminoAcid {
+        aminoAcids[position]
+    }
+
+    public func index(after index: Int) -> Int {
+        aminoAcids.index(after: index)
+    }
+
+    public func index(before index: Int) -> Int {
+        aminoAcids.index(before: index)
+    }
+}
+
 extension AminoAcidReferences {
     private static func isValidCode(_ code: String, length: Int) -> Bool {
         code.utf8.count == length && code.utf8.allSatisfy {
@@ -172,12 +296,12 @@ extension AminoAcidReferences {
     /// Combines bundled and custom definitions without permitting code overrides.
     /// Codes are normalized to uppercase; omitted three-letter codes are not indexed.
     public init(customAminoAcids: [AminoAcid]) throws {
-        let bundled = try ReferenceLibraryDefaults.loadBundled().aminoAcidReferences
+        let bundled = try ReferenceLibrary.aminoAcids
         var combined: [AminoAcid] = []
         var oneLetterCodes: Set<String> = []
         var threeLetterCodes: Set<String> = []
 
-        for aminoAcid in bundled.aminoAcids + customAminoAcids {
+        for aminoAcid in Array(bundled) + customAminoAcids {
             let code = try Self.normalizedCode(aminoAcid.oneLetterCode, length: 1)
             let threeLetterCode = aminoAcid.threeLetterCode.isEmpty
                 ? ""
@@ -210,6 +334,24 @@ extension AminoAcidReferences {
     }
 }
 
+/// Provides direct iteration and indexed access in reference-library order.
+extension EnzymeReferences: RandomAccessCollection {
+    public var startIndex: Int { enzymes.startIndex }
+    public var endIndex: Int { enzymes.endIndex }
+
+    public subscript(position: Int) -> Enzyme {
+        enzymes[position]
+    }
+
+    public func index(after index: Int) -> Int {
+        enzymes.index(after: index)
+    }
+
+    public func index(before index: Int) -> Int {
+        enzymes.index(before: index)
+    }
+}
+
 public struct EnzymeReferences: Sendable {
     public let enzymes: [Enzyme]
 
@@ -224,6 +366,24 @@ public struct EnzymeReferences: Sendable {
 
     public func enzyme(named name: String) -> Enzyme? {
         enzymesByName[name]
+    }
+}
+
+/// Provides direct iteration and indexed access in reference-library order.
+extension HydrophobicityReferences: RandomAccessCollection {
+    public var startIndex: Int { hydrophobicityScales.startIndex }
+    public var endIndex: Int { hydrophobicityScales.endIndex }
+
+    public subscript(position: Int) -> HydrophobicityScale {
+        hydrophobicityScales[position]
+    }
+
+    public func index(after index: Int) -> Int {
+        hydrophobicityScales.index(after: index)
+    }
+
+    public func index(before index: Int) -> Int {
+        hydrophobicityScales.index(before: index)
     }
 }
 
@@ -267,21 +427,21 @@ public struct HydrophobicityReferences: Sendable {
     }
 }
 
-public struct ReferenceLibraries: Sendable {
-    public let elements: [ChemicalElement]
-    public let aminoAcids: [AminoAcid]
-    public let unimodLibrary: ModificationLibrary
-    public let enzymes: [Enzyme]
-    public let hydrophobicityScales: [HydrophobicityScale]
-    public let psiModLibrary: ModificationLibrary
-    public let uniProtPTMLibrary: ModificationLibrary
+struct ReferenceLibraries: Sendable {
+    let elements: [ChemicalElement]
+    let aminoAcids: [AminoAcid]
+    let unimodLibrary: ModificationLibrary
+    let enzymes: [Enzyme]
+    let hydrophobicityScales: [HydrophobicityScale]
+    let psiModLibrary: ModificationLibrary
+    let uniProtPTMLibrary: ModificationLibrary
 
-    public let elementReferences: ElementReferences
-    public let aminoAcidReferences: AminoAcidReferences
-    public let enzymeReferences: EnzymeReferences
-    public let hydrophobicityReferences: HydrophobicityReferences
+    let elementReferences: ElementReferences
+    let aminoAcidReferences: AminoAcidReferences
+    let enzymeReferences: EnzymeReferences
+    let hydrophobicityReferences: HydrophobicityReferences
 
-    public init(
+    init(
         elements: [ChemicalElement],
         aminoAcids: [AminoAcid],
         unimodLibrary: ModificationLibrary,
@@ -304,23 +464,23 @@ public struct ReferenceLibraries: Sendable {
         self.hydrophobicityReferences = HydrophobicityReferences(hydrophobicityScales: hydrophobicityScales)
     }
 
-    public func element(symbol: String) -> ChemicalElement? {
+    func element(symbol: String) -> ChemicalElement? {
         elementReferences.element(symbol: symbol)
     }
 
-    public func aminoAcid(identifier: String) -> AminoAcid? {
+    func aminoAcid(identifier: String) -> AminoAcid? {
         aminoAcidReferences.aminoAcid(identifier: identifier)
     }
 
-    public func enzyme(named name: String) -> Enzyme? {
+    func enzyme(named name: String) -> Enzyme? {
         enzymeReferences.enzyme(named: name)
     }
 
-    public func hydrophobicityScale(named name: String) -> HydrophobicityScale? {
+    func hydrophobicityScale(named name: String) -> HydrophobicityScale? {
         hydrophobicityReferences.hydrophobicityScale(named: name)
     }
 
-    public func hydrophobicityScale(named name: HydrophobicityScaleName) -> HydrophobicityScale? {
+    func hydrophobicityScale(named name: HydrophobicityScaleName) -> HydrophobicityScale? {
         hydrophobicityReferences.hydrophobicityScale(named: name)
     }
 

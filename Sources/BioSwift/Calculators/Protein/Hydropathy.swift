@@ -72,7 +72,7 @@ public struct IsoelectricPointCalculator: Sendable {
         cTerminal: TerminalIonization = .free
     ) throws -> Double where Residues.Element == AminoAcid {
         // http://isoelectric.org/www_old/files/practise-isoelectric-point.html
-        let pKaValues = try ReferenceLibraryDefaults.loadBundled().hydrophobicityReferences.numericHydrophobicityValues(named: "pKa")
+        let pKaValues = try ReferenceLibrary.hydrophobicityScales.numericHydrophobicityValues(named: "pKa")
 
         func requiredValue(_ key: String) throws -> Double {
             guard let value = pKaValues[key] else {

@@ -137,7 +137,7 @@ final class UnimodXMLParser: NSObject {
 
     private func makeModification() throws -> Modification {
         var elementsBySymbol = Dictionary(
-            uniqueKeysWithValues: elementReferences.elements.map { ($0.symbol, $0) })
+            uniqueKeysWithValues: elementReferences.map { ($0.symbol, $0) })
         for element in parsedElements {
             elementsBySymbol[element.symbol] = element
         }

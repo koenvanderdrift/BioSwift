@@ -45,7 +45,7 @@ private struct UniProtPTMParser {
         self.elements = elements
         var aminoAcidsByIdentifier: [String: AminoAcid] = [:]
 
-        for aminoAcid in aminoAcids.aminoAcids {
+        for aminoAcid in aminoAcids {
             let identifiers = [
                 aminoAcid.name,
                 aminoAcid.oneLetterCode,

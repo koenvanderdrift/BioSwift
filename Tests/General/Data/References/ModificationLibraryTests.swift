@@ -12,7 +12,7 @@ import BioSwift
             modifications: [first, sameName, sameAccession, custom]
         )
 
-        #expect(library.modifications.count == 4)
+        #expect(library.count == 4)
         #expect(library.modification(named: "Shared")?.accession == "TEST:1")
         #expect(library.modification(accession: "TEST:1")?.name == "Shared")
         #expect(library.modification(accession: "TEST:2")?.name == "Shared")

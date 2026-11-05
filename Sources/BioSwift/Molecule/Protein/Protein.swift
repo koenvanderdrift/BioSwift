@@ -15,7 +15,7 @@ extension BioMolecule where ChainType == ProteinChain {
     public var nTermModifications: [Modification] {
         get throws {
             if let nTermAA = residues.first {
-                var nTermGroups = try ReferenceLibraryDefaults.loadBundled().unimodLibrary.modifications.filter { mod in
+                var nTermGroups = try ReferenceLibrary.unimod.filter { mod in
                 mod.specificities.contains { spec in
                     spec.position.contains("Protein N-term") && spec.site == nTermAA.oneLetterCode
                 }
@@ -33,7 +33,7 @@ extension BioMolecule where ChainType == ProteinChain {
     public var cTermModifications: [Modification] {
         get throws {
             if let cTermAA = residues.last {
-                var cTermGroups = try ReferenceLibraryDefaults.loadBundled().unimodLibrary.modifications.filter { mod in
+                var cTermGroups = try ReferenceLibrary.unimod.filter { mod in
                 mod.specificities.contains { spec in
                     spec.position.contains("Protein C-term") && spec.site == cTermAA.oneLetterCode
                 }

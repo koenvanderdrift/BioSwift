@@ -11,13 +11,19 @@ import Testing
 @Suite struct ReferenceLibraryTests: BioSwiftTestSuite {
     var fixtures = BioSwiftTestFixtures()
     @Test func bundledReferenceLibrariesLoadProperly() throws {
-        let libraries = try ReferenceLibraryDefaults.loadBundled()
+        let elements = try ReferenceLibrary.elements
+        let aminoAcids = try ReferenceLibrary.aminoAcids
+        let enzymes = try ReferenceLibrary.enzymes
+        let scales = try ReferenceLibrary.hydrophobicityScales
 
-        #expect(!libraries.elements.isEmpty)
-        #expect(!libraries.unimodLibrary.modifications.isEmpty)
-        #expect(!libraries.aminoAcids.isEmpty)
-        #expect(!libraries.enzymes.isEmpty)
-        #expect(!libraries.hydrophobicityScales.isEmpty)
+        #expect(elements.element(symbol: "C")?.symbol == "C")
+        #expect(aminoAcids.count == 20)
+        #expect(aminoAcids.filterSequence("ac def") == "ACDEF")
+        #expect(!enzymes.isEmpty)
+        #expect(!scales.isEmpty)
+        #expect(try ReferenceLibrary.unimod.vocabulary == .unimod)
+        #expect(try ReferenceLibrary.psiMod.modification(accession: "MOD:00007") != nil)
+        #expect(try !ReferenceLibrary.uniProtPTM.isEmpty)
     }
 
     @Test func bundledResultsExposeLoadingFailures() throws {
@@ -37,17 +43,17 @@ import Testing
         #expect(libraries.enzymeReferences.enzyme(named: enzyme.name)?.name == enzyme.name)
         let scale = try #require(libraries.hydrophobicityScales.first)
         #expect(libraries.hydrophobicityReferences.hydrophobicityScale(named: scale.name)?.name == scale.name)
-        #expect(libraries.elementReferences.elements.count == libraries.elements.count)
-        #expect(libraries.aminoAcidReferences.aminoAcids.count == libraries.aminoAcids.count)
-        #expect(libraries.enzymeReferences.enzymes.count == libraries.enzymes.count)
-        #expect(libraries.hydrophobicityReferences.hydrophobicityScales.count == libraries.hydrophobicityScales.count)
+        #expect(libraries.elementReferences.count == libraries.elements.count)
+        #expect(libraries.aminoAcidReferences.count == libraries.aminoAcids.count)
+        #expect(libraries.enzymeReferences.count == libraries.enzymes.count)
+        #expect(libraries.hydrophobicityReferences.count == libraries.hydrophobicityScales.count)
     }
 
     @Test func bundledDefaultsAreAvailable() throws {
         let libraries = try ReferenceLibraryDefaults.loadBundled()
 
         #expect(!libraries.elements.isEmpty)
-        #expect(!libraries.unimodLibrary.modifications.isEmpty)
+        #expect(!libraries.unimodLibrary.isEmpty)
         #expect(!libraries.aminoAcids.isEmpty)
         #expect(!libraries.enzymes.isEmpty)
         #expect(!libraries.hydrophobicityScales.isEmpty)
@@ -84,8 +90,8 @@ import Testing
         let libraries = try ReferenceLibraryDefaults.loadBundled()
 
         #expect(libraries.psiModLibrary.version == "1.038.0")
-        #expect(!libraries.psiModLibrary.modifications.isEmpty)
-        #expect(libraries.psiModLibrary.modifications.allSatisfy { $0.accession != nil })
+        #expect(!libraries.psiModLibrary.isEmpty)
+        #expect(libraries.psiModLibrary.allSatisfy { $0.accession != nil })
         #expect(libraries.psiModLibrary.modification(accession: "MOD:00007") != nil)
     }
 
@@ -94,10 +100,10 @@ import Testing
 
         func validate(_ library: ModificationLibrary, vocabulary: ModificationVocabulary) throws {
             #expect(library.vocabulary == vocabulary)
-            #expect(!library.modifications.isEmpty)
+            #expect(!library.isEmpty)
             #expect(!library.modifications(applicableTo: "M").isEmpty)
 
-            let modification = try #require(library.modifications.first)
+            let modification = try #require(library.first)
             let accession = try #require(modification.accession)
             #expect(library.modification(accession: accession)?.name == modification.name)
             #expect(library.modification(named: modification.name)?.name == modification.name)
@@ -189,7 +195,7 @@ import Testing
         )
 
         #expect(library.version == "test_release")
-        #expect(library.modifications.map(\.accession) == ["PTM-FIRST", "PTM-SECOND"])
+        #expect(library.map(\.accession) == ["PTM-FIRST", "PTM-SECOND"])
         #expect(library.modification(accession: "PTM-FIRST")?.name == "First modification")
         #expect(library.modification(accession: "PTM-SECOND")?.name == "Second modification")
     }
@@ -262,7 +268,7 @@ import Testing
         let metadata = modification.flatMap(library.metadata)
 
         #expect(library.version == "test_release")
-        #expect(library.modifications.count == 5)
+        #expect(library.count == 5)
         #expect(modification?.monoisotopicMass.rounded(scale: 6) == decimal("15.994915"))
         #expect(library.modification(accession: "PTM-TEST-D")?.specificities.first?.site == "D")
         #expect(library.modification(accession: "PTM-TEST-E")?.specificities.first?.site == "E")
@@ -335,8 +341,8 @@ import Testing
         )
 
         #expect(result.version == "test")
-        #expect(result.modifications.count == 1)
-        #expect(result.modifications.first?.accession == "MOD:10001")
+        #expect(result.count == 1)
+        #expect(result.first?.accession == "MOD:10001")
     }
 
     @Test func xmlReferenceLibrariesLoadProperly() throws {

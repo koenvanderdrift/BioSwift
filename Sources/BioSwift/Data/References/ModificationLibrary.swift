@@ -11,6 +11,24 @@ public enum ModificationVocabulary: String, Codable, Sendable {
     case uniProtPTM
 }
 
+/// Provides direct iteration and indexed access in reference-library order.
+extension ModificationLibrary: RandomAccessCollection {
+    public var startIndex: Int { modifications.startIndex }
+    public var endIndex: Int { modifications.endIndex }
+
+    public subscript(position: Int) -> Modification {
+        modifications[position]
+    }
+
+    public func index(after index: Int) -> Int {
+        modifications.index(after: index)
+    }
+
+    public func index(before index: Int) -> Int {
+        modifications.index(before: index)
+    }
+}
+
 public struct ModificationLibrary: Sendable {
     public let vocabulary: ModificationVocabulary
     public let version: String
