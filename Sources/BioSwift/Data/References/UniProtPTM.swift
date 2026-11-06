@@ -145,7 +145,8 @@ private struct UniProtPTMParser {
             ModificationSpecificity(
                 site: aminoAcid.oneLetterCode,
                 position: normalizedPosition(record.value(for: "PP")),
-                classification: keywords.joined(separator: ", ")
+                classification: keywords.joined(separator: ", "),
+                attachmentPositions: record.values(for: "PA")
             )
         ]
         let modification: Modification

@@ -208,6 +208,8 @@ import Testing
             AC   PTM-TEST1
             FT   MOD_RES
             TG   Asparagine.
+            PA   Side chain.
+            PA   Additional source constraint.
             PP   Anywhere.
             CF   O1
             MM   999.999999
@@ -277,6 +279,50 @@ import Testing
         #expect(metadata?.taxonomicRanges.count == 2)
         #expect(metadata?.crossReferences.count == 2)
         #expect(metadata?.keywords == ["Hydroxylation"])
+        let specificity = try #require(modification?.specificities.first)
+        #expect(specificity.attachmentPositions == ["Side chain.", "Additional source constraint."])
+        let decoded = try JSONDecoder().decode(
+            ModificationSpecificity.self, from: JSONEncoder().encode(specificity)
+        )
+        #expect(decoded.attachmentPositions == specificity.attachmentPositions)
+        #expect(decoded.site == specificity.site)
+        #expect(decoded.position == specificity.position)
+        #expect(decoded.classification == specificity.classification)
+        #expect(library.modification(accession: "PTM-TEST-D")?.specificities.first?.attachmentPositions == [])
+        #expect(AminoAcidModificationValidator.validate(
+            try #require(modification), in: .init(residue: "N")
+        ) != .allowed)
+    }
+
+    @Test func psiModPreservesTerminalRestrictions() throws {
+        let cases: [(String?, String)] = [
+            ("N-term", "Any N-term"), ("C-term", "Any C-term"),
+            ("none", "Anywhere"), ("Unrecognized restriction", "Unrecognized restriction"),
+            (nil, "Unknown")
+        ]
+        for (source, expected) in cases {
+            var text = """
+                [Term]
+                id: MOD:10001
+                name: Test modification
+                xref: DiffFormula: "O 1"
+                xref: Origin: "K"
+                """
+            if let source {
+                text += "\nxref: TermSpec: \"\(source)\""
+            }
+            let library = try PSIModReferenceLibraryLoader.parse(
+                text, elements: ReferenceLibrary.elements
+            )
+            let modification = try #require(library.first)
+            #expect(modification.specificities.first?.position == expected)
+            let result = AminoAcidModificationValidator.validate(modification, in: .init(residue: "K"))
+            if source == "none" {
+                #expect(result == .allowed)
+            } else {
+                #expect(result != .allowed)
+            }
+        }
     }
 
     @Test func psiModParserRejectsUnsupportedTerms() throws {

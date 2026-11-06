@@ -104,8 +104,12 @@ private struct PSIModParser {
             position = "Any N-term"
         case "C-term":
             position = "Any C-term"
-        default:
+        case "none":
             position = "Anywhere"
+        case .some(let value):
+            position = value
+        case .none:
+            position = "Unknown"
         }
 
         return try Modification(

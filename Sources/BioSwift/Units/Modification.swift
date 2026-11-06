@@ -98,11 +98,18 @@ public struct ModificationSpecificity: Codable, Sendable {
     public let site: String
     public let position: String
     public let classification: String
+    /// Attachment-position values in source terminology, such as UniProt PA fields.
+    /// An empty array means no attachment-position information was supplied.
+    public let attachmentPositions: [String]
 
-    public init(site: String, position: String = "Anywhere", classification: String = "") {
+    public init(
+        site: String, position: String = "Anywhere", classification: String = "",
+        attachmentPositions: [String] = []
+    ) {
         self.site = site
         self.position = position
         self.classification = classification
+        self.attachmentPositions = attachmentPositions
     }
 }
 
