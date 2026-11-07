@@ -86,14 +86,10 @@ private struct PSIModParser {
 
     private func makeModification(from term: PSIModTerm) throws -> Modification? {
         guard !term.isObsolete,
-            let differenceFormula = term.differenceFormula,
-            differenceFormula != "none",
             term.origins.count == 1,
             let origin = term.origins.first,
             !origin.hasPrefix("MOD:"),
-            canonicalOrigins.contains(origin),
-            let elementCounts = parseDifferenceFormula(differenceFormula),
-            !elementCounts.isEmpty
+            canonicalOrigins.contains(origin)
         else {
             return nil
         }
@@ -112,19 +108,32 @@ private struct PSIModParser {
             position = "Unknown"
         }
 
+        let specificities = [
+            ModificationSpecificity(
+                site: origin,
+                position: position,
+                classification: term.source ?? ""
+            )
+        ]
+        guard let elementCounts = term.differenceFormula.flatMap(parseDifferenceFormula),
+              !elementCounts.isEmpty else {
+            return Modification(
+                accession: term.accession,
+                name: term.preferredLabel ?? term.name,
+                fullName: term.name,
+                synonyms: term.synonyms,
+                reactions: [.undefined],
+                specificities: specificities
+            )
+        }
+
         return try Modification(
             accession: term.accession,
             name: term.preferredLabel ?? term.name,
             fullName: term.name,
             synonyms: term.synonyms,
             elements: elementCounts,
-            specificities: [
-                ModificationSpecificity(
-                    site: origin,
-                    position: position,
-                    classification: term.source ?? ""
-                )
-            ]
+            specificities: specificities
         )
     }
 

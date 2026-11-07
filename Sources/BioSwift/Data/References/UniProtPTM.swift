@@ -132,10 +132,7 @@ private struct UniProtPTMParser {
             let target = record.value(for: "TG").map(removeTrailingPeriod),
             let aminoAcid = aminoAcidsByIdentifier[
                 Self.normalizedAminoAcidIdentifier(target)
-            ],
-            let correctionFormula = record.value(for: "CF"),
-            let elementCounts = parseCorrectionFormula(correctionFormula),
-            !elementCounts.isEmpty
+            ]
         else {
             return nil
         }
@@ -149,20 +146,30 @@ private struct UniProtPTMParser {
                 attachmentPositions: record.values(for: "PA")
             )
         ]
+        let elementCounts = record.value(for: "CF").flatMap(parseCorrectionFormula)
         let modification: Modification
-        if let glycan = parsedGlycan(from: name) {
-            let targetFormula = try FormulaParser.parse(elements: elementCounts, using: elements)
+        if let elementCounts, !elementCounts.isEmpty {
+            if let glycan = parsedGlycan(from: name) {
+                let targetFormula = try FormulaParser.parse(elements: elementCounts, using: elements)
+                modification = Modification(
+                    accession: accession,
+                    name: name,
+                    reactions: glycanReactions(glycan: glycan, targetFormula: targetFormula),
+                    specificities: specificities
+                )
+            } else {
+                modification = try Modification(
+                    accession: accession,
+                    name: name,
+                    elements: elementCounts,
+                    specificities: specificities
+                )
+            }
+        } else {
             modification = Modification(
                 accession: accession,
                 name: name,
-                reactions: glycanReactions(glycan: glycan, targetFormula: targetFormula),
-                specificities: specificities
-            )
-        } else {
-            modification = try Modification(
-                accession: accession,
-                name: name,
-                elements: elementCounts,
+                reactions: [.undefined],
                 specificities: specificities
             )
         }

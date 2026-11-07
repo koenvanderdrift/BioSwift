@@ -86,6 +86,7 @@ final class UnimodXMLParser: NSObject {
     var modificationAccession: String?
     var modificationFullName = ""
     var modificationElements = [String: Int]()
+    private var hasInvalidModificationComposition = false
     var modificationSpecificities = [ModificationSpecificity]()
 
     var aminoAcidName = ""
@@ -132,6 +133,7 @@ final class UnimodXMLParser: NSObject {
         modificationAccession = nil
         modificationFullName.removeAll()
         modificationElements.removeAll()
+        hasInvalidModificationComposition = false
         modificationSpecificities.removeAll()
     }
 
@@ -142,6 +144,17 @@ final class UnimodXMLParser: NSObject {
             elementsBySymbol[element.symbol] = element
         }
         let references = ElementReferences(elements: Array(elementsBySymbol.values))
+        guard !hasInvalidModificationComposition,
+              modificationElements.values.contains(where: { $0 != 0 }),
+              modificationElements.keys.allSatisfy({ references.element(symbol: $0) != nil }) else {
+            return Modification(
+                accession: modificationAccession,
+                name: modificationTitle,
+                fullName: modificationFullName,
+                reactions: [.undefined],
+                specificities: modificationSpecificities
+            )
+        }
         var reactions: [Reaction] = []
 
         let removedElements = modificationElements.filter { $0.value < 0 }
@@ -215,6 +228,12 @@ extension UnimodXMLParser: XMLParserDelegate {
         } else if xmlElementName == neutralLoss {
             isNeutralLoss = true
         } else if xmlElementName == element {
+            // Reject the entire modification composition if any element is malformed.
+            if !isNeutralLoss, isModification,
+               (attributeDict[symbolAttributeKey]?.isEmpty != false
+                || attributeDict[numberAttributeKey].flatMap(Int.init) == nil) {
+                hasInvalidModificationComposition = true
+            }
             if isNeutralLoss == false, let symbol = attributeDict[symbolAttributeKey],
                 let number = attributeDict[numberAttributeKey]
             {

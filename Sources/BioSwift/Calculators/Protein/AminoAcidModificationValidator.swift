@@ -81,6 +81,16 @@ public enum AminoAcidModificationValidator {
         in context: AminoAcidModificationContext
     ) -> String? {
         // Preserve source strings in metadata; normalize only when interpreting them.
+        let position: String
+        switch specificity.position {
+        case "N-term":
+            position = "Any N-term"
+        case "C-term":
+            position = "Any C-term"
+        default:
+            position = specificity.position
+        }
+
         // Every supplied constraint must be satisfied. Compound cross-link rules
         // cannot be checked against this single-residue context.
         for value in specificity.attachmentPositions {
@@ -114,7 +124,7 @@ public enum AminoAcidModificationValidator {
             guard specificity.site == "X" || specificity.site == context.residue else {
                 return "Requires residue \(specificity.site)."
             }
-            if specificity.position == "Anywhere", specificity.attachmentPositions.isEmpty,
+            if position == "Anywhere", specificity.attachmentPositions.isEmpty,
                context.attachment == .nTerminus || context.attachment == .cTerminus {
                 return "Requires a residue attachment."
             }
@@ -122,15 +132,15 @@ public enum AminoAcidModificationValidator {
 
         // A one-residue peptide has both ends, but their attachment groups differ.
         if context.attachment == .cTerminus,
-           ["Any N-term", "Protein N-term"].contains(specificity.position) {
+           ["Any N-term", "Protein N-term"].contains(position) {
             return "Requires an N-terminal attachment."
         }
         if context.attachment == .nTerminus,
-           ["Any C-term", "Protein C-term"].contains(specificity.position) {
+           ["Any C-term", "Protein C-term"].contains(position) {
             return "Requires a C-terminal attachment."
         }
 
-        switch specificity.position {
+        switch position {
         case "Anywhere":
             return nil
         case "Any N-term":

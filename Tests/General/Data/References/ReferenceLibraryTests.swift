@@ -270,7 +270,9 @@ import Testing
         let metadata = modification.flatMap(library.metadata)
 
         #expect(library.version == "test_release")
-        #expect(library.count == 5)
+        #expect(library.count == 6)
+        #expect(library.modification(accession: "PTM-TEST2") != nil)
+        #expect(library.modification(accession: "PTM-TEST3") == nil)
         #expect(modification?.monoisotopicMass.rounded(scale: 6) == decimal("15.994915"))
         #expect(library.modification(accession: "PTM-TEST-D")?.specificities.first?.site == "D")
         #expect(library.modification(accession: "PTM-TEST-E")?.specificities.first?.site == "E")
@@ -292,6 +294,54 @@ import Testing
         #expect(AminoAcidModificationValidator.validate(
             try #require(modification), in: .init(residue: "N")
         ) != .allowed)
+    }
+
+    @Test(arguments: ["", "CF   ", "CF   Qq1", "CF   O", "CF   H0"])
+    func uniProtPTMRetainsRecordsWithoutUsableCorrectionFormulas(formulaLine: String) throws {
+        let text = """
+            ID   Unknown chemistry
+            AC   PTM-UNKNOWN
+            FT   MOD_RES
+            TG   Lysine.
+            PP   N-terminal.
+            PA   Amino acid backbone.
+            KW   Test classification.
+            TR   Mammalia; taxId:40674 (Mammalia).
+            DR   PSI-MOD; MOD:00035.
+            \(formulaLine)
+            //
+            ID   Cross-link with single target
+            AC   PTM-CROSSLINK
+            FT   CROSSLNK
+            TG   Lysine.
+            \(formulaLine)
+            //
+            """
+        let references = try ReferenceLibraryDefaults.loadBundled()
+        let library = try UniProtPTMReferenceLibraryLoader.parse(
+            text, elements: references.elementReferences,
+            aminoAcids: references.aminoAcidReferences
+        )
+        #expect(library.count == 1)
+        #expect(library.modification(accession: "PTM-CROSSLINK") == nil)
+        let modification = try #require(library.modification(accession: "PTM-UNKNOWN"))
+        #expect(modification.accession == "PTM-UNKNOWN")
+        #expect(modification.name == "Unknown chemistry")
+        #expect(modification.reactions.count == 1)
+        if case .undefined = modification.reactions.first {
+        } else {
+            Issue.record("Expected an undefined reaction")
+        }
+        let specificity = try #require(modification.specificities.first)
+        #expect(modification.specificities.count == 1)
+        #expect(specificity.site == "K")
+        #expect(specificity.position == "N-term")
+        #expect(specificity.classification == "Test classification")
+        #expect(specificity.attachmentPositions == ["Amino acid backbone."])
+        let metadata = try #require(library.metadata(for: modification))
+        #expect(metadata.keywords == ["Test classification"])
+        #expect(metadata.taxonomicRanges.first?.taxonIdentifier == 40674)
+        #expect(metadata.crossReferences.first?.identifier == "MOD:00035")
     }
 
     @Test func psiModPreservesTerminalRestrictions() throws {
@@ -387,8 +437,112 @@ import Testing
         )
 
         #expect(result.version == "test")
-        #expect(result.count == 1)
-        #expect(result.first?.accession == "MOD:10001")
+        #expect(result.map(\.accession) == [
+            "MOD:10001", "MOD:10003", "MOD:10004", "MOD:10007", "MOD:10008"
+        ])
+        for modification in result.dropFirst() {
+            #expect(modification.reactions.count == 1)
+            guard case .undefined = modification.reactions.first else {
+                Issue.record("Expected an undefined reaction")
+                continue
+            }
+        }
+    }
+
+    @Test(arguments: ["", "none", " ", "Qq 1", "O", "H nope", "H 0", "O 1 Qq 1"])
+    func psiModRetainsUnknownChemistryAndMetadata(formula: String) throws {
+        let text = """
+            [Term]
+            id: MOD:20001
+            name: Full modification name
+            synonym: "Preferred name" EXACT PSI-MOD-label []
+            synonym: "Alternative name" EXACT []
+            xref: DiffFormula: "\(formula)"
+            xref: Origin: "K"
+            xref: TermSpec: "N-term"
+            xref: Source: "natural"
+
+            [Term]
+            id: MOD:20002
+            name: Cross-link
+            xref: Origin: "C, C"
+
+            [Term]
+            id: MOD:20003
+            name: Obsolete
+            is_obsolete: true
+            xref: Origin: "K"
+
+            [Term]
+            id: MOD:20004
+            name: Unknown origin
+            xref: Origin: "MOD:00047"
+            """
+        let library = try PSIModReferenceLibraryLoader.parse(
+            text, elements: ReferenceLibrary.elements
+        )
+        #expect(library.count == 1)
+        let modification = try #require(library.first)
+        #expect(modification.accession == "MOD:20001")
+        #expect(modification.name == "Preferred name")
+        #expect(modification.fullName == "Full modification name")
+        #expect(modification.synonyms.contains("Alternative name"))
+        #expect(modification.reactions.count == 1)
+        guard case .undefined = modification.reactions.first else {
+            Issue.record("Expected an undefined reaction")
+            return
+        }
+        let specificity = try #require(modification.specificities.first)
+        #expect(specificity.site == "K")
+        #expect(specificity.position == "Any N-term")
+        #expect(specificity.classification == "natural")
+    }
+
+    @Test(arguments: [
+        "",
+        "<umod:delta/>",
+        "<umod:delta><umod:element symbol=\"H\" number=\"0\"/></umod:delta>",
+        "<umod:delta><umod:element symbol=\"Qq\" number=\"1\"/></umod:delta>",
+        "<umod:delta><umod:element symbol=\"O\" number=\"1\"/><umod:element symbol=\"H\" number=\"bad\"/></umod:delta>",
+        "<umod:delta><umod:element symbol=\"H\"/></umod:delta>",
+        "<umod:delta><umod:element number=\"1\"/></umod:delta>"
+    ])
+    func unimodRetainsUnknownChemistryAndResetsRecordState(composition: String) throws {
+        let xml = """
+            <umod:unimod xmlns:umod="http://www.unimod.org/xmlns/schema/unimod_2">
+                <umod:modifications>
+                    <umod:mod title="Test modification" full_name="Full modification name" record_id="20001">
+                        <umod:specificity site="K" position="Any N-term" classification="Post-translational"/>
+                        \(composition)
+                    </umod:mod>
+                    <umod:mod title="Valid modification" record_id="20002">
+                        <umod:specificity site="M" position="Anywhere" classification="Post-translational"/>
+                        <umod:delta><umod:element symbol="O" number="1"/></umod:delta>
+                        <umod:NeutralLoss><umod:element symbol="H" number="bad"/></umod:NeutralLoss>
+                    </umod:mod>
+                    <umod:mod title="Xlink:test" record_id="20003">
+                        \(composition)
+                    </umod:mod>
+                </umod:modifications>
+            </umod:unimod>
+            """
+        let result = try UnimodReferenceLibraryLoader.parse(data: Data(xml.utf8))
+        #expect(result.modifications.count == 2)
+        let modification = try #require(result.modifications.first)
+        #expect(modification.accession == "UNIMOD:20001")
+        #expect(modification.name == "Test modification")
+        #expect(modification.fullName == "Full modification name")
+        #expect(modification.reactions.count == 1)
+        guard case .undefined = modification.reactions.first else {
+            Issue.record("Expected an undefined reaction")
+            return
+        }
+        let specificity = try #require(modification.specificities.first)
+        #expect(specificity.site == "K")
+        #expect(specificity.position == "Any N-term")
+        #expect(specificity.classification == "Post-translational")
+        #expect(result.modifications.last?.accession == "UNIMOD:20002")
+        #expect(result.modifications.last?.monoisotopicMass.rounded(scale: 6) == decimal("15.994915"))
     }
 
     @Test func xmlReferenceLibrariesLoadProperly() throws {

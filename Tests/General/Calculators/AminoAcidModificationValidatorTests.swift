@@ -129,6 +129,38 @@ import BioSwift
         }
     }
 
+    @Test(arguments: ["N-term", "C-term"])
+    func terminalPositionAliasesPreserveConstraints(position: String) {
+        let isN = position == "N-term"
+        let matching: AminoAcidModificationContext.Attachment = isN ? .nTerminus : .cTerminus
+        let opposite: AminoAcidModificationContext.Attachment = isN ? .cTerminus : .nTerminus
+        for spelling in [position, "Any " + position] {
+            let mod = modification(.init(site: "K", position: spelling))
+            #expect(AminoAcidModificationValidator.validate(mod, in: .init(residue: "K")) != .allowed)
+            #expect(AminoAcidModificationValidator.validate(mod, in: .init(
+                residue: "K", isNTerminal: isN, isCTerminal: !isN
+            )) == .allowed)
+            #expect(AminoAcidModificationValidator.validate(mod, in: .init(
+                residue: "K", isNTerminal: !isN, isCTerminal: isN
+            )) != .allowed)
+            #expect(AminoAcidModificationValidator.validate(mod, in: .init(
+                residue: "K", attachment: matching, isNTerminal: isN, isCTerminal: !isN
+            )) == .allowed)
+            #expect(AminoAcidModificationValidator.validate(mod, in: .init(
+                residue: "K", attachment: opposite, isNTerminal: !isN, isCTerminal: isN
+            )) != .allowed)
+            #expect(AminoAcidModificationValidator.validate(mod, in: .init(
+                residue: "K", attachment: matching, isNTerminal: true, isCTerminal: true
+            )) == .allowed)
+            #expect(AminoAcidModificationValidator.validate(mod, in: .init(
+                residue: "K", attachment: opposite, isNTerminal: true, isCTerminal: true
+            )) != .allowed)
+            #expect(AminoAcidModificationValidator.validate(mod, in: .init(
+                residue: "M", attachment: matching, isNTerminal: true, isCTerminal: true
+            )) != .allowed)
+        }
+    }
+
     @Test func singleResiduePeptideStillHasDistinctTerminalGroups() {
         #expect(AminoAcidModificationValidator.validate(
             modification(.init(site: "K", position: "Any N-term")), in: .init(
